@@ -1,18 +1,3 @@
 <template>
-  <h1>CYBEBOX</h1>
+  <h1>cyber box</h1>
 </template>
-
-<script>
-export default {}
-</script>
-<style>
-body {
-  display: flex;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-}
-h1 {
-  font-family: "PopinsMedium", sans-serif;
-}
-</style>

@@ -1,0 +1,9 @@
+/*1rem === 10px*/
+:root {
+  --fontSize: .52085vw;
+}
+@media screen and (max-width: 460px) {
+  :root {
+    --fontSize: 2.778vw;
+  }
+}
