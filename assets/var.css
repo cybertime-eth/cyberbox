@@ -1,6 +1,6 @@
 /*1rem === 10px*/
 :root {
-  --fontSize: .52085vw;
+  --fontSize: .6945vw;
 }
 @media screen and (max-width: 460px) {
   :root {
