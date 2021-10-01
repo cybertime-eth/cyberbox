@@ -3,7 +3,7 @@
     <div class="header container-xl">
       <div class="header__logo">
         <img src="/logo.svg" alt="logo" class="header__logo-img">
-        <nuxt-link to="/" class="header__logo-link">SaveNFT</nuxt-link>
+        <nuxt-link to="/" class="header__logo-link">CyberBox</nuxt-link>
       </div>
       <nav class="header__navigation">
         <ul class="header__ul">
@@ -21,14 +21,25 @@
           </li>
         </ul>
       </nav>
-      <button class="header__box">
+      <button class="header__box gradient-button">
         Create Box
       </button>
+      <div class="header__wallet">
+        <h3 class="header__wallet-address">0x5cbd...031a</h3>
+        <div class="header__wallet-avatar gradient-button">
+        </div>
+      </div>
     </div>
   </header>
 </template>
 <script>
-
+export default {
+  data() {
+    return {
+      image: false
+    }
+  }
+}
 </script>
 <style lang="scss">
 header {
@@ -37,32 +48,47 @@ header {
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 29.5rem 42rem 38rem;
+  grid-template-columns: 32rem 42rem 35.3rem 22.5rem;
   align-items: center;
   &__logo {
     display: flex;
     align-items: center;
-    width: 13.5rem;
+    width: 14.9rem;
     justify-content: space-between;
+    &-link {
+      letter-spacing: 0.04em;
+    }
     &-img {
       width: 6rem;
     }
-  }
-  &__navigation {
   }
   &__ul {
     display: flex;
     justify-content: space-between;
   }
   &__box {
-    background: none;
-    color: $pink;
     width: 13.9rem;
     height: 4.8rem;
+    cursor: pointer;
+  }
+  &__wallet {
+    background: #E9FCEE;
+    border-radius: 2.5rem;
+    width: 19.7rem;
+    height: 4.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     justify-self: end;
-    border: .1rem solid transparent;
-    border-image-slice : 1;
-    border-image-source: linear-gradient(93.06deg, #FC2EF5 8.21%, #5489D8 50.57%, #2CFF64 100%);
+    cursor: pointer;
+    &-address {
+      padding-left: 2.2rem;
+    }
+    &-avatar {
+      width: 4.2rem;
+      height: 4.5rem;
+      border-radius: 2.5rem;
+    }
   }
 }
 </style>

@@ -14,6 +14,26 @@ export default {
 </script>
 <style lang="scss">
 
+.gradient-button {
+  position: relative;
+  background-clip: padding-box;
+  background: #fff;
+  color: $pink;
+  justify-self: end;
+  border-radius: 2.3rem;
+  letter-spacing: 0.04em;
+  border: .1rem solid transparent;
+  &::after {
+    position: absolute;
+    top: -.2rem; bottom: -.2rem;
+    left: -.2rem; right: -.2rem;
+    background: linear-gradient(93.06deg, #FC2EF5 8.21%, #5489D8 50.57%, #2CFF64 100%);
+    content: '';
+    z-index: -1;
+    border-radius: 2.3rem;
+  }
+}
+
 //DEFAULT STYLES
 
 html,
