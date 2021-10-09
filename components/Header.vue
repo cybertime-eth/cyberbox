@@ -24,11 +24,11 @@
       <button class="header__box gradient-button">
         Create Box
       </button>
-      <div class="header__wallet">
+      <nuxt-link to="/profile/1" class="header__wallet">
         <h3 class="header__wallet-address">0x5cbd...031a</h3>
         <div class="header__wallet-avatar gradient-button">
         </div>
-      </div>
+      </nuxt-link>
     </div>
   </header>
 </template>

@@ -87,9 +87,26 @@ ul {
 li {
   list-style: none;
 }
-
+input,textarea {
+  background: $white;
+  border: .1rem solid $border2;
+  border-radius: .4rem;
+  font-size: 1.6rem;
+  color: $textColor;
+  padding: 1.2rem 1rem;
+  outline: none;
+  resize: none;
+  font-family: OpenSans-Regular;
+  &::placeholder {
+    color: $border2;
+  }
+}
 .container-xl {
   width: 132rem;
+  margin: 0 auto;
+}
+.container-l {
+  width: 81.8rem;
   margin: 0 auto;
 }
 
@@ -111,6 +128,11 @@ li {
   font-family: "Cabin-Bold";
   src: local("Cabin-Bold"),
   url(./assets/fonts/Cabin-Bold.ttf) format('truetype');
+}
+@font-face {
+  font-family: "Cabin-Medium";
+  src: local("Cabin-Medium"),
+  url(./assets/fonts/Cabin-Medium.ttf) format('truetype');
 }
 @font-face {
   font-family: 'OpenSans-Bold';

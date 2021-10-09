@@ -1,6 +1,6 @@
 <template>
   <section id="profile">
-    <div class="container-xl profile">
+    <div class="container-xl profile" v-if="!showEditProfile">
       <div class="profile__banner"></div>
       <div class="profile__block">
         <div class="profile__info">
@@ -9,7 +9,7 @@
             <h3 class="profile__info-address-value">0x5cbd...031a</h3>
             <img src="/copy.svg" alt="copy">
           </div>
-          <button class="profile__info-edit">
+          <button class="profile__info-edit" @click="showEditProfile = true">
             Edit profile
           </button>
         </div>
@@ -26,8 +26,30 @@
         </div>
       </div>
     </div>
+    <Edit v-else @saveChanges="userInfo"/>
   </section>
 </template>
+<script>
+import Edit from '@/components/profile/edit'
+export default {
+  data() {
+    return {
+      showEditProfile: false,
+      user: {}
+    }
+  },
+  methods: {
+    userInfo(user) {
+      console.log(user)
+      this.user = user
+      this.showEditProfile = false
+    }
+  },
+  components: {
+    Edit
+  }
+}
+</script>
 <style lang="scss">
 .profile {
   &__banner {
