@@ -30,8 +30,9 @@
                 placeholder="A little bit words about you"
                 class="profile__edit-content-item-form-textarea"
                 v-model="user.bio"
+                maxlength="200"
               ></textarea>
-              <h4 class="profile__edit-content-item-form-length">0/200</h4>
+              <h4 class="profile__edit-content-item-form-length">{{ user.bio.length }}/200</h4>
             </div>
           </div>
 
@@ -48,8 +49,16 @@
               </p>
             </div>
             <div class="profile__edit-content-item-form">
+              <input type="file" @change="previewFilesAvatar($event)" class="profile__edit-content-item-form-button">
               <div class="profile__edit-content-item-form-image">
-                <p class="profile__edit-content-item-form-image-text">Drag and drop an image <br> here, or click to browse.</p>
+                <p class="profile__edit-content-item-form-image-text" v-if="!user.image">Drag and drop an image <br> here, or click to browse.</p>
+                <div class="profile__edit-content-item-form-image-info" v-else>
+                  <img :src="user.image" alt="avatar" class="profile__edit-content-item-form-image-info-image">
+                  <div class="profile__edit-content-item-form-image-info-text">
+                    <p class="profile__edit-content-item-form-image-info-text-name">{{ avatarInfo.name }}</p>
+                    <h3 class="profile__edit-content-item-form-image-info-text-button" @click="removeImage('avatar')">Delete</h3>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -67,8 +76,16 @@
               </p>
             </div>
             <div class="profile__edit-content-item-form">
+              <input type="file" @change="previewFilesCover($event)" class="profile__edit-content-item-form-button">
               <div class="profile__edit-content-item-form-image">
-                <p class="profile__edit-content-item-form-image-text">Drag and drop an image <br> here, or click to browse.</p>
+                <p class="profile__edit-content-item-form-image-text" v-if="!user.cover">Drag and drop an image <br> here, or click to browse.</p>
+                <div class="profile__edit-content-item-form-image-info" v-else>
+                  <img :src="user.cover" alt="avatar" class="profile__edit-content-item-form-image-info-image">
+                  <div class="profile__edit-content-item-form-image-info-text">
+                    <p class="profile__edit-content-item-form-image-info-text-name">{{ coverInfo.name }}</p>
+                    <h3 class="profile__edit-content-item-form-image-info-text-button" @click="removeImage('cover')">Delete</h3>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -92,7 +109,7 @@
                 type="text"
                 class="profile__edit-content-socials-link-value"
                 placeholder="Website URL"
-                v-model="user.telegram"
+                v-model="user.links.telegram"
               >
             </div>
 
@@ -110,7 +127,7 @@
                 type="text"
                 class="profile__edit-content-socials-link-value"
                 placeholder="Website URL"
-                v-model="user.instagram"
+                v-model="user.links.instagram"
               >
             </div>
 
@@ -128,7 +145,7 @@
                 type="text"
                 class="profile__edit-content-socials-link-value"
                 placeholder="Website URL"
-                v-model="user.twitter"
+                v-model="user.links.twitter"
               >
             </div>
           </div>
@@ -144,20 +161,46 @@
 export default {
   data() {
     return {
+      coverInfo: '',
+      avatarInfo: '',
       user: {
         name: '',
         bio: '',
         image: '',
         cover: '',
-        telegram: '',
-        instagram: '',
-        twitter: ''
+        links: {
+          telegram: '',
+          instagram: '',
+          twitter: ''
+        }
       }
     }
   },
   methods: {
     saveChanges() {
-      this.$emit('saveChanges', this.user)
+      this.$emit('saveChanges', false)
+      this.$store.commit('setUser', this.user)
+    },
+    previewFilesAvatar(event) {
+      this.avatarInfo = event.target.files[0]
+      if (event.target.files[0]) {
+        this.user.image = URL.createObjectURL(event.target.files[0]);
+      }
+    },
+    previewFilesCover(event) {
+      this.coverInfo = event.target.files[0]
+      if (event.target.files[0]) {
+        this.user.cover = URL.createObjectURL(event.target.files[0]);
+      }
+    },
+    removeImage(type) {
+      if (type === 'avatar') {
+        this.avatarInfo = '';
+        this.user.image = '';
+      } else {
+        this.coverInfo = '';
+        this.user.cover = '';
+      }
     }
   }
 }
@@ -242,6 +285,7 @@ export default {
           width: 27.1rem;
         }
         &-form {
+          position: relative;
           &-input {
             width: 34.4rem;
             margin-top: 1.5rem;
@@ -267,6 +311,47 @@ export default {
             &-text {
               color: $grayLight;
             }
+            &-info {
+              display: flex;
+              align-items: center;
+              width: 35.5rem;
+              padding-left: 1rem;
+              position: relative;
+              z-index: 2;
+              cursor: pointer;
+              &-image {
+                width: 7.5rem;
+                height: 7.5rem;
+                object-fit: cover;
+                border-radius: .4rem;
+              }
+              &-text {
+                padding-left: 1.6rem;
+                &-name {
+                  font-size: 1.8rem;
+                  color: $textColor;
+                }
+                &-button {
+                  color: $border;
+                  font-weight: bold;
+                  font-family: OpenSans-Bold;
+                  padding-top: .5rem;
+                }
+              }
+            }
+          }
+          &-button {
+            position: absolute;
+            width: 36.5rem;
+            height: 11.2rem;
+            z-index: 1;
+            opacity: 0;
+            content: '';
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            cursor: pointer;
           }
         }
       }

@@ -27,6 +27,7 @@
       <nuxt-link to="/profile/1" class="header__wallet">
         <h3 class="header__wallet-address">0x5cbd...031a</h3>
         <div class="header__wallet-avatar gradient-button">
+          <img :src="user.image" alt="avatar" v-if="user.image">
         </div>
       </nuxt-link>
     </div>
@@ -37,6 +38,11 @@ export default {
   data() {
     return {
       image: false
+    }
+  },
+  computed: {
+    user() {
+      return this.$store.state.user
     }
   }
 }
@@ -88,6 +94,15 @@ header {
       width: 4.2rem;
       height: 4.5rem;
       border-radius: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      img {
+        width: 4.2rem;
+        height: 4.5rem;
+        object-fit: cover;
+        border-radius: 2.5rem;
+      }
     }
   }
 }
