@@ -90,6 +90,7 @@ header {
     &-address {
       padding-left: 2.2rem;
     }
+
     &-avatar {
       width: 4.2rem;
       height: 4.5rem;
