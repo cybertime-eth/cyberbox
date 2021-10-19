@@ -8,7 +8,7 @@
       <nav class="header__navigation">
         <ul class="header__ul">
           <li class="header__list">
-            <nuxt-link class="header__link" to="#">Marketplace</nuxt-link>
+            <nuxt-link class="header__link gradient-text" to="#">Marketplace</nuxt-link>
           </li>
           <li class="header__list">
             <nuxt-link class="header__link" to="#">Minted Box</nuxt-link>
@@ -21,28 +21,44 @@
           </li>
         </ul>
       </nav>
-      <button class="header__box gradient-button">
+      <button class="header__box gradient-button" v-if="address">
         Create Box
       </button>
-      <nuxt-link to="/profile/1" class="header__wallet">
-        <h3 class="header__wallet-address">0x5cbd...031a</h3>
+      <button v-else></button>
+      <nuxt-link to="/profile/1" class="header__wallet" v-if="address">
+        <h3 class="header__wallet-address">{{ address }}</h3>
         <div class="header__wallet-avatar gradient-button">
           <img :src="user.image" alt="avatar" v-if="user.image">
         </div>
       </nuxt-link>
+      <button class="gradient-button header__connect" v-else @click="showConnectModal = true">Connect Wallet</button>
     </div>
+    <connect v-if="showConnectModal && !address" @closeModal="closeModal"/>
   </header>
 </template>
 <script>
+import connect from '@/components/modals/connect'
 export default {
   data() {
     return {
-      image: false
+      image: false,
+      showConnectModal: false
     }
+  },
+  components: {
+    connect
   },
   computed: {
     user() {
       return this.$store.state.user
+    },
+    address() {
+      return this.$store.state.address
+    }
+  },
+  methods: {
+    closeModal(payload) {
+      this.showConnectModal = payload
     }
   }
 }
@@ -105,6 +121,11 @@ header {
         border-radius: 2.5rem;
       }
     }
+  }
+  &__connect {
+    width: 17.4rem;
+    height: 4.8rem;
+    cursor: pointer;
   }
 }
 </style>

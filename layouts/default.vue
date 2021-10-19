@@ -2,6 +2,7 @@
   <div class="app">
     <Header />
     <Nuxt />
+
   </div>
 </template>
 <script>
@@ -9,6 +10,9 @@ import Header from './../components/Header'
 export default {
   components: {
     Header
+  },
+ async mounted() {
+    await this.$store.dispatch('updateUser')
   }
 }
 </script>
@@ -32,6 +36,12 @@ export default {
     z-index: -1;
     border-radius: 2.3rem;
   }
+}
+
+.gradient-text {
+  background: linear-gradient(93.06deg, #FC2EF5 8.21%, #5489D8 50.57%, #2CFF64 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 //DEFAULT STYLES
@@ -120,6 +130,40 @@ input,textarea {
 ::-webkit-scrollbar-thumb {
   background: #fff;
   cursor: pointer;
+}
+
+// MODALS
+
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, .5);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &__block {
+    position: relative;
+    padding: 2.8rem 6.9rem;
+    background: $modalColor;
+    border-radius: .8rem;
+  }
+  &__title {
+    color: $titleColor;
+    text-align: center;
+  }
+  &__close {
+    width: 1.4rem;
+    position: absolute;
+    right: 2.1rem;
+    top: 2.1rem;
+    z-index: 4;
+    cursor: pointer;
+  }
 }
 
 //FONTS

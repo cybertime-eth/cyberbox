@@ -10,10 +10,10 @@
             <img :src="user.image" alt="image" v-if="user.image">
           </div>
           <div class="profile__info-address">
-            <h3 class="profile__info-address-value">0x5cbd...031a</h3>
+            <h3 class="profile__info-address-value">{{ address ? address : '' }}</h3>
             <img src="/copy.svg" alt="copy">
           </div>
-          <h1 class="profile__info-name" v-if="user.name">{{ user.name }}</h1>
+          <h1 class="profile__info-name gradient-text" v-if="user.name">{{ user.name }}</h1>
           <div class="profile__info-bio" v-if="user.bio">
             <h3 class="profile__info-bio-title">Bio</h3>
             <p class="profile__info-bio-content">
@@ -64,6 +64,9 @@ export default {
   computed: {
     user() {
       return this.$store.state.user
+    },
+    address() {
+      return this.$store.state.address
     }
   },
   components: {
@@ -131,9 +134,6 @@ export default {
       }
     }
     &-name {
-      background: linear-gradient(93.06deg, #FC2EF5 8.21%, #5489D8 50.57%, #2CFF64 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
       font-weight: 500;
       font-family: Cabin-Medium;
     }
