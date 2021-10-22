@@ -25,28 +25,32 @@
         Create Box
       </button>
       <button v-else></button>
-      <nuxt-link to="/profile/1" class="header__wallet" v-if="address">
+      <div class="header__wallet" v-if="address" @click="showProfileMenu = true">
         <h3 class="header__wallet-address">{{ address }}</h3>
         <div class="header__wallet-avatar gradient-button">
           <img :src="user.image" alt="avatar" v-if="user.image">
         </div>
-      </nuxt-link>
+      </div>
       <button class="gradient-button header__connect" v-else @click="showConnectModal = true">Connect Wallet</button>
     </div>
     <connect v-if="showConnectModal && !address" @closeModal="closeModal"/>
+    <profileModal v-if="showProfileMenu" @closeModal="closeModal"/>
   </header>
 </template>
 <script>
 import connect from '@/components/modals/connect'
+import profileModal from '@/components/modals/profileModal'
 export default {
   data() {
     return {
       image: false,
-      showConnectModal: false
+      showConnectModal: false,
+      showProfileMenu: false
     }
   },
   components: {
-    connect
+    connect,
+    profileModal
   },
   computed: {
     user() {
@@ -59,6 +63,7 @@ export default {
   methods: {
     closeModal(payload) {
       this.showConnectModal = payload
+      this.showProfileMenu = payload
     }
   }
 }

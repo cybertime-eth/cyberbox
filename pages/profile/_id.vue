@@ -28,7 +28,7 @@
               <a :href="'https://www.instagram.com/' + user.links.instagram" v-if="user.links.instagram" target="_blank"><img src="/socials/instagram.svg" alt="instagram"></a>
             </p>
           </div>
-          <button class="profile__info-edit" @click="showEditProfile = true">
+          <button class="profile__info-edit" @click="showEditProfile = true" v-if="address">
             Edit profile
           </button>
         </div>

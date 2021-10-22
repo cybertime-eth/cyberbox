@@ -8,11 +8,11 @@
           MetaMask
           <img src="/auth/metamask.svg" alt="metamask" class="modal__connect-button-image">
         </button>
-        <button class="modal__connect-button">
+        <button class="modal__connect-button" @click="connectMetaTrust">
           TrustWallet
           <img src="/auth/trastwallet.svg" alt="metamask" class="modal__connect-button-image">
         </button>
-        <button class="modal__connect-button">
+        <button class="modal__connect-button" @click="connectWallet">
           WalletConnect
           <img src="/auth/WalletConnect.png" alt="metamask" class="modal__connect-button-image">
         </button>
@@ -23,8 +23,11 @@
 <script>
 export default {
   methods: {
-    connectMetaTrust() {
-      this.$store.dispatch('connectMetaTrust')
+    async connectMetaTrust() {
+      await this.$store.dispatch('connectMetaTrust')
+    },
+    async connectWallet() {
+      await this.$store.dispatch('walletConnect', true)
     },
     closeModal() {
       this.$emit('closeModal', false)

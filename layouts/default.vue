@@ -13,6 +13,7 @@ export default {
   },
  async mounted() {
     await this.$store.dispatch('updateUser')
+    await this.$store.dispatch('walletConnect', false)
   }
 }
 </script>
@@ -110,6 +111,9 @@ input,textarea {
   &::placeholder {
     color: $border2;
   }
+}
+ul {
+  margin: 0;
 }
 .container-xl {
   width: 132rem;
