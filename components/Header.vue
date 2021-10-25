@@ -21,7 +21,7 @@
           </li>
         </ul>
       </nav>
-      <button class="header__box gradient-button" v-if="address">
+      <button class="header__box gradient-button" v-if="address" @click="$router.push('/createbox')">
         Create Box
       </button>
       <button v-else></button>

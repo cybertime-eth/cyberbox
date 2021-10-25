@@ -128,11 +128,11 @@ ul {
 
 ::-webkit-scrollbar {
   width: 9px;
-  background: #000;
+  background: #fff;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #fff;
+  background: #000;
   cursor: pointer;
 }
 

@@ -39,7 +39,7 @@
           <div class="profile__content-boxes">
             <div class="profile__content-boxes-none">
               <p class="profile__content-boxes-none-subtitle">You haven’t got any boxes</p>
-              <h4 class="profile__content-boxes-none-title">Create your first mystery box</h4>
+              <h4 class="profile__content-boxes-none-title" @click="$router.push('/createbox')">Create your first mystery box</h4>
             </div>
           </div>
         </div>
