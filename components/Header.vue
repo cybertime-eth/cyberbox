@@ -108,6 +108,8 @@ header {
     justify-content: space-between;
     justify-self: end;
     cursor: pointer;
+    position: relative;
+    z-index: 1;
     &-address {
       padding-left: 2.2rem;
     }
@@ -119,6 +121,9 @@ header {
       display: flex;
       align-items: center;
       justify-content: center;
+      &::after {
+        border-radius: 50% !important;
+      }
       img {
         width: 4.2rem;
         height: 4.5rem;

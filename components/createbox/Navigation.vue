@@ -45,9 +45,9 @@
 export default {
   data() {
     return {
-      step: 1,
     }
   },
+  props: ['step'],
   computed: {
     activeLine() {
       switch (this.step) {

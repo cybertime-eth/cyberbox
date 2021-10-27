@@ -1,23 +1,34 @@
 <template>
   <section class="create-box">
     <div class="container-xl">
-      <Navigation />
-      <Step1 />
+      <Navigation :step="step" />
+      <CreateBoxStep v-if="step === 1" @changeStep="changeStep"/>
+      <AddLoginStep v-if="step === 2" @routeBack="changeStep"/>
     </div>
   </section>
 </template>
 <script>
 import Navigation from "../components/createbox/Navigation";
-import Step1 from "../components/createbox/Step1";
+import CreateBoxStep from "../components/createbox/CreateBoxStep";
+import AddLoginStep from "../components/createbox/AddLogicStep";
 export default {
   data() {
     return {
       step: 1,
     }
   },
+  methods: {
+    changeStep(payload) {
+      this.step = payload
+      if (process.browser) {
+        window.scrollTo(0, 0)
+      }
+    }
+  },
   components: {
     Navigation,
-    Step1
+    CreateBoxStep,
+    AddLoginStep
   }
 }
 </script>

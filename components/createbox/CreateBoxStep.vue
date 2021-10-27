@@ -90,10 +90,19 @@
         <h3 class="step-first-info-form-title">Price</h3>
         <input type="text" class="step-first-info-form-input" placeholder="Enter price for box">
       </div>
-      <button class="gradient-button step-first-info-button">Next step <img src="/array-right-long.svg" alt="array"></button>
+      <button class="gradient-button step-first-info-button" @click="nextStep">Next step <img src="/array-right-long.svg" alt="array"></button>
     </div>
   </div>
 </template>
+<script>
+export default {
+  methods: {
+    nextStep() {
+      this.$emit('changeStep', 2)
+    }
+  }
+}
+</script>
 <style lang="scss">
 .step-first {
   display: grid;
