@@ -20,10 +20,12 @@
       </h3>
     </div>
     <AddNftInBox v-if="activeWallet" />
+    <CreateNftInBox v-if="activeCreateNft" />
   </div>
 </template>
 <script>
 import AddNftInBox from './addNft/AddNftInBox'
+import CreateNftInBox from './addNft/CreateNftInBox'
 export default {
   data() {
     return {
@@ -37,7 +39,8 @@ export default {
     }
   },
   components: {
-    AddNftInBox
+    AddNftInBox,
+    CreateNftInBox
   }
 }
 </script>

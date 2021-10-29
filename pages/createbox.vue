@@ -14,7 +14,7 @@ import AddLoginStep from "../components/createbox/AddLogicStep";
 export default {
   data() {
     return {
-      step: 1,
+      step: 2,
     }
   },
   methods: {
