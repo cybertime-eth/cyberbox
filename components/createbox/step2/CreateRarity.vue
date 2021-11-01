@@ -63,8 +63,8 @@
     <p class="rarity__ranks">Total filled ranks: 0</p>
     <h2 class="rarity__total">Total Boxes:  0</h2>
     <div class="rarity__buttons">
-      <button class="gradient-button rarity__buttons-back" @click="routeBack"><img src="/array-right-long.svg" alt="array">Back</button>
-      <button class="gradient-button rarity__buttons-next">Next step<img src="/array-right-long.svg" alt="array"></button>
+      <button class="gradient-button rarity__buttons-back" @click="changeStep(1)"><img src="/array-right-long.svg" alt="array">Back</button>
+      <button class="gradient-button rarity__buttons-next" @click="changeStep(3)">Next step<img src="/array-right-long.svg" alt="array"></button>
     </div>
   </div>
 </template>
@@ -76,11 +76,14 @@ export default {
     }
   },
   methods: {
+    nextStep() {
+      this.$emit('nextStep', 3)
+    },
     showAddNftPage() {
       this.$emit('changePage', true)
     },
-    routeBack() {
-      this.$emit('routeBack', true)
+    changeStep(step) {
+      this.$emit('routeBack', step)
     }
   }
 }

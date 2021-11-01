@@ -206,4 +206,9 @@ ul {
   src: local("OpenSans-Regular"),
   url(./assets/fonts/OpenSans-Regular.ttf) format('truetype');
 }
+@font-face {
+  font-family: 'Orbitron-Black';
+  src: local("Orbitron-Black"),
+  url(./assets/fonts/Orbitron-Black.ttf) format('truetype');
+}
 </style>

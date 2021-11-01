@@ -1,6 +1,6 @@
 <template>
   <div class="step-second">
-    <CreateRarity v-if="createRarity" @changePage="changePage" @routeBack="routeBack" />
+    <CreateRarity v-if="createRarity" @changePage="changePage" @routeBack="changeStep" @nextStep="changeStep" />
     <AddNft v-if="addNftInBox" @changePage="changePage"/>
   </div>
 </template>
@@ -27,8 +27,8 @@ export default {
         window.scrollTo(0, 0)
       }
     },
-    routeBack() {
-      this.$emit('routeBack', 1)
+    changeStep(step) {
+      this.$emit('routeBack', step)
     }
   },
   components: {
