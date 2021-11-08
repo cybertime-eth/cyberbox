@@ -8,21 +8,21 @@
       <nav class="header__navigation">
         <ul class="header__ul">
           <li class="header__list">
-            <nuxt-link class="header__link gradient-text" to="#">Marketplace</nuxt-link>
+            <nuxt-link class="header__link gradient-text" to="/">Marketplace</nuxt-link>
           </li>
-          <li class="header__list">
-            <nuxt-link class="header__link" to="#">Minted Box</nuxt-link>
-          </li>
-          <li class="header__list">
-            <nuxt-link class="header__link" to="#">Rankings</nuxt-link>
-          </li>
+<!--          <li class="header__list">-->
+<!--            <nuxt-link class="header__link" to="#">Minted Box</nuxt-link>-->
+<!--          </li>-->
+<!--          <li class="header__list">-->
+<!--            <nuxt-link class="header__link" to="#">Rankings</nuxt-link>-->
+<!--          </li>-->
           <li class="header__list">
             <nuxt-link class="header__link" to="#">About</nuxt-link>
           </li>
         </ul>
       </nav>
-      <button class="header__box gradient-button" v-if="address" @click="$router.push('/createbox')">
-        Create Box
+      <button class="header__box gradient-button" v-if="address" @click="$router.push('/mycollection')">
+       My Collection
       </button>
       <button v-else></button>
       <div class="header__wallet" v-if="address" @click="showProfileMenu = true">
@@ -75,7 +75,7 @@ header {
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 32rem 42rem 35.3rem 22.5rem;
+  grid-template-columns: 47rem 18rem 44.3rem 22.5rem;
   align-items: center;
   &__logo {
     display: flex;
@@ -94,7 +94,7 @@ header {
     justify-content: space-between;
   }
   &__box {
-    width: 13.9rem;
+    width: 15.8rem;
     height: 4.8rem;
     cursor: pointer;
   }

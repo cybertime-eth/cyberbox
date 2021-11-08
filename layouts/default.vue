@@ -86,6 +86,7 @@ button {
   color: $textColor;
   font-family: OpenSans-SemiBold;
   padding: 0;
+  cursor: pointer;
 }
 a {
   text-decoration: none;

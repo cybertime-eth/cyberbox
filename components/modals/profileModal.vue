@@ -1,16 +1,16 @@
 <template>
   <ul class="profile__menu" @mouseleave="closeModal">
-    <li class="profile__menu-list">
-      <nuxt-link to="/profile/1" class="profile__menu-link">
-        <div class="profile__menu-link-info">
-          <div class="profile__menu-link-avatar">
-            <img :src="user.image" alt="image" v-if="user.image">
-          </div>
-          View Profile
-        </div>
-        <img src="/array-right.svg" alt="array">
-      </nuxt-link>
-    </li>
+<!--    <li class="profile__menu-list">-->
+<!--      <nuxt-link to="/profile/1" class="profile__menu-link">-->
+<!--        <div class="profile__menu-link-info">-->
+<!--          <div class="profile__menu-link-avatar">-->
+<!--            <img :src="user.image" alt="image" v-if="user.image">-->
+<!--          </div>-->
+<!--          View Profile-->
+<!--        </div>-->
+<!--        <img src="/array-right.svg" alt="array">-->
+<!--      </nuxt-link>-->
+<!--    </li>-->
     <li class="profile__menu-list">
       <nuxt-link to="/" class="profile__menu-link">
         <div class="profile__menu-link-info">
