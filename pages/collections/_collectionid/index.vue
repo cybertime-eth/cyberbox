@@ -78,11 +78,11 @@
       </button>
     </div>
     <div class="collection__items">
-      <div class="collection__item" @click="$router.push('/collections/daopolis/1111')">
-        <img src="/daopolis-nft.png" alt="item" class="collection__item-image">
+      <div class="collection__item" @click="$router.push(`/collections/daopolis/${index+1}`)" v-for="(card, index) of cards">
+        <img :src="card.image" alt="item" class="collection__item-image">
         <div class="collection__item-info">
           <h2 class="collection__item-info-name">
-            Daopolis #1111
+            {{ card.name }}
           </h2>
           <div class="collection__item-info-price">
             <img src="/celo.png" alt="celo">
@@ -100,6 +100,16 @@ export default {
     return {
       filter: 1,
       sort: 0,
+    }
+  },
+  async created() {
+    if (!this.cards.length) {
+      await this.$store.dispatch('getCeloCards', this.$route.params.collectionid)
+    }
+  },
+  computed: {
+    cards() {
+      return this.$store.state.cards
     }
   }
 }
@@ -193,6 +203,7 @@ export default {
     display: grid;
     grid-template-columns: 31.5rem 31.5rem 31.5rem 31.5rem;
     grid-column-gap: 2rem;
+    grid-row-gap: 2rem;
     padding-top: 3.2rem;
   }
   &__item {

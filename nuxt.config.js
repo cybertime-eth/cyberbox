@@ -15,7 +15,6 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '@/assets/var.css'
@@ -37,10 +36,16 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/proxy'
   ],
 
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    proxy: true
+  },
+
+  proxy: {
+    '/api/': { target: 'https://celopunks.club/', pathRewrite: {'^/api/': ''}, changeOrigin: true }
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

@@ -5,12 +5,12 @@
         <nuxt-link to="/collections/daopolis" class="card__crumbs">
           Marketplace
           <img src="/array-right.svg" alt="array">
-          <span>Daopolis #11111</span>
+          <span>{{ card.name }}</span>
         </nuxt-link>
         <div class="card__block">
-          <img src="/daopolis-nft.png" alt="item" class="card__block-image">
+          <img :src="card.image" alt="item" class="card__block-image">
           <div class="card__block-info">
-            <h1 class="card__block-info-name">Daopolis #11111</h1>
+            <h1 class="card__block-info-name">{{ card.name }}</h1>
             <h3 class="card__block-info-minted">Rarity rank 3629</h3>
             <p class="card__block-info-price-text">Price</p>
             <div class="card__block-info-price"><img src="/celo.png" alt="celo"><h1>2 CELO</h1><span>= 30$</span></div>
@@ -35,6 +35,14 @@ export default {
   components: {
     Attributes,
     History
+  },
+  async mounted() {
+    await this.$store.dispatch('getCeloCard', this.$route.params.nftid)
+  },
+  computed: {
+    card() {
+      return this.$store.state.card
+    }
   }
 }
 </script>
@@ -50,7 +58,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 26rem;
+    width: 23rem;
     color: $border;
     span {
       color: $pink;

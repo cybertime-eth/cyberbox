@@ -6,7 +6,9 @@ export const state = () => ({
   user: {},
   chainId: null,
   address: null,
-  celoPunks: '0x2430d96e1c450e69456e8994f99E1F5869f48021'
+  celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
+  cards: [],
+  card: {}
 })
 export const actions = {
   async updateUser({commit}) {
@@ -79,17 +81,30 @@ export const actions = {
       console.log(error);
     }
   },
-  async getCeloPunks({commit}) {
+  async getCeloCards({commit, state}, collection) {
     if (process.browser) {
       const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
       const provider = new ethers.providers.Web3Provider(web3 ? web3 : window.ethereum);
-      const signer = new Wallet('0xD0dbE4D10b488eF06936b1eD5476932C9d189A61', provider)
-      const contract = new ethers.Contract("0xD0dbE4D10b488eF06936b1eD5476932C9d189A61", CeloPunksABI, signer)
-      const getNft = await contract.tokenURI(1)
-      const res = await this.$axios.get(getNft)
-      console.log(res)
+      const signer = new Wallet(state.celoPunks, provider)
+      const contract = new ethers.Contract(state.celoPunks, CeloPunksABI, signer)
+      for (let i = 1; i < 20; i++) {
+        const getNft = await contract.tokenURI(i)
+        const res = await this.$axios.get(getNft)
+        commit('setNewCards', res.data)
+      }
     }
-  }
+  },
+  async getCeloCard({commit, state}, id) {
+    if (process.browser) {
+      const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
+      const provider = new ethers.providers.Web3Provider(web3 ? web3 : window.ethereum);
+      const signer = new Wallet(state.celoPunks, provider)
+      const contract = new ethers.Contract(state.celoPunks, CeloPunksABI, signer)
+      const getNft = await contract.tokenURI(id)
+      const res = await this.$axios.get(getNft)
+      commit('setNewCard', res.data)
+    }
+  },
 }
 export const mutations = {
   setUser(state, user) {
@@ -104,5 +119,11 @@ export const mutations = {
       .concat(dotArr)
       .concat(endID)
       .join("");
+  },
+  setNewCards(state, card) {
+    state.cards.push(card)
+  },
+  setNewCard(state, card) {
+    state.card = card
   },
 }
