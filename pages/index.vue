@@ -2,23 +2,30 @@
   <section class="home container-xl">
     <h1 class="home__title">Discover, collect and trade NFTs</h1>
     <div class="home__items">
-      <div class="home__item">
+      <div class="home__item" @click="$router.push('/collections/daopolis')">
         <img src="/daopolis-nft.png" alt="dao" class="home__item-image">
         <div class="home__item-info">
           <h2 class="home__item-info-name">Daopolis</h2>
-          <button class="home__item-info-button" @click="$router.push('/collections/daopolis')">Marketplace</button>
+          <button class="home__item-info-button">Marketplace</button>
         </div>
       </div>
-      <div class="home__item">
+      <div class="home__item" @click="$router.push('/collections/punks')">
         <img src="/punk-nft.png" alt="dao" class="home__item-image">
         <div class="home__item-info">
           <h2 class="home__item-info-name">Panks</h2>
-          <button class="home__item-info-button" @click="$router.push('/collections/punks')">Marketplace</button>
+          <button class="home__item-info-button">Marketplace</button>
         </div>
       </div>
     </div>
   </section>
 </template>
+<script>
+export default {
+  created() {
+    this.$store.dispatch('getCeloPunks')
+  },
+}
+</script>
 <style lang="scss">
 .home {
   padding-top: 4.2rem;

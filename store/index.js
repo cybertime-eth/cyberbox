@@ -1,10 +1,12 @@
 import Web3 from 'web3'
 import { ethers, Wallet, providers } from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import CeloPunksABI from './../abis/celoPunks.json'
 export const state = () => ({
   user: {},
   chainId: null,
-  address: null
+  address: null,
+  celoPunks: '0x2430d96e1c450e69456e8994f99E1F5869f48021'
 })
 export const actions = {
   async updateUser({commit}) {
@@ -75,6 +77,17 @@ export const actions = {
       window.location.reload();
     } catch (error) {
       console.log(error);
+    }
+  },
+  async getCeloPunks({commit}) {
+    if (process.browser) {
+      const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
+      const provider = new ethers.providers.Web3Provider(web3 ? web3 : window.ethereum);
+      const signer = new Wallet('0xD0dbE4D10b488eF06936b1eD5476932C9d189A61', provider)
+      const contract = new ethers.Contract("0xD0dbE4D10b488eF06936b1eD5476932C9d189A61", CeloPunksABI, signer)
+      const getNft = await contract.tokenURI(1)
+      const res = await this.$axios.get(getNft)
+      console.log(res)
     }
   }
 }
