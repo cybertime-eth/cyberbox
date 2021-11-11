@@ -2,7 +2,7 @@
   <div class="attributes container-xl">
     <div class="attributes__block">
       <div class="attributes__block-header">
-        <h3 class="attributes__block-header-title">Attributes <span>6</span></h3>
+        <h3 class="attributes__block-header-title">Attributes <span>{{ item.attributes ? item.attributes.length : '' }}</span></h3>
         <img
           class="attributes__block-header-image"
           src="/attr-array.svg" alt="array"
@@ -11,29 +11,9 @@
         >
       </div>
       <div class="attributes__block-content" v-if="showLeftAttributes">
-        <div class="attributes__block-content-item">
-          <h3 class="attributes__block-content-item-title">Smelliness</h3>
-          <h3 class="attributes__block-content-item-subtitle">Juicy</h3>
-        </div>
-        <div class="attributes__block-content-item">
-          <h3 class="attributes__block-content-item-title">Sounddrop</h3>
-          <h3 class="attributes__block-content-item-subtitle">Drop</h3>
-        </div>
-        <div class="attributes__block-content-item">
-          <h3 class="attributes__block-content-item-title">Flush Feel</h3>
-          <h3 class="attributes__block-content-item-subtitle">Turtle</h3>
-        </div>
-        <div class="attributes__block-content-item">
-          <h3 class="attributes__block-content-item-title">Body</h3>
-          <h3 class="attributes__block-content-item-subtitle">Smelly Valentine</h3>
-        </div>
-        <div class="attributes__block-content-item">
-          <h3 class="attributes__block-content-item-title">Face</h3>
-          <h3 class="attributes__block-content-item-subtitle">Casual</h3>
-        </div>
-        <div class="attributes__block-content-item">
-          <h3 class="attributes__block-content-item-title">Prop</h3>
-          <h3 class="attributes__block-content-item-subtitle">Horns</h3>
+        <div class="attributes__block-content-item" v-for="attribute of item.attributes">
+          <h3 class="attributes__block-content-item-title">{{ attribute.trait_type }}</h3>
+          <h3 class="attributes__block-content-item-subtitle">{{ attribute.value }}</h3>
         </div>
       </div>
     </div>
@@ -71,7 +51,8 @@ export default {
       showLeftAttributes: true,
       showRightAttributes: true,
     }
-  }
+  },
+  props: ['item']
 }
 </script>
 <style lang="scss">

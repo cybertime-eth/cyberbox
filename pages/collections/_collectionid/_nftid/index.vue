@@ -14,7 +14,7 @@
             <h3 class="card__block-info-minted">Rarity rank 3629</h3>
             <p class="card__block-info-price-text">Price</p>
             <div class="card__block-info-price"><img src="/celo.png" alt="celo"><h1>2 CELO</h1><span>= 30$</span></div>
-            <p class="card__block-info-description">Sale ends in 29 days 23 hours 58 minutes</p>
+            <p class="card__block-info-description">{{ card.description }}</p>
             <div class="card__block-info-status">
               <p class="card__block-info-status-title">Market status</p>
               <h3 class="card__block-info-status-content">For sale</h3>
@@ -24,7 +24,7 @@
         </div>
       </div>
     </div>
-    <Attributes />
+    <Attributes :item="card"/>
     <History />
   </section>
 </template>

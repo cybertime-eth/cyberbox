@@ -10,7 +10,7 @@
       </div>
       <div class="collection__header-info">
         <div class="collection__header-info-block">
-          <h3 class="collection__header-info-block-title">10,000</h3>
+          <h3 class="collection__header-info-block-title">{{ cards ? cards.length : 0 }}</h3>
           <h3 class="collection__header-info-block-subtitle">Items</h3>
         </div>
         <div class="collection__header-info-block">

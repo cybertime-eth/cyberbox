@@ -81,16 +81,20 @@ export const actions = {
       console.log(error);
     }
   },
-  async getCeloCards({commit, state}, collection) {
+  async getCeloCards({commit, state}) {
     if (process.browser) {
       const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
       const provider = new ethers.providers.Web3Provider(web3 ? web3 : window.ethereum);
       const signer = new Wallet(state.celoPunks, provider)
       const contract = new ethers.Contract(state.celoPunks, CeloPunksABI, signer)
-      for (let i = 1; i < 20; i++) {
-        const getNft = await contract.tokenURI(i)
-        const res = await this.$axios.get(getNft)
-        commit('setNewCards', res.data)
+      let countCards = 100
+      if (window.scrollY+1 >= document.documentElement.scrollHeight-document.documentElement.clientHeight) {
+
+        for (let i = 1; i < countCards; i++) {
+          const getNft = await contract.tokenURI(i)
+          const res = await this.$axios.get(getNft)
+          commit('setNewCards', res.data)
+        }
       }
     }
   },
