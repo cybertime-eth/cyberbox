@@ -1,16 +1,16 @@
 <template>
   <section class="my-collection">
-    <h1 class="my-collection__title">My my-collection</h1>
+    <h1 class="my-collection__title">My collection</h1>
     <div class="my-collection__empty" v-if="empty">
       <h3 class="my-collection__empty-title">You don't have NFT yet</h3>
       <button class="gradient-button my-collection__empty-button" @click="$router.push('/')">Buy</button>
     </div>
-    <div class="my-collection__items" v-else>
-      <div class="my-collection__item">
-        <img src="/daopolis-nft.png" alt="item" class="my-collection__item-image">
+    <div class="my-collection__items" v-else-if="!empty && cards.length">
+      <div class="my-collection__item" @click="$router.push(`/list-nft/${index+222}`)" v-for="(card, index) of cards" v-if="cards">
+        <img :src="card.image" alt="item" class="my-collection__item-image">
         <div class="my-collection__item-info">
           <h2 class="my-collection__item-info-name">
-            Daopolis #1111
+            {{ card.name }}
           </h2>
           <div class="my-collection__item-info-price">
             <img src="/celo.png" alt="celo">
@@ -19,19 +19,9 @@
           <p class="my-collection__item-info-type">Last sold</p>
         </div>
       </div>
-      <div class="my-collection__item">
-        <img src="/punk-nft.png" alt="item" class="my-collection__item-image">
-        <div class="my-collection__item-info">
-          <h2 class="my-collection__item-info-name">
-            Pank #1111
-          </h2>
-          <div class="my-collection__item-info-price">
-            <img src="/celo.png" alt="celo">
-            <h3 class="my-collection__item-info-price-text">0.38477 <span>CELO</span></h3>
-          </div>
-          <p class="my-collection__item-info-type">Last sold</p>
-        </div>
-      </div>
+    </div>
+    <div class="my-collection__loading" v-else-if="!empty && !cards.length">
+      <img src="/loading-button.svg" alt="load">
     </div>
   </section>
 </template>
@@ -42,6 +32,16 @@ export default {
       empty: false,
       showTransfer: false,
       showPurchased: false
+    }
+  },
+  async created() {
+    if (!this.cards.length) {
+      await this.$store.dispatch('getCeloCards')
+    }
+  },
+  computed: {
+    cards() {
+      return this.$store.state.myCollection
     }
   },
   methods: {
@@ -118,6 +118,16 @@ export default {
         color: $border;
         font-size: 1.1rem;
       }
+    }
+  }
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20rem;
+    img {
+      width: 8rem;
+      animation: loading 1s infinite;
     }
   }
 }

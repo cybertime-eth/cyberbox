@@ -212,4 +212,13 @@ ul {
   src: local("Orbitron-Black"),
   url(./assets/fonts/Orbitron-Black.ttf) format('truetype');
 }
+
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 </style>

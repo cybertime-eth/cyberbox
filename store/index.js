@@ -8,6 +8,7 @@ export const state = () => ({
   address: null,
   celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
   cards: [],
+  myCollection: [],
   card: {}
 })
 export const actions = {
@@ -88,8 +89,12 @@ export const actions = {
       const signer = new Wallet(state.celoPunks, provider)
       const contract = new ethers.Contract(state.celoPunks, CeloPunksABI, signer)
       let countCards = 100
+      for (let i = 222; i <= 227; i++) {
+        const getNft = await contract.tokenURI(i)
+        const res = await this.$axios.get(getNft)
+        commit('setCollection', res.data)
+      }
       if (window.scrollY+1 >= document.documentElement.scrollHeight-document.documentElement.clientHeight) {
-
         for (let i = 1; i < countCards; i++) {
           const getNft = await contract.tokenURI(i)
           const res = await this.$axios.get(getNft)
@@ -130,4 +135,7 @@ export const mutations = {
   setNewCard(state, card) {
     state.card = card
   },
+  setCollection(state, cards) {
+    state.myCollection.push(cards)
+  }
 }

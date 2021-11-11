@@ -8,7 +8,10 @@
           <span>{{ card.name }}</span>
         </nuxt-link>
         <div class="card__block">
-          <img :src="card.image" alt="item" class="card__block-image">
+          <img :src="card.image" alt="item" class="card__block-image" v-if="card.image">
+          <div v-else class="card__block-image-loading">
+            <img src="/loading-button.svg" alt="load">
+          </div>
           <div class="card__block-info">
             <h1 class="card__block-info-name">{{ card.name }}</h1>
             <h3 class="card__block-info-minted">Rarity rank 3629</h3>
@@ -72,6 +75,20 @@ export default {
     padding-top: 4.5rem;
     &-image {
       width: 56.6rem;
+      height: 56.6rem;
+      object-fit: cover;
+      &-loading {
+        width: 56.6rem;
+        height: 56.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: .1rem solid $pink;
+        img {
+          width: 8rem;
+          animation: loading 1s infinite;
+        }
+      }
     }
     &-info {
       &-name {

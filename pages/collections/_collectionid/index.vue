@@ -104,7 +104,7 @@ export default {
   },
   async created() {
     if (!this.cards.length) {
-      await this.$store.dispatch('getCeloCards', this.$route.params.collectionid)
+      await this.$store.dispatch('getCeloCards')
     }
   },
   computed: {
