@@ -87,7 +87,7 @@
       </div>
     </div>
     <Attributes :item="card"/>
-    <History />
+<!--    <History />-->
   </section>
 </template>
 <script>
@@ -154,11 +154,13 @@ export default {
   &__crumbs {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: 23rem;
     color: $border;
     span {
       color: $pink;
+      margin-left: 1rem;
+    }
+    img {
+      margin-left: 1rem;
     }
   }
   &__block {
@@ -321,6 +323,34 @@ export default {
           }
         }
       }
+    }
+  }
+}
+@media screen and (max-width: 460px) {
+  .list-nft {
+    &__block {
+      grid-template-columns: 1fr;
+      &-image {
+        width: 32.6rem;
+        height: 32.6rem;
+      }
+      &-info {
+        text-align: center;
+        &-name {
+          text-align: center;
+          padding-top: 2rem;
+        }
+        &-price {
+          justify-content: center;
+        }
+        &-buy {
+          margin-top: 4rem;
+        }
+      }
+    }
+    &__navigation {
+      width: 32rem;
+      margin: 0;
     }
   }
 }

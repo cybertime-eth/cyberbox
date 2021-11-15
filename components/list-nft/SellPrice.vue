@@ -33,7 +33,7 @@
     </div>
     <div class="list-nft__content-form">
       <h3 class="list-nft__content-form-title">Enter price in CELO for this NFT</h3>
-      <input type="number" class="list-nft__content-form-input">
+      <input type="number" class="list-nft__content-form-input" v-model="price">
     </div>
     <p class="list-nft__content-subtitle" v-if="!changeInfo">Awaiting your approval for Cyber Box to list your NFTs</p>
     <p class="list-nft__content-subtitle" v-else>Your NFT is being listed on the marketplace</p>
@@ -47,7 +47,8 @@
 export default {
   data() {
     return {
-      activeDate: 1
+      activeDate: 1,
+      price: 0
     }
   },
   props: ['changeInfo'],

@@ -15,11 +15,23 @@
 </template>
 <script>
 export default {
-  created() {
-    setTimeout(() => {
-      this.$emit('changeStep', 3)
-    }, 3000)
-  }
+  computed: {
+    approve() {
+      return this.$store.state.approveToken
+    }
+  },
+  watch: {
+    approve() {
+      if (this.approve) {
+        this.$emit('changeStep', 3)
+      } else {
+        this.$router.push('/mycollection')
+      }
+    }
+  },
+  async created() {
+    await this.$store.dispatch('approveToken')
+  },
 }
 </script>
 

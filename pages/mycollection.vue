@@ -6,7 +6,7 @@
       <button class="gradient-button my-collection__empty-button" @click="$router.push('/')">Buy</button>
     </div>
     <div class="my-collection__items" v-else-if="!empty && cards.length">
-      <div class="my-collection__item" @click="$router.push(`/list-nft/${index+222}`)" v-for="(card, index) of cards" v-if="cards">
+      <div class="my-collection__item" @click="$router.push(`/list-nft/${card.edition}`)" v-for="(card, index) of cards" v-if="cards">
         <img :src="card.image" alt="item" class="my-collection__item-image">
         <div class="my-collection__item-info">
           <h2 class="my-collection__item-info-name">
@@ -36,7 +36,7 @@ export default {
   },
   async created() {
     if (!this.cards.length) {
-      await this.$store.dispatch('getCeloCards')
+      await this.$store.dispatch('getCollectionCard')
     }
   },
   computed: {
@@ -128,6 +128,13 @@ export default {
     img {
       width: 8rem;
       animation: loading 1s infinite;
+    }
+  }
+}
+@media screen and (max-width: 460px) {
+  .my-collection {
+    &__items {
+      grid-template-columns: 1fr;
     }
   }
 }

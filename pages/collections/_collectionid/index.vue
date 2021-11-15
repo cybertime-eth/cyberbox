@@ -245,4 +245,11 @@ export default {
     }
   }
 }
+@media screen and (max-width: 460px) {
+  .collection {
+    &__items {
+      grid-template-columns: 1fr;
+    }
+  }
+}
 </style>

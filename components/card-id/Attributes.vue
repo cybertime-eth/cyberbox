@@ -122,4 +122,12 @@ export default {
   transform: rotate(0deg);
   transition: .3s;
 }
+@media screen and (max-width: 460px) {
+  .attributes {
+    flex-direction: column;
+    &__block {
+      width: 28.7rem;
+    }
+  }
+}
 </style>

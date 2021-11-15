@@ -138,4 +138,18 @@ header {
     cursor: pointer;
   }
 }
+@media screen and (max-width: 460px) {
+  .header {
+    grid-template-columns: 1fr;
+    &__navigation {
+      display: none;
+    }
+    &__box {
+      display: none;
+    }
+    &__wallet {
+      display: none;
+    }
+  }
+}
 </style>

@@ -14,11 +14,23 @@
 </template>
 <script>
 export default {
-  created() {
-    setTimeout(() => {
-      this.$emit('changeStep', 5)
-    }, 3000)
-  }
+  computed: {
+    listToken() {
+      return this.$store.state.listToken
+    }
+  },
+  watch: {
+    listToken() {
+      if (this.listToken) {
+        this.$emit('changeStep', 5)
+      } else {
+        this.$router.push('/mycollection')
+      }
+    }
+  },
+  async created() {
+    await this.$store.dispatch('listingNFT')
+  },
 }
 </script>
 

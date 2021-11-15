@@ -22,13 +22,13 @@
               <p class="card__block-info-status-title">Market status</p>
               <h3 class="card__block-info-status-content">For sale</h3>
             </div>
-            <button class="card__block-info-buy">Buy now</button>
+            <button class="card__block-info-buy" @click="buyToken">Buy now</button>
           </div>
         </div>
       </div>
     </div>
     <Attributes :item="card"/>
-    <History />
+<!--    <History />-->
   </section>
 </template>
 <script>
@@ -41,6 +41,14 @@ export default {
   },
   async mounted() {
     await this.$store.dispatch('getCeloCard', this.$route.params.nftid)
+  },
+  methods: {
+    buyToken() {
+      this.$store.dispatch('buyToken', {
+        id: this.$route.params.nftid,
+        price: 2
+      })
+    }
   },
   computed: {
     card() {
@@ -60,11 +68,13 @@ export default {
   &__crumbs {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: 23rem;
     color: $border;
+    img {
+      margin-left: 1rem;
+    }
     span {
       color: $pink;
+      margin-left: 1rem;
     }
   }
   &__block {
@@ -133,6 +143,33 @@ export default {
         height: 5.4rem;
         color: $white;
       }
+    }
+  }
+}
+@media screen and (max-width: 460px) {
+  .card {
+    &__block {
+      grid-template-columns: 1fr;
+      &-image {
+        width: 32.6rem;
+        height: 32.6rem;
+      }
+      &-info {
+        text-align: center;
+        &-name {
+          text-align: center;
+          padding-top: 2rem;
+        }
+        &-price {
+          justify-content: center;
+        }
+        &-buy {
+          margin-top: 4rem;
+        }
+      }
+    }
+    &__crumbs {
+
     }
   }
 }

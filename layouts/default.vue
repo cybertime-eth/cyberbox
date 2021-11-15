@@ -221,4 +221,9 @@ ul {
     transform: rotate(360deg);
   }
 }
+@media screen and (max-width: 460px) {
+  .container-xl {
+    width: 32rem;
+  }
+}
 </style>
