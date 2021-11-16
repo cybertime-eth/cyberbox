@@ -1,94 +1,112 @@
 <template>
-  <section class="collection container-xl">
-    <div class="collection__header">
-      <h1 class="collection__header-title">Daopolis</h1>
-      <div class="collection__header-socials">
-        <img src="/socials/disckord.svg" alt="social">
-        <img src="/socials/telegram.svg" alt="social">
-        <img src="/socials/twitter.svg" alt="social">
-        <img src="/socials/web.svg" alt="social">
-      </div>
-      <div class="collection__header-info">
-        <div class="collection__header-info-block">
-          <h3 class="collection__header-info-block-title">{{ cards ? cards.length : 0 }}</h3>
-          <h3 class="collection__header-info-block-subtitle">Items</h3>
+  <section class="collection">
+    <img src="/CeloPunks.png" alt="banner" class="collection__banner">
+    <div class="collection__content container-xl">
+      <div class="collection__header">
+        <img src="/avatar-punks.png" alt="avatar" class="collection__header-avatar">
+        <h1 class="collection__header-title">CeloPunks</h1>
+        <p class="collection__header-subtitle">Collectibes</p>
+        <div class="collection__header-socials">
+          <img src="/socials/disckord.svg" alt="social">
+          <img src="/socials/telegram.svg" alt="social">
+          <img src="/socials/twitter.svg" alt="social">
+          <img src="/socials/web.svg" alt="social">
         </div>
-        <div class="collection__header-info-block">
-          <h3 class="collection__header-info-block-title">76 CELO</h3>
-          <h3 class="collection__header-info-block-subtitle">Volume traded</h3>
-        </div>
-        <div class="collection__header-info-block">
-          <h3 class="collection__header-info-block-title">0.1 Celo</h3>
-          <h3 class="collection__header-info-block-subtitle">Floor price</h3>
-        </div>
-      </div>
-    </div>
-    <div class="collection__filter">
-      <button
-        class="collection__filter-button"
-        :class="{'collection__filter-button-active': filter === 1}"
-        @click="filter = 1"
-      >
-        All
-      </button>
-      <button
-        class="collection__filter-button"
-        :class="{'collection__filter-button-active': filter === 2}"
-        @click="filter = 2"
-      >
-        Listings
-      </button>
-      <button
-        class="collection__filter-button"
-        :class="{'collection__filter-button-active': filter === 3}"
-        @click="filter = 3"
-      >
-        Sold
-      </button>
-    </div>
-    <div class="collection__sort">
-      <button
-        class="collection__sort-button"
-        :class="{'collection__sort-button-active': sort === 1}"
-        @click="sort = 1"
-      >
-        Sold - Latest
-      </button>
-      <button
-        class="collection__sort-button"
-        :class="{'collection__sort-button-active': sort === 2}"
-        @click="sort = 2"
-      >
-        Price - Lowest
-      </button>
-      <button
-        class="collection__sort-button"
-        :class="{'collection__sort-button-active': sort === 3}"
-        @click="sort = 3"
-      >
-        Price - Highest
-      </button>
-      <button
-        class="collection__sort-button"
-        :class="{'collection__sort-button-active': sort === 4}"
-        @click="sort = 4"
-      >
-        Traits
-        <img src="/sort.svg" alt="sort">
-      </button>
-    </div>
-    <div class="collection__items">
-      <div class="collection__item" @click="$router.push(`/collections/daopolis/${index+1}`)" v-for="(card, index) of cards">
-        <img :src="card.image" alt="item" class="collection__item-image">
-        <div class="collection__item-info">
-          <h2 class="collection__item-info-name">
-            {{ card.name }}
-          </h2>
-          <div class="collection__item-info-price">
-            <img src="/celo.png" alt="celo">
-            <h3 class="collection__item-info-price-text">0.38477 <span>CELO</span></h3>
+        <div class="collection__header-info">
+          <div class="collection__header-info-block">
+            <h3 class="collection__header-info-block-title">{{ nftList ? nftList.length : 0 }}</h3>
+            <h3 class="collection__header-info-block-subtitle">Items</h3>
           </div>
-          <p class="collection__item-info-type">Price</p>
+          <div class="collection__header-info-block">
+            <h3 class="collection__header-info-block-title">5.0K</h3>
+            <h3 class="collection__header-info-block-subtitle">Owners</h3>
+          </div>
+          <div class="collection__header-info-block">
+            <h3 class="collection__header-info-block-title">76 CELO</h3>
+            <h3 class="collection__header-info-block-subtitle">Volume traded</h3>
+          </div>
+          <div class="collection__header-info-block">
+            <h3 class="collection__header-info-block-title">0.1 Celo</h3>
+            <h3 class="collection__header-info-block-subtitle">Floor price</h3>
+          </div>
+        </div>
+        <h3 class="collection__header-content">
+          Wipies is the biggest collection of digital toilet paper on the blockchain.
+          Each one of the 10,000 Wipies is as special as the next, but some Wipies are rarer than the others.
+          Wipies come in different rarities ranging from the ultra-rare 'Artifact' to the common 'Unusual' Wipies.
+          The rarer the attributes, the rarer your Wipies will be! You can reveal on unopend in the Poopies.io's Gallery.
+        </h3>
+      </div>
+      <div class="collection__filter">
+        <button
+          class="collection__filter-button"
+          :class="{'collection__filter-button-active': filter === 1}"
+          @click="filter = 1"
+        >
+          All
+        </button>
+        <button
+          class="collection__filter-button"
+          :class="{'collection__filter-button-active': filter === 2}"
+          @click="filter = 2"
+        >
+          Listings
+        </button>
+        <button
+          class="collection__filter-button"
+          :class="{'collection__filter-button-active': filter === 3}"
+          @click="filter = 3"
+        >
+          Sold
+        </button>
+      </div>
+      <div class="collection__sort">
+        <button
+          class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 1}"
+          @click="sort = 1"
+        >
+          Sold - Latest
+        </button>
+        <button
+          class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 2}"
+          @click="sort = 2"
+        >
+          Price - Lowest
+        </button>
+        <button
+          class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 3}"
+          @click="sort = 3"
+        >
+          Price - Highest
+        </button>
+        <button
+          class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 4}"
+          @click="sort = 4"
+        >
+          Traits
+          <img src="/sort.svg" alt="sort">
+        </button>
+      </div>
+      <div class="collection__items">
+        <div class="collection__item" @click="$router.push(`/collections/daopolis/${nft.id}`)" v-for="(nft, index) of nftList">
+          <img src="/banner-1.png" alt="item" class="collection__item-image">
+          <div class="collection__item-info">
+            <h2 class="collection__item-info-name">
+              test nft
+            </h2>
+            <p class="collection__item-info-rarity">Rarity Rank 1111</p>
+            <p class="collection__item-info-id">Token ID {{ nft.id }}</p>
+            <div class="collection__item-info-price">
+              <img src="/celo.png" alt="celo">
+              <h3 class="collection__item-info-price-text">{{ nft.price }} <span>CELO</span></h3>
+            </div>
+            <p class="collection__item-info-type">Price</p>
+            <button class="collection__item-info-details">Details</button>
+          </div>
         </div>
       </div>
     </div>
@@ -103,13 +121,14 @@ export default {
     }
   },
   async created() {
-    if (!this.cards.length) {
-      await this.$store.dispatch('getCeloCards')
+    if (!this.nftList.length) {
+      await this.$store.dispatch('getCeloNftList')
     }
+    console.log(this.nftList)
   },
   computed: {
-    cards() {
-      return this.$store.state.cards
+    nftList() {
+      return this.$store.state.nftList
     }
   }
 }
@@ -117,13 +136,32 @@ export default {
 <style lang="scss">
 .collection {
   padding-bottom: 20rem;
+  &__banner {
+    width: 100%;
+    height: 22.4rem;
+    object-fit: cover;
+  }
+  &__content {
+    position: relative;
+    top: -7rem;
+  }
   &__header {
-    padding-top: 2.6rem;
-    display: grid;
-    grid-template-columns: 60.5rem 17rem 46rem;
-    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    &-avatar {
+      width: 12.6rem;
+      height: 12.6rem;
+      border-radius: 50%;
+    }
+    &-title {
+      padding-top: 2rem;
+    }
     &-socials {
+      position: absolute;
+      right: 0;
+      top: 10rem;
+      width: 17rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -138,6 +176,7 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding-top: 2rem;
       &-block {
         width: 14.6rem;
         height: 6.8rem;
@@ -146,6 +185,7 @@ export default {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        margin-right: 1rem;
         &-title {
           font-family: OpenSans-SemiBold;
         }
@@ -155,6 +195,13 @@ export default {
         }
       }
     }
+    &-content {
+      color: $grayLight;
+      text-align: center;
+      width: 65rem;
+      padding-top: 1rem;
+      letter-spacing: 0.03em;
+    }
   }
   &__filter {
     display: flex;
@@ -163,7 +210,7 @@ export default {
     width: 100%;
     border: .1rem solid $modalColor;
     border-radius: 2.5rem;
-    margin-top: 3rem;
+    margin-top: 4rem;
     &-button {
       width: 42.6rem;
       height: 5.4rem;
@@ -201,27 +248,38 @@ export default {
   }
   &__items {
     display: grid;
-    grid-template-columns: 31.5rem 31.5rem 31.5rem 31.5rem;
-    grid-column-gap: 2rem;
-    grid-row-gap: 2rem;
+    grid-template-columns: 20rem 20rem 20rem 20rem 20rem 20rem;
+    grid-column-gap: 2.4rem;
+    grid-row-gap: 3.2rem;
     padding-top: 3.2rem;
   }
   &__item {
-    width: 31.5rem;
-    height: 48rem;
+    width: 20rem;
+    height: 42.4rem;
     border-radius: .4rem;
     box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
+    transition: 1s;
     cursor: pointer;
     &-image {
-      width: 31.5rem;
-      height: 31.5rem;
+      width: 20rem;
+      height: 20rem;
       object-fit: cover;
+      border-radius: .4rem .4rem 0 0;
     }
     &-info {
-      padding: 1.3rem 1.6rem 3.4rem;
+      padding: 1.6rem .8rem 3.4rem;
       &-name {
         font-size: 1.8rem;
         font-family: OpenSans-SemiBold;
+      }
+      &-rarity {
+        color: $grayLight;
+        font-size: 1.3rem;
+      }
+      &-id {
+        color: $grayLight;
+        padding-top: .5rem;
+        font-size: 1.3rem;
       }
       &-price {
         display: flex;
@@ -234,14 +292,28 @@ export default {
           padding-left: .8rem;
           font-family: OpenSans-SemiBold;
           span {
-            padding-left: 1rem;
+            padding-left: .5rem;
           }
         }
       }
       &-type {
         color: $border;
         font-size: 1.1rem;
+        padding-top: 1rem;
       }
+      &-details {
+        width: 18.4rem;
+        height: 2.8rem;
+        border-radius: 2rem;
+        font-size: 1.3rem;
+        margin-top: 1.5rem;
+        background: $modalColor;
+      }
+    }
+    &:hover {
+      position: relative;
+      top: -.5rem;
+      transition: 1s;
     }
   }
 }

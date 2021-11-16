@@ -5,10 +5,10 @@
         <nuxt-link to="/collections/daopolis" class="list-nft__crumbs">
           Marketplace
           <img src="/array-right.svg" alt="array">
-          <span>{{ card.name }}</span>
+          <span>{{ nft.name }}</span>
         </nuxt-link>
         <div class="list-nft__block">
-          <img :src="card.image" alt="item" class="list-nft__block-image" v-if="card.image">
+          <img :src="nft.image" alt="item" class="list-nft__block-image" v-if="nft.image">
           <div v-else class="list-nft__block-image-loading">
             <img src="/loading-button.svg" alt="load">
           </div>
@@ -16,7 +16,7 @@
           <!-- LIST INFO DEFAULT -->
 
           <div class="list-nft__block-info" v-if="listStatus === 'default'">
-            <h1 class="list-nft__block-info-name">{{ card.name }}</h1>
+            <h1 class="list-nft__block-info-name">{{ nft.name }}</h1>
             <h3 class="list-nft__block-info-minted">Rarity rank 3629</h3>
             <div class="list-nft__block-info-status">
               <p class="list-nft__block-info-status-title">Market status</p>
@@ -32,10 +32,10 @@
           <div class="list-nft__block-info" v-else-if="listStatus === 'active'">
             <h1 class="list-nft__block-info-name">List onto market</h1>
             <Navigation :step="step" />
-            <SellPrice @changeStep="changeStep" v-if="step === 1"/>
+            <SellPrice @changeStep="changeStep" @setInfo="setInfoNft" v-if="step === 1"/>
             <Approve @changeStep="changeStep" v-if="step === 2"/>
             <Sign @changeStep="changeStep" v-if="step === 3"/>
-            <Listing @changeStep="changeStep" v-if="step === 4"/>
+            <Listing @changeStep="changeStep" :nft="nftInfo" v-if="step === 4"/>
             <Successful @changeList="changeList" v-if="step === 5"/>
           </div>
 
@@ -47,18 +47,18 @@
             <h1 class="list-nft__block-info-name">List onto market</h1>
             <Navigation :step="step" :changeInfo="true" />
             <SellPrice @changeStep="changeStep" :changeInfo="true" v-if="step === 1"/>
-            <Sign @changeStep="changeStep"  v-if="step === 3"/>
-            <Successful @changeList="changeList" v-if="step === 4"/>
+            <Sign @changeStep="changeStep" :price="nftInfo.price"  v-if="step === 3"/>
+            <Successful @changeList="changeList" :price="nftInfo.price" v-if="step === 4"/>
           </div>
 
           <!-- LIST INFO DONE -->
 
           <div class="list-nft__block-info" v-else>
-            <h1 class="list-nft__block-info-name">{{ card.name }}</h1>
+            <h1 class="list-nft__block-info-name">{{ nft.name }}</h1>
             <h3 class="list-nft__block-info-minted">Rarity rank 3629</h3>
             <p class="list-nft__block-info-price-text">Price</p>
             <div class="list-nft__block-info-price"><img src="/celo.png" alt="celo"><h1>2 CELO</h1><span>= 30$</span></div>
-            <p class="list-nft__block-info-description">{{ card.description }}</p>
+            <p class="list-nft__block-info-description">{{ nft.description }}</p>
             <div class="list-nft__block-info-status">
               <p class="list-nft__block-info-status-title">Market status</p>
               <h3 class="list-nft__block-info-status-content">For sale</h3>
@@ -86,13 +86,13 @@
         </div>
       </div>
     </div>
-    <Attributes :item="card"/>
+    <Attributes :item="nft"/>
 <!--    <History />-->
   </section>
 </template>
 <script>
-import Attributes from '@/components/card-id/Attributes'
-import History from '@/components/card-id/History-table'
+import Attributes from '@/components/nft-id/Attributes'
+import History from '@/components/nft-id/History-table'
 import SellPrice from '@/components/list-nft/SellPrice'
 import Approve from '@/components/list-nft/Approve'
 import Sign from '@/components/list-nft/Sign'
@@ -104,7 +104,8 @@ export default {
     return {
       listStatus: 'default',
       step: 1,
-      loadButton: false
+      loadButton: false,
+      nftInfo: {}
     }
   },
   components: {
@@ -118,7 +119,7 @@ export default {
     Successful
   },
   async mounted() {
-    await this.$store.dispatch('getCeloCard', this.$route.params.nftid)
+    await this.$store.dispatch('getCeloNft', this.$route.params.nftid)
   },
   methods: {
     removeFromMarket() {
@@ -134,11 +135,14 @@ export default {
     changeList(list) {
       this.listStatus = list
       this.step = 1
-    }
+    },
+    setInfoNft(info) {
+      this.nftInfo = info
+    },
   },
   computed: {
-    card() {
-      return this.$store.state.card
+    nft() {
+      return this.$store.state.nft
     }
   }
 }

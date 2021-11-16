@@ -19,6 +19,7 @@ export default {
       return this.$store.state.listToken
     }
   },
+  props: ['nft'],
   watch: {
     listToken() {
       if (this.listToken) {
@@ -29,7 +30,7 @@ export default {
     }
   },
   async created() {
-    await this.$store.dispatch('listingNFT')
+    await this.$store.dispatch('listingNFT', this.nft)
   },
 }
 </script>

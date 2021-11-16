@@ -1,68 +1,68 @@
 <template>
-  <section id="card">
-    <div class="card">
-      <div class="card__container container-xl">
-        <nuxt-link to="/collections/daopolis" class="card__crumbs">
+  <section id="nft">
+    <div class="nft">
+      <div class="nft__container container-xl">
+        <nuxt-link to="/collections/daopolis" class="nft__crumbs">
           Marketplace
           <img src="/array-right.svg" alt="array">
-          <span>{{ card.name }}</span>
+          <span>{{ nft.name }}</span>
         </nuxt-link>
-        <div class="card__block">
-          <img :src="card.image" alt="item" class="card__block-image" v-if="card.image">
-          <div v-else class="card__block-image-loading">
+        <div class="nft__block">
+          <img :src="nft.image" alt="item" class="nft__block-image" v-if="nft.image">
+          <div v-else class="nft__block-image-loading">
             <img src="/loading-button.svg" alt="load">
           </div>
-          <div class="card__block-info">
-            <h1 class="card__block-info-name">{{ card.name }}</h1>
-            <h3 class="card__block-info-minted">Rarity rank 3629</h3>
-            <p class="card__block-info-price-text">Price</p>
-            <div class="card__block-info-price"><img src="/celo.png" alt="celo"><h1>2 CELO</h1><span>= 30$</span></div>
-            <p class="card__block-info-description">{{ card.description }}</p>
-            <div class="card__block-info-status">
-              <p class="card__block-info-status-title">Market status</p>
-              <h3 class="card__block-info-status-content">For sale</h3>
+          <div class="nft__block-info">
+            <h1 class="nft__block-info-name">{{ nft.name }}</h1>
+            <h3 class="nft__block-info-minted">Rarity rank 3629</h3>
+            <p class="nft__block-info-price-text">Price</p>
+            <div class="nft__block-info-price"><img src="/celo.png" alt="celo"><h1>2 CELO</h1><span>= 30$</span></div>
+            <p class="nft__block-info-description">{{ nft.description }}</p>
+            <div class="nft__block-info-status">
+              <p class="nft__block-info-status-title">Market status</p>
+              <h3 class="nft__block-info-status-content">For sale</h3>
             </div>
-            <button class="card__block-info-buy" @click="buyToken">Buy now</button>
+            <button class="nft__block-info-buy" @click="buyToken">Buy now</button>
           </div>
         </div>
       </div>
     </div>
-    <Attributes :item="card"/>
+    <Attributes :item="nft"/>
 <!--    <History />-->
   </section>
 </template>
 <script>
-import Attributes from '@/components/card-id/Attributes'
-import History from '@/components/card-id/History-table'
+import Attributes from '@/components/nft-id/Attributes'
+import History from '@/components/nft-id/History-table'
 export default {
   components: {
     Attributes,
     History
   },
   async mounted() {
-    await this.$store.dispatch('getCeloCard', this.$route.params.nftid)
+    await this.$store.dispatch('getCeloNft', this.$route.params.nftid)
   },
   methods: {
     buyToken() {
-      this.$store.dispatch('buyToken', {
+      this.$store.dispatch('approveBuyToken', {
         id: this.$route.params.nftid,
-        price: 2
+        price: 11
       })
     }
   },
   computed: {
-    card() {
-      return this.$store.state.card
+    nft() {
+      return this.$store.state.nft
     }
   }
 }
 </script>
 <style lang="scss">
-#card {
+#nft {
   padding-bottom: 10rem;
   padding-top: 4rem;
 }
-.card {
+.nft {
   box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
   padding-bottom: 3rem;
   &__crumbs {
@@ -147,7 +147,7 @@ export default {
   }
 }
 @media screen and (max-width: 460px) {
-  .card {
+  .nft {
     &__block {
       grid-template-columns: 1fr;
       &-image {

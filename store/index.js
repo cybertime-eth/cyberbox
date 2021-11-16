@@ -4,16 +4,17 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import CeloPunksABI from './../abis/celoPunks.json'
 import CyberBoxMarketplaceABI from './../abis/cyberBoxMarketPlace.json'
 import DaosABI from './../abis/daos.json'
+import celoNativeAsset from './../abis/celoNativeAsset.json'
 export const state = () => ({
   user: {},
   chainId: null,
   address: null,
-  celoPunks: '0xb4C1aF7e7A89E4b3EFEAc330c62e4E3B6Eea8c0b',
+  celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
   cyberBoxMarketplace: '0xa6cBFBCa5b50282305114E39da7c6218a9BEFADb',
   daosContract: '0x33B823Da7AcAacD389473C7AE9fc03Fd129DCCfb',
-  cards: [],
+  nftList: [],
   myCollection: [],
-  card: {},
+  nft: {},
   approveToken: '',
   listToken: '',
 })
@@ -94,28 +95,32 @@ export const actions = {
       console.log(error);
     }
   },
-  async getCeloCards({commit, state}) {
+  async getCeloNftList({commit, state}) {
     if (process.browser) {
-      const signer = new Wallet(state.daosContract, this.getters.provider)
-      const contract = new ethers.Contract(state.daosContract, DaosABI, signer)
-      let countCards = 105
-      for (let i = 101; i < countCards; i++) {
-        const getNft = await contract.tokenURI(i)
-        const res = await this.$axios.get(getNft)
-        commit('setNewCards', res.data)
+      const signer = new Wallet(state.cyberBoxMarketplace, this.getters.provider);
+      const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer);
+      const items = await contract.getAllTokenListings();
+      for (let item of items) {
+        let result = {
+          id: BigNumber.from(item[0]._hex).toNumber(),
+          price: BigNumber.from(item[1]._hex).toNumber(),
+          address: item[2],
+          data: BigNumber.from(item[3]._hex).toNumber()
+        }
+        commit('setNewNftList', result)
       }
     }
   },
-  async getCeloCard({commit, state}, id) {
+  async getCeloNft({commit, state}, id) {
     if (process.browser) {
       const signer = new Wallet(state.daosContract, this.getters.provider)
       const contract = new ethers.Contract(state.daosContract, DaosABI, signer)
       const getNft = await contract.tokenURI(id)
       const res = await this.$axios.get(getNft)
-      commit('setNewCard', res.data)
+      commit('setNewNft', res.data)
     }
   },
-  async getCollectionCard({commit, state}) {
+  async getCollectionNft({commit, state}) {
     const signer = this.getters.provider.getSigner()
     const address = signer.getAddress()
     const contract = new ethers.Contract(state.daosContract, DaosABI, signer)
@@ -131,7 +136,7 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.daosContract, DaosABI, signer)
     try {
-      await contract.approve(state.cyberBoxMarketplace, state.card.edition)
+      await contract.approve(state.cyberBoxMarketplace, state.nft.edition)
       contract.on("Approval", () => {
         commit('changeApproveToken', true)
       });
@@ -144,23 +149,34 @@ export const actions = {
     const contract = new ethers.Contract(state.daosContract, DaosABI, signer);
     contract.startSale();
   },
-  async listingNFT({commit, state}) {
+  async listingNFT({commit, state}, nft) {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer)
     try {
-      await contract.listToken(state.card.edition, 10, 1637412505)
+      console.log(nft.price, nft.date)
+      await contract.listToken(state.nft.edition, nft.price, nft.date)
       this.getters.provider.once(contract, async () => {
-        commit('changelistTokenToken', true)
+        commit('changelistToken', true)
       });
     } catch (error) {
-      commit('changelistTokenToken', false)
+      commit('changelistToken', false)
       console.log(error)
     }
   },
-  async buyToken({commit, state}, token) {
-    const signer = this.getters.provider.getSigner()
+  async approveBuyToken({commit,state}) {
+    const contractAddress = '0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9'
+    const signer = this.getters.provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, celoNativeAsset, signer)
+    console.log(contract)
+  },
+  async buyNFT({commit, state}, token) {
+    const signer = this.getters.provider.getSigner();
+    const address = await signer.getAddress()
     const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer)
-    contract.buyToken(token.id, token.price)
+    await contract.buyToken(token.id).send({
+      from: address,
+      value: token.price + token.price * 30 / 1000,
+    })
   },
 }
 export const mutations = {
@@ -177,16 +193,16 @@ export const mutations = {
       .concat(endID)
       .join("");
   },
-  setNewCards(state, card) {
-    state.cards.push(card)
+  setNewNftList(state, nft) {
+    state.nftList.push(nft)
   },
-  setNewCard(state, card) {
-    state.card = card
+  setNewNft(state, nft) {
+    state.nft = nft
   },
-  setCollection(state, cards) {
-    state.myCollection.push(cards)
+  setCollection(state, nftList) {
+    state.myCollection.push(nftList)
   },
-  changelistTokenToken(state, status) {
+  changelistToken(state, status) {
     state.listToken = status
   },
   changeApproveToken(state, approve) {

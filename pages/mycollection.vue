@@ -5,12 +5,12 @@
       <h3 class="my-collection__empty-title">You don't have NFT yet</h3>
       <button class="gradient-button my-collection__empty-button" @click="$router.push('/')">Buy</button>
     </div>
-    <div class="my-collection__items" v-else-if="!empty && cards.length">
-      <div class="my-collection__item" @click="$router.push(`/list-nft/${card.edition}`)" v-for="(card, index) of cards" v-if="cards">
-        <img :src="card.image" alt="item" class="my-collection__item-image">
+    <div class="my-collection__items" v-else-if="!empty && listNft.length">
+      <div class="my-collection__item" @click="$router.push(`/list-nft/${nft.edition}`)" v-for="(nft, index) of listNft" v-if="listNft">
+        <img :src="nft.image" alt="item" class="my-collection__item-image">
         <div class="my-collection__item-info">
           <h2 class="my-collection__item-info-name">
-            {{ card.name }}
+            {{ nft.name }}
           </h2>
           <div class="my-collection__item-info-price">
             <img src="/celo.png" alt="celo">
@@ -20,7 +20,7 @@
         </div>
       </div>
     </div>
-    <div class="my-collection__loading" v-else-if="!empty && !cards.length">
+    <div class="my-collection__loading" v-else-if="!empty && !listNft.length">
       <img src="/loading-button.svg" alt="load">
     </div>
   </section>
@@ -35,12 +35,12 @@ export default {
     }
   },
   async created() {
-    if (!this.cards.length) {
-      await this.$store.dispatch('getCollectionCard')
+    if (!this.listNft.length) {
+      await this.$store.dispatch('getCollectionNft')
     }
   },
   computed: {
-    cards() {
+    listNft() {
       return this.$store.state.myCollection
     }
   },

@@ -22,59 +22,59 @@
         </div>
       </div>
     </div>
-    <div class="launch__cards container-xl">
-      <h2 class="launch__cards-title">Series Content</h2>
-      <div class="launch__cards-items">
-        <div class="launch__cards-item">
-          <img src="/item-1.png" alt="item" class="launch__cards-item-image">
-          <div class="launch__cards-item-info">
-            <h3 class="launch__cards-item-info-name">Lucky NFT</h3>
-            <p class="launch__cards-item-quantity">Quantity 300</p>
-            <p class="launch__cards-item-probability">Probability 0,1%</p>
-            <p class="launch__cards-item-type launch__cards-item-type-ssr">SSR</p>
+    <div class="launch__list-nft container-xl">
+      <h2 class="launch__list-nft-title">Series Content</h2>
+      <div class="launch__list-nft-items">
+        <div class="launch__list-nft-item">
+          <img src="/item-1.png" alt="item" class="launch__list-nft-item-image">
+          <div class="launch__list-nft-item-info">
+            <h3 class="launch__list-nft-item-info-name">Lucky NFT</h3>
+            <p class="launch__list-nft-item-quantity">Quantity 300</p>
+            <p class="launch__list-nft-item-probability">Probability 0,1%</p>
+            <p class="launch__list-nft-item-type launch__list-nft-item-type-ssr">SSR</p>
           </div>
         </div>
-        <div class="launch__cards-item">
-          <img src="/item-2.png" alt="item" class="launch__cards-item-image">
-          <div class="launch__cards-item-info">
-            <h3 class="launch__cards-item-info-name">Lucky NFT</h3>
-            <p class="launch__cards-item-quantity">Quantity 300</p>
-            <p class="launch__cards-item-probability">Probability 0,1%</p>
-            <p class="launch__cards-item-type launch__cards-item-type-ssr">SSR</p>
+        <div class="launch__list-nft-item">
+          <img src="/item-2.png" alt="item" class="launch__list-nft-item-image">
+          <div class="launch__list-nft-item-info">
+            <h3 class="launch__list-nft-item-info-name">Lucky NFT</h3>
+            <p class="launch__list-nft-item-quantity">Quantity 300</p>
+            <p class="launch__list-nft-item-probability">Probability 0,1%</p>
+            <p class="launch__list-nft-item-type launch__list-nft-item-type-ssr">SSR</p>
           </div>
         </div>
-        <div class="launch__cards-item">
-          <img src="/item-3.png" alt="item" class="launch__cards-item-image">
-          <div class="launch__cards-item-info">
-            <h3 class="launch__cards-item-info-name">Lucky NFT</h3>
-            <p class="launch__cards-item-quantity">Quantity 300</p>
-            <p class="launch__cards-item-probability">Probability 0,1%</p>
-            <p class="launch__cards-item-type launch__cards-item-type-sr">SR</p>
+        <div class="launch__list-nft-item">
+          <img src="/item-3.png" alt="item" class="launch__list-nft-item-image">
+          <div class="launch__list-nft-item-info">
+            <h3 class="launch__list-nft-item-info-name">Lucky NFT</h3>
+            <p class="launch__list-nft-item-quantity">Quantity 300</p>
+            <p class="launch__list-nft-item-probability">Probability 0,1%</p>
+            <p class="launch__list-nft-item-type launch__list-nft-item-type-sr">SR</p>
           </div>
         </div>
-        <div class="launch__cards-item">
-          <img src="/item-4.png" alt="item" class="launch__cards-item-image">
-          <div class="launch__cards-item-info">
-            <h3 class="launch__cards-item-info-name">Lucky NFT</h3>
-            <p class="launch__cards-item-quantity">Quantity 300</p>
-            <p class="launch__cards-item-probability">Probability 0,1%</p>
-            <p class="launch__cards-item-type launch__cards-item-type-sr">SR</p>
+        <div class="launch__list-nft-item">
+          <img src="/item-4.png" alt="item" class="launch__list-nft-item-image">
+          <div class="launch__list-nft-item-info">
+            <h3 class="launch__list-nft-item-info-name">Lucky NFT</h3>
+            <p class="launch__list-nft-item-quantity">Quantity 300</p>
+            <p class="launch__list-nft-item-probability">Probability 0,1%</p>
+            <p class="launch__list-nft-item-type launch__list-nft-item-type-sr">SR</p>
           </div>
         </div>
-        <div class="launch__cards-item">
-          <img src="/item-1.png" alt="item" class="launch__cards-item-image">
-          <div class="launch__cards-item-info">
-            <h3 class="launch__cards-item-info-name">Lucky NFT</h3>
-            <p class="launch__cards-item-quantity">Quantity 300</p>
-            <p class="launch__cards-item-probability">Probability 0,1%</p>
-            <p class="launch__cards-item-type launch__cards-item-type-ssr">SSR</p>
+        <div class="launch__list-nft-item">
+          <img src="/item-1.png" alt="item" class="launch__list-nft-item-image">
+          <div class="launch__list-nft-item-info">
+            <h3 class="launch__list-nft-item-info-name">Lucky NFT</h3>
+            <p class="launch__list-nft-item-quantity">Quantity 300</p>
+            <p class="launch__list-nft-item-probability">Probability 0,1%</p>
+            <p class="launch__list-nft-item-type launch__list-nft-item-type-ssr">SSR</p>
           </div>
         </div>
       </div>
-      <h3 class="launch__cards-subtitle">Total: 5000 NFT’s</h3>
-      <div class="launch__cards-rules">
-        <h2 class="launch__cards-rules-title">Rule Introduction</h2>
-        <p class="launch__cards-rules-subtitle">
+      <h3 class="launch__list-nft-subtitle">Total: 5000 NFT’s</h3>
+      <div class="launch__list-nft-rules">
+        <h2 class="launch__list-nft-rules-title">Rule Introduction</h2>
+        <p class="launch__list-nft-rules-subtitle">
           There will be 31320 Mystery Boxes on sale, including 1250 boxes reserved for the community.
           Every user can only buy a maximum of 100 boxes.
           <br>
@@ -143,7 +143,7 @@ export default {
       }
     }
   }
-  &__cards {
+  &__list-nft {
     padding-top: 9rem;
     &-title {
       letter-spacing: 0.03em;
