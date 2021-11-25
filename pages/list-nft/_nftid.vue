@@ -34,7 +34,7 @@
             <Navigation :step="step" />
             <SellPrice @changeStep="changeStep" @setInfo="setInfoNft" v-if="step === 1"/>
             <Approve @changeStep="changeStep" v-if="step === 2"/>
-            <Sign @changeStep="changeStep" v-if="step === 3"/>
+            <Sign @changeStep="changeStep" :price="nftInfo.price" v-if="step === 3"/>
             <Listing @changeStep="changeStep" :nft="nftInfo" v-if="step === 4"/>
             <Successful @changeList="changeList" v-if="step === 5"/>
           </div>

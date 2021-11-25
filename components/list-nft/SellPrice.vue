@@ -65,6 +65,8 @@ export default {
         case 3: this.date = dateNow + 2592000;
         break;
         case 4: this.date = dateNow + 15778463;
+        break;
+        default: this.date = dateNow + 259200
       }
       console.log(this.date)
     },

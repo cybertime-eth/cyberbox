@@ -9,18 +9,18 @@
         </nuxt-link>
         <div class="nft__block">
           <img :src="nft.image" alt="item" class="nft__block-image" v-if="nft.image">
-          <div v-else class="nft__block-image-loading">
+          <div class="nft__block-image-loading" v-else>
             <img src="/loading-button.svg" alt="load">
           </div>
           <div class="nft__block-info">
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
-            <h3 class="nft__block-info-minted">Rarity rank 3629</h3>
+            <h3 class="nft__block-info-minted">Rarity rank {{ nft.rarity_rank }}</h3>
             <p class="nft__block-info-price-text">Price</p>
-            <div class="nft__block-info-price"><img src="/celo.png" alt="celo"><h1>2 CELO</h1><span>= 30$</span></div>
+            <div class="nft__block-info-price"><img src="/celo.png" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= 30$</span></div>
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <div class="nft__block-info-status">
               <p class="nft__block-info-status-title">Market status</p>
-              <h3 class="nft__block-info-status-content">For sale</h3>
+              <h3 class="nft__block-info-status-content">{{ nft.market_status }}</h3>
             </div>
             <button class="nft__block-info-buy" @click="buyToken">Buy now</button>
           </div>
@@ -40,13 +40,13 @@ export default {
     History
   },
   async mounted() {
-    await this.$store.dispatch('getCeloNft', this.$route.params.nftid)
+    await this.$store.dispatch('getNft', this.$route.params.nftid)
   },
   methods: {
     buyToken() {
       this.$store.dispatch('approveBuyToken', {
         id: this.$route.params.nftid,
-        price: 11
+        price: 1
       })
     }
   },

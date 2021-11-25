@@ -34,7 +34,7 @@
       <button class="gradient-button header__connect" v-else @click="showConnectModal = true">Connect Wallet</button>
     </div>
     <connect v-if="showConnectModal && !address" @closeModal="closeModal"/>
-    <profileModal v-if="showProfileMenu" @closeModal="closeModal"/>
+    <profileModal v-show="showProfileMenu" @closeModal="closeModal"/>
   </header>
 </template>
 <script>

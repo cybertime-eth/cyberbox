@@ -6,13 +6,13 @@ export default {
       lang: 'en'
     },
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
+      {charset: 'utf-8'},
+      {name: 'viewport', content: 'width=device-width, initial-scale=1'},
+      {hid: 'description', name: 'description', content: ''},
+      {name: 'format-detection', content: 'telephone=no'}
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}
     ]
   },
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -24,31 +24,56 @@ export default {
   },
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '@/plugins/aos.client.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
-  buildModules: ['@nuxtjs/style-resources'],
+  buildModules: ['@nuxtjs/style-resources', 'nuxt-graphql-request'],
 
-  // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [
-    // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios',
-    '@nuxtjs/proxy'
-  ],
-
-  axios: {
-    proxy: true
+  graphql: {
+    /**
+     * An Object of your GraphQL clients
+     */
+    clients: {
+      default: {
+        /**
+         * The client endpoint url
+         */
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/master-daos-graphql',
+        /**
+         * Per-client options overrides
+         * See: https://github.com/prisma-labs/graphql-request#passing-more-options-to-fetch
+         */
+        options: {},
+      },
+      secondClient: {
+        // ...client config
+      },
+      // ...your other clients
+    },
   },
 
-  proxy: {
-    '/api/': { target: 'https://celopunks.club/', pathRewrite: {'^/api/': ''}, changeOrigin: true }
-  },
+    // Modules: https://go.nuxtjs.dev/config-modules
+    modules: [
+      // https://go.nuxtjs.dev/axios
+      '@nuxtjs/axios',
+      '@nuxtjs/proxy'
+    ],
 
-  // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {
-    cache: false
+    axios: {
+      proxy: true
+    },
+
+    // Build Configuration: https://go.nuxtjs.dev/config-build
+    build: {
+      cache: false,
+      extend(config, {}) {
+        config.node = {
+          fs: 'empty'
+        }
+      }
+    }
   }
-}

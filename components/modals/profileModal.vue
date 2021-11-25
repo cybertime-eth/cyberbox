@@ -1,21 +1,10 @@
 <template>
   <ul class="profile__menu" @mouseleave="closeModal">
-<!--    <li class="profile__menu-list">-->
-<!--      <nuxt-link to="/profile/1" class="profile__menu-link">-->
-<!--        <div class="profile__menu-link-info">-->
-<!--          <div class="profile__menu-link-avatar">-->
-<!--            <img :src="user.image" alt="image" v-if="user.image">-->
-<!--          </div>-->
-<!--          View Profile-->
-<!--        </div>-->
-<!--        <img src="/array-right.svg" alt="array">-->
-<!--      </nuxt-link>-->
-<!--    </li>-->
     <li class="profile__menu-list">
       <nuxt-link to="/" class="profile__menu-link">
         <div class="profile__menu-link-info">
-          <img src="/coolicon.svg" alt="coolicon" class="profile__menu-link-info-icon">
-          Support
+          <img src="/my-collection.png" alt="coolicon" class="profile__menu-link-info-icon">
+          My collection
         </div>
         <img src="/array-right.svg" alt="array">
       </nuxt-link>
@@ -23,8 +12,8 @@
     <li class="profile__menu-list">
       <nuxt-link to="/" class="profile__menu-link">
         <div class="profile__menu-link-info">
-          <img src="/savenft.png" alt="savenft" class="profile__menu-link-info-icon-savenft">
-          Buy SAVENFT
+          <img src="/celo.png" alt="celo" class="profile__menu-link-info-icon-savenft">
+          Buy CELO
         </div>
         <img src="/array-right.svg" alt="array">
       </nuxt-link>
@@ -66,6 +55,8 @@ export default {
   width: 29.8rem;
   box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1);
   border-radius: .4rem;
+  animation: showModal .5s;
+  z-index: 2;
   &-list {
     padding-left: 1.3rem;
     padding-right: 1.9rem;
@@ -109,6 +100,14 @@ export default {
         }
       }
     }
+  }
+}
+@keyframes showModal {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
 </style>

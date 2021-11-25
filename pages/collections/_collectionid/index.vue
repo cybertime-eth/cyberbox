@@ -4,7 +4,7 @@
     <div class="collection__content container-xl">
       <div class="collection__header">
         <img src="/avatar-punks.png" alt="avatar" class="collection__header-avatar">
-        <h1 class="collection__header-title">CeloPunks</h1>
+        <h1 class="collection__header-title" >CeloPunks</h1>
         <p class="collection__header-subtitle">Collectibes</p>
         <div class="collection__header-socials">
           <img src="/socials/disckord.svg" alt="social">
@@ -13,49 +13,49 @@
           <img src="/socials/web.svg" alt="social">
         </div>
         <div class="collection__header-info">
-          <div class="collection__header-info-block">
+          <div class="collection__header-info-block" data-aos="fade-right">
             <h3 class="collection__header-info-block-title">{{ nftList ? nftList.length : 0 }}</h3>
             <h3 class="collection__header-info-block-subtitle">Items</h3>
           </div>
-          <div class="collection__header-info-block">
+          <div class="collection__header-info-block" data-aos="fade-right">
             <h3 class="collection__header-info-block-title">5.0K</h3>
             <h3 class="collection__header-info-block-subtitle">Owners</h3>
           </div>
-          <div class="collection__header-info-block">
+          <div class="collection__header-info-block" data-aos="fade-left">
             <h3 class="collection__header-info-block-title">76 CELO</h3>
             <h3 class="collection__header-info-block-subtitle">Volume traded</h3>
           </div>
-          <div class="collection__header-info-block">
+          <div class="collection__header-info-block"  data-aos="fade-left">
             <h3 class="collection__header-info-block-title">0.1 Celo</h3>
             <h3 class="collection__header-info-block-subtitle">Floor price</h3>
           </div>
         </div>
-        <h3 class="collection__header-content">
+        <h3 class="collection__header-content" data-aos="fade-up">
           Wipies is the biggest collection of digital toilet paper on the blockchain.
           Each one of the 10,000 Wipies is as special as the next, but some Wipies are rarer than the others.
           Wipies come in different rarities ranging from the ultra-rare 'Artifact' to the common 'Unusual' Wipies.
           The rarer the attributes, the rarer your Wipies will be! You can reveal on unopend in the Poopies.io's Gallery.
         </h3>
       </div>
-      <div class="collection__filter">
+      <div class="collection__filter" @click="changeFilter">
         <button
           class="collection__filter-button"
-          :class="{'collection__filter-button-active': filter === 1}"
-          @click="filter = 1"
+          :class="{'collection__filter-button-active': filter === 'All'}"
+          @click="filter = 'All'"
         >
           All
         </button>
         <button
           class="collection__filter-button"
-          :class="{'collection__filter-button-active': filter === 2}"
-          @click="filter = 2"
+          :class="{'collection__filter-button-active': filter === 'listed'}"
+          @click="filter = 'listed'"
         >
           Listings
         </button>
         <button
           class="collection__filter-button"
-          :class="{'collection__filter-button-active': filter === 3}"
-          @click="filter = 3"
+          :class="{'collection__filter-button-active': filter === 'bought'}"
+          @click="filter = 'bought'"
         >
           Sold
         </button>
@@ -66,71 +66,88 @@
           :class="{'collection__sort-button-active': sort === 1}"
           @click="sort = 1"
         >
-          Sold - Latest
+          Price - Lowest
         </button>
         <button
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 2}"
           @click="sort = 2"
         >
-          Price - Lowest
+          Price - Highest
         </button>
         <button
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 3}"
           @click="sort = 3"
         >
-          Price - Highest
+          Rarity - Rare
         </button>
         <button
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 4}"
           @click="sort = 4"
         >
+          Rarity - Common
+        </button>
+        <button
+          class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 5}"
+          @click="sort = 5"
+        >
           Traits
           <img src="/sort.svg" alt="sort">
         </button>
       </div>
-      <div class="collection__items">
-        <div class="collection__item" @click="$router.push(`/collections/daopolis/${nft.id}`)" v-for="(nft, index) of nftList">
-          <img src="/banner-1.png" alt="item" class="collection__item-image">
-          <div class="collection__item-info">
-            <h2 class="collection__item-info-name">
-              test nft
-            </h2>
-            <p class="collection__item-info-rarity">Rarity Rank 1111</p>
-            <p class="collection__item-info-id">Token ID {{ nft.id }}</p>
-            <div class="collection__item-info-price">
-              <img src="/celo.png" alt="celo">
-              <h3 class="collection__item-info-price-text">{{ nft.price }} <span>CELO</span></h3>
-            </div>
-            <p class="collection__item-info-type">Price</p>
-            <button class="collection__item-info-details">Details</button>
+      <div class="collection__info">
+        <h3 class="collection__info-items">{{ nftList ? nftList.length : 0 }} items</h3>
+        <div class="collection__info-nft" @click="changeMyNftStatus">
+          <h3 class="collection__info-nft-text">My NFTs</h3>
+          <div class="collection__info-nft-switcher" :class="{'collection__info-nft-switcher-active': myNft}">
+            <div class="collection__info-nft-switcher-element" :class="{'collection__info-nft-switcher-element-active': myNft}"></div>
           </div>
         </div>
+      </div>
+      <div class="collection__items">
+        <nft :nft="nft" v-for="nft of nftList"/>
       </div>
     </div>
   </section>
 </template>
 <script>
+import nft from '@/components/nft.vue'
+import {BigNumber} from 'ethers'
 export default {
   data() {
     return {
-      filter: 1,
+      filter: 'All',
       sort: 0,
+      myNft: false
     }
   },
+  components: {
+    nft
+  },
+  methods: {
+    changeMyNftStatus() {
+      this.myNft = !this.myNft
+      if (this.myNft) {
+        this.$store.dispatch('getGraphData', 'myNft')
+      } else {
+        this.$store.dispatch('getGraphData')
+      }
+    },
+    changeFilter() {
+      this.$store.dispatch('getGraphData', this.filter)
+    },
+  },
   async created() {
-    if (!this.nftList.length) {
-      await this.$store.dispatch('getCeloNftList')
-    }
-    console.log(this.nftList)
+    await this.$store.dispatch('getGraphData')
   },
   computed: {
     nftList() {
       return this.$store.state.nftList
     }
-  }
+  },
 }
 </script>
 <style lang="scss">
@@ -170,6 +187,10 @@ export default {
       }
       img {
         width: 2rem;
+        cursor: pointer;
+        &:hover {
+          animation: shaking .5s;
+        }
       }
     }
     &-info {
@@ -246,6 +267,44 @@ export default {
       }
     }
   }
+  &__info {
+    padding-top: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    &-nft {
+      display: flex;
+      align-items: center;
+      &-text {
+        margin-right: 1.6rem;
+      }
+      &-switcher {
+        width: 5.3rem;
+        height: 2.6rem;
+        background: $border2;
+        border-radius: 1.55rem;
+        position: relative;
+        cursor: pointer;
+        transition: .5s;
+        &-element {
+          position: absolute;
+          left: .2rem;
+          top: .2rem;
+          background: $white;
+          width: 2.2rem;
+          height: 2.2rem;
+          border-radius: 1.5rem;
+          transition: .5s;
+          &-active {
+            left: 2.8rem;
+          }
+        }
+        &-active {
+          background: $green;
+        }
+      }
+    }
+  }
   &__items {
     display: grid;
     grid-template-columns: 20rem 20rem 20rem 20rem 20rem 20rem;
@@ -253,75 +312,23 @@ export default {
     grid-row-gap: 3.2rem;
     padding-top: 3.2rem;
   }
-  &__item {
-    width: 20rem;
-    height: 42.4rem;
-    border-radius: .4rem;
-    box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
-    transition: 1s;
-    cursor: pointer;
-    &-image {
-      width: 20rem;
-      height: 20rem;
-      object-fit: cover;
-      border-radius: .4rem .4rem 0 0;
-    }
-    &-info {
-      padding: 1.6rem .8rem 3.4rem;
-      &-name {
-        font-size: 1.8rem;
-        font-family: OpenSans-SemiBold;
-      }
-      &-rarity {
-        color: $grayLight;
-        font-size: 1.3rem;
-      }
-      &-id {
-        color: $grayLight;
-        padding-top: .5rem;
-        font-size: 1.3rem;
-      }
-      &-price {
-        display: flex;
-        align-items: center;
-        padding-top: 2.5rem;
-        img {
-          width: 1.8rem;
-        }
-        &-text {
-          padding-left: .8rem;
-          font-family: OpenSans-SemiBold;
-          span {
-            padding-left: .5rem;
-          }
-        }
-      }
-      &-type {
-        color: $border;
-        font-size: 1.1rem;
-        padding-top: 1rem;
-      }
-      &-details {
-        width: 18.4rem;
-        height: 2.8rem;
-        border-radius: 2rem;
-        font-size: 1.3rem;
-        margin-top: 1.5rem;
-        background: $modalColor;
-      }
-    }
-    &:hover {
-      position: relative;
-      top: -.5rem;
-      transition: 1s;
-    }
-  }
 }
 @media screen and (max-width: 460px) {
   .collection {
     &__items {
       grid-template-columns: 1fr;
     }
+  }
+}
+@keyframes shaking {
+  0% {
+    transform: rotate(-10deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  100% {
+    transform: rotate(-10deg);
   }
 }
 </style>

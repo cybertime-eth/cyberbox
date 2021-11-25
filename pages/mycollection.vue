@@ -1,42 +1,50 @@
 <template>
-  <section class="my-collection">
+  <section class="my-collection container-xl">
     <h1 class="my-collection__title">My collection</h1>
-    <div class="my-collection__empty" v-if="empty">
+    <div class="my-collection__loading" v-if="!listNft.length && loading">
+      <img src="/loading-button.svg" alt="load">
+    </div>
+    <div class="my-collection__empty" v-else-if="!listNft.length">
       <h3 class="my-collection__empty-title">You don't have NFT yet</h3>
       <button class="gradient-button my-collection__empty-button" @click="$router.push('/')">Buy</button>
     </div>
-    <div class="my-collection__items" v-else-if="!empty && listNft.length">
-      <div class="my-collection__item" @click="$router.push(`/list-nft/${nft.edition}`)" v-for="(nft, index) of listNft" v-if="listNft">
-        <img :src="nft.image" alt="item" class="my-collection__item-image">
-        <div class="my-collection__item-info">
-          <h2 class="my-collection__item-info-name">
-            {{ nft.name }}
-          </h2>
-          <div class="my-collection__item-info-price">
-            <img src="/celo.png" alt="celo">
-            <h3 class="my-collection__item-info-price-text">0.38477 <span>CELO</span></h3>
-          </div>
-          <p class="my-collection__item-info-type">Last sold</p>
-        </div>
+    <div class="my-collection-filters" v-if="listNft.length">
+      <div class="my-collection-filters-item">
+        <p class="my-collection-filters-item-text">All</p>
+        <p class="my-collection-filters-item-content">{{ listNft.length }}</p>
+      </div>
+      <div class="my-collection-filters-item">
+        <p class="my-collection-filters-item-text">For sale</p>
+        <p class="my-collection-filters-item-content">1</p>
+      </div>
+      <div class="my-collection-filters-item">
+        <img src="/daopolis-nft.png" alt="nft" class="my-collection-filters-item-image">
+        <p class="my-collection-filters-item-content">3</p>
+      </div>
+      <div class="my-collection-filters-item">
+        <img src="/punk-nft.png" alt="nft" class="my-collection-filters-item-image">
+        <p class="my-collection-filters-item-content">1</p>
       </div>
     </div>
-    <div class="my-collection__loading" v-else-if="!empty && !listNft.length">
-      <img src="/loading-button.svg" alt="load">
+    <div class="my-collection__items" v-if="listNft.length">
+      <nft :nft="nft" @click="$router.push(`/list-nft/${nft.edition}`)" v-for="nft of listNft" v-if="listNft" />
     </div>
   </section>
 </template>
 <script>
+import nft from '@/components/nft.vue'
 export default {
   data() {
     return {
-      empty: false,
       showTransfer: false,
-      showPurchased: false
+      showPurchased: false,
+      loading: true
     }
   },
   async created() {
     if (!this.listNft.length) {
       await this.$store.dispatch('getCollectionNft')
+      this.loading = false
     }
   },
   computed: {
@@ -79,44 +87,39 @@ export default {
   }
   &__items {
     display: grid;
-    grid-template-columns: 31.5rem 31.5rem 31.5rem 31.5rem;
-    grid-column-gap: 2rem;
-    padding-top: 5.8rem;
+    grid-template-columns: 20rem 20rem 20rem 20rem 20rem 20rem;
+    grid-column-gap: 2.4rem;
+    grid-row-gap: 2.4rem;
+    padding-top: 3.2rem;
   }
-  &__item {
-    width: 31.5rem;
-    height: 48rem;
-    border-radius: .4rem;
-    box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
-    &-image {
-      width: 31.5rem;
-      height: 31.5rem;
-      object-fit: cover;
-    }
-    &-info {
-      padding: 1.3rem 1.6rem 3.4rem;
-      &-name {
-        font-size: 1.8rem;
-        font-family: OpenSans-SemiBold;
+  &-filters {
+    display: flex;
+    align-items: center;
+    align-self: flex-start;
+    padding-top: 5.5rem;
+    &-item {
+      box-shadow: 0 .2rem .8rem rgba(0, 0, 0, 0.05);
+      border-radius: 2rem;
+      padding: 0 1.6rem 0 1rem;
+      display: flex;
+      align-items: center;
+      height: 3.2rem;
+      cursor: pointer;
+      margin-right: 2rem;
+      transition: .3s;
+      background: $white;
+      &-image {
+        width: 2.6rem;
+        height: 2.6rem;
+        border-radius: 1.5rem;
       }
-      &-price {
-        display: flex;
-        align-items: center;
-        padding-top: 2.5rem;
-        img {
-          width: 1.8rem;
-        }
-        &-text {
-          padding-left: .8rem;
-          font-family: OpenSans-SemiBold;
-          span {
-            padding-left: 1rem;
-          }
-        }
-      }
-      &-type {
+      &-content {
+        margin-left: .8rem;
         color: $border;
-        font-size: 1.1rem;
+      }
+      &:hover {
+        background: $modalColor;
+        transition: .3s;
       }
     }
   }
