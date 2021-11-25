@@ -46,7 +46,7 @@ export default {
     buyToken() {
       this.$store.dispatch('approveBuyToken', {
         id: this.$route.params.nftid,
-        price: 1
+        price: this.nft.price
       })
     }
   },

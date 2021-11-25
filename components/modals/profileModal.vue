@@ -1,7 +1,7 @@
 <template>
   <ul class="profile__menu" @mouseleave="closeModal">
     <li class="profile__menu-list">
-      <nuxt-link to="/" class="profile__menu-link">
+      <nuxt-link to="/mycollection" class="profile__menu-link">
         <div class="profile__menu-link-info">
           <img src="/my-collection.png" alt="coolicon" class="profile__menu-link-info-icon">
           My collection
