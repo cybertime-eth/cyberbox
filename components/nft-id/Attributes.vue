@@ -1,8 +1,8 @@
 <template>
-  <div class="attributes container-xl">
+  <div class="attributes">
     <div class="attributes__block">
       <div class="attributes__block-header">
-        <h3 class="attributes__block-header-title">Attributes <span>{{ item.attributes ? item.attributes.length : '' }}</span></h3>
+        <h3 class="attributes__block-header-title">Attributes <span>{{ item ? item.length : '' }}</span></h3>
         <img
           class="attributes__block-header-image"
           src="/attr-array.svg" alt="array"
@@ -11,7 +11,7 @@
         >
       </div>
       <div class="attributes__block-content" v-if="showLeftAttributes">
-        <div class="attributes__block-content-item" v-for="attribute of item.attributes">
+        <div class="attributes__block-content-item" v-for="attribute of item">
           <h3 class="attributes__block-content-item-title">{{ attribute.trait_type }}</h3>
           <h3 class="attributes__block-content-item-subtitle">{{ attribute.value }}</h3>
         </div>
@@ -30,15 +30,15 @@
       <div class="attributes__block-content" v-if="showRightAttributes">
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Owned by</h3>
-          <h3 class="attributes__block-content-item-subtitle">0x21ef...26c7</h3>
+          <h3 class="attributes__block-content-item-subtitle">{{ seller }}</h3>
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Token ID</h3>
-          <h3 class="attributes__block-content-item-subtitle"># 9197342973o48 <img src="/copy.svg" alt="copy"></h3>
+          <h3 class="attributes__block-content-item-subtitle"># {{ info.id }} <img src="/copy.svg" alt="copy"></h3>
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Contract Address</h3>
-          <h3 class="attributes__block-content-item-subtitle">0xda6d...0ca6 <img src="/send.svg" alt="send"></h3>
+          <h3 class="attributes__block-content-item-subtitle">{{ info.contract_address }} <img src="/send.svg" alt="send"></h3>
         </div>
       </div>
     </div>
@@ -50,9 +50,28 @@ export default {
     return {
       showLeftAttributes: true,
       showRightAttributes: true,
+      seller: '',
+      id: 0,
+      info: {}
     }
   },
-  props: ['item']
+  props: ['item'],
+  async created() {
+    this.info = await this.$store.dispatch('getNft', this.$route.params.nftid)
+    await this.owned()
+  },
+  methods: {
+    async owned() {
+      const address = await this.info.seller
+      const startID = await address.split("").slice(0, 6);
+      const endID = await address.split("").slice(-4);
+      const dotArr = [".", ".", "."];
+      this.seller = await startID
+        .concat(dotArr)
+        .concat(endID)
+        .join("");
+    },
+  }
 }
 </script>
 <style lang="scss">

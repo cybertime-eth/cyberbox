@@ -1,5 +1,5 @@
 <template>
-  <div class="collection__item" @click="$router.push(`/collections/daopolis/${nft.id}`)">
+  <div class="collection__item" @click="$router.push(route)">
     <img :src="nft.image" alt="item" class="collection__item-image">
     <div class="collection__item-info">
       <h2 class="collection__item-info-name">
@@ -20,7 +20,7 @@
 <script>
 import {BigNumber} from "ethers";
 export default {
-  props: ['nft'],
+  props: ['nft', 'route'],
   methods: {
     nftPrice(number) {
       let decPlaces = 1;
@@ -51,7 +51,7 @@ export default {
       if (id >= 0) {
         return BigNumber.from(id).toNumber()
       } else {
-        return false
+        return id
       }
     },
   }

@@ -31,10 +31,7 @@
           </div>
         </div>
         <h3 class="collection__header-content" data-aos="fade-up">
-          Wipies is the biggest collection of digital toilet paper on the blockchain.
-          Each one of the 10,000 Wipies is as special as the next, but some Wipies are rarer than the others.
-          Wipies come in different rarities ranging from the ultra-rare 'Artifact' to the common 'Unusual' Wipies.
-          The rarer the attributes, the rarer your Wipies will be! You can reveal on unopend in the Poopies.io's Gallery.
+          This NFT is part of DAOS
         </h3>
       </div>
       <div class="collection__filter" @click="changeFilter">
@@ -63,36 +60,36 @@
       <div class="collection__sort">
         <button
           class="collection__sort-button"
-          :class="{'collection__sort-button-active': sort === 1}"
-          @click="sort = 1"
+          :class="{'collection__sort-button-active': sort === 'price-lowest'}"
+          @click="changeSort('price-lowest')"
         >
           Price - Lowest
         </button>
         <button
           class="collection__sort-button"
-          :class="{'collection__sort-button-active': sort === 2}"
-          @click="sort = 2"
+          :class="{'collection__sort-button-active': sort === 'price-highest'}"
+          @click="changeSort('price-highest')"
         >
           Price - Highest
         </button>
         <button
           class="collection__sort-button"
-          :class="{'collection__sort-button-active': sort === 3}"
-          @click="sort = 3"
+          :class="{'collection__sort-button-active': sort === 'rarity-rare'}"
+          @click="changeSort('rarity-rare')"
         >
           Rarity - Rare
         </button>
         <button
           class="collection__sort-button"
-          :class="{'collection__sort-button-active': sort === 4}"
-          @click="sort = 4"
+          :class="{'collection__sort-button-active': sort === 'rarity-common'}"
+          @click="changeSort('rarity-common')"
         >
           Rarity - Common
         </button>
         <button
           class="collection__sort-button"
-          :class="{'collection__sort-button-active': sort === 5}"
-          @click="sort = 5"
+          :class="{'collection__sort-button-active': sort === 'traits'}"
+          @click="changeSort('traits')"
         >
           Traits
           <img src="/sort.svg" alt="sort">
@@ -108,7 +105,7 @@
         </div>
       </div>
       <div class="collection__items">
-        <nft :nft="nft" v-for="nft of nftList"/>
+        <nft :nft="nft" v-for="nft of nftList" :route="`/collections/daopolis/${nft.id}`"/>
       </div>
     </div>
   </section>
@@ -120,7 +117,7 @@ export default {
   data() {
     return {
       filter: 'All',
-      sort: 0,
+      sort: '',
       myNft: false
     }
   },
@@ -128,6 +125,10 @@ export default {
     nft
   },
   methods: {
+    changeSort(id) {
+      this.sort = id
+      this.$store.dispatch('getGraphData', id)
+    },
     changeMyNftStatus() {
       this.myNft = !this.myNft
       if (this.myNft) {

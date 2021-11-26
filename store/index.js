@@ -37,6 +37,14 @@ export const actions = {
       case 'all': sort = `first: 50`
         break;
       case 'bought': sort = `where: { market_status: "BOUGHT"}`
+        break;
+      case 'price-lowest': sort = `orderBy: price, orderDirection: asc`;
+        break;
+      case 'price-highest': sort = `orderBy: price, orderDirection: desc`;
+        break;
+      case 'rarity-rare': sort =  `orderBy: rarity_rank, orderDirection: asc`
+        break;
+      case 'rarity-common': sort =  `orderBy: rarity_rank, orderDirection: desc`
     }
     const query = gql`
       query Sample {
@@ -77,7 +85,9 @@ export const actions = {
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    commit('setNewNftList', data.daosInfos)
+    let sortData = data.daosInfos.sort((a, b) => BigNumber.from(a.id).toNumber() - BigNumber.from(b.id).toNumber())
+    console.log(sortData)
+    commit('setNewNftList', sortData)
   },
   async updateUser({commit}) {
     const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
@@ -187,9 +197,9 @@ export const actions = {
           }
         }
       }`;
-    const data = await this.$graphql.default.request(query)
+    let data = await this.$graphql.default.request(query)
     commit('setNewNft', data.daosInfo)
-
+    return data.daosInfo
   },
   async getCollectionNft({commit, state}) {
     const signer = this.getters.provider.getSigner()
@@ -291,7 +301,6 @@ export const mutations = {
   },
   setNewNft(state, nft) {
     state.nft = nft
-    console.log(state.nft)
   },
   setCollection(state, nftList) {
     state.myCollection.push(nftList)

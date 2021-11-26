@@ -8,14 +8,14 @@
           MetaMask
           <img src="/auth/metamask.svg" alt="metamask" class="modal__connect-button-image">
         </button>
-        <button class="modal__connect-button" @click="connectMetaTrust">
-          TrustWallet
-          <img src="/auth/trastwallet.svg" alt="metamask" class="modal__connect-button-image">
-        </button>
-        <button class="modal__connect-button" @click="connectWallet">
-          WalletConnect
-          <img src="/auth/WalletConnect.png" alt="metamask" class="modal__connect-button-image">
-        </button>
+<!--        <button class="modal__connect-button" @click="connectMetaTrust">-->
+<!--          TrustWallet-->
+<!--          <img src="/auth/trastwallet.svg" alt="metamask" class="modal__connect-button-image">-->
+<!--        </button>-->
+<!--        <button class="modal__connect-button" @click="connectWallet">-->
+<!--          WalletConnect-->
+<!--          <img src="/auth/WalletConnect.png" alt="metamask" class="modal__connect-button-image">-->
+<!--        </button>-->
       </div>
     </div>
   </div>

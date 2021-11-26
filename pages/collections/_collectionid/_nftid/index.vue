@@ -1,7 +1,7 @@
 <template>
   <section id="nft">
     <div class="nft">
-      <div class="nft__container container-xl">
+      <div class="">
         <nuxt-link to="/collections/daopolis" class="nft__crumbs">
           Marketplace
           <img src="/array-right.svg" alt="array">
@@ -20,14 +20,14 @@
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <div class="nft__block-info-status">
               <p class="nft__block-info-status-title">Market status</p>
-              <h3 class="nft__block-info-status-content">{{ nft.market_status }}</h3>
+              <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
             </div>
             <button class="nft__block-info-buy" @click="buyToken">Buy now</button>
           </div>
         </div>
       </div>
     </div>
-    <Attributes :item="nft"/>
+    <Attributes :item="attributes" :info="nft"/>
 <!--    <History />-->
   </section>
 </template>
@@ -35,12 +35,18 @@
 import Attributes from '@/components/nft-id/Attributes'
 import History from '@/components/nft-id/History-table'
 export default {
+  data() {
+    return {
+      attributes: [],
+    }
+  },
   components: {
     Attributes,
     History
   },
   async mounted() {
     await this.$store.dispatch('getNft', this.$route.params.nftid)
+    await this.getAttributes()
   },
   methods: {
     buyToken() {
@@ -48,22 +54,27 @@ export default {
         id: this.$route.params.nftid,
         price: this.nft.price
       })
+    },
+    async getAttributes() {
+      const res =  await this.$axios.get(this.nft.attributes);
+      this.attributes = res.data.attributes
     }
   },
   computed: {
     nft() {
       return this.$store.state.nft
-    }
-  }
+    },
+  },
 }
 </script>
 <style lang="scss">
 #nft {
   padding-bottom: 10rem;
   padding-top: 4rem;
+  width: 109.6rem;
+  margin: 0 auto;
 }
 .nft {
-  box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
   padding-bottom: 3rem;
   &__crumbs {
     display: flex;
@@ -80,12 +91,15 @@ export default {
   &__block {
     display: grid;
     grid-template-columns: 56.6rem 1fr;
-    grid-column-gap: 10.2rem;
+    box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
+    grid-column-gap: 2.4rem;
     justify-content: space-between;
-    padding-top: 4.5rem;
+    padding-top: 1.6rem;
+    padding-bottom: 4rem;
+    margin-top: 2.5rem;
     &-image {
-      width: 56.6rem;
-      height: 56.6rem;
+      width: 52rem;
+      height: 52rem;
       object-fit: cover;
       &-loading {
         width: 56.6rem;

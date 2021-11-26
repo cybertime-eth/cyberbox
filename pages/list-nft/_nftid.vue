@@ -86,7 +86,7 @@
         </div>
       </div>
     </div>
-    <Attributes :item="nft"/>
+    <Attributes :item="attributes" :info="nft"/>
 <!--    <History />-->
   </section>
 </template>
@@ -105,7 +105,8 @@ export default {
       listStatus: 'default',
       step: 1,
       loadButton: false,
-      nftInfo: {}
+      nftInfo: {},
+      attributes: [],
     }
   },
   components: {
@@ -119,7 +120,8 @@ export default {
     Successful
   },
   async mounted() {
-    await this.$store.dispatch('getCeloNft', this.$route.params.nftid)
+    await this.$store.dispatch('getNft', this.$route.params.nftid)
+    await this.getAttributes();
   },
   methods: {
     removeFromMarket() {
@@ -139,6 +141,10 @@ export default {
     setInfoNft(info) {
       this.nftInfo = info
     },
+    async getAttributes() {
+      const res =  await this.$axios.get(this.nft.attributes);
+      this.attributes = res.data.attributes
+    }
   },
   computed: {
     nft() {
