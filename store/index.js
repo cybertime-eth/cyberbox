@@ -19,6 +19,7 @@ export const state = () => ({
   nft: {},
   approveToken: '',
   listToken: '',
+  countPage: 1,
 })
 export const getters = {
   provider() {
@@ -28,27 +29,30 @@ export const getters = {
 }
 export const actions = {
   async getGraphData({commit,state}, type) {
-    let sort = `first: 50`
+    let sort = `orderBy: contract_id`
     switch (type) {
       case 'myNft': sort = `where: { seller: "${state.fullAddress}"}`
         break;
-      case 'listed': sort = `where: { market_status: "LISTED"}`
+      case 'listed': sort = `where: { market_status: "LISTED"} orderBy: contract_id`
         break;
-      case 'all': sort = `first: 50`
+      case 'all': sort =  `orderBy: contract_id`
         break;
-      case 'bought': sort = `where: { market_status: "BOUGHT"}`
+      case 'bought': sort = `where: { market_status: "BOUGHT"} orderBy: contract_id`
         break;
       case 'price-lowest': sort = `orderBy: price, orderDirection: asc`;
         break;
       case 'price-highest': sort = `orderBy: price, orderDirection: desc`;
         break;
-      case 'rarity-rare': sort =  `orderBy: rarity_rank, orderDirection: asc`
+      case 'rarity-rare': sort =  `orderBy: rarity_rank, orderDirection: asc`;
         break;
-      case 'rarity-common': sort =  `orderBy: rarity_rank, orderDirection: desc`
+      case 'rarity-common': sort =  `orderBy: rarity_rank, orderDirection: desc`;
+        break;
+      case 'pagination': sort = `skip: ${100 * state.countPage} orderBy: contract_id`;
+        break;
     }
     const query = gql`
       query Sample {
-        contractInfos(${sort}) {
+        contractInfos(${sort} first: 100) {
           id
           contract
           contract_id
@@ -87,9 +91,7 @@ export const actions = {
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    let sortData = data.contractInfos.sort((a, b) => BigNumber.from(a.contract_id).toNumber() - BigNumber.from(b.contract_id).toNumber())
-    console.log(sortData)
-    commit('setNewNftList', sortData)
+    type === 'pagination' ? commit('addNftToList', data.contractInfos) : commit('setNewNftList', data.contractInfos)
   },
 
 
@@ -304,6 +306,11 @@ export const mutations = {
   setNewNftList(state, list) {
     state.nftList = list
   },
+  addNftToList(state, list) {
+    for (let nft of list) {
+      state.nftList.push(nft)
+    }
+  },
   setNewNft(state, nft) {
     state.nft = nft
   },
@@ -316,4 +323,8 @@ export const mutations = {
   changeApproveToken(state, approve) {
     state.approveToken = approve
   },
+  changeCountPage(state, count) {
+    console.log(count)
+    state.countPage = count
+  }
 }

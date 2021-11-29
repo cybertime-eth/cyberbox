@@ -118,13 +118,24 @@ export default {
     return {
       filter: 'All',
       sort: '',
-      myNft: false
+      myNft: false,
+      loadMoreNft: true
     }
   },
   components: {
     nft
   },
   methods: {
+    addCurrentPage() {
+      if(process.browser) {
+        const count = this.$store.state.countPage
+        const element = document.body
+        if (element.scrollHeight === window.pageYOffset + window.innerHeight) {
+          this.$store.commit('changeCountPage', count + 1)
+          this.$store.dispatch('getGraphData', 'pagination')
+        }
+      }
+    },
     changeSort(id) {
       this.sort = id
       this.$store.dispatch('getGraphData', id)
@@ -143,6 +154,10 @@ export default {
   },
   async created() {
     await this.$store.dispatch('getGraphData')
+    if (process.browser) {
+      addEventListener('scroll', this.addCurrentPage)
+    }
+
   },
   computed: {
     nftList() {
