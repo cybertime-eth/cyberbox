@@ -6,7 +6,7 @@
         {{ nft.name }}
       </h2>
       <p class="collection__item-info-rarity">Rarity Rank {{ nft.rarity_rank }}</p>
-      <p class="collection__item-info-id">Token ID {{ nftID(nft.id) }}</p>
+      <p class="collection__item-info-id">Token ID {{ nftID(nft.contract_id) }}</p>
       <p class="collection__item-info-type">Price</p>
       <div class="collection__item-info-price" v-if="nft.price > 0">
         <img src="/celo.png" alt="celo">

@@ -146,7 +146,8 @@ export default {
   },
   computed: {
     nftList() {
-      return this.$store.state.nftList
+      const list = this.$store.state.nftList
+      return list.filter(item => item.contract === this.$route.params.collectionid)
     }
   },
 }
