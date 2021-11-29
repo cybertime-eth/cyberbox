@@ -271,9 +271,10 @@ export const actions = {
     const exchange = await kit._web3Contracts.getExchange()
     const balance = await goldToken.methods.balanceOf(account).call()
     const contract = new kit.web3.eth.Contract(CyberBoxMarketplaceABI, state.cyberBoxMarketplace)
-    const parsePrice = ethers.utils.parseEther(String(token.price + token.price * 30 / 1000))
+    const parsePrice = ethers.utils.parseEther(String(token.price))
+    const parseId = BigNumber.from(token.id).toNumber()
     const gas = ethers.utils.parseEther(String(3000000))
-    const result = await contract.methods.buyToken(token.id).send({
+    const result = await contract.methods.buyToken(parseId).send({
       from: account,
       value: parsePrice,
       gas: 3000000
