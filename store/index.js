@@ -11,7 +11,7 @@ export const state = () => ({
   address: null,
   fullAddress: null,
   celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
-  cyberBoxMarketplace: '0x2eBC5391C39Eb585DA0B828CB1e1Ef8f91946934',
+  cyberBoxMarketplace: '0xB78488e1f48aaE23e3f0Aa0d864e447F18A1658e',
   daosContract: '0xD3C4bD67C30eFB90CDCFb432d2c45fffC02F7090',
   celo: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
   nftList: [],
@@ -48,8 +48,10 @@ export const actions = {
     }
     const query = gql`
       query Sample {
-        daosInfos(${sort}) {
+        contractInfos(${sort}) {
           id
+          contract
+          contract_id
           price
           seller
           attributes
@@ -85,10 +87,17 @@ export const actions = {
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    let sortData = data.daosInfos.sort((a, b) => BigNumber.from(a.id).toNumber() - BigNumber.from(b.id).toNumber())
+    let sortData = data.contractInfos.sort((a, b) => BigNumber.from(a.contract_id).toNumber() - BigNumber.from(b.contract_id).toNumber())
     console.log(sortData)
     commit('setNewNftList', sortData)
   },
+
+
+
+  // AUTHORIZATION
+
+
+
   async updateUser({commit}) {
     const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
     const provider = new ethers.providers.Web3Provider(web3 ? web3 : window.ethereum);
@@ -96,19 +105,6 @@ export const actions = {
       const signer = await provider.getSigner()
       const address = await signer.getAddress()
       commit('setAddress', address)
-    }
-  },
-  reloadOnAccChange({commit}) {
-    try {
-      if (window.ethereum) {
-        const ethereum = window.ethereum;
-        ethereum.autoRefreshOnNetworkChange = false;
-        ethereum.on("accountsChanged", (accounts) => {
-          commit('setAddress', accounts[0])
-        });
-      }
-    } catch (error) {
-      console.log("Something went wrong!", error);
     }
   },
   async connectMetaTrust({commit}) {
@@ -159,11 +155,17 @@ export const actions = {
       console.log(error);
     }
   },
-  async getNft({commit, state}, id) {
+
+  // GET NFT
+
+  async getNft({commit, state}, token) {
+    console.log(token)
     const query = gql`
       query Sample {
-        daosInfo(id: "${id}") {
+        contractInfo(id: "${token.id}_${token.collectionId ? token.collectionId : 'daos'}") {
           id
+          contract
+          contract_id
           price
           seller
           attributes
@@ -174,6 +176,7 @@ export const actions = {
           image
           description
           updatedAt
+          dna
           listData {
             id
             owner
@@ -198,8 +201,8 @@ export const actions = {
         }
       }`;
     let data = await this.$graphql.default.request(query)
-    commit('setNewNft', data.daosInfo)
-    return data.daosInfo
+    commit('setNewNft', data.contractInfo)
+    return data.contractInfo
   },
   async getCollectionNft({commit, state}) {
     const signer = this.getters.provider.getSigner()
@@ -213,29 +216,33 @@ export const actions = {
       commit('setCollection', res.data)
     }
   },
+
+  // SELL NFT
+
   async approveToken({commit, state, dispatch}) {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.daosContract, DaosABI, signer)
     try {
-      await contract.approve(state.cyberBoxMarketplace, state.nft.edition)
+      await contract.approve(state.cyberBoxMarketplace, state.nft.contract_id)
       contract.on("Approval", () => {
-        commit('changeApproveToken', true)
+        commit('changeApproveToken', 'approve')
       });
     } catch (error) {
-      commit('changeApproveToken', false)
+      commit('changeApproveToken', 'error')
     }
   },
   async startSale({commit, state}) {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.daosContract, DaosABI, signer);
     contract.startSale();
+    console.log('work start sale')
   },
   async listingNFT({commit, state}, nft) {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer)
     try {
       console.log(nft.price, nft.date)
-      await contract.listToken(state.nft.edition, nft.price, nft.date)
+      await contract.listToken(state.nft.contract_id, nft.price, nft.date)
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
       });
@@ -244,15 +251,15 @@ export const actions = {
       console.log(error)
     }
   },
+
+  // BUY NFT
+
   async approveBuyToken({commit,state, dispatch}, token) {
     const web3 = new Web3(window.ethereum)
     const accounts = await web3.eth.getAccounts()
     const account = accounts[0]
-    const linkAddress = `https://alfajores-blockscout.celo-testnet.org/address/${account}`
     const kit = ContractKit.newKitFromWeb3(web3)
     const goldToken = await kit._web3Contracts.getGoldToken();
-    const exchange = await kit._web3Contracts.getExchange()
-    const balance = await goldToken.methods.balanceOf(account).call()
     const parsePrice = ethers.utils.parseEther(String(token.price + token.price * 30 / 1000))
     const result = await goldToken.methods.approve(account, parsePrice).send({
       from: account,
@@ -265,15 +272,10 @@ export const actions = {
     const web3 = new Web3(window.ethereum)
     const accounts = await web3.eth.getAccounts()
     const account = accounts[0]
-    const linkAddress = `https://alfajores-blockscout.celo-testnet.org/address/${account}`
     const kit = ContractKit.newKitFromWeb3(web3)
-    const goldToken = await kit._web3Contracts.getGoldToken();
-    const exchange = await kit._web3Contracts.getExchange()
-    const balance = await goldToken.methods.balanceOf(account).call()
     const contract = new kit.web3.eth.Contract(CyberBoxMarketplaceABI, state.cyberBoxMarketplace)
     const parsePrice = ethers.utils.parseEther(String(token.price))
     const parseId = BigNumber.from(token.id).toNumber()
-    const gas = ethers.utils.parseEther(String(3000000))
     const result = await contract.methods.buyToken(parseId).send({
       from: account,
       value: parsePrice,
@@ -282,6 +284,8 @@ export const actions = {
     console.log(result)
   },
 }
+
+
 export const mutations = {
   setUser(state, user) {
     state.user = user

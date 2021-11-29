@@ -34,7 +34,7 @@
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Token ID</h3>
-          <h3 class="attributes__block-content-item-subtitle"># {{ info.id }} <img src="/copy.svg" alt="copy"></h3>
+          <h3 class="attributes__block-content-item-subtitle"># {{ info.contract_id }} <img src="/copy.svg" alt="copy"></h3>
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Contract Address</h3>
@@ -57,7 +57,10 @@ export default {
   },
   props: ['item'],
   async created() {
-    this.info = await this.$store.dispatch('getNft', this.$route.params.nftid)
+    this.info = await this.$store.dispatch('getNft', {
+      id: this.$route.params.nftid,
+      collectionid: this.$route.params.collectionid
+    })
     await this.owned()
   },
   methods: {

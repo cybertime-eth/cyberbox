@@ -45,7 +45,10 @@ export default {
     History
   },
   async mounted() {
-    await this.$store.dispatch('getNft', this.$route.params.nftid)
+    await this.$store.dispatch('getNft', {
+      id: this.$route.params.nftid,
+      collectionId: this.$route.params.collectionid
+    })
     await this.getAttributes()
   },
   methods: {

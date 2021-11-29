@@ -2,7 +2,7 @@
   <section class="home container-xl">
     <h1 class="home__title">Discover, collect and trade NFTs</h1>
     <div class="home__items">
-      <div class="home__item" @click="$router.push('/collections/punks')">
+      <div class="home__item" @click="$router.push('/collections/daos')">
         <img src="/banner-1.png" alt="dao" class="home__item-image">
         <div class="home__item-info">
           <h2 class="home__item-info-name">Celo Punks</h2>

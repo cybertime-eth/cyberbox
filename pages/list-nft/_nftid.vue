@@ -120,7 +120,9 @@ export default {
     Successful
   },
   async mounted() {
-    await this.$store.dispatch('getNft', this.$route.params.nftid)
+    await this.$store.dispatch('getNft', {
+      id: this.$route.params.nftid,
+    })
     await this.getAttributes();
   },
   methods: {

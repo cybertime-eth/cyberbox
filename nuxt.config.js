@@ -39,14 +39,7 @@ export default {
      */
     clients: {
       default: {
-        /**
-         * The client endpoint url
-         */
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/master-daos-graphql',
-        /**
-         * Per-client options overrides
-         * See: https://github.com/prisma-labs/graphql-request#passing-more-options-to-fetch
-         */
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/masterchief/',
         options: {},
       },
       secondClient: {

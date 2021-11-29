@@ -105,7 +105,7 @@
         </div>
       </div>
       <div class="collection__items">
-        <nft :nft="nft" v-for="nft of nftList" :route="`/collections/daopolis/${nft.id}`"/>
+        <nft :nft="nft" v-for="nft of nftList" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
       </div>
     </div>
   </section>
