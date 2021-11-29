@@ -5,7 +5,14 @@
       <div class="home__item" @click="$router.push('/collections/daos')">
         <img src="/banner-1.png" alt="dao" class="home__item-image">
         <div class="home__item-info">
-          <h2 class="home__item-info-name">Celo Punks</h2>
+          <h2 class="home__item-info-name">Daos</h2>
+          <button class="home__item-info-button">Marketplace</button>
+        </div>
+      </div>
+      <div class="home__item" @click="$router.push('/collections/maos')">
+        <img src="/daopolis-nft.png" alt="dao" class="home__item-image">
+        <div class="home__item-info">
+          <h2 class="home__item-info-name">Maos</h2>
           <button class="home__item-info-button">Marketplace</button>
         </div>
       </div>
