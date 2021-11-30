@@ -129,7 +129,7 @@ export default {
       if(process.browser) {
         const count = this.$store.state.countPage
         const element = document.body
-        if (element.scrollHeight === window.pageYOffset + window.innerHeight) {
+        if (element.scrollHeight === window.pageYOffset + window.innerHeight && this.$route.fullPath === '/collections/' + this.$route.params.collectionid && this.filter === 'All') {
           this.$store.commit('changeCountPage', count + 1)
           this.$store.dispatch('getGraphData', 'pagination')
         }
@@ -153,7 +153,7 @@ export default {
   },
   async created() {
     await this.$store.dispatch('getGraphData')
-    if (process.browser && this.$route.fullPath === '/collections/' + this.$route.params.collectionid && this.filter === 'All') {
+    if (process.browser) {
       addEventListener('scroll', this.addCurrentPage)
     }
 

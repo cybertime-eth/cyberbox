@@ -43,6 +43,7 @@ export default {
     height: 37.6rem;
     border-radius: .4rem;
     box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
+    cursor: pointer;
     &-image {
       width: 42.4rem;
       height: 22.5rem;
@@ -64,6 +65,9 @@ export default {
         font-size: 1.3rem;
         font-family: OpenSans-Regular;
       }
+    }
+    &:hover {
+      transform: scale(1.02);
     }
   }
 }
