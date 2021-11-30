@@ -105,7 +105,7 @@ input,textarea {
   font-size: 1.6rem;
   color: $textColor;
   padding: 1.2rem 1rem;
-  outline: none;
+  outline: $lightGreen;
   resize: none;
   font-family: OpenSans-Regular;
   &::placeholder {

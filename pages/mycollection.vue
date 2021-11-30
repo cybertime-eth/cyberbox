@@ -27,7 +27,7 @@
       </div>
     </div>
     <div class="my-collection__items" v-if="listNft.length">
-      <nft :nft="nft" :route="`/list-nft/${nft.edition}`" v-for="nft of listNft" v-if="listNft" />
+      <nft :nft="nft" :route="`/collections/daos/${nft.edition}`" :seller="true" v-for="nft of listNft" v-if="listNft" />
     </div>
   </section>
 </template>

@@ -1,46 +1,33 @@
 <template>
-  <div class="list-nft__navigation">
-    <div class="list-nft__navigation-step">
+  <div class="nft__navigation">
+    <div class="nft__navigation-step">
       <div
-        class="list-nft__navigation-step-num"
-        :class="step === 1 ? 'list-nft__navigation-step-num-active' : step > 1 ? 'list-nft__navigation-step-num-done' : ''">
+        class="nft__navigation-step-num"
+        :class="step === 1 ? 'nft__navigation-step-num-active' : step > 1 ? 'nft__navigation-step-num-done' : ''">
         <img src="/done.svg" alt="done" v-if="step > 1">
         <h3 v-else>1</h3>
       </div>
       <h3
-        class="list-nft__navigation-step-text"
-        :class="step >= 1 ? 'list-nft__navigation-step-text-active' : ''">
+        class="nft__navigation-step-text"
+        :class="step >= 1 ? 'nft__navigation-step-text-active' : ''">
         Sell price
       </h3>
     </div>
-    <div class="list-nft__navigation-step" v-if="!changeInfo">
+    <div class="nft__navigation-step">
       <div
-        class="list-nft__navigation-step-num"
-        :class="step === 2 ? 'list-nft__navigation-step-num-active' : step > 2 ? 'list-nft__navigation-step-num-done' : ''">
-        <img src="/done.svg" alt="done" v-if="step > 2">
+        class="nft__navigation-step-num"
+        :class="step === 2 || step === 3 ? 'nft__navigation-step-num-active' : step > 3 ? 'nft__navigation-step-num-done' : ''">
+        <img src="/done.svg" alt="done" v-if="step > 3">
         <h3 v-else>2</h3>
       </div>
       <h3
-        class="list-nft__navigation-step-text"
-        :class="step >= 2 ? 'list-nft__navigation-step-text-active' : ''">
-        Approve
+        class="nft__navigation-step-text"
+        :class="step >= 2 ? 'nft__navigation-step-text-active' : ''">
+        Launch
       </h3>
     </div>
-    <div class="list-nft__navigation-step">
-      <div
-        class="list-nft__navigation-step-num"
-        :class="step === 3 ? 'list-nft__navigation-step-num-active' : step > 3 ? 'list-nft__navigation-step-num-done' : ''">
-        <img src="/done.svg" alt="done" v-if="step > 3">
-        <h3 v-else>{{ changeInfo ? '2' : '3' }}</h3>
-      </div>
-      <h3
-        class="list-nft__navigation-step-text"
-        :class="step >= 3 ? 'list-nft__navigation-step-text-active' : ''">
-        Sign
-      </h3>
-    </div>
-    <div class="list-nft__navigation-line">
-      <div class="list-nft__navigation-line-active" :style="'width:' + activeLine + '%'"></div>
+    <div class="nft__navigation-line">
+      <div class="nft__navigation-line-active" :style="'width:' + activeLine + '%'"></div>
     </div>
   </div>
 </template>
@@ -51,18 +38,15 @@ export default {
     activeLine() {
       switch (this.step) {
         case 1: return 0;
-        case 2: return 50;
-        case 3: return 100;
+        case 2: return 100;
       }
     }
   }
 }
 </script>
 <style lang="scss">
-.list-nft {
+.nft {
   &__navigation {
-    width: 61.4rem;
-    margin-left: 2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -105,6 +89,7 @@ export default {
         color: $border2;
         letter-spacing: 0.03em;
         padding-top: 2rem;
+        text-align: left;
         &-active {
           color: $pink;
         }

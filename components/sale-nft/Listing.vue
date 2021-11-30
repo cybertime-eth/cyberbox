@@ -1,11 +1,11 @@
 <template>
-  <div class="list-nft__content">
-    <h1 class="list-nft__content-title">Listing in progress</h1>
-    <h3 class="list-nft__content-text list-nft__content-text-border">Please wait while we confirm your listing</h3>
-    <p class="list-nft__content-subtitle list-nft__content-subtitle-second">Your NFT is being listed on the marketplace</p>
-    <div class="list-nft__content-buttons list-nft__content-buttons-mini">
+  <div class="nft__content">
+    <h1 class="nft__content-title">Listing in progress</h1>
+    <h3 class="nft__content-text nft__content-text-border">Please wait while we confirm your listing</h3>
+    <p class="nft__content-subtitle nft__content-subtitle-second">Your NFT is being listed on the marketplace</p>
+    <div class="nft__content-buttons nft__content-buttons-mini">
       <button
-        class="list-nft__content-buttons-button-confirm gradient-button"
+        class="nft__content-buttons-button-confirm gradient-button"
       >
         Pending confirmation <img src="/loading-button.svg" alt="load">
       </button>

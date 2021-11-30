@@ -1,5 +1,5 @@
 <template>
-  <div class="collection__item" @click="$router.push(route)">
+  <div class="collection__item" @click="routeNft">
     <img :src="nft.image" alt="item" class="collection__item-image">
     <div class="collection__item-info">
       <h2 class="collection__item-info-name">
@@ -20,7 +20,7 @@
 <script>
 import {BigNumber} from "ethers";
 export default {
-  props: ['nft', 'route'],
+  props: ['nft', 'route', 'seller'],
   methods: {
     nftPrice(number) {
       let decPlaces = 1;
@@ -54,6 +54,10 @@ export default {
         return id
       }
     },
+    routeNft() {
+      this.$store.commit('setNewTestSeller', this.seller)
+      this.$router.push(this.route)
+    }
   }
 }
 </script>

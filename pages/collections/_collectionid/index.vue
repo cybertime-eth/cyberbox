@@ -105,7 +105,7 @@
         </div>
       </div>
       <div class="collection__items">
-        <nft :nft="nft" v-for="nft of nftList" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
+        <nft :nft="nft" v-for="nft of nftList" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
       </div>
     </div>
   </section>
@@ -119,7 +119,6 @@ export default {
       filter: 'All',
       sort: '',
       myNft: false,
-      loadMoreNft: true
     }
   },
   components: {
@@ -154,15 +153,14 @@ export default {
   },
   async created() {
     await this.$store.dispatch('getGraphData')
-    if (process.browser) {
+    if (process.browser && this.$route.fullPath === '/collections/' + this.$route.params.collectionid && this.filter === 'All') {
       addEventListener('scroll', this.addCurrentPage)
     }
 
   },
   computed: {
     nftList() {
-      const list = this.$store.state.nftList
-      return list.filter(item => item.contract === this.$route.params.collectionid)
+      return this.$store.state.nftList
     }
   },
 }

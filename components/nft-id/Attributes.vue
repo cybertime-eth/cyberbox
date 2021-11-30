@@ -87,7 +87,7 @@ export default {
     box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
     border-radius: .4rem;
     height: 100%;
-    width: 61.7rem;
+    width: 53.6rem;
     &-header {
       display: flex;
       align-items: center;

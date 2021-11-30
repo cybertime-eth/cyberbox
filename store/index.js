@@ -19,7 +19,8 @@ export const state = () => ({
   nft: {},
   approveToken: '',
   listToken: '',
-  countPage: 1,
+  countPage: 0,
+  testSeller: false
 })
 export const getters = {
   provider() {
@@ -31,13 +32,13 @@ export const actions = {
   async getGraphData({commit,state}, type) {
     let sort = `orderBy: contract_id`
     switch (type) {
-      case 'myNft': sort = `where: { seller: "${state.fullAddress}"}`
+      case 'myNft': sort = `where: { seller: "${state.fullAddress}"}`;
         break;
-      case 'listed': sort = `where: { market_status: "LISTED"} orderBy: contract_id`
+      case 'listed': sort = `where: { market_status: "LISTED"}`;
         break;
-      case 'all': sort =  `orderBy: contract_id`
+      case 'all': sort =  `orderBy: contract_id`;
         break;
-      case 'bought': sort = `where: { market_status: "BOUGHT"} orderBy: contract_id`
+      case 'bought': sort = `where: { market_status: "BOUGHT"}`;
         break;
       case 'price-lowest': sort = `orderBy: price, orderDirection: asc`;
         break;
@@ -47,12 +48,12 @@ export const actions = {
         break;
       case 'rarity-common': sort =  `orderBy: rarity_rank, orderDirection: desc`;
         break;
-      case 'pagination': sort = `skip: ${100 * state.countPage} orderBy: contract_id`;
+      case 'pagination': sort = `skip: ${48 * state.countPage} orderBy: contract_id`;
         break;
     }
     const query = gql`
       query Sample {
-        contractInfos(${sort} first: 100) {
+        contractInfos(${sort} first: 48 where: { contract: "${$nuxt.$route.params.collectionid}"}) {
           id
           contract
           contract_id
@@ -67,6 +68,7 @@ export const actions = {
           description
           updatedAt
           dna
+          trait
           listData {
             id
             owner
@@ -161,7 +163,6 @@ export const actions = {
   // GET NFT
 
   async getNft({commit, state}, token) {
-    console.log(token)
     const query = gql`
       query Sample {
         contractInfo(id: "${token.id}_${token.collectionId ? token.collectionId : 'daos'}") {
@@ -243,8 +244,8 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer)
     try {
-      console.log(nft.price, nft.date)
-      await contract.listToken(state.nft.contract_id, nft.price, nft.date)
+      let dateNow = new Date().getTime() / 1000
+      await contract.listToken(state.nft.contract_id, nft.price, (dateNow + 604800).toFixed(0))
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
       });
@@ -326,5 +327,8 @@ export const mutations = {
   changeCountPage(state, count) {
     console.log(count)
     state.countPage = count
-  }
+  },
+  setNewTestSeller(state, payload) {
+    state.testSeller = payload
+  },
 }
