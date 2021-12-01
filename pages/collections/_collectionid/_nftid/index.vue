@@ -37,12 +37,33 @@
             <h3 class="nft__block-info-company">Cybertime.finance</h3>
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <h3 class="nft__block-info-minted">Rarity rank {{ nft.rarity_rank }}</h3>
+            <p class="nft__block-info-description" v-if="nft.price !== 0">{{ nft.description }}</p>
+            <p class="nft__block-info-price-text" v-if="nft.price !== 0">Price</p>
+            <div class="nft__block-info-price" v-if="nft.price !== 0"><img src="/celo.png" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= 30$</span></div>
             <div class="nft__block-info-status">
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
             </div>
             <h3 class="nft__block-info-transfer"><img src="/transfer.svg" alt="transfer">Transfer</h3>
-            <button class="nft__block-info-sell gradient-button" @click="listStatus = 'active'">Sell</button>
+            <button class="nft__block-info-sell gradient-button" @click="listStatus = 'active'"  v-if="nft.price === 0">Sell</button>
+            <div class="nft__content-buttons nft__content-buttons-mini" v-else>
+              <button
+                class="
+                nft__content-buttons-button
+                nft__content-buttons-button-confirm
+                nft__content-buttons-button-cancel"
+                @click="removeFromMarket"
+              >
+                Remove from market
+                <img src="/loading-button.svg" alt="load" v-if="loadButton">
+              </button>
+              <button
+                class="nft__content-buttons-button nft__content-buttons-button-confirm gradient-button"
+                @click="listStatus = 'change'"
+              >
+                Change sell price
+              </button>
+            </div>
           </div>
 
           <!-- LIST INFO ACTIVE -->
@@ -78,24 +99,6 @@
             <div class="nft__block-info-status">
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">For sale</h3>
-            </div>
-            <div class="nft__content-buttons nft__content-buttons-mini">
-              <button
-                class="
-                nft__content-buttons-button
-                nft__content-buttons-button-confirm
-                nft__content-buttons-button-cancel"
-                @click="removeFromMarket"
-              >
-                Remove from market
-                <img src="/loading-button.svg" alt="load" v-if="loadButton">
-              </button>
-              <button
-                class="nft__content-buttons-button nft__content-buttons-button-confirm gradient-button"
-                @click="listStatus = 'change'"
-              >
-                Change sell price
-              </button>
             </div>
           </div>
         </div>
@@ -144,7 +147,7 @@ export default {
   },
   computed: {
     seller() {
-      return this.$store.state.testSeller
+      return this.nft.owner === this.$store.state.fullAddress
     }
   },
   methods: {

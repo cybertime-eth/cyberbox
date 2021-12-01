@@ -11,16 +11,16 @@ export const state = () => ({
   address: null,
   fullAddress: null,
   celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
-  cyberBoxMarketplace: '0xB78488e1f48aaE23e3f0Aa0d864e447F18A1658e',
-  daosContract: '0xD3C4bD67C30eFB90CDCFb432d2c45fffC02F7090',
+  cyberBoxMarketplace: '0x43fb8C0d8D577C13E3664CAC91A390140bC7F156',
+  daosContract: '0x3066E73379d0209D9127175D479fB79fD57Ac135',
+  maosContract: '0x69BE88E846763eCEB4a14FEC89C9A62C762612Eb',
   celo: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
   nftList: [],
   myCollection: [],
   nft: {},
   approveToken: '',
   listToken: '',
-  countPage: 0,
-  testSeller: false
+  countPage: 1,
 })
 export const getters = {
   provider() {
@@ -32,13 +32,13 @@ export const actions = {
   async getGraphData({commit,state}, type) {
     let sort = `orderBy: contract_id`
     switch (type) {
-      case 'myNft': sort = `where: { seller: "${state.fullAddress}"}`;
+      case 'myNft': sort = `where: { owner: "${state.fullAddress}"} orderBy: contract_id`;
         break;
-      case 'listed': sort = `where: { market_status: "LISTED"}`;
+      case 'listed': sort = `where: { market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"}`;
         break;
       case 'all': sort =  `orderBy: contract_id`;
         break;
-      case 'bought': sort = `where: { market_status: "BOUGHT"}`;
+      case 'bought': sort = `where: { market_status: "BOUGHT"  contract: "${$nuxt.$route.params.collectionid}"}`;
         break;
       case 'price-lowest': sort = `orderBy: price, orderDirection: asc`;
         break;
@@ -59,6 +59,7 @@ export const actions = {
           contract_id
           price
           seller
+          owner
           attributes
           rarity_rank
           contract_address
@@ -171,6 +172,7 @@ export const actions = {
           contract_id
           price
           seller
+          owner
           attributes
           rarity_rank
           contract_address
@@ -295,7 +297,7 @@ export const mutations = {
   },
   setAddress(state,address) {
     localStorage.setItem('address', address)
-    state.fullAddress = address
+    state.fullAddress = address.toLowerCase()
     const startID = address.split("").slice(0, 6);
     const endID = address.split("").slice(-4);
     const dotArr = [".", ".", "."];
@@ -327,8 +329,5 @@ export const mutations = {
   changeCountPage(state, count) {
     console.log(count)
     state.countPage = count
-  },
-  setNewTestSeller(state, payload) {
-    state.testSeller = payload
-  },
+  }
 }

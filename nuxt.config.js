@@ -39,7 +39,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/masterchief',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cyber-box-graph-one',
         options: {},
       },
       secondClient: {

@@ -55,7 +55,6 @@ export default {
       }
     },
     routeNft() {
-      this.$store.commit('setNewTestSeller', this.seller)
       this.$router.push(this.route)
     }
   }
