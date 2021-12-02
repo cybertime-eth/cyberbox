@@ -1,33 +1,30 @@
 <template>
   <section class="my-collection container-xl">
     <h1 class="my-collection__title">My collection</h1>
-    <div class="my-collection__loading" v-if="!listNft.length && loading">
+    <div class="my-collection__loading" v-if="!filteredNft && loading">
       <img src="/loading-button.svg" alt="load">
     </div>
-    <div class="my-collection__empty" v-else-if="!listNft.length">
+    <div class="my-collection__empty" v-else-if="!filteredNft">
       <h3 class="my-collection__empty-title">You don't have NFT yet</h3>
       <button class="gradient-button my-collection__empty-button" @click="$router.push('/')">Buy</button>
     </div>
-    <div class="my-collection-filters" v-if="listNft.length">
-      <div class="my-collection-filters-item">
+    <div class="my-collection-filters" v-if="filteredNft">
+      <div class="my-collection-filters-item" @click="filter('all')" :class="{'my-collection-filters-item-active': activeFilter === 'all'}">
         <p class="my-collection-filters-item-text">All</p>
         <p class="my-collection-filters-item-content">{{ listNft.length }}</p>
       </div>
-      <div class="my-collection-filters-item">
+      <div class="my-collection-filters-item" :class="{'my-collection-filters-item-active': activeFilter === 'sale'}" @click="filter('sale')">
         <p class="my-collection-filters-item-text">For sale</p>
-        <p class="my-collection-filters-item-content">1</p>
+        <p class="my-collection-filters-item-content">{{ forSaleInfo }}</p>
       </div>
-      <div class="my-collection-filters-item">
+      <div class="my-collection-filters-item my-collection-filters-item-nft" :class="{'my-collection-filters-item-active': activeFilter === 'daos'}" @click="filter('daos')">
         <img src="/daopolis-nft.png" alt="nft" class="my-collection-filters-item-image">
-        <p class="my-collection-filters-item-content">3</p>
-      </div>
-      <div class="my-collection-filters-item">
-        <img src="/punk-nft.png" alt="nft" class="my-collection-filters-item-image">
-        <p class="my-collection-filters-item-content">1</p>
+        <p class="my-collection-filters-item-content">{{ contractDaosLength }}</p>
+        <h4 class="my-collection-filters-item-hover">Daopolis</h4>
       </div>
     </div>
-    <div class="my-collection__items" v-if="listNft.length">
-      <nft :nft="nft" :route="`/collections/daos/${nft.edition}`" :seller="true" v-for="nft of listNft" v-if="listNft" />
+    <div class="my-collection__items">
+      <nft :nft="nft" :route="`/collections/daos/${nft.contract_id}`" :seller="true" v-for="nft of filteredNft" v-if="filteredNft" />
     </div>
   </section>
 </template>
@@ -38,21 +35,46 @@ export default {
     return {
       showTransfer: false,
       showPurchased: false,
-      loading: true
+      loading: true,
+      listNft: false,
+      filteredNft: false,
+      activeFilter: 'all'
     }
   },
   async created() {
-    if (!this.listNft.length) {
-      await this.$store.dispatch('getCollectionNft')
+    if (!this.listNft) {
+      this.listNft = await this.$store.dispatch('getGraphData', 'myNft')
+      this.filteredNft = this.listNft
       this.loading = false
     }
   },
   computed: {
-    listNft() {
-      return this.$store.state.myCollection
-    }
+    forSaleInfo() {
+      if (this.listNft) {
+        const list = this.listNft
+        const countListing = list.filter(item => item.market_status === 'LISTED')
+        return countListing.length
+      }
+    },
+    contractDaosLength() {
+      if (this.listNft) {
+        const list = this.listNft
+        const countListing = list.filter(item => item.contract === 'daos')
+        return countListing.length
+      }
+    },
   },
   methods: {
+    async filter(payload) {
+      if (payload === 'sale') {
+        this.filteredNft = this.listNft.filter(item => item.market_status === 'LISTED')
+      } else if (payload === 'all') {
+        this.filteredNft = await this.$store.dispatch('getGraphData', 'myNft')
+      } else {
+        this.filteredNft = this.listNft.filter(item => item.contract === payload)
+      }
+      this.activeFilter = payload
+    },
     closeModal(payload) {
       this.showTransfer = payload
       this.showPurchased = payload
@@ -108,6 +130,24 @@ export default {
       margin-right: 2rem;
       transition: .3s;
       background: $white;
+      position: relative;
+      &-nft {
+        &:hover > .my-collection-filters-item-hover {
+          display: block;
+        }
+      }
+      &-hover {
+        position: absolute;
+        top: -4rem;
+        left: 0;
+        padding: .4rem 1.6rem;
+        box-shadow: 0 .2rem .8rem rgba(0, 0, 0, 0.05);
+        display: none;
+      }
+      &-active {
+        background: $modalColor;
+        transition: .3s;
+      }
       &-image {
         width: 2.6rem;
         height: 2.6rem;

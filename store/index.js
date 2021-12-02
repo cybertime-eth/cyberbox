@@ -5,22 +5,23 @@ import CyberBoxMarketplaceABI from './../abis/cyberBoxMarketPlace.json'
 import DaosABI from './../abis/daos.json'
 import {gql} from "nuxt-graphql-request";
 const ContractKit = require('@celo/contractkit')
+import filter from './../config.js'
 export const state = () => ({
-  user: {},
-  chainId: null,
-  address: null,
-  fullAddress: null,
   celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
   cyberBoxMarketplace: '0x43fb8C0d8D577C13E3664CAC91A390140bC7F156',
   daosContract: '0x3066E73379d0209D9127175D479fB79fD57Ac135',
   maosContract: '0x69BE88E846763eCEB4a14FEC89C9A62C762612Eb',
   celo: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
+  user: {},
+  chainId: null,
+  address: null,
+  fullAddress: null,
   nftList: [],
-  myCollection: [],
   nft: {},
   approveToken: '',
   listToken: '',
   countPage: 1,
+  filter: filter.races.DAOS.layers
 })
 export const getters = {
   provider() {
@@ -32,7 +33,7 @@ export const actions = {
   async getGraphData({commit,state}, type) {
     let sort = `orderBy: contract_id`
     switch (type) {
-      case 'myNft': sort = `where: { owner: "${state.fullAddress}"} orderBy: contract_id`;
+      case 'myNft': sort = `where: { owner: "${localStorage.getItem('address')}"} orderBy: contract_id`;
         break;
       case 'listed': sort = `where: { market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"}`;
         break;
@@ -95,6 +96,7 @@ export const actions = {
       }`;
     const data = await this.$graphql.default.request(query)
     type === 'pagination' ? commit('addNftToList', data.contractInfos) : commit('setNewNftList', data.contractInfos)
+    return data.contractInfos
   },
 
 
@@ -209,17 +211,24 @@ export const actions = {
     commit('setNewNft', data.contractInfo)
     return data.contractInfo
   },
-  async getCollectionNft({commit, state}) {
-    const signer = this.getters.provider.getSigner()
-    const address = signer.getAddress()
-    const contract = new ethers.Contract(state.daosContract, DaosABI, signer)
-    const res = await contract.tokensOfOwner(address)
-    for (let number of res) {
-      let bigNumber = BigNumber.from(number._hex).toNumber()
-      const getNft = await contract.tokenURI(bigNumber)
-      const res = await this.$axios.get(getNft)
-      commit('setCollection', res.data)
-    }
+
+  async getCountAttributes({commit, state}) {
+    const query = gql`
+      query Sample {
+        contracts(first: 1) {
+          attributes_use
+          element_use0
+          element_use1
+          element_use2
+          element_use3
+          element_use4
+          element_use5
+          element_use6
+          element_use7
+        }
+      }`;
+      let data = await this.$graphql.default.request(query)
+      return data.contracts[0]
   },
 
   // SELL NFT
@@ -240,14 +249,12 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.daosContract, DaosABI, signer);
     contract.startSale();
-    console.log('work start sale')
   },
   async listingNFT({commit, state}, nft) {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer)
     try {
-      let dateNow = new Date().getTime() / 1000
-      await contract.listToken(state.nft.contract_id, nft.price, (dateNow + 604800).toFixed(0))
+      await contract.listToken(state.nft.contract_id, nft.price, nft.date.toFixed(0))
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
       });
@@ -286,8 +293,44 @@ export const actions = {
       value: parsePrice,
       gas: 3000000
     })
-    console.log(result)
   },
+
+  // GET COLLECTION INFO
+
+  async getCollectionInfo({commit, state}) {
+    const query = gql`
+      query Sample {
+        contracts(first: 5) {
+           id
+          title
+          mint_count
+          bid_count
+          sell_count
+          sell_max_price
+          sell_min_price
+          sell_total_price
+          dna_count
+        }
+      }`;
+    let data = await this.$graphql.default.request(query)
+    return data.contracts[0]
+  },
+
+  // REMOVE NFT FROM LIST
+
+  async removeNft({commit, state}, id) {
+    const signer = this.getters.provider.getSigner()
+    const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer)
+    try {
+      await contract.delistToken(id)
+      this.getters.provider.once(contract, async () => {
+        return true
+      });
+    } catch (error) {
+      console.log(error)
+      return false
+    }
+  }
 }
 
 
@@ -317,9 +360,6 @@ export const mutations = {
   setNewNft(state, nft) {
     state.nft = nft
   },
-  setCollection(state, nftList) {
-    state.myCollection.push(nftList)
-  },
   changelistToken(state, status) {
     state.listToken = status
   },
@@ -327,7 +367,6 @@ export const mutations = {
     state.approveToken = approve
   },
   changeCountPage(state, count) {
-    console.log(count)
     state.countPage = count
-  }
+  },
 }

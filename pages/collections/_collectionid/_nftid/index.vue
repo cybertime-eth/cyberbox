@@ -57,12 +57,12 @@
                 Remove from market
                 <img src="/loading-button.svg" alt="load" v-if="loadButton">
               </button>
-              <button
-                class="nft__content-buttons-button nft__content-buttons-button-confirm gradient-button"
-                @click="listStatus = 'change'"
-              >
-                Change sell price
-              </button>
+<!--              <button-->
+<!--                class="nft__content-buttons-button nft__content-buttons-button-confirm gradient-button"-->
+<!--                @click="listStatus = 'change'"-->
+<!--              >-->
+<!--                Change sell price-->
+<!--              </button>-->
             </div>
           </div>
 
@@ -74,8 +74,9 @@
             <Navigation :step="step" />
             <SellPrice @changeStep="changeStep" @setInfo="setInfoNft" v-if="step === 1"/>
             <Approve @changeStep="changeStep" v-if="step === 2"/>
-            <Sign @changeStep="changeStep" :nft="nftInfo" v-if="step === 3"/>
-            <Successful @changeList="changeList" :price="nftInfo.price" v-if="step === 4"/>
+            <Sign @changeStep="changeStep" @setInfo="setInfoNft" :price="nftInfo.price" v-if="step === 3"/>
+            <Listing @changeStep="changeStep" :nft="nftInfo" v-if="step === 4" />
+            <Successful @changeList="changeList" :price="nftInfo.price" v-if="step === 5"/>
           </div>
 
           <!-- LIST INFO CHANGE -->
@@ -84,22 +85,8 @@
             <h1 class="nft__block-info-name">List onto market</h1>
             <Navigation :step="step" :changeInfo="true" />
             <SellPrice @changeStep="changeStep" :changeInfo="true" v-if="step === 1"/>
-            <Sign @changeStep="changeStep" :price="nftInfo.price"  v-if="step === 3"/>
+            <Sign @changeStep="changeStep" :changeInfo="true" :price="nftInfo.price"  v-if="step === 3"/>
             <Successful @changeList="changeList" :price="nftInfo.price" v-if="step === 4"/>
-          </div>
-
-          <!-- LIST INFO DONE -->
-
-          <div class="nft__block-info" v-else>
-            <h1 class="nft__block-info-name">{{ nft.name }}</h1>
-            <h3 class="nft__block-info-minted">Rarity rank 3629</h3>
-            <p class="nft__block-info-price-text">Price</p>
-            <div class="nft__block-info-price"><img src="/celo.png" alt="celo"><h1>2 CELO</h1><span>= 30$</span></div>
-            <p class="nft__block-info-description">{{ nft.description }}</p>
-            <div class="nft__block-info-status">
-              <p class="nft__block-info-status-title">Market status</p>
-              <h3 class="nft__block-info-status-content">For sale</h3>
-            </div>
           </div>
         </div>
       </div>
@@ -114,6 +101,7 @@ import History from '@/components/nft-id/History-table'
 import SellPrice from '@/components/sale-nft/SellPrice'
 import Approve from '@/components/sale-nft/Approve'
 import Sign from '@/components/sale-nft/Sign'
+import Listing from '@/components/sale-nft/Listing'
 import Successful from '@/components/sale-nft/Successful'
 import Navigation from '@/components/sale-nft/Navigation'
 export default {
@@ -136,6 +124,7 @@ export default {
     SellPrice,
     Approve,
     Sign,
+    Listing,
     Successful
   },
   async mounted() {
@@ -151,12 +140,16 @@ export default {
     }
   },
   methods: {
-    removeFromMarket() {
+   async removeFromMarket() {
       this.loadButton = true
-      setTimeout(() => {
+      const res = await this.$store.dispatch('removeNft', this.nft.contract_id)
+      if (res) {
         this.step = 1
         this.listStatus = 'default'
-      }, 2000)
+        if (process.browser) {
+          window.reload()
+        }
+      }
     },
     changeStep(step) {
       this.step = step
@@ -313,6 +306,7 @@ export default {
         height: 5.4rem;
         border-radius: 2.5rem;
         background: none;
+        font-family: OpenSans-Regular;
       }
     }
     &-active {

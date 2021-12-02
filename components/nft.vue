@@ -1,5 +1,9 @@
 <template>
   <div class="collection__item" @click="routeNft">
+    <img src="/more.png" alt="more" v-if="seller" class="collection__item-more">
+    <div class="collection__item-modal">
+
+    </div>
     <img :src="nft.image" alt="item" class="collection__item-image">
     <div class="collection__item-info">
       <h2 class="collection__item-info-name">
@@ -71,6 +75,12 @@ export default {
     cursor: pointer;
     position: relative;
     top: 0;
+    &-more {
+      position: absolute;
+      right: .8rem;
+      top: .8rem;
+      width: 2.4rem;
+    }
     &-image {
       width: 20rem;
       height: 20rem;

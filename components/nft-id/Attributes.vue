@@ -30,11 +30,11 @@
       <div class="attributes__block-content" v-if="showRightAttributes">
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Owned by</h3>
-          <h3 class="attributes__block-content-item-subtitle">{{ seller }}</h3>
+          <h3 class="attributes__block-content-item-subtitle">{{ owner }}</h3>
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Token ID</h3>
-          <h3 class="attributes__block-content-item-subtitle"># {{ info.contract_id }} <img src="/copy.svg" alt="copy"></h3>
+          <h3 class="attributes__block-content-item-subtitle">#{{ info.contract_id }} <img src="/copy.svg" alt="copy"></h3>
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Contract Address</h3>
@@ -50,7 +50,7 @@ export default {
     return {
       showLeftAttributes: true,
       showRightAttributes: true,
-      seller: '',
+      owner: '',
       id: 0,
       info: {}
     }
@@ -65,11 +65,11 @@ export default {
   },
   methods: {
     async owned() {
-      const address = await this.info.seller
+      const address = await this.info.owner
       const startID = await address.split("").slice(0, 6);
       const endID = await address.split("").slice(-4);
       const dotArr = [".", ".", "."];
-      this.seller = await startID
+      this.owner = await startID
         .concat(dotArr)
         .concat(endID)
         .join("");

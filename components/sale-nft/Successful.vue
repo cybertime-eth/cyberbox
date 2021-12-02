@@ -13,7 +13,7 @@
 export default {
   methods: {
     changeList() {
-      this.$emit('changeList', 'done')
+      this.$emit('changeList', 'default')
     }
   },
   props: ['price']

@@ -13,17 +13,30 @@
         Sell price
       </h3>
     </div>
-    <div class="nft__navigation-step">
+    <div class="nft__navigation-step" v-if="!changeInfo">
       <div
         class="nft__navigation-step-num"
-        :class="step === 2 || step === 3 ? 'nft__navigation-step-num-active' : step > 3 ? 'nft__navigation-step-num-done' : ''">
-        <img src="/done.svg" alt="done" v-if="step > 3">
+        :class="step === 2 ? 'nft__navigation-step-num-active' : step > 2 ? 'nft__navigation-step-num-done' : ''">
+        <img src="/done.svg" alt="done" v-if="step > 2">
         <h3 v-else>2</h3>
       </div>
       <h3
         class="nft__navigation-step-text"
         :class="step >= 2 ? 'nft__navigation-step-text-active' : ''">
-        Launch
+        Approve
+      </h3>
+    </div>
+    <div class="nft__navigation-step">
+      <div
+        class="nft__navigation-step-num"
+        :class="step === 3 ? 'nft__navigation-step-num-active' : step > 3 ? 'nft__navigation-step-num-done' : ''">
+        <img src="/done.svg" alt="done" v-if="step > 3">
+        <h3 v-else>{{ changeInfo ? '2' : '3' }}</h3>
+      </div>
+      <h3
+        class="nft__navigation-step-text"
+        :class="step >= 3 ? 'nft__navigation-step-text-active' : ''">
+        Sign
       </h3>
     </div>
     <div class="nft__navigation-line">
@@ -38,7 +51,8 @@ export default {
     activeLine() {
       switch (this.step) {
         case 1: return 0;
-        case 2: return 100;
+        case 2: return 50;
+        case 3: return 100;
       }
     }
   }
@@ -47,6 +61,7 @@ export default {
 <style lang="scss">
 .nft {
   &__navigation {
+    width: 52rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -89,7 +104,6 @@ export default {
         color: $border2;
         letter-spacing: 0.03em;
         padding-top: 2rem;
-        text-align: left;
         &-active {
           color: $pink;
         }

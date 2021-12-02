@@ -14,7 +14,7 @@
         </div>
         <div class="collection__header-info">
           <div class="collection__header-info-block" data-aos="fade-right">
-            <h3 class="collection__header-info-block-title">{{ nftList ? nftList.length : 0 }}</h3>
+            <h3 class="collection__header-info-block-title">{{ collectionInfo.mint_count }}</h3>
             <h3 class="collection__header-info-block-subtitle">Items</h3>
           </div>
           <div class="collection__header-info-block" data-aos="fade-right">
@@ -22,11 +22,11 @@
             <h3 class="collection__header-info-block-subtitle">Owners</h3>
           </div>
           <div class="collection__header-info-block" data-aos="fade-left">
-            <h3 class="collection__header-info-block-title">76 CELO</h3>
+            <h3 class="collection__header-info-block-title">{{ collectionInfo.sell_total_price }} CELO</h3>
             <h3 class="collection__header-info-block-subtitle">Volume traded</h3>
           </div>
           <div class="collection__header-info-block"  data-aos="fade-left">
-            <h3 class="collection__header-info-block-title">0.1 Celo</h3>
+            <h3 class="collection__header-info-block-title">{{ collectionInfo.sell_max_price }} Celo</h3>
             <h3 class="collection__header-info-block-subtitle">Floor price</h3>
           </div>
         </div>
@@ -95,8 +95,9 @@
           <img src="/sort.svg" alt="sort">
         </button>
       </div>
+<!--      <attributesFilter />-->
       <div class="collection__info">
-        <h3 class="collection__info-items">{{ nftList ? nftList.length : 0 }} items</h3>
+        <h3 class="collection__info-items">{{ countItems }} items</h3>
         <div class="collection__info-nft" @click="changeMyNftStatus">
           <h3 class="collection__info-nft-text">My NFTs</h3>
           <div class="collection__info-nft-switcher" :class="{'collection__info-nft-switcher-active': myNft}">
@@ -112,6 +113,7 @@
 </template>
 <script>
 import nft from '@/components/nft.vue'
+import attributesFilter from '@/components/modals/attributesFilter'
 import {BigNumber} from 'ethers'
 export default {
   data() {
@@ -119,10 +121,12 @@ export default {
       filter: 'All',
       sort: '',
       myNft: false,
+      collectionInfo: {}
     }
   },
   components: {
-    nft
+    nft,
+    attributesFilter
   },
   methods: {
     addCurrentPage() {
@@ -153,12 +157,20 @@ export default {
   },
   async created() {
     await this.$store.dispatch('getGraphData')
+    this.collectionInfo = await this.$store.dispatch('getCollectionInfo')
+
     if (process.browser) {
       addEventListener('scroll', this.addCurrentPage)
     }
 
   },
   computed: {
+    countItems() {
+      switch (this.filter) {
+        case 'All': return this.collectionInfo.mint_count;
+        case 'listed': return this.collectionInfo.sell_count;
+      }
+    },
     nftList() {
       return this.$store.state.nftList
     }

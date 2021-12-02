@@ -1,18 +1,41 @@
 <template>
   <div class="nft__content">
-    <h1 class="nft__content-title">Listing in progress</h1>
-    <p class="nft__content-text-second" v-if="!launch">Your NFT is being listed on the marketplace</p>
-    <h3 class="nft__content-text nft__content-text-border" v-if="launch">Please wait while we confirm your listing</h3>
-    <p class="nft__content-subtitle nft__content-subtitle-second" v-if="launch">Your NFT is being listed on the marketplace</p>
-    <div class="nft__content-buttons">
+    <h1 class="nft__content-title">Sign</h1>
+    <p class="nft__content-text">Set your sale listing expiry time</p>
+        <div class="nft__content-time" v-if="!changeInfo">
+          <button
+            class="nft__content-time-button"
+            :class="{'nft__content-active': activeDate === 1}"
+            @click="changeDate(1)"
+          >
+            3 days
+          </button>
+          <button
+            class="nft__content-time-button"
+            :class="{'nft__content-active': activeDate === 2}"
+            @click="changeDate(2)"
+          >
+            7 days
+          </button>
+          <button
+            class="nft__content-time-button"
+            :class="{'nft__content-active': activeDate === 3}"
+            @click="changeDate(3)"
+          >
+            30 days
+          </button>
+          <button
+            class="nft__content-time-button"
+            :class="{'nft__content-active': activeDate === 4}"
+            @click="changeDate(4)"
+          >
+            6 month
+          </button>
+        </div>
+    <p class="nft__content-subtitle">Your listing will expire on {{ getDate }}</p>
+    <div class="nft__content-buttons-mini">
       <button class="nft__content-buttons-button nft__content-buttons-button-cancel" @click="$router.push('/mycollection')">Cancel</button>
-      <button class="nft__content-buttons-button gradient-button" v-if="!launch" @click="listingNft">Launch</button>
-      <button
-        class="nft__content-buttons-button-confirm gradient-button"
-        v-else
-      >
-        Pending confirmation <img src="/loading-button.svg" alt="load">
-      </button>
+      <button class="nft__content-buttons-button gradient-button" @click="listingNft">List for sale</button>
     </div>
   </div>
 </template>
@@ -20,20 +43,47 @@
 export default {
   data() {
     return {
-      launch: false
+      date: (new Date().getTime() / 1000) + 259200,
+      activeDate: 1
     }
   },
-  props: ['nft'],
+  props: ['price', 'changeInfo'],
   methods: {
+    changeDate(date) {
+      this.activeDate = date
+      let dateNow = new Date().getTime() / 1000
+      switch (date) {
+        case 1: this.date = dateNow + 259200;
+          break;
+        case 2: this.date = dateNow + 604800;
+          break;
+        case 3: this.date = dateNow + 2592000;
+          break;
+        case 4: this.date = dateNow + 15778463;
+          break;
+        default: this.date = dateNow + 259200
+      }
+    },
     changeStep(step) {
       this.$emit('changeStep', step)
     },
     async listingNft() {
-      await this.$store.dispatch('listingNFT', this.nft)
-      this.launch = true
+      this.$emit('setInfo', {
+        price: this.price,
+        date: this.date
+      })
+      this.changeStep(4)
     },
   },
   computed: {
+    getDate() {
+      let month = ['Jan', 'Feb', 'Mar',
+        'Apr', 'May', 'June', 'July',
+        'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      let getDate = new Date(+this.date * 1000)
+      return `${month[getDate.getMonth()]} ${getDate.getDate()} @ ${getDate.getHours()}:${getDate.getMinutes()}`
+
+    },
     listToken() {
       return this.$store.state.listToken
     }
