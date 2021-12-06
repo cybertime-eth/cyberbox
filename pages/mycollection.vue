@@ -43,7 +43,7 @@ export default {
   },
   async created() {
     if (!this.listNft) {
-      this.listNft = await this.$store.dispatch('getGraphData', 'myNft')
+      this.listNft = await this.$store.dispatch('getGraphData', 'myNftAll')
       this.filteredNft = this.listNft
       this.loading = false
     }
@@ -69,7 +69,7 @@ export default {
       if (payload === 'sale') {
         this.filteredNft = this.listNft.filter(item => item.market_status === 'LISTED')
       } else if (payload === 'all') {
-        this.filteredNft = await this.$store.dispatch('getGraphData', 'myNft')
+        this.filteredNft = await this.$store.dispatch('getGraphData', 'myNftAll')
       } else {
         this.filteredNft = this.listNft.filter(item => item.contract === payload)
       }
