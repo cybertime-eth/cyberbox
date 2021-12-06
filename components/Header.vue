@@ -142,6 +142,12 @@ header {
   }
   &__mobile {
     display: none;
+    &-menu {
+      display: none;
+    }
+    &-connect {
+      display: none;
+    }
   }
 }
 @media screen and (max-width: 460px) {
@@ -182,6 +188,7 @@ header {
     &__mobile {
       display: block;
       &-menu {
+        display: block;
         justify-self: flex-end;
         width: 1.8rem;
       }
