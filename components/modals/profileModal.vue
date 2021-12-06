@@ -114,4 +114,11 @@ export default {
     opacity: 1;
   }
 }
+@media screen and (max-width: 460px) {
+  .profile__menu {
+    right: 0;
+    top: 6.6rem;
+    width: 100%;
+  }
+}
 </style>

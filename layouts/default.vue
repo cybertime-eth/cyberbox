@@ -223,7 +223,7 @@ ul {
 }
 @media screen and (max-width: 460px) {
   .container-xl {
-    width: 32rem;
+    width: 30.4rem;
   }
 }
 </style>

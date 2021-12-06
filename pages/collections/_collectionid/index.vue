@@ -356,8 +356,88 @@ export default {
 }
 @media screen and (max-width: 460px) {
   .collection {
+    &__banner {
+      height: 12rem;
+    }
+    &__content {
+      top: -4.5rem;
+    }
+    &__header {
+      &-avatar {
+        width: 8rem;
+        height: 8rem;
+      }
+      &-title {
+        padding-top: 1rem;
+      }
+      &-subtitle {
+        padding-top: .5rem;
+      }
+      &-socials {
+        top: 17rem;
+        left: auto;
+        right: auto;
+        width: 15rem;
+      }
+      &-info {
+        padding-top: 5.6rem;
+        flex-wrap: wrap;
+        &-block {
+          width: 14rem;
+          height: 5.6rem;
+          margin-bottom: .8rem;
+          &-title {
+            font-size: 1.4rem;
+          }
+          &-subtitle {
+            font-size: 1rem;
+          }
+        }
+      }
+      &-content {
+        padding-top: 1rem;
+        font-size: 1.4rem;
+        text-align: left;
+        width: auto;
+      }
+    }
+    &__filter {
+      margin-top: 2rem;
+      &-button {
+        font-size: 1.4rem;
+      }
+    }
     &__items {
-      grid-template-columns: 1fr;
+      grid-template-columns: 14.4rem 14.4rem;
+      grid-column-gap: 1.6rem;
+      grid-row-gap: 1.6rem;
+      padding-top: 2.2rem;
+    }
+    &__item {
+      width: 14.4rem;
+      height: 32.8rem;
+      &-image {
+        width: 14.4rem;
+        height: 14.4rem;
+      }
+      &-info {
+        padding: .5rem 0.8rem 3.4rem;
+        &-details {
+          margin-top: 1rem;
+          width: 100%;
+        }
+        &-price {
+          &-null {
+            font-size: 1.4rem;
+          }
+          &-text {
+            font-size: 1.4rem;
+          }
+        }
+        &-id {
+          padding-bottom: 1rem;
+        }
+      }
     }
   }
 }

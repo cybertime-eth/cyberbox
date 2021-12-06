@@ -71,4 +71,32 @@ export default {
     }
   }
 }
+@media screen and (max-width: 460px) {
+  .home {
+    padding-top: 2.2rem;
+    &__title {
+      font-size: 1.8rem;
+      letter-spacing: 0.03em;
+    }
+    &__items {
+      grid-template-columns: 1fr;
+      padding-top: 2.1rem;
+      grid-row-gap: 2rem;
+    }
+    &__item {
+      width: 100%;
+      height: 43.2rem;
+      &-image {
+        width: 100%;
+        height: 30.4rem;
+      }
+      &-info {
+        padding-top: 1.5rem;
+        &-button {
+          margin-top: 2.2rem;
+        }
+      }
+    }
+  }
+}
 </style>

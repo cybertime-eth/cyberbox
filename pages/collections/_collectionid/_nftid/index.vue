@@ -24,7 +24,11 @@
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <p class="nft__block-info-price-text" v-if="nft.price !== 0">Price</p>
             <div class="nft__block-info-price" v-if="nft.price !== 0"><img src="/celo.png" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= 30$</span></div>
-            <p class="nft__block-info-date"><img src="/time.svg" alt="time"> Sale ends December 11, 2021 at 01:33pm +03</p>
+            <p class="nft__block-info-date"><img src="/time.svg" alt="time"> Sale ends in
+              {{ daysDifference }} days
+              {{ hoursDifference }} hours
+              {{ minutesDifference }} minutes
+            </p>
             <div class="nft__block-info-status">
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
@@ -45,7 +49,7 @@
               <h1>{{ nft.price }} CELO</h1>
               <span>= 30$</span>
             </div>
-            <p class="nft__block-info-date"><img src="/time.svg" alt="time"> Sale ends {{ getDate }}</p>
+            <p class="nft__block-info-date"><img src="/time.svg" alt="time"> Sale ends {{ daysDifference }}</p>
             <div class="nft__block-info-status">
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">
@@ -123,6 +127,10 @@ export default {
       step: 1,
       loadButton: false,
       nftInfo: {},
+      daysDifference: 0,
+      hoursDifference: 0,
+      minutesDifference: 0,
+      secondsDifference: 0,
     }
   },
   components: {
@@ -141,6 +149,16 @@ export default {
       collectionId: this.$route.params.collectionid
     })
     await this.getAttributes()
+    setInterval(() => {
+      if(Date.now() / 1000 <= this.nft.updatedAt * 1000) {
+        this.timeDifference();
+      } else {
+        this.daysDifference = 0;
+        this.hoursDifference = 0;
+        this.minutesDifference = 0;
+        this.secondsDifference = 0;
+      }
+    }, 1000)
   },
   computed: {
     getDate() {
@@ -160,6 +178,19 @@ export default {
     }
   },
   methods: {
+    timeDifference() {
+      let difference = this.nft.updatedAt * 1000 - new Date();
+      this.daysDifference = Math.floor(difference/1000/60/60/24)
+      difference -= this.daysDifference*1000*60*60*24
+
+      this.hoursDifference = Math.floor(difference/1000/60/60)
+      difference -= this.hoursDifference*1000*60*60
+
+      this.minutesDifference = Math.floor(difference/1000/60)
+      difference -= this.minutesDifference*1000*60
+
+      this.secondsDifference = Math.floor(difference/1000)
+    },
    async removeFromMarket() {
       this.loadButton = true
       const res = await this.$store.dispatch('removeNft', this.nft.contract_id)

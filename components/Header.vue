@@ -20,7 +20,7 @@
       <button class="header__box gradient-button" v-if="address" @click="$router.push('/mycollection')">
        My Collection
       </button>
-      <button v-else></button>
+      <button v-else class="header__null"></button>
       <div class="header__wallet" v-if="address" @click="showProfileMenu = true">
         <h3 class="header__wallet-address">{{ address }}</h3>
         <div class="header__wallet-avatar gradient-button">
@@ -28,25 +28,31 @@
         </div>
       </div>
       <button class="gradient-button header__connect" v-else @click="showConnectModal = true">Connect Wallet</button>
+      <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
+      <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showProfileMenuMobile = true">
     </div>
     <connect v-if="showConnectModal && !address" @closeModal="closeModal"/>
     <profileModal v-show="showProfileMenu" @closeModal="closeModal"/>
+    <profileModalMobile v-show="showProfileMenuMobile" @closeModal="closeModal"/>
   </header>
 </template>
 <script>
 import connect from '@/components/modals/connect'
 import profileModal from '@/components/modals/profileModal'
+import profileModalMobile from '@/components/modals/profileModalMobile'
 export default {
   data() {
     return {
       image: false,
       showConnectModal: false,
-      showProfileMenu: false
+      showProfileMenu: false,
+      showProfileMenuMobile: false
     }
   },
   components: {
     connect,
-    profileModal
+    profileModal,
+    profileModalMobile
   },
   computed: {
     user() {
@@ -60,6 +66,7 @@ export default {
     closeModal(payload) {
       this.showConnectModal = payload
       this.showProfileMenu = payload
+      this.showProfileMenuMobile = payload
     }
   }
 }
@@ -133,18 +140,57 @@ header {
     height: 4.8rem;
     cursor: pointer;
   }
+  &__mobile {
+    display: none;
+  }
 }
 @media screen and (max-width: 460px) {
   .header {
-    grid-template-columns: 1fr;
+    grid-template-columns: 15rem 1fr 1fr;
+    height: 6.5rem;
+    &__null {
+      display: none;
+    }
     &__navigation {
       display: none;
+    }
+    &__logo {
+      img {
+        width: 4rem;
+      }
     }
     &__box {
       display: none;
     }
-    &__wallet {
+    &__connect {
       display: none;
+    }
+    &__wallet {
+      width: 9.2rem;
+      height: 2.4rem;
+      justify-self: center;
+      padding: .2rem 1rem;
+      background: $purpleLight;
+      &-avatar {
+        display: none;
+      }
+      &-address {
+        padding-left: 0;
+        font-size: 1.3rem;
+      }
+    }
+    &__mobile {
+      display: block;
+      &-menu {
+        justify-self: flex-end;
+        width: 1.8rem;
+      }
+      &-connect {
+        display: block;
+        width: 10.1rem;
+        height: 2.4rem;
+        font-size: 1.3rem;
+      }
     }
   }
 }

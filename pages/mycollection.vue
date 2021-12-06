@@ -182,7 +182,7 @@ export default {
 @media screen and (max-width: 460px) {
   .my-collection {
     &__items {
-      grid-template-columns: 1fr;
+      grid-template-columns: 14.4rem 14.4rem;
     }
   }
 }
