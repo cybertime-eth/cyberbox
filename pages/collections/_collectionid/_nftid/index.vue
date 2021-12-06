@@ -24,6 +24,7 @@
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <p class="nft__block-info-price-text" v-if="nft.price !== 0">Price</p>
             <div class="nft__block-info-price" v-if="nft.price !== 0"><img src="/celo.png" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= 30$</span></div>
+            <p class="nft__block-info-date"><img src="/time.svg" alt="time"> Sale ends December 11, 2021 at 01:33pm +03</p>
             <div class="nft__block-info-status">
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
@@ -39,10 +40,17 @@
             <h3 class="nft__block-info-minted">Rarity rank {{ nft.rarity_rank }}</h3>
             <p class="nft__block-info-description" v-if="nft.price !== 0">{{ nft.description }}</p>
             <p class="nft__block-info-price-text" v-if="nft.price !== 0">Price</p>
-            <div class="nft__block-info-price" v-if="nft.price !== 0"><img src="/celo.png" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= 30$</span></div>
+            <div class="nft__block-info-price" v-if="nft.price !== 0">
+              <img src="/celo.png" alt="celo">
+              <h1>{{ nft.price }} CELO</h1>
+              <span>= 30$</span>
+            </div>
+            <p class="nft__block-info-date"><img src="/time.svg" alt="time"> Sale ends {{ getDate }}</p>
             <div class="nft__block-info-status">
               <p class="nft__block-info-status-title">Market status</p>
-              <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
+              <h3 class="nft__block-info-status-content">
+                {{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}
+              </h3>
             </div>
             <h3 class="nft__block-info-transfer"><img src="/transfer.svg" alt="transfer">Transfer</h3>
             <button class="nft__block-info-sell gradient-button" @click="listStatus = 'active'"  v-if="nft.price === 0">Sell</button>
@@ -135,6 +143,18 @@ export default {
     await this.getAttributes()
   },
   computed: {
+    getDate() {
+      const month = ['January', 'February', 'March',
+        'April', 'May', 'June', 'July',
+        'August', 'September', 'October', 'November', 'December'];
+      let getDate = new Date(+this.nft.updatedAt * 1000)
+      return `
+      ${month[getDate.getMonth()]}
+      ${getDate.getDate()},
+      ${getDate.getFullYear()} at
+      ${getDate.getHours()}:${getDate.getUTCMinutes() < 10 ? '0' + getDate.getUTCMinutes() : getDate.getMinutes()}`
+
+    },
     seller() {
       return this.nft.owner === this.$store.state.fullAddress
     }
@@ -232,6 +252,16 @@ export default {
       &-minted {
         font-family: OpenSans-Regular;
         padding-top: 1rem;
+      }
+      &-date {
+        padding-top: 1.8rem;
+        color: $grayLight;
+        display: flex;
+        align-items: center;
+        img {
+          width: 2rem;
+          margin-right: 1rem;
+        }
       }
       &-description {
         padding-top: 1rem;

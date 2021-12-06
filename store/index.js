@@ -20,7 +20,7 @@ export const state = () => ({
   nft: {},
   approveToken: '',
   listToken: '',
-  countPage: 1,
+  countPage: 0,
   filter: filter.races.DAOS.layers
 })
 export const getters = {
@@ -33,13 +33,17 @@ export const actions = {
   async getGraphData({commit,state}, type) {
     let sort = `orderBy: contract_id`
     switch (type) {
-      case 'myNft': sort = `where: { owner: "${localStorage.getItem('address')}"} orderBy: contract_id`;
+      case 'myNftAll': sort = `where: { owner: "${localStorage.getItem('address')}"} orderBy: contract_id`;
         break;
-      case 'listed': sort = `where: { market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"}`;
+      case 'myNftlisted': sort = `where: { owner: "${localStorage.getItem('address')}" market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
+        break;
+      case 'myNftbought': sort = `where: { owner: "${localStorage.getItem('address')}" market_status: "BOUGHT"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
+        break;
+      case 'listed': sort = `where: { market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
         break;
       case 'all': sort =  `orderBy: contract_id`;
         break;
-      case 'bought': sort = `where: { market_status: "BOUGHT"  contract: "${$nuxt.$route.params.collectionid}"}`;
+      case 'bought': sort = `where: { market_status: "BOUGHT"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
         break;
       case 'price-lowest': sort = `orderBy: price, orderDirection: asc`;
         break;
@@ -48,6 +52,10 @@ export const actions = {
       case 'rarity-rare': sort =  `orderBy: rarity_rank, orderDirection: asc`;
         break;
       case 'rarity-common': sort =  `orderBy: rarity_rank, orderDirection: desc`;
+        break;
+      case 'mint-lowest': sort = `orderBy: contract_id`;
+        break;
+      case 'mint-highest': sort = `orderBy: contract_id orderDirection: desc`;
         break;
       case 'pagination': sort = `skip: ${48 * state.countPage} orderBy: contract_id`;
         break;

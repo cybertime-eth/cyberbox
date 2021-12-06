@@ -19,7 +19,7 @@
     </div>
     <div class="attributes__block">
       <div class="attributes__block-header">
-        <h3 class="attributes__block-header-title">Attributes <span>3</span></h3>
+        <h3 class="attributes__block-header-title">Information</h3>
         <img
           class="attributes__block-header-image"
           src="/attr-array.svg" alt="array"
@@ -34,7 +34,7 @@
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Token ID</h3>
-          <h3 class="attributes__block-content-item-subtitle">#{{ info.contract_id }} <img src="/copy.svg" alt="copy"></h3>
+          <h3 class="attributes__block-content-item-subtitle">#{{ info.contract_id }}</h3>
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Contract Address</h3>

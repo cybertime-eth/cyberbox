@@ -26,7 +26,7 @@
             <h3 class="collection__header-info-block-subtitle">Volume traded</h3>
           </div>
           <div class="collection__header-info-block"  data-aos="fade-left">
-            <h3 class="collection__header-info-block-title">{{ collectionInfo.sell_max_price }} Celo</h3>
+            <h3 class="collection__header-info-block-title">{{ collectionInfo.sell_max_price }} CELO</h3>
             <h3 class="collection__header-info-block-subtitle">Floor price</h3>
           </div>
         </div>
@@ -62,15 +62,33 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'price-lowest'}"
           @click="changeSort('price-lowest')"
+          v-if="filter !== 'All'"
         >
           Price - Lowest
         </button>
         <button
           class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 'mint-lowest'}"
+          @click="changeSort('mint-lowest')"
+          v-if="filter === 'All'"
+        >
+          Mint - Lowest
+        </button>
+        <button
+          class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'price-highest'}"
           @click="changeSort('price-highest')"
+          v-if="filter !== 'All'"
         >
           Price - Highest
+        </button>
+        <button
+          class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 'mint-highest'}"
+          @click="changeSort('mint-highest')"
+          v-if="filter === 'All'"
+        >
+          Mint - Highest
         </button>
         <button
           class="collection__sort-button"
@@ -145,14 +163,10 @@ export default {
     },
     changeMyNftStatus() {
       this.myNft = !this.myNft
-      if (this.myNft) {
-        this.$store.dispatch('getGraphData', 'myNft')
-      } else {
-        this.$store.dispatch('getGraphData')
-      }
+      this.$store.dispatch('getGraphData', this.myNft ? 'myNft' + this.filter : this.filter)
     },
     changeFilter() {
-      this.$store.dispatch('getGraphData', this.filter)
+      this.$store.dispatch('getGraphData', this.myNft ? 'myNft' + this.filter : this.filter)
     },
   },
   async created() {

@@ -10,13 +10,17 @@
       </nuxt-link>
     </li>
     <li class="profile__menu-list">
-      <nuxt-link to="/" class="profile__menu-link">
+      <a
+        href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438"
+        class="profile__menu-link"
+        target="_blank"
+      >
         <div class="profile__menu-link-info">
           <img src="/celo.png" alt="celo" class="profile__menu-link-info-icon-savenft">
           Buy CELO
         </div>
         <img src="/array-right.svg" alt="array">
-      </nuxt-link>
+      </a>
     </li>
     <li class="profile__menu-list" @click="logout">
       <div class="profile__menu-link">

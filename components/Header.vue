@@ -3,21 +3,17 @@
     <div class="header container-xl">
       <div class="header__logo">
         <img src="/logo.svg" alt="logo" class="header__logo-img">
-        <nuxt-link to="/" class="header__logo-link">CyberBox</nuxt-link>
       </div>
       <nav class="header__navigation">
         <ul class="header__ul">
           <li class="header__list">
             <nuxt-link class="header__link gradient-text" to="/">Marketplace</nuxt-link>
           </li>
-<!--          <li class="header__list">-->
-<!--            <nuxt-link class="header__link" to="#">Minted Box</nuxt-link>-->
-<!--          </li>-->
-<!--          <li class="header__list">-->
-<!--            <nuxt-link class="header__link" to="#">Rankings</nuxt-link>-->
-<!--          </li>-->
           <li class="header__list">
-            <nuxt-link class="header__link" to="#">About</nuxt-link>
+            <a class="header__link" href="https://forms.gle/R7LmANz7iqsCA88X8" target="_blank">Launchpad</a>
+          </li>
+          <li class="header__list">
+            <nuxt-link class="header__link" to="#">Rankings</nuxt-link>
           </li>
         </ul>
       </nav>
@@ -75,7 +71,7 @@ header {
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 47rem 18rem 44.3rem 22.5rem;
+  grid-template-columns: 14rem 34rem 61.3rem 22.5rem;
   align-items: center;
   &__logo {
     display: flex;
