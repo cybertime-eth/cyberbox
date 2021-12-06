@@ -19,8 +19,13 @@
       </div>
       <div class="my-collection-filters-item my-collection-filters-item-nft" :class="{'my-collection-filters-item-active': activeFilter === 'daos'}" @click="filter('daos')">
         <img src="/daopolis-nft.png" alt="nft" class="my-collection-filters-item-image">
-        <p class="my-collection-filters-item-content">{{ contractDaosLength }}</p>
+        <p class="my-collection-filters-item-content">{{ contractDaosLength('daos') }}</p>
         <h4 class="my-collection-filters-item-hover">Daopolis</h4>
+      </div>
+      <div class="my-collection-filters-item my-collection-filters-item-nft" :class="{'my-collection-filters-item-active': activeFilter === 'daos'}" @click="filter('maos')">
+        <img src="/default-avatar.png" alt="nft" class="my-collection-filters-item-image">
+        <p class="my-collection-filters-item-content">{{ contractDaosLength('maos') }}</p>
+        <h4 class="my-collection-filters-item-hover">Maos</h4>
       </div>
     </div>
     <div class="my-collection__items">
@@ -43,7 +48,7 @@ export default {
   },
   async created() {
     if (!this.listNft) {
-      this.listNft = await this.$store.dispatch('getGraphData', 'myNftAll')
+      this.listNft = await this.$store.dispatch('getGraphData', 'myNft')
       this.filteredNft = this.listNft
       this.loading = false
     }
@@ -56,20 +61,20 @@ export default {
         return countListing.length
       }
     },
-    contractDaosLength() {
+  },
+  methods: {
+    contractDaosLength(contract) {
       if (this.listNft) {
         const list = this.listNft
-        const countListing = list.filter(item => item.contract === 'daos')
+        const countListing = list.filter(item => item.contract === contract)
         return countListing.length
       }
     },
-  },
-  methods: {
     async filter(payload) {
       if (payload === 'sale') {
         this.filteredNft = this.listNft.filter(item => item.market_status === 'LISTED')
       } else if (payload === 'all') {
-        this.filteredNft = await this.$store.dispatch('getGraphData', 'myNftAll')
+        this.filteredNft = await this.$store.dispatch('getGraphData', 'myNft')
       } else {
         this.filteredNft = this.listNft.filter(item => item.contract === payload)
       }

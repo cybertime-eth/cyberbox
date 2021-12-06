@@ -33,6 +33,8 @@ export const actions = {
   async getGraphData({commit,state}, type) {
     let sort = `orderBy: contract_id`
     switch (type) {
+      case 'myNft': sort = `where: { owner: "${localStorage.getItem('address')}"} orderBy: contract_id`;
+        break;
       case 'myNftAll': sort = `where: { owner: "${localStorage.getItem('address')}" contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
         break;
       case 'myNftlisted': sort = `where: { owner: "${localStorage.getItem('address')}" market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
