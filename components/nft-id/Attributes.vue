@@ -30,7 +30,7 @@
       <div class="attributes__block-content" v-if="showRightAttributes">
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Owned by</h3>
-          <h3 class="attributes__block-content-item-subtitle">{{ owner }}</h3>
+          <h3 class="attributes__block-content-item-subtitle">{{ cutAddress(info.owner) }}</h3>
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Token ID</h3>
@@ -38,7 +38,7 @@
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Contract Address</h3>
-          <h3 class="attributes__block-content-item-subtitle">{{ info.contract_address }} <img src="/send.svg" alt="send"></h3>
+          <h3 class="attributes__block-content-item-subtitle">{{ cutAddress(info.contract_address) }} <img src="/send.svg" alt="send"></h3>
         </div>
       </div>
     </div>
@@ -61,18 +61,18 @@ export default {
       id: this.$route.params.nftid,
       collectionid: this.$route.params.collectionid
     })
-    await this.owned()
   },
   methods: {
-    async owned() {
-      const address = await this.info.owner
-      const startID = await address.split("").slice(0, 6);
-      const endID = await address.split("").slice(-4);
-      const dotArr = [".", ".", "."];
-      this.owner = await startID
-        .concat(dotArr)
-        .concat(endID)
-        .join("");
+     cutAddress(address) {
+      if (address) {
+        const startID = address.split("").slice(0, 6);
+        const endID = address.split("").slice(-4);
+        const dotArr = [".", ".", "."];
+        return startID
+          .concat(dotArr)
+          .concat(endID)
+          .join("");
+      }
     },
   }
 }
@@ -148,7 +148,7 @@ export default {
   .attributes {
     flex-direction: column;
     &__block {
-      width: 28.7rem;
+      width: 26.4rem;
     }
   }
 }

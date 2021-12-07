@@ -20,7 +20,6 @@
           <div class="nft__block-info" v-if="!seller">
             <h3 class="nft__block-info-company">Cybertime.finance</h3>
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
-            <h3 class="nft__block-info-minted">Rarity rank {{ nft.rarity_rank }}</h3>
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <p class="nft__block-info-price-text" v-if="nft.price !== 0">Price</p>
             <div class="nft__block-info-price" v-if="nft.price !== 0"><img src="/celo.png" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= 30$</span></div>
@@ -41,7 +40,6 @@
           <div class="nft__block-info" v-else-if="listStatus === 'default'">
             <h3 class="nft__block-info-company">Cybertime.finance</h3>
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
-            <h3 class="nft__block-info-minted">Rarity rank {{ nft.rarity_rank }}</h3>
             <p class="nft__block-info-description" v-if="nft.price !== 0">{{ nft.description }}</p>
             <p class="nft__block-info-price-text" v-if="nft.price !== 0">Price</p>
             <div class="nft__block-info-price" v-if="nft.price !== 0">
@@ -49,7 +47,11 @@
               <h1>{{ nft.price }} CELO</h1>
               <span>= 30$</span>
             </div>
-            <p class="nft__block-info-date"><img src="/time.svg" alt="time"> Sale ends {{ daysDifference }}</p>
+            <p class="nft__block-info-date"><img src="/time.svg" alt="time"> Sale ends in
+              {{ daysDifference }} days
+              {{ hoursDifference }} hours
+              {{ minutesDifference }} minutes
+            </p>
             <div class="nft__block-info-status">
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">
@@ -441,29 +443,62 @@ export default {
   }
 }
 @media screen and (max-width: 460px) {
+  #nft {
+    width: 30.4rem;
+  }
   .nft {
+    &__crumbs {
+      display: none;
+    }
     &__block {
       grid-template-columns: 1fr;
+      padding: 0;
+      margin: 0;
       &-image {
-        width: 32.6rem;
-        height: 32.6rem;
+        width: 30.4rem;
+        height: 30.4rem;
+        &-loading {
+          width: 30.4rem;
+          height: 30.4rem;
+        }
       }
       &-info {
-        text-align: center;
+        text-align: left;
+        padding-top: 1.8rem;
+        padding-bottom: 2rem;
+        &-company {
+          font-size: 1.4rem;
+        }
         &-name {
-          text-align: center;
-          padding-top: 2rem;
+          text-align: left;
+          padding-top: 1rem;
+          font-size: 2.2rem;
+        }
+        &-minted {
+          font-size: 1.4rem;
+          padding-top: .5rem;
+        }
+        &-description {
+          padding-top: 1.5rem;
         }
         &-price {
-          justify-content: center;
+          padding-top: 1rem;
+          img {
+            width: 2rem;
+            margin-right: 1.5rem;
+          }
+          h1 {
+            font-size: 1.8rem;
+          }
+        }
+        &-date {
+          display: none;
         }
         &-buy {
           margin-top: 4rem;
+          width: 100%;
         }
       }
-    }
-    &__crumbs {
-
     }
   }
 }

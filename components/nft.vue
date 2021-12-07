@@ -9,7 +9,6 @@
       <h2 class="collection__item-info-name">
         {{ nft.name }}
       </h2>
-      <p class="collection__item-info-rarity">Rarity Rank {{ nft.rarity_rank }}</p>
       <p class="collection__item-info-id">Token ID {{ nftID(nft.contract_id) }}</p>
       <p class="collection__item-info-type">Price</p>
       <div class="collection__item-info-price" v-if="nft.price > 0">
@@ -68,7 +67,7 @@ export default {
 .collection {
   &__item {
     width: 20rem;
-    height: 42.4rem;
+    height: 43.2rem;
     border-radius: .4rem;
     box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
     transition: .3s;
@@ -88,7 +87,7 @@ export default {
       border-radius: .4rem .4rem 0 0;
     }
     &-info {
-      padding: 1.6rem .8rem 3.4rem;
+      padding: 1.6rem .8rem 2.4rem;
       &-name {
         font-size: 1.8rem;
         font-family: OpenSans-SemiBold;
@@ -102,7 +101,7 @@ export default {
         padding-top: .5rem;
         font-size: 1.3rem;
         border-bottom: .1rem solid $modalColor;
-        padding-bottom: 2rem;
+        padding-bottom: 2.8rem;
       }
       &-price {
         display: flex;
@@ -126,7 +125,7 @@ export default {
       &-type {
         color: $border;
         font-size: 1.1rem;
-        padding-top: 1rem;
+        padding-top: 2.4rem;
       }
       &-details {
         width: 18.4rem;

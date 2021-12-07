@@ -4,7 +4,7 @@
     <div class="collection__content container-xl">
       <div class="collection__header">
         <img src="/avatar-punks.png" alt="avatar" class="collection__header-avatar">
-        <h1 class="collection__header-title" >CeloPunks</h1>
+        <h1 class="collection__header-title" >CeloPunks <img src="/confirmed.svg" alt="confirm"></h1>
         <p class="collection__header-subtitle">Collectibes</p>
         <div class="collection__header-socials">
           <img src="/socials/disckord.svg" alt="social">
@@ -16,10 +16,6 @@
           <div class="collection__header-info-block" data-aos="fade-right">
             <h3 class="collection__header-info-block-title">{{ collectionInfo.mint_count }}</h3>
             <h3 class="collection__header-info-block-subtitle">Items</h3>
-          </div>
-          <div class="collection__header-info-block" data-aos="fade-right">
-            <h3 class="collection__header-info-block-title">5.0K</h3>
-            <h3 class="collection__header-info-block-subtitle">Owners</h3>
           </div>
           <div class="collection__header-info-block" data-aos="fade-left">
             <h3 class="collection__header-info-block-title">{{ collectionInfo.sell_total_price }} CELO</h3>
@@ -89,20 +85,6 @@
           v-if="filter === 'All'"
         >
           Mint - Highest
-        </button>
-        <button
-          class="collection__sort-button"
-          :class="{'collection__sort-button-active': sort === 'rarity-rare'}"
-          @click="changeSort('rarity-rare')"
-        >
-          Rarity - Rare
-        </button>
-        <button
-          class="collection__sort-button"
-          :class="{'collection__sort-button-active': sort === 'rarity-common'}"
-          @click="changeSort('rarity-common')"
-        >
-          Rarity - Common
         </button>
         <button
           class="collection__sort-button"
@@ -214,6 +196,9 @@ export default {
     }
     &-title {
       padding-top: 2rem;
+      img {
+        width: 2rem;
+      }
     }
     &-socials {
       position: absolute;
@@ -290,7 +275,7 @@ export default {
     width: 100%;
     margin-top: 3.2rem;
     &-button {
-      width: 31.5rem;
+      width: 100%;
       height: 4rem;
       box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
       border-radius: .8rem;
@@ -393,6 +378,11 @@ export default {
             font-size: 1rem;
           }
         }
+        :first-child {
+          width: 100%;
+          margin-right: 0;
+          text-align: center;
+        }
       }
       &-content {
         padding-top: 1rem;
@@ -437,6 +427,12 @@ export default {
         &-id {
           padding-bottom: 1rem;
         }
+      }
+    }
+    &__sort {
+      &-button {
+        width: 9.6rem;
+        height: 5.2rem;
       }
     }
   }
