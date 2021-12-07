@@ -8,9 +8,9 @@ const ContractKit = require('@celo/contractkit')
 import filter from './../config.js'
 export const state = () => ({
   celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
-  cyberBoxMarketplace: '0x43fb8C0d8D577C13E3664CAC91A390140bC7F156',
-  daosContract: '0x3066E73379d0209D9127175D479fB79fD57Ac135',
-  maosContract: '0x69BE88E846763eCEB4a14FEC89C9A62C762612Eb',
+  cyberBoxMarketplace: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
+  daosContract: '0xc43e4469DB9aF84370b7bC4e7EFfEefCc2251B4f',
+  maosContract: '0x22E495DA2A5f00134408A183830Cf9b792684d9E',
   celo: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
   user: {},
   chainId: null,

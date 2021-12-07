@@ -29,7 +29,7 @@
       </div>
     </div>
     <div class="my-collection__items">
-      <nft :nft="nft" :route="`/collections/daos/${nft.contract_id}`" :seller="true" v-for="nft of filteredNft" v-if="filteredNft" />
+      <nft :nft="nft" :route="`/collections/${nft.contract}/${nft.contract_id}`" :seller="true" v-for="nft of filteredNft" v-if="filteredNft" />
     </div>
   </section>
 </template>
