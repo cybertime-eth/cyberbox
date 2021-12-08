@@ -7,13 +7,13 @@
       <nav class="header__navigation">
         <ul class="header__ul">
           <li class="header__list">
-            <nuxt-link class="header__link gradient-text" to="/">Marketplace</nuxt-link>
+            <nuxt-link class="header__link" to="/" append active-class="gradient-text" exact>Marketplace</nuxt-link>
           </li>
           <li class="header__list">
             <a class="header__link" href="https://forms.gle/R7LmANz7iqsCA88X8" target="_blank">Launchpad</a>
           </li>
           <li class="header__list">
-            <nuxt-link class="header__link" to="#">Rankings</nuxt-link>
+            <nuxt-link class="header__link" active-class="gradient-text" to="/rankings"  exact>Rankings</nuxt-link>
           </li>
         </ul>
       </nav>

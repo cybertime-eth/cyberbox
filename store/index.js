@@ -4,15 +4,18 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import CyberBoxMarketplaceABI from './../abis/cyberBoxMarketPlace.json'
 import DaosABI from './../abis/daos.json'
 import MaosABI from './../abis/maos.json'
+import CeloToken from './../abis/celoToken.json'
 import {gql} from "nuxt-graphql-request";
 const ContractKit = require('@celo/contractkit')
 import filter from './../config.js'
+import redstone from 'redstone-api';
 export const state = () => ({
   celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
-  cyberBoxMarketplace: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
+  cyberBoxMarketplace: '0x43fb8C0d8D577C13E3664CAC91A390140bC7F156',
   daosContract: '0x3066E73379d0209D9127175D479fB79fD57Ac135',
-  maosContract: '0x22E495DA2A5f00134408A183830Cf9b792684d9E',
+  maosContract: '0x69BE88E846763eCEB4a14FEC89C9A62C762612Eb',
   celo: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
+  celoToken: '0x471EcE3750Da237f93B8E339c536989b8978a438',
   user: {},
   chainId: null,
   address: null,
@@ -22,7 +25,8 @@ export const state = () => ({
   approveToken: '',
   listToken: '',
   countPage: 0,
-  filter: filter.races.DAOS.layers
+  filter: filter.races.DAOS.layers,
+  successBuyToken: false,
 })
 export const getters = {
   provider() {
@@ -116,7 +120,7 @@ export const actions = {
 
 
 
-  async updateUser({commit}) {
+  async updateUser({commit, state}) {
     const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
     const provider = new ethers.providers.Web3Provider(web3 ? web3 : window.ethereum);
     if (localStorage.getItem('address') && !localStorage.getItem('walletconnect')) {
@@ -172,6 +176,19 @@ export const actions = {
     } catch (error) {
       console.log(error);
     }
+  },
+
+
+  // GET INFORMATION USER
+
+  async getBalance({state}) {
+    const web3 = new Web3(window.ethereum)
+    const kit = ContractKit.newKitFromWeb3(web3)
+    const res = await kit.getTotalBalance(state.fullAddress)
+    return res.CELO.c[0] / 10000
+  },
+  async getPriceToken() {
+    return await redstone.getPrice('CELO')
   },
 
   // GET NFT
@@ -246,9 +263,9 @@ export const actions = {
 
   async approveToken({commit, state, dispatch}) {
     const signer = this.getters.provider.getSigner()
-    const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer)
+    const contract = new ethers.Contract(state.daosContract, DaosABI, signer)
     try {
-      await contract.changeERC721Token('maos', '0x22E495DA2A5f00134408A183830Cf9b792684d9E')
+      await contract.approve(state.cyberBoxMarketplace, state.nft.contract_id)
       contract.on("Approval", () => {
         commit('changeApproveToken', 'approve')
       });
@@ -288,7 +305,7 @@ export const actions = {
       from: account,
     })
     this.getters.provider.once(result, async () => {
-      dispatch('buyNFT', token)
+     dispatch('buyNFT', token)
     });
   },
   async buyNFT({commit, state}, token) {
@@ -304,6 +321,9 @@ export const actions = {
       value: parsePrice,
       gas: 3000000
     })
+    this.getters.provider.once(result, async () => {
+      commit('changeSuccessBuyToken')
+    });
   },
 
   // GET COLLECTION INFO
@@ -380,4 +400,7 @@ export const mutations = {
   changeCountPage(state, count) {
     state.countPage = count
   },
+  changeSuccessBuyToken(state) {
+    state.successBuyToken = true
+  }
 }

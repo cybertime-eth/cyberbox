@@ -22,7 +22,7 @@
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <p class="nft__block-info-price-text" v-if="nft.price !== 0">Price</p>
-            <div class="nft__block-info-price" v-if="nft.price !== 0"><img src="/celo.png" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= 30$</span></div>
+            <div class="nft__block-info-price" v-if="nft.price !== 0"><img src="/celo.png" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= {{ priceToken }}$</span></div>
             <p class="nft__block-info-date"><img src="/time.svg" alt="time"> Sale ends in
               {{ daysDifference }} days
               {{ hoursDifference }} hours
@@ -32,7 +32,7 @@
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
             </div>
-            <button class="nft__block-info-buy" @click="buyToken" v-if="nft.price !== 0">Buy now</button>
+            <button class="nft__block-info-buy" @click="showBuyTokenModal = true" v-if="nft.price !== 0">Buy now</button>
           </div>
 
           <!-- INFO SELLER -->
@@ -45,7 +45,7 @@
             <div class="nft__block-info-price" v-if="nft.price !== 0">
               <img src="/celo.png" alt="celo">
               <h1>{{ nft.price }} CELO</h1>
-              <span>= 30$</span>
+              <span>= {{ priceToken }}$</span>
             </div>
             <p class="nft__block-info-date"><img src="/time.svg" alt="time"> Sale ends in
               {{ daysDifference }} days
@@ -106,25 +106,31 @@
       </div>
     </div>
   <Attributes :item="attributes" :info="nft"/>
+  <BuyToken v-if="showBuyTokenModal" :price="nft.price" @closeModal="closeModal"/>
+  <SuccessfullBuy v-if="showSuccessModal" :image="nft.image" :name="nft.name"/>
 <!--    <History />-->
   </section>
 </template>
 <script>
-import Attributes from '@/components/nft-id/Attributes'
-import History from '@/components/nft-id/History-table'
-import SellPrice from '@/components/sale-nft/SellPrice'
-import Approve from '@/components/sale-nft/Approve'
-import Sign from '@/components/sale-nft/Sign'
-import Listing from '@/components/sale-nft/Listing'
-import Successful from '@/components/sale-nft/Successful'
-import Navigation from '@/components/sale-nft/Navigation'
+import Attributes from '@/components/nft-id/Attributes';
+import History from '@/components/nft-id/History-table';
+import SellPrice from '@/components/sale-nft/SellPrice';
+import Approve from '@/components/sale-nft/Approve';
+import Sign from '@/components/sale-nft/Sign';
+import Listing from '@/components/sale-nft/Listing';
+import Successful from '@/components/sale-nft/Successful';
+import Navigation from '@/components/sale-nft/Navigation';
+import BuyToken from '@/components/modals/buyToken';
+import SuccessfullBuy from '@/components/modals/successBuy';
 export default {
   data() {
     return {
       attributes: [],
+      showBuyTokenModal: false,
       nft: {
         price: 0
       },
+      priceToken: 0,
       listStatus: 'default',
       step: 1,
       loadButton: false,
@@ -143,13 +149,17 @@ export default {
     Approve,
     Sign,
     Listing,
-    Successful
+    Successful,
+    BuyToken,
+    SuccessfullBuy
   },
   async mounted() {
     this.nft = await this.$store.dispatch('getNft', {
       id: this.$route.params.nftid,
       collectionId: this.$route.params.collectionid
     })
+    const price = await this.$store.dispatch('getPriceToken')
+    this.priceToken = (price.value * this.nft.price).toFixed(1)
     await this.getAttributes()
     setInterval(() => {
       if(Date.now() / 1000 <= this.nft.updatedAt * 1000) {
@@ -163,6 +173,9 @@ export default {
     }, 1000)
   },
   computed: {
+    showSuccessModal() {
+      return this.$store.state.successBuyToken
+    },
     getDate() {
       const month = ['January', 'February', 'March',
         'April', 'May', 'June', 'July',
@@ -180,6 +193,9 @@ export default {
     }
   },
   methods: {
+    closeModal(payload) {
+      this.showBuyTokenModal = payload
+    },
     timeDifference() {
       let difference = this.nft.updatedAt * 1000 - new Date();
       this.daysDifference = Math.floor(difference/1000/60/60/24)
@@ -213,12 +229,6 @@ export default {
     },
     setInfoNft(info) {
       this.nftInfo = info
-    },
-    buyToken() {
-      this.$store.dispatch('approveBuyToken', {
-        id: this.$route.params.nftid,
-        price: this.nft.price
-      })
     },
     async getAttributes() {
       const res =  await this.$axios.get(this.nft.attributes);

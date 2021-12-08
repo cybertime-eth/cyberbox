@@ -1,7 +1,7 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'cyberbox',
+    title: 'CyberBox - NFT Marketplace on Celo',
     htmlAttrs: {
       lang: 'en'
     },
@@ -12,7 +12,7 @@ export default {
       {name: 'format-detection', content: 'telephone=no'}
     ],
     link: [
-      {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}
+      {rel: 'icon', type: 'image/x-icon', href: '/logo.svg'}
     ]
   },
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -24,7 +24,8 @@ export default {
   },
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '@/plugins/aos.client.js'
+    '@/plugins/aos.client.js',
+    '@/plugins/outside.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
