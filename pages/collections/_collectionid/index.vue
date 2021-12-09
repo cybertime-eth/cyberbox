@@ -58,7 +58,6 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'price-lowest'}"
           @click="changeSort('price-lowest')"
-          v-if="filter !== 'All'"
         >
           Price - Lowest
         </button>
@@ -66,7 +65,6 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'mint-lowest'}"
           @click="changeSort('mint-lowest')"
-          v-if="filter === 'All'"
         >
           Mint - Lowest
         </button>
@@ -74,7 +72,6 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'price-highest'}"
           @click="changeSort('price-highest')"
-          v-if="filter !== 'All'"
         >
           Price - Highest
         </button>
@@ -82,7 +79,6 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'mint-highest'}"
           @click="changeSort('mint-highest')"
-          v-if="filter === 'All'"
         >
           Mint - Highest
         </button>
@@ -166,6 +162,7 @@ export default {
       switch (this.filter) {
         case 'All': return this.collectionInfo.mint_count;
         case 'listed': return this.collectionInfo.sell_count;
+        case 'bought': return this.collectionInfo.sell_count;
       }
     },
     nftList() {

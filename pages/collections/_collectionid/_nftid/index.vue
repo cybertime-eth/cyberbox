@@ -155,7 +155,6 @@ export default {
     SuccessfullBuy
   },
   async mounted() {
-    console.log('work')
     this.nft = await this.$store.dispatch('getNft', {
       id: this.$route.params.nftid,
       collectionId: this.$route.params.collectionid

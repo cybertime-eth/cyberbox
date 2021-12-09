@@ -24,7 +24,7 @@
       <div class="header__wallet" v-if="address" @click="showProfileMenu = true">
         <h3 class="header__wallet-address">{{ address }}</h3>
         <div class="header__wallet-avatar gradient-button">
-          <img :src="user.image" alt="avatar" v-if="user.image">
+          <img src="/celo.svg" alt="avatar">
         </div>
       </div>
       <button class="gradient-button header__connect" v-else @click="showConnectModal = true">Connect Wallet</button>
@@ -128,10 +128,10 @@ header {
         border-radius: 50% !important;
       }
       img {
-        width: 4.2rem;
-        height: 4.5rem;
+        width: 2.4rem;
+        height: 2.4rem;
         object-fit: cover;
-        border-radius: 2.5rem;
+        border-radius: 25%;
       }
     }
   }

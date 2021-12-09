@@ -1,8 +1,19 @@
 <template>
-  <div class="collection__item" @click="routeNft">
-    <img src="/more.png" alt="more" v-if="seller" class="collection__item-more">
-    <div class="collection__item-modal">
-
+  <div class="collection__item" @click="routeNft(false)">
+    <img src="/more.png" alt="more" v-if="seller" class="collection__item-more" @click="openModal(nft.id)">
+    <div class="collection__item-modal" v-if="modalId === nft.id" @mouseleave="modalId = 0">
+      <div class="collection__item-modal-button" @click="routeNft(true)">
+        <img src="/outline-sell.svg" alt="sell">
+        <h3>Sell</h3>
+      </div>
+      <div class="collection__item-modal-button">
+        <img src="/transfer-black.svg" alt="transfer">
+        <h3>Transfer</h3>
+      </div>
+      <div class="collection__item-modal-button">
+        <img src="/copy-link.svg" alt="copy">
+        <h3>Copy link</h3>
+      </div>
     </div>
     <img :src="nft.image" alt="item" class="collection__item-image">
     <div class="collection__item-info">
@@ -24,8 +35,16 @@
 <script>
 import {BigNumber} from "ethers";
 export default {
+  data() {
+    return {
+      modalId: 0
+    }
+  },
   props: ['nft', 'route', 'seller', 'filter'],
   methods: {
+    openModal(id) {
+      this.modalId = id
+    },
     nftPrice(number) {
       let decPlaces = 1;
       decPlaces = Math.pow(10, decPlaces);
@@ -58,8 +77,13 @@ export default {
         return id
       }
     },
-    routeNft() {
-      this.$router.push(this.route)
+    routeNft(payload) {
+      if (!this.seller) {
+        this.$router.push(this.route)
+      }
+      if (payload) {
+        this.$router.push(this.route)
+      }
     }
   }
 }
@@ -75,6 +99,32 @@ export default {
     cursor: pointer;
     position: relative;
     top: 0;
+    &-modal {
+      position: absolute;
+      top: 3.8rem;
+      left: .4rem;
+      width: 19.2rem;
+      height: 18.6rem;
+      background: $white;
+      box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1);
+      border-radius: .4rem;
+      &-button {
+        display: flex;
+        align-items: center;
+        padding-left: 1rem;
+        width: 18.2rem;
+        height: 6.2rem;
+        img {
+          width: 1.6rem;
+        }
+        h3 {
+          padding-left: 1.5rem;
+        }
+        &:hover {
+          background: $lightGreen;
+        }
+      }
+    }
     &-more {
       position: absolute;
       right: .8rem;

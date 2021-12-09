@@ -328,11 +328,11 @@ export const actions = {
 
   // GET COLLECTION INFO
 
-  async getCollectionInfo({commit, state}) {
+  async getCollectionInfo({commit, state}, isArray) {
     const query = gql`
       query Sample {
         contracts(first: 5) {
-           id
+          id
           title
           mint_count
           bid_count
@@ -344,7 +344,7 @@ export const actions = {
         }
       }`;
     let data = await this.$graphql.default.request(query)
-    return data.contracts[0]
+    return isArray ? data.contracts : data.contracts[0]
   },
 
   // REMOVE NFT FROM LIST
