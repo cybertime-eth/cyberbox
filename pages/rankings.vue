@@ -31,13 +31,13 @@
           </div>
           <div class="rankings__table-content-item-volume">
             <h3 class="rankings__table-content-item-volume-title">${{ item.volumePrice }}</h3>
-            <p class="rankings__table-content-item-volume-subtitle"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }} CELO</p>
+            <p class="rankings__table-content-item-volume-subtitle">{{ item.volumeCelo }} <img src="/celo.svg" alt="celo"> CELO</p>
           </div>
           <h3 class="rankings__table-content-item-day">-</h3>
           <h3 class="rankings__table-content-item-week">-</h3>
           <div class="rankings__table-content-item-floor">
             <h3 class="rankings__table-content-item-floor-title">${{ item.floorPrice }}</h3>
-            <p class="rankings__table-content-item-floor-subtitle"><img src="/celo.svg" alt="celo">{{ item.floorPriceCelo }} CELO</p>
+            <p class="rankings__table-content-item-floor-subtitle">{{ item.floorPriceCelo }} <img src="/celo.svg" alt="celo"> CELO</p>
           </div>
           <h3 class="rankings__table-content-item-owners">-</h3>
           <h3 class="rankings__table-content-item-items">{{ item.items }}</h3>
@@ -199,8 +199,8 @@ export default {
             display: flex;
             align-items: center;
             img {
-              margin-right: .5rem;
-              width: 1.6rem;
+              margin: 0 .5rem;
+              width: 1.4rem;
             }
           }
         }
@@ -222,8 +222,8 @@ export default {
             display: flex;
             align-items: center;
             img {
-              margin-right: .5rem;
-              width: 1.6rem;
+              margin: 0 .5rem;
+              width: 1.4rem;
             }
           }
         }
