@@ -18,11 +18,11 @@
             <h3 class="collection__header-info-block-subtitle">Items</h3>
           </div>
           <div class="collection__header-info-block" data-aos="fade-left">
-            <h3 class="collection__header-info-block-title">{{ collectionInfo.sell_total_price }} CELO</h3>
+            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ collectionInfo.sell_total_price }} CELO</h3>
             <h3 class="collection__header-info-block-subtitle">Volume traded</h3>
           </div>
-          <div class="collection__header-info-block"  data-aos="fade-left">
-            <h3 class="collection__header-info-block-title">{{ collectionInfo.sell_max_price }} CELO</h3>
+          <div class="collection__header-info-block" data-aos="fade-left">
+            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ collectionInfo.sell_max_price }} CELO</h3>
             <h3 class="collection__header-info-block-subtitle">Floor price</h3>
           </div>
         </div>
@@ -86,14 +86,14 @@
         >
           Mint - Highest
         </button>
-        <button
-          class="collection__sort-button"
-          :class="{'collection__sort-button-active': sort === 'traits'}"
-          @click="changeSort('traits')"
-        >
-          Traits
-          <img src="/sort.svg" alt="sort">
-        </button>
+<!--        <button-->
+<!--          class="collection__sort-button"-->
+<!--          :class="{'collection__sort-button-active': sort === 'traits'}"-->
+<!--          @click="changeSort('traits')"-->
+<!--        >-->
+<!--          Traits-->
+<!--          <img src="/sort.svg" alt="sort">-->
+<!--        </button>-->
       </div>
 <!--      <attributesFilter />-->
       <div class="collection__info">
@@ -106,7 +106,7 @@
         </div>
       </div>
       <div class="collection__items">
-        <nft :nft="nft" v-for="nft of nftList" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
+        <nft :nft="nft" v-for="nft of nftList" :filter="filter" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
       </div>
     </div>
   </section>
@@ -133,9 +133,9 @@ export default {
       if(process.browser) {
         const count = this.$store.state.countPage
         const element = document.body
-        if (element.scrollHeight === window.pageYOffset + window.innerHeight && this.$route.fullPath === '/collections/' + this.$route.params.collectionid && this.filter === 'All') {
-          this.$store.commit('changeCountPage', count + 1)
-          this.$store.dispatch('getGraphData', 'pagination')
+        if (element.scrollHeight === window.pageYOffset + window.innerHeight && count * 48 === this.nftList.length) {
+            this.$store.commit('changeCountPage', count + 1)
+            this.$store.dispatch('getGraphData', 'pagination')
         }
       }
     },
@@ -152,6 +152,7 @@ export default {
     },
   },
   async created() {
+    this.$store.commit('changeCountPage', 1)
     await this.$store.dispatch('getGraphData')
     this.collectionInfo = await this.$store.dispatch('getCollectionInfo')
 
@@ -235,6 +236,12 @@ export default {
         margin-right: 1rem;
         &-title {
           font-family: OpenSans-SemiBold;
+          display: flex;
+          align-items: center;
+          img {
+            width: 1.6rem;
+            margin-right: .6rem;
+          }
         }
         &-subtitle {
           font-family: OpenSans-Regular;

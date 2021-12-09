@@ -10,10 +10,11 @@
         {{ nft.name }}
       </h2>
       <p class="collection__item-info-id">Token ID {{ nftID(nft.contract_id) }}</p>
-      <p class="collection__item-info-type">Price</p>
-      <div class="collection__item-info-price" v-if="nft.price > 0">
-        <img src="/celo.png" alt="celo">
-        <h3 class="collection__item-info-price-text">{{ nftPrice(nft.price) }} <span>CELO</span></h3>
+      <p class="collection__item-info-type" v-if="filter === 'bought'">Last sell</p>
+      <p class="collection__item-info-type" v-else>Price</p>
+      <div class="collection__item-info-price" v-if="nft.price > 0 && nft.market_status !== 'BOUGHT' || filter === 'bought'">
+        <img src="/celo.svg" alt="celo">
+        <h3 class="collection__item-info-price-text">{{ nftPrice(filter === 'bought' ? nft.price / 1000 : nft.price) }} <span>CELO</span></h3>
       </div>
       <h3 class="collection__item-info-price-null" v-else>Not for sale</h3>
       <button class="collection__item-info-details">Details</button>
@@ -23,7 +24,7 @@
 <script>
 import {BigNumber} from "ethers";
 export default {
-  props: ['nft', 'route', 'seller'],
+  props: ['nft', 'route', 'seller', 'filter'],
   methods: {
     nftPrice(number) {
       let decPlaces = 1;

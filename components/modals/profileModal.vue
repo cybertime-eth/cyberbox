@@ -16,7 +16,7 @@
         target="_blank"
       >
         <div class="profile__menu-link-info">
-          <img src="/celo.png" alt="celo" class="profile__menu-link-info-icon-savenft">
+          <img src="/celo.svg" alt="celo" class="profile__menu-link-info-icon-savenft">
           Buy CELO
         </div>
         <img src="/array-right.svg" alt="array">

@@ -11,9 +11,9 @@ import filter from './../config.js'
 import redstone from 'redstone-api';
 export const state = () => ({
   celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
-  cyberBoxMarketplace: '0x43fb8C0d8D577C13E3664CAC91A390140bC7F156',
-  daosContract: '0x3066E73379d0209D9127175D479fB79fD57Ac135',
-  maosContract: '0x69BE88E846763eCEB4a14FEC89C9A62C762612Eb',
+  cyberBoxMarketplace: '0x4Dbf292BAD2cc86B318036f55C876e96bb7863D5',
+  daosContract: '0x34d63dc2f8c5655bA6E05124B3D4a283A402CEd9',
+  maosContract: '0x1FBB74537Bf8b8bbd2aF43fE2115638A67137D45',
   celo: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
   celoToken: '0x471EcE3750Da237f93B8E339c536989b8978a438',
   user: {},
@@ -24,7 +24,7 @@ export const state = () => ({
   nft: {},
   approveToken: '',
   listToken: '',
-  countPage: 0,
+  countPage: 1,
   filter: filter.races.DAOS.layers,
   successBuyToken: false,
 })
@@ -64,7 +64,7 @@ export const actions = {
         break;
       case 'mint-highest': sort = `orderBy: contract_id orderDirection: desc`;
         break;
-      case 'pagination': sort = `skip: ${48 * state.countPage} orderBy: contract_id`;
+      case 'pagination': sort = `skip: ${48 * (state.countPage - 1)} orderBy: contract_id`;
         break;
     }
     const query = gql`
@@ -282,7 +282,7 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer)
     try {
-      await contract.listToken(state.nft.contract_id, nft.price, nft.date.toFixed(0))
+      await contract.listToken(state.nft.contract_address, state.nft.contract_id, nft.price, nft.date.toFixed(0))
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
       });
@@ -316,7 +316,7 @@ export const actions = {
     const contract = new kit.web3.eth.Contract(CyberBoxMarketplaceABI, state.cyberBoxMarketplace)
     const parsePrice = ethers.utils.parseEther(String(token.price))
     const parseId = BigNumber.from(token.id).toNumber()
-    const result = await contract.methods.buyToken(parseId).send({
+    const result = await contract.methods.buyToken(state.nft.contract_address, parseId).send({
       from: account,
       value: parsePrice,
       gas: 3000000
@@ -353,7 +353,7 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer)
     try {
-      await contract.delistToken(id)
+      await contract.delistToken(state.nft.contract_address ,id)
       this.getters.provider.once(contract, async () => {
         return true
       });
@@ -398,6 +398,7 @@ export const mutations = {
     state.approveToken = approve
   },
   changeCountPage(state, count) {
+    console.log(count)
     state.countPage = count
   },
   changeSuccessBuyToken(state) {

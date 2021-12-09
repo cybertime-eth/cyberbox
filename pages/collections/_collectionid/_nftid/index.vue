@@ -21,9 +21,9 @@
             <h3 class="nft__block-info-company">Cybertime.finance</h3>
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
-            <p class="nft__block-info-price-text" v-if="nft.price !== 0">Price</p>
-            <div class="nft__block-info-price" v-if="nft.price !== 0"><img src="/celo.png" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= {{ priceToken }}$</span></div>
-            <p class="nft__block-info-date"><img src="/time.svg" alt="time"> Sale ends in
+            <p class="nft__block-info-price-text" v-if="isSellNFT">Price</p>
+            <div class="nft__block-info-price" v-if="isSellNFT"><img src="/celo.svg" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= {{ priceToken }}$</span></div>
+            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in
               {{ daysDifference }} days
               {{ hoursDifference }} hours
               {{ minutesDifference }} minutes
@@ -32,7 +32,8 @@
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
             </div>
-            <button class="nft__block-info-buy" @click="showBuyTokenModal = true" v-if="nft.price !== 0">Buy now</button>
+            <h3 class="nft__block-info-owner" v-if="!isSellNFT">Owner: {{ nft.owner }}</h3>
+            <button class="nft__block-info-buy" @click="showBuyTokenModal = true" v-if="isSellNFT">Buy now</button>
           </div>
 
           <!-- INFO SELLER -->
@@ -40,14 +41,14 @@
           <div class="nft__block-info" v-else-if="listStatus === 'default'">
             <h3 class="nft__block-info-company">Cybertime.finance</h3>
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
-            <p class="nft__block-info-description" v-if="nft.price !== 0">{{ nft.description }}</p>
-            <p class="nft__block-info-price-text" v-if="nft.price !== 0">Price</p>
-            <div class="nft__block-info-price" v-if="nft.price !== 0">
-              <img src="/celo.png" alt="celo">
+            <p class="nft__block-info-description" v-if="isSellNFT">{{ nft.description }}</p>
+            <p class="nft__block-info-price-text" v-if="isSellNFT">Price</p>
+            <div class="nft__block-info-price" v-if="isSellNFT">
+              <img src="/celo.svg" alt="celo">
               <h1>{{ nft.price }} CELO</h1>
               <span>= {{ priceToken }}$</span>
             </div>
-            <p class="nft__block-info-date"><img src="/time.svg" alt="time"> Sale ends in
+            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in
               {{ daysDifference }} days
               {{ hoursDifference }} hours
               {{ minutesDifference }} minutes
@@ -173,6 +174,13 @@ export default {
     }, 1000)
   },
   computed: {
+    isSellNFT() {
+      if (this.nft.market_status !== 'BOUGHT' && this.nft.price !== 0) {
+        return true
+      } else {
+        return false
+      }
+    },
     showSuccessModal() {
       return this.$store.state.successBuyToken
     },
@@ -305,6 +313,9 @@ export default {
           width: 2rem;
           margin-right: 1rem;
         }
+      }
+      &-owner {
+        padding-top: 2.4rem;
       }
       &-description {
         padding-top: 1rem;
