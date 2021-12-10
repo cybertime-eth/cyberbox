@@ -1,7 +1,7 @@
 import Web3 from 'web3'
 import {ethers, Wallet, providers, BigNumber} from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import CyberBoxMarketplaceABI from './../abis/cyberBoxMarketPlace.json'
+import MarketMainABI from './../abis/marketMain.json'
 import DaosABI from './../abis/daos.json'
 import MaosABI from './../abis/maos.json'
 import CeloToken from './../abis/celoToken.json'
@@ -12,6 +12,7 @@ import redstone from 'redstone-api';
 export const state = () => ({
   celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
   cyberBoxMarketplace: '0x4Dbf292BAD2cc86B318036f55C876e96bb7863D5',
+  marketMain: '0x0874b64E20690aEed36a33a55F529ad05734Fbc6',
   daosContract: '0x34d63dc2f8c5655bA6E05124B3D4a283A402CEd9',
   maosContract: '0x1FBB74537Bf8b8bbd2aF43fE2115638A67137D45',
   celo: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
@@ -38,13 +39,13 @@ export const actions = {
   async getGraphData({commit,state}, type) {
     let sort = `orderBy: contract_id`
     switch (type) {
-      case 'myNft': sort = `where: { owner: "${localStorage.getItem('address')}"} orderBy: contract_id`;
+      case 'myNft': sort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}"} orderBy: contract_id`;
         break;
-      case 'myNftAll': sort = `where: { owner: "${localStorage.getItem('address')}" contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
+      case 'myNftAll': sort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
         break;
-      case 'myNftlisted': sort = `where: { owner: "${localStorage.getItem('address')}" market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
+      case 'myNftlisted': sort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}" market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
         break;
-      case 'myNftbought': sort = `where: { owner: "${localStorage.getItem('address')}" market_status: "BOUGHT"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
+      case 'myNftbought': sort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}" market_status: "BOUGHT"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
         break;
       case 'listed': sort = `where: { market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
         break;
@@ -263,9 +264,11 @@ export const actions = {
 
   async approveToken({commit, state, dispatch}) {
     const signer = this.getters.provider.getSigner()
+    const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
+    const resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
     const contract = new ethers.Contract(state.daosContract, DaosABI, signer)
     try {
-      await contract.approve(state.cyberBoxMarketplace, state.nft.contract_id)
+      await contract.approve(resultAddress, state.nft.contract_id)
       contract.on("Approval", () => {
         commit('changeApproveToken', 'approve')
       });
@@ -280,8 +283,9 @@ export const actions = {
   },
   async listingNFT({commit, state}, nft) {
     const signer = this.getters.provider.getSigner()
-    const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer)
+    const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
+      console.log(state.nft.contract_address, state.nft.contract_id, nft.price, nft.date.toFixed(0))
       await contract.listToken(state.nft.contract_address, state.nft.contract_id, nft.price, nft.date.toFixed(0))
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
@@ -313,9 +317,10 @@ export const actions = {
     const accounts = await web3.eth.getAccounts()
     const account = accounts[0]
     const kit = ContractKit.newKitFromWeb3(web3)
-    const contract = new kit.web3.eth.Contract(CyberBoxMarketplaceABI, state.cyberBoxMarketplace)
+    const contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
     const parsePrice = ethers.utils.parseEther(String(token.price))
     const parseId = BigNumber.from(token.id).toNumber()
+    console.log(state.nft.contract_address, parseId, parsePrice)
     const result = await contract.methods.buyToken(state.nft.contract_address, parseId).send({
       from: account,
       value: parsePrice,
@@ -329,9 +334,11 @@ export const actions = {
   // GET COLLECTION INFO
 
   async getCollectionInfo({commit, state}, isArray) {
+    const allArray = `first: 5`
+    const firstObject = `where: { title: "${$nuxt.$route.params.collectionid}"}`
     const query = gql`
       query Sample {
-        contracts(first: 5) {
+        contracts(${isArray ? allArray : firstObject}) {
           id
           title
           mint_count
@@ -351,7 +358,7 @@ export const actions = {
 
   async removeNft({commit, state}, id) {
     const signer = this.getters.provider.getSigner()
-    const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer)
+    const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
       await contract.delistToken(state.nft.contract_address ,id)
       this.getters.provider.once(contract, async () => {
