@@ -1,7 +1,7 @@
 <template>
   <header>
     <div class="header container-xl">
-      <div class="header__logo">
+      <div class="header__logo" @click="$router.push('/')">
         <img src="/logo.svg" alt="logo" class="header__logo-img">
       </div>
       <nav class="header__navigation">

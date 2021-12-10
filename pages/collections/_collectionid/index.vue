@@ -381,8 +381,13 @@ export default {
           width: 14rem;
           height: 5.6rem;
           margin-bottom: .8rem;
+          text-align: center;
           &-title {
             font-size: 1.4rem;
+            justify-content: center;
+            img {
+              width: 1.6rem !important;
+            }
           }
           &-subtitle {
             font-size: 1rem;
