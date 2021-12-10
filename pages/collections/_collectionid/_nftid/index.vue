@@ -32,7 +32,6 @@
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
             </div>
-            <h3 class="nft__block-info-owner" v-if="!isSellNFT">Owner: {{ nft.owner }}</h3>
             <button class="nft__block-info-buy" @click="showBuyTokenModal = true" v-if="isSellNFT">Buy now</button>
           </div>
 

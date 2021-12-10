@@ -56,13 +56,6 @@
       <div class="collection__sort">
         <button
           class="collection__sort-button"
-          :class="{'collection__sort-button-active': sort === 'price-lowest'}"
-          @click="changeSort('price-lowest')"
-        >
-          Price - Lowest
-        </button>
-        <button
-          class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'mint-lowest'}"
           @click="changeSort('mint-lowest')"
         >
@@ -70,17 +63,24 @@
         </button>
         <button
           class="collection__sort-button"
-          :class="{'collection__sort-button-active': sort === 'price-highest'}"
-          @click="changeSort('price-highest')"
-        >
-          Price - Highest
-        </button>
-        <button
-          class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'mint-highest'}"
           @click="changeSort('mint-highest')"
         >
           Mint - Highest
+        </button>
+        <button
+          class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 'price-lowest'}"
+          @click="changeSort('price-lowest')"
+        >
+          Price - Lowest
+        </button>
+        <button
+          class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 'price-highest'}"
+          @click="changeSort('price-highest')"
+        >
+          Price - Highest
         </button>
 <!--        <button-->
 <!--          class="collection__sort-button"-->
