@@ -18,7 +18,7 @@
         <h3>Items</h3>
       </div>
       <div class="rankings__table-content">
-        <div class="rankings__table-content-item" v-for="item of list">
+        <div class="rankings__table-content-item" v-for="item of list" @click="$router.push(`/collections/${item.route}`)">
           <h3 class="rankings__table-content-item-number">{{ item.id }}</h3>
           <div class="rankings__table-content-item-collection">
             <div class="rankings__table-content-item-collection-image">
@@ -30,14 +30,12 @@
             <h3 class="rankings__table-content-item-collection-name">{{ item.name }}</h3>
           </div>
           <div class="rankings__table-content-item-volume">
-            <h3 class="rankings__table-content-item-volume-title">${{ item.volumePrice }}</h3>
-            <p class="rankings__table-content-item-volume-subtitle">{{ item.volumeCelo }} <img src="/celo.svg" alt="celo"> CELO</p>
+            <p class="rankings__table-content-item-volume-title"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</p>
           </div>
           <h3 class="rankings__table-content-item-day">-</h3>
           <h3 class="rankings__table-content-item-week">-</h3>
           <div class="rankings__table-content-item-floor">
-            <h3 class="rankings__table-content-item-floor-title">${{ item.floorPrice }}</h3>
-            <p class="rankings__table-content-item-floor-subtitle">{{ item.floorPriceCelo }} <img src="/celo.svg" alt="celo"> CELO</p>
+            <p class="rankings__table-content-item-floor-title"><img src="/celo.svg" alt="celo">{{ item.floorPriceCelo }}</p>
           </div>
           <h3 class="rankings__table-content-item-owners">-</h3>
           <h3 class="rankings__table-content-item-items">{{ item.items }}</h3>
@@ -59,22 +57,24 @@ export default {
   methods: {
     async renderlist() {
       const result = await this.$store.dispatch('getCollectionInfo', true)
+      const testResult = this.$store.state.collectionList
       const priceToken = await this.$store.dispatch('getPriceToken')
-      for (let [index, item] of result.entries()) {
+      for (let [index, item] of testResult.entries()) {
         this.list.push({
           id: index + 1,
-          collectionImage: '/daopolis-nft.png',
+          collectionImage: item.logo,
           verification: false,
           new: false,
-          name: item.title,
-          volumePrice: (item.sell_total_price * priceToken.value).toFixed(1),
-          volumeCelo: item.sell_total_price,
+          name: item.name,
+          volumePrice: 0,
+          volumeCelo: 0,
           statDay: 3,
           statWeek: 7,
-          floorPrice: (item.sell_max_price * priceToken.value).toFixed(1),
-          floorPriceCelo: item.sell_max_price,
+          floorPrice: 0,
+          floorPriceCelo: 0,
           owners: 0,
-          items: item.mint_count,
+          items: 0,
+          route: item.route
         })
       }
     }
@@ -139,6 +139,7 @@ export default {
         height: 8rem;
         border-bottom: .1rem solid $modalColor;
         align-items: center;
+        cursor: pointer;
         :first-child {
           justify-self: center;
         }
@@ -192,6 +193,12 @@ export default {
           text-align: right;
           &-title {
             letter-spacing: 0.03em;
+            display: flex;
+            align-items: center;
+            img {
+              margin: 0 .5rem;
+              width: 1.4rem;
+            }
           }
           &-subtitle {
             padding-top: .4rem;
@@ -215,6 +222,12 @@ export default {
           text-align: right;
           &-title {
             letter-spacing: 0.03em;
+            display: flex;
+            align-items: center;
+            img {
+              margin: 0 .5rem;
+              width: 1.4rem;
+            }
           }
           &-subtitle {
             padding-top: .4rem;

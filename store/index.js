@@ -28,6 +28,71 @@ export const state = () => ({
   countPage: 1,
   filter: filter.races.DAOS.layers,
   successBuyToken: false,
+  collectionList: [
+    {
+      id: 1,
+      name: 'Daopolis',
+      route: 'daos',
+      image: '/daopolis-nft.png',
+      banner: '/daopolis-nft.png',
+      logo: '/daopolis-nft.png',
+      wallet: '0x29a6520A99656e5b17A34471D5d458eFD3696695',
+      website: 'https://celopunks.club/',
+      twitter: 'https://twitter.com/CeloPunks',
+      discord: 'https://discord.com/invite/Dzukufsrqe',
+      telegram: 'https://t.me/celopunksclub',
+    },
+    {
+      id: 1,
+      name: 'CeloPunks',
+      route: 'celopunks',
+      image: '/collections/CeloPunks.png',
+      banner: '/collections/CeloPunks-banner.png',
+      logo: '/collections/CeloPunks-logo.png',
+      wallet: '0x29a6520A99656e5b17A34471D5d458eFD3696695',
+      website: 'https://celopunks.club/',
+      twitter: 'https://twitter.com/CeloPunks',
+      discord: 'https://discord.com/invite/Dzukufsrqe',
+      telegram: 'https://t.me/celopunksclub',
+    },
+    {
+      id: 2,
+      name: 'CeloToadz',
+      route: 'celotoadz',
+      image: '/collections/celoToadz.png',
+      banner: '/collections/celoToadz-banner.png',
+      logo: '/collections/celoToadz-logo.png',
+      wallet: '0xdbde524ed479f9effe777ba6b708ed8463fba445',
+      website: 'https://www.celotoadz.com/',
+      twitter: 'https://twitter.com/c_ToadzOfficial',
+      discord: 'https://discord.gg/dD3D223k8N',
+      instagram: 'https://www.instagram.com/celotoadzofficial/',
+    },
+    {
+      id: 3,
+      name: 'DimsOfCelo',
+      route: 'dimsofcelo',
+      image: '/collections/DimsOfCelo.png',
+      banner: '/collections/DimsOfCelo-banner.png',
+      logo: '/collections/DimsOfCelo-logo.png',
+      wallet: '0x462BFAFE102e9EAFd3A8c95097cFcb21B6A3c9B2',
+      website: 'https://dimsofcelo.art/',
+      twitter: 'https://twitter.com/dimsofcelonft',
+      discord: 'https://discord.com/invite/rhJjVUtKEs',
+    },
+    {
+      id: 4,
+      name: 'PixelAva',
+      route: 'pixelava',
+      image: '/collections/PixelAva.png',
+      banner: '/collections/PixelAva-banner.png',
+      logo: '/collections/PixelAva-logo.png',
+      wallet: '0xeBD0A580fabb5a5DBE98030D074e532F025C1367',
+      website: 'https://pixelava.space/',
+      twitter: 'https://twitter.com/NPixelava',
+      discord: 'https://discord.gg/sjjjFX2X',
+    },
+  ],
 })
 export const getters = {
   provider() {
@@ -285,8 +350,7 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
-      console.log(state.nft.contract_address, state.nft.contract_id, nft.price, nft.date.toFixed(0))
-      await contract.listToken(state.nft.contract_address, state.nft.contract_id, nft.price, nft.date.toFixed(0))
+      await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)), nft.date.toFixed(0))
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
       });

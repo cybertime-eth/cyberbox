@@ -1,16 +1,16 @@
 <template>
   <section class="collection">
-    <img src="/CeloPunks.png" alt="banner" class="collection__banner">
+    <img :src="collection.banner" alt="banner" class="collection__banner">
     <div class="collection__content container-xl">
       <div class="collection__header">
-        <img src="/avatar-punks.png" alt="avatar" class="collection__header-avatar">
-        <h1 class="collection__header-title" >CeloPunks <img src="/confirmed.svg" alt="confirm"></h1>
+        <img :src="collection.logo" alt="avatar" class="collection__header-avatar">
+        <h1 class="collection__header-title" >{{ collection.name }} <img src="/confirmed.svg" alt="confirm"></h1>
         <p class="collection__header-subtitle">Collectibes</p>
         <div class="collection__header-socials">
-          <img src="/socials/disckord.svg" alt="social">
-          <img src="/socials/telegram.svg" alt="social">
-          <img src="/socials/twitter.svg" alt="social">
-          <img src="/socials/web.svg" alt="social">
+          <a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
+          <a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
+          <a :href="collection.twitter" target="_blank" v-if="collection.twitter"><img src="/socials/twitter.svg" alt="social"></a>
+          <a :href="collection.website" target="_blank" v-if="collection.website"><img src="/socials/web.svg" alt="social"></a>
         </div>
         <div class="collection__header-info">
           <div class="collection__header-info-block" data-aos="fade-right">
@@ -18,11 +18,11 @@
             <h3 class="collection__header-info-block-subtitle">Items</h3>
           </div>
           <div class="collection__header-info-block" data-aos="fade-left">
-            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ collectionInfo.sell_total_price }} CELO</h3>
+            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ collectionInfo.sell_total_price }}</h3>
             <h3 class="collection__header-info-block-subtitle">Volume traded</h3>
           </div>
           <div class="collection__header-info-block" data-aos="fade-left">
-            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ collectionInfo.sell_max_price }} CELO</h3>
+            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ collectionInfo.sell_max_price }}</h3>
             <h3 class="collection__header-info-block-subtitle">Floor price</h3>
           </div>
         </div>
@@ -101,7 +101,7 @@
           </div>
         </div>
       </div>
-      <div class="collection__items">
+      <div class="collection__items" v-if="nftList.length">
         <nft :nft="nft" v-for="nft of nftList" :filter="filter" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
       </div>
     </div>
@@ -150,8 +150,9 @@ export default {
   async created() {
     this.$store.commit('changeCountPage', 1)
     await this.$store.dispatch('getGraphData')
-    this.collectionInfo = await this.$store.dispatch('getCollectionInfo')
-
+    const collectionResult = await this.$store.dispatch('getCollectionInfo')
+    collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
+    console.log(this.collection)
     if (process.browser) {
       addEventListener('scroll', this.addCurrentPage)
     }
@@ -167,7 +168,10 @@ export default {
     },
     nftList() {
       return this.$store.state.nftList
-    }
+    },
+    collection() {
+      return this.$store.state.collectionList.filter(item => item.route === this.$route.params.collectionid)[0]
+    },
   },
 }
 </script>
@@ -209,11 +213,13 @@ export default {
       :first-child {
         width: 2.1rem;
       }
-      img {
-        width: 2rem;
-        cursor: pointer;
-        &:hover {
-          animation: shaking .5s;
+      a {
+        img {
+          width: 2rem;
+          cursor: pointer;
+          &:hover {
+            animation: shaking .5s;
+          }
         }
       }
     }
