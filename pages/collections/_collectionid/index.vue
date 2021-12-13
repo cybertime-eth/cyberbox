@@ -152,7 +152,6 @@ export default {
     await this.$store.dispatch('getGraphData')
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
-    console.log(this.collection)
     if (process.browser) {
       addEventListener('scroll', this.addCurrentPage)
     }

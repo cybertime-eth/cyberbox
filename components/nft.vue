@@ -10,7 +10,7 @@
         <img src="/transfer-black.svg" alt="transfer">
         <h3>Transfer</h3>
       </div>
-      <div class="collection__item-modal-button">
+      <div class="collection__item-modal-button" @click="copyLink">
         <img src="/copy-link.svg" alt="copy">
         <h3>Copy link</h3>
       </div>
@@ -42,6 +42,13 @@ export default {
   },
   props: ['nft', 'route', 'seller', 'filter'],
   methods: {
+    copyLink() {
+      this.$copyText(`https://cyberbox.vercel.app/collections/${this.nft.contract}/${this.nft.contract_id}`)
+      this.$store.commit('setMessage', 'Link copied!')
+      setTimeout(() => {
+        this.$store.commit('setMessage', '')
+      }, 2000)
+    },
     openModal(id) {
       this.modalId = id
     },

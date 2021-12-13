@@ -25,7 +25,8 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '@/plugins/aos.client.js',
-    '@/plugins/outside.js'
+    '@/plugins/outside.js',
+    '@/plugins/components.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -40,7 +41,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/market-main-v4',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/market-main-alfa-first',
         options: {},
       },
       secondClient: {

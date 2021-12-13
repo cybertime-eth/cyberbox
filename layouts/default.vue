@@ -2,13 +2,41 @@
   <div class="app">
     <Header />
     <Nuxt />
+    <WrongNetwork v-if="showWrongNetwork" @closeModal="closeModal"/>
+    <h3 class="message" v-if="message">{{ message }}</h3>
   </div>
 </template>
 <script>
 import Header from './../components/Header'
+import WrongNetwork from './../components/modals/wrongNetwork'
 export default {
+  data() {
+    return {
+      showWrongNetwork: false,
+    }
+  },
+  watch: {
+    chainId() {
+      const id = this.$store.state.chainId
+      id === 44787 || id === 42220 || id === null ? this.showWrongNetwork = false :  this.showWrongNetwork = true
+    }
+  },
+  computed: {
+    message() {
+      return this.$store.state.message
+    },
+    chainId() {
+      return this.$store.state.chainId
+    }
+  },
+  methods: {
+    closeModal(payload) {
+      this.showWrongNetwork = payload
+    }
+  },
   components: {
-    Header
+    Header,
+    WrongNetwork
   },
  async mounted() {
     await this.$store.dispatch('updateUser')
@@ -17,7 +45,14 @@ export default {
 }
 </script>
 <style lang="scss">
-
+.message {
+  position: fixed;
+  bottom: 2.4rem;
+  left: 6rem;
+  padding: 1.2rem 2.5rem;
+  background: $lightGreen;
+  border-radius: .8rem;
+}
 .gradient-button {
   position: relative;
   background-clip: padding-box;

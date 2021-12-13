@@ -28,12 +28,13 @@ export const state = () => ({
   countPage: 1,
   filter: filter.races.DAOS.layers,
   successBuyToken: false,
+  message: '',
   collectionList: [
     {
       id: 1,
       name: 'Daopolis',
       route: 'daos',
-      image: '/daopolis-nft.png',
+      image: '/daopolis.JPG',
       banner: '/daopolis-nft.png',
       logo: '/daopolis-nft.png',
       wallet: '0x29a6520A99656e5b17A34471D5d458eFD3696695',
@@ -46,7 +47,7 @@ export const state = () => ({
       id: 1,
       name: 'CeloPunks',
       route: 'celopunks',
-      image: '/collections/CeloPunks.png',
+      image: '/collections/Celopunks.jpg',
       banner: '/collections/CeloPunks-banner.png',
       logo: '/collections/CeloPunks-logo.png',
       wallet: '0x29a6520A99656e5b17A34471D5d458eFD3696695',
@@ -91,6 +92,19 @@ export const state = () => ({
       website: 'https://pixelava.space/',
       twitter: 'https://twitter.com/NPixelava',
       discord: 'https://discord.gg/sjjjFX2X',
+    },
+    {
+      id: 5,
+      name: 'CeloPunksNeon',
+      route: 'celopunksneon',
+      image: '/collections/celopunksneon.png',
+      banner: '/collections/celopunksneon-banner.png',
+      logo: '/collections/celopunksneon-logo.png',
+      wallet: '0x29a6520A99656e5b17A34471D5d458eFD3696695',
+      website: 'https://celopunks.club/',
+      twitter: 'https://twitter.com/CeloPunks',
+      discord: 'https://discord.com/invite/Dzukufsrqe',
+      telegram: 'https://t.me/celopunksclub'
     },
   ],
 })
@@ -189,10 +203,20 @@ export const actions = {
   async updateUser({commit, state}) {
     const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
     const provider = new ethers.providers.Web3Provider(web3 ? web3 : window.ethereum);
-    if (localStorage.getItem('address') && !localStorage.getItem('walletconnect')) {
+    const ethereum = window.ethereum || window.web3
+    if (localStorage.getItem('address') && !localStorage.getItem('walletconnect') && ethereum) {
       const signer = await provider.getSigner()
       const address = await signer.getAddress()
+      const chain = await provider.getNetwork()
+      try {
+        ethereum.on("chainChanged", async (chainId) => {
+          commit('setChainId', BigNumber.from(chainId).toNumber())
+        })
+      } catch (error) {
+        console.log(error)
+      }
       commit('setAddress', address)
+      commit('setChainId', chain.chainId)
     }
   },
   async connectMetaTrust({commit}) {
@@ -201,6 +225,8 @@ export const actions = {
         await window.ethereum.request({ method: 'eth_requestAccounts' })
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const address = await provider.getSigner().getAddress();
+        const chainId = await provider.getNetwork()
+        commit('setChainId', chainId.chainId)
         commit('setAddress', address)
       } else if (window.web3) {
         window.web3 = new ethers.providers.Web3Provider(
@@ -208,6 +234,8 @@ export const actions = {
         );
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const address = await provider.getSigner().getAddress();
+        const chainId = await provider.getNetwork()
+        commit('setChainId', chainId.chainId)
         commit('setAddress', address)
       } else {
         alert("please use web3 enabled browser.");
@@ -368,7 +396,7 @@ export const actions = {
     const account = accounts[0]
     const kit = ContractKit.newKitFromWeb3(web3)
     const goldToken = await kit._web3Contracts.getGoldToken();
-    const parsePrice = ethers.utils.parseEther(String(token.price + token.price * 30 / 1000))
+    const parsePrice = ethers.utils.parseEther(String(token.price))
     const result = await goldToken.methods.approve(account, parsePrice).send({
       from: account,
     })
@@ -474,5 +502,11 @@ export const mutations = {
   },
   changeSuccessBuyToken(state) {
     state.successBuyToken = true
+  },
+  setChainId(state, chain) {
+    state.chainId = chain
+  },
+  setMessage(state, msg) {
+    state.message = msg
   }
 }
