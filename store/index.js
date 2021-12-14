@@ -32,9 +32,9 @@ export const state = () => ({
   sort: `orderBy: contract_id`,
   collectionList: [
     {
-      id: 1,
+      id: 0,
       name: 'Daopolis',
-      route: 'daos',
+      route: false,
       image: '/daopolis.JPG',
       banner: '/daopolis-nft.png',
       logo: '/daopolis-nft.png',
@@ -47,7 +47,7 @@ export const state = () => ({
     {
       id: 1,
       name: 'CeloPunks',
-      route: 'celopunks',
+      route: 'CPUNK',
       image: '/collections/Celopunks.jpg',
       banner: '/collections/CeloPunks-banner.png',
       logo: '/collections/CeloPunks-logo.png',
@@ -60,7 +60,7 @@ export const state = () => ({
     {
       id: 2,
       name: 'CeloToadz',
-      route: 'celotoadz',
+      route: 'CTOADS',
       image: '/collections/celoToadz.png',
       banner: '/collections/celoToadz-banner.png',
       logo: '/collections/celoToadz-logo.png',
@@ -116,7 +116,7 @@ export const getters = {
   }
 }
 export const actions = {
-  async getGraphData({commit,state}, type) {
+  async getGraphData({commit,state}) {
     const sort = state.sort
     const query = gql`
       query Sample {
@@ -161,7 +161,7 @@ export const actions = {
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    type === 'pagination' ? commit('addNftToList', data.contractInfos) : commit('setNewNftList', data.contractInfos)
+    sort === `skip: ${48 * (state.countPage - 1)} orderBy: contract_id` ? commit('addNftToList', data.contractInfos) : commit('setNewNftList', data.contractInfos)
     return data.contractInfos
   },
 
@@ -512,8 +512,9 @@ export const mutations = {
     state.message = msg
   },
   changeSortData(state, type) {
+    console.log(type)
     switch (type) {
-      case 'myNft': state.sort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}"} orderBy: contract_id`;
+      case 'myNft': state.sort = `first: 200 where: { owner: "${localStorage.getItem('address').toLowerCase()}"} orderBy: contract_id`;
         break;
       case 'myNftAll': state.sort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
         break;
@@ -523,7 +524,11 @@ export const mutations = {
         break;
       case 'price-lowest': state.sort = `orderBy: price, orderDirection: asc`;
         break;
+      case 'price-lowest-sold': state.sort = `orderBy: price_total, orderDirection: asc`;
+        break;
       case 'price-highest': state.sort = `orderBy: price, orderDirection: desc`;
+        break;
+      case 'price-highest-sold': state.sort = `orderBy: price_total, orderDirection: desc`;
         break;
       case 'rarity-rare': state.sort =  `orderBy: rarity_rank, orderDirection: asc`;
         break;
@@ -531,7 +536,11 @@ export const mutations = {
         break;
       case 'mint-lowest': state.sort = `orderBy: contract_id`;
         break;
+      case 'mint-lowest-sold': state.sort = `orderBy: contract_id`;
+        break;
       case 'mint-highest': state.sort = `orderBy: contract_id orderDirection: desc`;
+        break;
+      case 'mint-highest-sold': state.sort = `orderBy: contract_id orderDirection: desc`;
         break;
       case 'pagination': state.sort = `skip: ${48 * (state.countPage - 1)} orderBy: contract_id`;
         break;

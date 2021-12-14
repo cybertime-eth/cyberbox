@@ -30,7 +30,7 @@
       <div class="attributes__block-content" v-if="showRightAttributes">
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Owned by</h3>
-          <h3 class="attributes__block-content-item-subtitle">{{ cutAddress(info.owner) }}</h3>
+          <h3 class="attributes__block-content-item-subtitle">{{ cutAddress( info.owner) }}</h3>
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Token ID</h3>
@@ -50,17 +50,15 @@ export default {
     return {
       showLeftAttributes: true,
       showRightAttributes: true,
-      owner: '',
       id: 0,
-      info: {}
     }
   },
-  props: ['item'],
+  props: ['item', 'info'],
   async created() {
-    this.info = await this.$store.dispatch('getNft', {
-      id: this.$route.params.nftid,
-      collectionid: this.$route.params.collectionid
-    })
+    // this.info = await this.$store.dispatch('getNft', {
+    //   id: this.$route.params.nftid,
+    //   collectionid: this.$route.params.collectionid
+    // })
   },
   methods: {
      cutAddress(address) {

@@ -72,6 +72,7 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'price-lowest'}"
           @click="changeSort('price-lowest')"
+          v-if="filter !== 'All'"
         >
           Price - Lowest
         </button>
@@ -79,6 +80,7 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'price-highest'}"
           @click="changeSort('price-highest')"
+          v-if="filter !== 'All'"
         >
           Price - Highest
         </button>
@@ -131,6 +133,7 @@ export default {
         const count = this.$store.state.countPage
         const element = document.body
         if (element.scrollHeight === window.pageYOffset + window.innerHeight && count * 48 === this.nftList.length) {
+          console.log('workCureentPage', 11111)
             this.$store.commit('changeCountPage', count + 1)
           this.$store.commit('changeSortData', 'pagination')
           this.$store.dispatch(this.activeRequest)
@@ -139,7 +142,7 @@ export default {
     },
     changeSort(id) {
       this.sort = id
-      this.$store.commit('changeSortData', id)
+      this.$store.commit('changeSortData', this.filter === 'bought' ? `${id}-sold` : id)
       this.$store.dispatch(this.activeRequest)
     },
     changeMyNftStatus() {
@@ -157,6 +160,8 @@ export default {
     },
     changeFilter() {
       const filter = this.filter
+      this.sort = '';
+      this.$store.commit('changeSortData', 'all')
       let activeRequest = 'getGraphData'
       switch (filter) {
         case 'All': activeRequest = 'getGraphData'
@@ -172,6 +177,7 @@ export default {
   },
   async created() {
     this.$store.commit('changeCountPage', 1)
+    this.$store.commit('changeSortData', 'all')
     await this.$store.dispatch(this.activeRequest)
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}

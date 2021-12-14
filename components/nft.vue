@@ -18,7 +18,7 @@
     <img :src="nft.image" alt="item" class="collection__item-image">
     <div class="collection__item-info">
       <h2 class="collection__item-info-name">
-        {{ nft.name }}
+        {{ nft.name || nft.contract_name }}
       </h2>
       <p class="collection__item-info-id">Token ID {{ nftID(nft.contract_id) }}</p>
       <p class="collection__item-info-type" v-if="filter === 'bought'">Last sell</p>

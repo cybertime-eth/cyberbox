@@ -47,11 +47,15 @@ export default {
     }
   },
   async created() {
+    this.$store.commit('changeCountPage', 1)
     if (!this.listNft) {
       this.$store.commit('changeSortData', 'myNft')
       this.listNft = await this.$store.dispatch('getGraphData')
       this.filteredNft = this.listNft
       this.loading = false
+    }
+    if (process.browser) {
+      addEventListener('scroll', this.addCurrentPage)
     }
   },
   computed: {
@@ -64,6 +68,17 @@ export default {
     },
   },
   methods: {
+    addCurrentPage() {
+      if(process.browser) {
+        const count = this.$store.state.countPage
+        const element = document.body
+        if (element.scrollHeight === window.pageYOffset + window.innerHeight && count * 48 === this.listNft.length) {
+          this.$store.commit('changeCountPage', count + 1)
+          this.$store.commit('changeSortData', 'pagination')
+          this.$store.dispatch('getGraphData')
+        }
+      }
+    },
     contractDaosLength(contract) {
       if (this.listNft) {
         const list = this.listNft
@@ -75,7 +90,8 @@ export default {
       if (payload === 'sale') {
         this.filteredNft = this.listNft.filter(item => item.market_status === 'LISTED')
       } else if (payload === 'all') {
-        this.filteredNft = await this.$store.dispatch('getGraphData', 'myNft')
+        this.$store.commit('changeSortData', 'myNft')
+        this.filteredNft = await this.$store.dispatch('getGraphData')
       } else {
         this.filteredNft = this.listNft.filter(item => item.contract === payload)
       }
