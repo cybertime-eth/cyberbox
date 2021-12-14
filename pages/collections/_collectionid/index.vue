@@ -13,20 +13,20 @@
           <a :href="collection.website" target="_blank" v-if="collection.website"><img src="/socials/web.svg" alt="social"></a>
         </div>
         <div class="collection__header-info">
-          <div class="collection__header-info-block" data-aos="fade-right">
+          <div class="collection__header-info-block">
             <h3 class="collection__header-info-block-title">{{ collectionInfo.mint_count }}</h3>
             <h3 class="collection__header-info-block-subtitle">Items</h3>
           </div>
-          <div class="collection__header-info-block" data-aos="fade-left">
-            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ collectionInfo.sell_total_price }}</h3>
+          <div class="collection__header-info-block">
+            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ collectionInfo.sell_total_price / 1000 }}</h3>
             <h3 class="collection__header-info-block-subtitle">Volume traded</h3>
           </div>
-          <div class="collection__header-info-block" data-aos="fade-left">
-            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ collectionInfo.sell_max_price }}</h3>
+          <div class="collection__header-info-block">
+            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ collectionInfo.sell_max_price / 1000 }}</h3>
             <h3 class="collection__header-info-block-subtitle">Floor price</h3>
           </div>
         </div>
-        <h3 class="collection__header-content" data-aos="fade-up">
+        <h3 class="collection__header-content">
           This NFT is part of DAOS
         </h3>
       </div>
@@ -115,6 +115,7 @@ export default {
   data() {
     return {
       filter: 'All',
+      activeRequest: 'getGraphData',
       sort: '',
       myNft: false,
       collectionInfo: {}
@@ -131,25 +132,47 @@ export default {
         const element = document.body
         if (element.scrollHeight === window.pageYOffset + window.innerHeight && count * 48 === this.nftList.length) {
             this.$store.commit('changeCountPage', count + 1)
-            this.$store.dispatch('getGraphData', 'pagination')
+          this.$store.commit('changeSortData', 'pagination')
+          this.$store.dispatch(this.activeRequest)
         }
       }
     },
     changeSort(id) {
       this.sort = id
-      this.$store.dispatch('getGraphData', id)
+      this.$store.commit('changeSortData', id)
+      this.$store.dispatch(this.activeRequest)
     },
     changeMyNftStatus() {
       this.myNft = !this.myNft
-      this.$store.dispatch('getGraphData', this.myNft ? 'myNft' + this.filter : this.filter)
+      let sortMyNft = 'all'
+      if (this.myNft && this.activeRequest === 'getGraphDataSells') {
+        sortMyNft = 'myNftSold'
+      } else if (this.myNft) {
+        sortMyNft = 'myNftAll'
+      } else {
+        sortMyNft = 'all'
+      }
+      this.$store.commit('changeSortData', sortMyNft)
+      this.$store.dispatch(this.activeRequest)
     },
     changeFilter() {
-      this.$store.dispatch('getGraphData', this.myNft ? 'myNft' + this.filter : this.filter)
+      const filter = this.filter
+      let activeRequest = 'getGraphData'
+      switch (filter) {
+        case 'All': activeRequest = 'getGraphData'
+          break;
+        case 'listed': activeRequest = 'getGraphDataListed'
+          break;
+        case 'bought': activeRequest = 'getGraphDataSells'
+      }
+      this.activeRequest = activeRequest
+      this.$store.dispatch(activeRequest)
+      this.$store.commit('changeCountPage', 1)
     },
   },
   async created() {
     this.$store.commit('changeCountPage', 1)
-    await this.$store.dispatch('getGraphData')
+    await this.$store.dispatch(this.activeRequest)
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     if (process.browser) {
@@ -161,7 +184,7 @@ export default {
     countItems() {
       switch (this.filter) {
         case 'All': return this.collectionInfo.mint_count;
-        case 'listed': return this.collectionInfo.sell_count;
+        case 'listed': return this.collectionInfo.list_count;
         case 'bought': return this.collectionInfo.sell_count;
       }
     },
@@ -194,6 +217,7 @@ export default {
       width: 12.6rem;
       height: 12.6rem;
       border-radius: 50%;
+      border: .2rem solid $white;
     }
     &-title {
       padding-top: 2rem;

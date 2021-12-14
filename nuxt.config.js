@@ -41,7 +41,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/market-main-alfa-first',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/market-main-alfa-second',
         options: {},
       },
       secondClient: {

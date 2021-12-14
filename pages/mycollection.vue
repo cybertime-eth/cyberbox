@@ -22,7 +22,7 @@
         <p class="my-collection-filters-item-content">{{ contractDaosLength('daos') }}</p>
         <h4 class="my-collection-filters-item-hover">Daopolis</h4>
       </div>
-      <div class="my-collection-filters-item my-collection-filters-item-nft" :class="{'my-collection-filters-item-active': activeFilter === 'daos'}" @click="filter('maos')">
+      <div class="my-collection-filters-item my-collection-filters-item-nft" :class="{'my-collection-filters-item-active': activeFilter === 'maos'}" @click="filter('maos')">
         <img src="/default-avatar.png" alt="nft" class="my-collection-filters-item-image">
         <p class="my-collection-filters-item-content">{{ contractDaosLength('maos') }}</p>
         <h4 class="my-collection-filters-item-hover">Maos</h4>
@@ -48,7 +48,8 @@ export default {
   },
   async created() {
     if (!this.listNft) {
-      this.listNft = await this.$store.dispatch('getGraphData', 'myNft')
+      this.$store.commit('changeSortData', 'myNft')
+      this.listNft = await this.$store.dispatch('getGraphData')
       this.filteredNft = this.listNft
       this.loading = false
     }

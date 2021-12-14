@@ -29,6 +29,7 @@ export const state = () => ({
   filter: filter.races.DAOS.layers,
   successBuyToken: false,
   message: '',
+  sort: `orderBy: contract_id`,
   collectionList: [
     {
       id: 1,
@@ -116,37 +117,7 @@ export const getters = {
 }
 export const actions = {
   async getGraphData({commit,state}, type) {
-    let sort = `orderBy: contract_id`
-    switch (type) {
-      case 'myNft': sort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}"} orderBy: contract_id`;
-        break;
-      case 'myNftAll': sort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
-        break;
-      case 'myNftlisted': sort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}" market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
-        break;
-      case 'myNftbought': sort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}" market_status: "BOUGHT"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
-        break;
-      case 'listed': sort = `where: { market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
-        break;
-      case 'all': sort =  `orderBy: contract_id`;
-        break;
-      case 'bought': sort = `where: { market_status: "BOUGHT"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
-        break;
-      case 'price-lowest': sort = `orderBy: price, orderDirection: asc`;
-        break;
-      case 'price-highest': sort = `orderBy: price, orderDirection: desc`;
-        break;
-      case 'rarity-rare': sort =  `orderBy: rarity_rank, orderDirection: asc`;
-        break;
-      case 'rarity-common': sort =  `orderBy: rarity_rank, orderDirection: desc`;
-        break;
-      case 'mint-lowest': sort = `orderBy: contract_id`;
-        break;
-      case 'mint-highest': sort = `orderBy: contract_id orderDirection: desc`;
-        break;
-      case 'pagination': sort = `skip: ${48 * (state.countPage - 1)} orderBy: contract_id`;
-        break;
-    }
+    const sort = state.sort
     const query = gql`
       query Sample {
         contractInfos(${sort} first: 48 where: { contract: "${$nuxt.$route.params.collectionid}"}) {
@@ -194,7 +165,39 @@ export const actions = {
     return data.contractInfos
   },
 
+  async getGraphDataListed({commit, state}) {
+    const sort = state.sort
+    const query = gql`
+      query Sample {
+        contractLists(${sort} first: 48 where: { contract: "${$nuxt.$route.params.collectionid}"}) {
+          id
+          contract
+          contract_id
+          price
+          image
+        }
+      }`;
+    const data = await this.$graphql.default.request(query)
+    commit('setNewNftList', data.contractLists)
+  },
 
+  async getGraphDataSells({commit, state}) {
+    const sort = state.sort
+    const query = gql`
+      query Sample {
+        contractSells(${sort} first: 48 where: { contract: "${$nuxt.$route.params.collectionid}"}) {
+          id
+          contract
+          contract_id
+          price_total
+          price_value
+          price_fee
+          image
+        }
+      }`;
+    const data = await this.$graphql.default.request(query)
+    commit('setNewNftList', data.contractSells)
+  },
 
   // AUTHORIZATION
 
@@ -411,9 +414,7 @@ export const actions = {
     const kit = ContractKit.newKitFromWeb3(web3)
     const contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
     const parsePrice = ethers.utils.parseEther(String(token.price))
-    const parseId = BigNumber.from(token.id).toNumber()
-    console.log(state.nft.contract_address, parseId, parsePrice)
-    const result = await contract.methods.buyToken(state.nft.contract_address, parseId).send({
+    const result = await contract.methods.buyToken(state.nft.contract_address, token.id, token.price).send({
       from: account,
       value: parsePrice,
       gas: 3000000
@@ -439,6 +440,7 @@ export const actions = {
           sell_max_price
           sell_min_price
           sell_total_price
+          list_count
           dna_count
         }
       }`;
@@ -508,5 +510,31 @@ export const mutations = {
   },
   setMessage(state, msg) {
     state.message = msg
+  },
+  changeSortData(state, type) {
+    switch (type) {
+      case 'myNft': state.sort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}"} orderBy: contract_id`;
+        break;
+      case 'myNftAll': state.sort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
+        break;
+      case 'myNftSold': state.sort = `where: { seller: "${localStorage.getItem('address').toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
+        break;
+      case 'all': state.sort =  `orderBy: contract_id`;
+        break;
+      case 'price-lowest': state.sort = `orderBy: price, orderDirection: asc`;
+        break;
+      case 'price-highest': state.sort = `orderBy: price, orderDirection: desc`;
+        break;
+      case 'rarity-rare': state.sort =  `orderBy: rarity_rank, orderDirection: asc`;
+        break;
+      case 'rarity-common': state.sort =  `orderBy: rarity_rank, orderDirection: desc`;
+        break;
+      case 'mint-lowest': state.sort = `orderBy: contract_id`;
+        break;
+      case 'mint-highest': state.sort = `orderBy: contract_id orderDirection: desc`;
+        break;
+      case 'pagination': state.sort = `skip: ${48 * (state.countPage - 1)} orderBy: contract_id`;
+        break;
+    }
   }
 }
