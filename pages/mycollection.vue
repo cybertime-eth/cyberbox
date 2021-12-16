@@ -17,16 +17,16 @@
         <p class="my-collection-filters-item-text">For sale</p>
         <p class="my-collection-filters-item-content">{{ forSaleInfo }}</p>
       </div>
-      <div class="my-collection-filters-item my-collection-filters-item-nft" :class="{'my-collection-filters-item-active': activeFilter === 'daos'}" @click="filter('daos')">
-        <img src="/daopolis-nft.png" alt="nft" class="my-collection-filters-item-image">
-        <p class="my-collection-filters-item-content">{{ contractDaosLength('daos') }}</p>
-        <h4 class="my-collection-filters-item-hover">Daopolis</h4>
-      </div>
-      <div class="my-collection-filters-item my-collection-filters-item-nft" :class="{'my-collection-filters-item-active': activeFilter === 'maos'}" @click="filter('maos')">
-        <img src="/default-avatar.png" alt="nft" class="my-collection-filters-item-image">
-        <p class="my-collection-filters-item-content">{{ contractDaosLength('maos') }}</p>
-        <h4 class="my-collection-filters-item-hover">Maos</h4>
-      </div>
+<!--      <div class="my-collection-filters-item my-collection-filters-item-nft" :class="{'my-collection-filters-item-active': activeFilter === 'daos'}" @click="filter('daos')">-->
+<!--        <img src="/daopolis-nft.png" alt="nft" class="my-collection-filters-item-image">-->
+<!--        <p class="my-collection-filters-item-content">{{ contractDaosLength('daos') }}</p>-->
+<!--        <h4 class="my-collection-filters-item-hover">Daopolis</h4>-->
+<!--      </div>-->
+<!--      <div class="my-collection-filters-item my-collection-filters-item-nft" :class="{'my-collection-filters-item-active': activeFilter === 'maos'}" @click="filter('maos')">-->
+<!--        <img src="/default-avatar.png" alt="nft" class="my-collection-filters-item-image">-->
+<!--        <p class="my-collection-filters-item-content">{{ contractDaosLength('maos') }}</p>-->
+<!--        <h4 class="my-collection-filters-item-hover">Maos</h4>-->
+<!--      </div>-->
     </div>
     <div class="my-collection__items">
       <nft :nft="nft" :route="`/collections/${nft.contract}/${nft.contract_id}`" :seller="true" v-for="nft of filteredNft" v-if="filteredNft" />

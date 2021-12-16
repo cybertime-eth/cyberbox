@@ -25,7 +25,7 @@
       <p class="collection__item-info-type" v-else>Price</p>
       <div class="collection__item-info-price" v-if="nft.price > 0 && nft.market_status !== 'BOUGHT' || filter === 'bought'">
         <img src="/celo.svg" alt="celo">
-        <h3 class="collection__item-info-price-text">{{ nftPrice(filter === 'bought' ? nft.price_total / 1000 : nft.price) }} <span>CELO</span></h3>
+        <h3 class="collection__item-info-price-text">{{ nftPrice(filter === 'bought' ? (nft.price_total / 1000).toFixed(2) : nft.price.toFixed(2)) }}</h3>
       </div>
       <h3 class="collection__item-info-price-null" v-else>Not for sale</h3>
       <button class="collection__item-info-details">Details</button>

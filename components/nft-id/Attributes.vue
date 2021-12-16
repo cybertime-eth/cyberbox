@@ -38,7 +38,14 @@
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Contract Address</h3>
-          <h3 class="attributes__block-content-item-subtitle">{{ cutAddress(info.contract_address) }} <img src="/send.svg" alt="send"></h3>
+          <a
+            :href="`https://explorer.celo.org/address/${info.contract_address}`"
+            target="_blank"
+            class="attributes__block-content-item-subtitle"
+          >
+            {{ cutAddress(info.contract_address) }}
+            <img src="/send.svg" alt="send">
+          </a>
         </div>
       </div>
     </div>
@@ -54,12 +61,6 @@ export default {
     }
   },
   props: ['item', 'info'],
-  async created() {
-    // this.info = await this.$store.dispatch('getNft', {
-    //   id: this.$route.params.nftid,
-    //   collectionid: this.$route.params.collectionid
-    // })
-  },
   methods: {
      cutAddress(address) {
       if (address) {

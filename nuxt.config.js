@@ -41,7 +41,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-punk-plus-four',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-new-marketmain-one',
         options: {},
       },
       secondClient: {

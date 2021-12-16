@@ -27,7 +27,7 @@
           </div>
         </div>
         <h3 class="collection__header-content">
-          This NFT is part of DAOS
+          {{ collection.description }}
         </h3>
       </div>
       <div class="collection__filter" @click="changeFilter">
@@ -132,8 +132,7 @@ export default {
       if(process.browser) {
         const count = this.$store.state.countPage
         const element = document.body
-        if (element.scrollHeight === window.pageYOffset + window.innerHeight && count * 48 === this.nftList.length) {
-          console.log('workCureentPage', 11111)
+        if (element.scrollHeight === window.pageYOffset + window.innerHeight && count * 48 === this.nftList.length && this.nftList.length !== 0) {
             this.$store.commit('changeCountPage', count + 1)
           this.$store.commit('changeSortData', 'pagination')
           this.$store.dispatch(this.activeRequest)

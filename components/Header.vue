@@ -17,6 +17,11 @@
           </li>
         </ul>
       </nav>
+      <div class="header__error-network" v-if="showWrongNetwork">
+        <img src="/pulse.svg" alt="pulse">
+        <p class="header__error-network-text">You are on the wrong network</p>
+      </div>
+      <div v-else class="header__null"></div>
       <button class="header__box gradient-button" v-if="address" @click="$router.push('/mycollection')">
        My Collection
       </button>
@@ -27,7 +32,7 @@
           <img src="/celo.svg" alt="avatar">
         </div>
       </div>
-      <button class="gradient-button header__connect" v-else @click="showConnectModal = true">Connect Wallet</button>
+      <button class="gradient-button header__connect" v-if="!address" @click="showConnectModal = true">Connect Wallet</button>
       <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
       <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showProfileMenuMobile = true">
     </div>
@@ -46,7 +51,15 @@ export default {
       image: false,
       showConnectModal: false,
       showProfileMenu: false,
-      showProfileMenuMobile: false
+      showProfileMenuMobile: false,
+      showWrongNetwork: false,
+
+    }
+  },
+  watch: {
+    chainId() {
+      const id = this.$store.state.chainId
+      id === 42220 || id === null ? this.showWrongNetwork = false :  this.showWrongNetwork = true
     }
   },
   components: {
@@ -55,6 +68,9 @@ export default {
     profileModalMobile
   },
   computed: {
+    chainId() {
+      return this.$store.state.chainId
+    },
     user() {
       return this.$store.state.user
     },
@@ -78,7 +94,7 @@ header {
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 14rem 34rem 61.3rem 22.5rem;
+  grid-template-columns: 14rem 34rem 44.3rem 17.5rem 22rem;
   align-items: center;
   &__logo {
     display: flex;
@@ -100,6 +116,21 @@ header {
     width: 15.8rem;
     height: 4.8rem;
     cursor: pointer;
+  }
+  &__error {
+    &-network {
+      padding: 1.2rem .8rem;
+      background: $pink;
+      display: flex;
+      align-items: center;
+      border-radius: .8rem;
+      width: 24rem;
+      justify-self: flex-end;
+      &-text {
+        color: $white;
+        padding-left: .8rem;
+      }
+    }
   }
   &__wallet {
     background: #E9FCEE;

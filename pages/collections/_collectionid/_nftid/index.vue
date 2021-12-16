@@ -18,7 +18,6 @@
           <!-- INFO BUYER -->
 
           <div class="nft__block-info" v-if="!seller">
-            <h3 class="nft__block-info-company">Cybertime.finance</h3>
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <p class="nft__block-info-price-text" v-if="isSellNFT">Price</p>
@@ -38,7 +37,6 @@
           <!-- INFO SELLER -->
 
           <div class="nft__block-info" v-else-if="listStatus === 'default'">
-            <h3 class="nft__block-info-company">Cybertime.finance</h3>
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <p class="nft__block-info-description" v-if="isSellNFT">{{ nft.description }}</p>
             <p class="nft__block-info-price-text" v-if="isSellNFT">Price</p>
@@ -174,11 +172,7 @@ export default {
   },
   computed: {
     isSellNFT() {
-      if (this.nft.market_status !== 'BOUGHT' && this.nft.price !== 0) {
-        return true
-      } else {
-        return false
-      }
+      return this.nft.market_status !== 'BOUGHT' && this.nft.price !== 0
     },
     showSuccessModal() {
       return this.$store.state.successBuyToken

@@ -1,18 +1,18 @@
 import Web3 from 'web3'
 import {ethers, Wallet, providers, BigNumber} from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import MarketMainABI from './../abis/marketMain.json'
-import DaosABI from './../abis/daos.json'
-import MaosABI from './../abis/maos.json'
-import CeloToken from './../abis/celoToken.json'
+import MarketMainABI from './../abis/MarketMain.json'
+import MarketPlaceABI from './../abis/marketplace.abi'
+import punksABI from './../abis/punks.abi'
+import toadsABI from './../abis/toads.abi'
 import {gql} from "nuxt-graphql-request";
 const ContractKit = require('@celo/contractkit')
 import filter from './../config.js'
 import redstone from 'redstone-api';
 export const state = () => ({
   celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
-  cyberBoxMarketplace: '0x4Dbf292BAD2cc86B318036f55C876e96bb7863D5',
-  marketMain: '0x0874b64E20690aEed36a33a55F529ad05734Fbc6',
+  cyberBoxMarketplace: '0x78253a54a7FD429605E8815f96EedB91c92073e0',
+  marketMain: '0x1c39c7ef3FbEFEc96e1E6563Fd8270f27C00c232',
   daosContract: '0x34d63dc2f8c5655bA6E05124B3D4a283A402CEd9',
   maosContract: '0x1FBB74537Bf8b8bbd2aF43fE2115638A67137D45',
   celo: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
@@ -32,19 +32,6 @@ export const state = () => ({
   sort: `orderBy: contract_id`,
   collectionList: [
     {
-      id: 0,
-      name: 'Daopolis',
-      route: false,
-      image: '/daopolis.JPG',
-      banner: '/daopolis-nft.png',
-      logo: '/daopolis-nft.png',
-      wallet: '0x29a6520A99656e5b17A34471D5d458eFD3696695',
-      website: 'https://celopunks.club/',
-      twitter: 'https://twitter.com/CeloPunks',
-      discord: 'https://discord.com/invite/Dzukufsrqe',
-      telegram: 'https://t.me/celopunksclub',
-    },
-    {
       id: 1,
       name: 'CeloPunks',
       route: 'CPUNK',
@@ -56,6 +43,7 @@ export const state = () => ({
       twitter: 'https://twitter.com/CeloPunks',
       discord: 'https://discord.com/invite/Dzukufsrqe',
       telegram: 'https://t.me/celopunksclub',
+      description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
     },
     {
       id: 2,
@@ -69,6 +57,7 @@ export const state = () => ({
       twitter: 'https://twitter.com/c_ToadzOfficial',
       discord: 'https://discord.gg/dD3D223k8N',
       instagram: 'https://www.instagram.com/celotoadzofficial/',
+      description: 'CeloToadz | First collection of 6969 randomly generated Toadz made up of more than 120 different traits on Celo Blockchain!'
     },
     // {
     //   id: 3,
@@ -175,6 +164,7 @@ export const actions = {
           contract_id
           price
           image
+          contract_name
         }
       }`;
     const data = await this.$graphql.default.request(query)
@@ -193,6 +183,7 @@ export const actions = {
           price_value
           price_fee
           image
+          contract_name
         }
       }`;
     const data = await this.$graphql.default.request(query)
@@ -253,7 +244,7 @@ export const actions = {
         56: "https://bsc-dataseed1.ninicoin.io"
       },
       qrcodeModalOptions: {
-        mobileLinks: ['metamask', 'trust', 'safepal', 'math']
+        mobileLinks: ['metamask']
       },
     });
     provider.on("accountsChanged", (accounts) => {
@@ -293,7 +284,7 @@ export const actions = {
   async getNft({commit, state}, token) {
     const query = gql`
       query Sample {
-        contractInfo(id: "${token.id}_${token.collectionId ? token.collectionId : 'daos'}") {
+        contractInfo(id: "${token.id}_${token.collectionId}") {
           id
           contract
           contract_id
@@ -309,6 +300,7 @@ export const actions = {
           description
           updatedAt
           dna
+          trait
           listData {
             id
             owner
@@ -356,13 +348,34 @@ export const actions = {
       return data.contracts[0]
   },
 
+
+  async getStatisticCountNft() {
+    const timeYesterday = ((Date.now() / 1000) - 186400).toFixed(0)
+    const query = gql`
+      query Sample {
+        contractSells(where:{ updatedAt_gt: ${timeYesterday} }) {
+          updatedAt
+          price_total
+        }
+      }`;
+    const data = await this.$graphql.default.request(query)
+    return data.contractSells
+  },
+
   // SELL NFT
 
   async approveToken({commit, state, dispatch}) {
     const signer = this.getters.provider.getSigner()
     const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     const resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
-    const contract = new ethers.Contract(state.daosContract, DaosABI, signer)
+    let AbiNft = null
+    switch (state.nft.contract) {
+      case 'CPUNK': AbiNft = punksABI
+        break;
+      case 'CTOADS': AbiNft = toadsABI
+        break;
+    }
+    const contract = new ethers.Contract(state.nft.contract_address, AbiNft, signer)
     try {
       await contract.approve(resultAddress, state.nft.contract_id)
       contract.on("Approval", () => {
@@ -442,6 +455,8 @@ export const actions = {
           sell_total_price
           list_count
           dna_count
+          nftName
+          ownerCount
         }
       }`;
     let data = await this.$graphql.default.request(query)
