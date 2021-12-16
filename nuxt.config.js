@@ -41,7 +41,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-new-marketmain-two',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-new-marketmain-four',
         options: {},
       },
       secondClient: {
