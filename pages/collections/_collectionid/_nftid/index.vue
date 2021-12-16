@@ -36,7 +36,7 @@
 
           <!-- INFO SELLER -->
 
-          <div class="nft__block-info" v-else-if="listStatus === 'default'">
+          <div class="nft__block-info" v-else-if="listStatus === 'default' && seller">
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <p class="nft__block-info-description" v-if="isSellNFT">{{ nft.description }}</p>
             <p class="nft__block-info-price-text" v-if="isSellNFT">Price</p>
@@ -57,7 +57,7 @@
               </h3>
             </div>
             <h3 class="nft__block-info-transfer"><img src="/transfer.svg" alt="transfer">Transfer</h3>
-            <button class="nft__block-info-sell gradient-button" @click="listStatus = 'active'"  v-if="nft.price === 0">Sell</button>
+            <button class="nft__block-info-sell gradient-button" @click="listStatus = 'active'"  v-if="nft.market_status !== 'LISTED'">Sell</button>
             <div class="nft__content-buttons nft__content-buttons-mini" v-else>
               <button
                 class="

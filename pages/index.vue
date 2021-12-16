@@ -5,7 +5,7 @@
       <div class="home__item" @click="openDaopolis()">
         <img src="/daopolis.JPG" alt="dao" class="home__item-image">
         <div class="home__item-info">
-          <h2 class="home__item-info-name">Daopolos</h2>
+          <h2 class="home__item-info-name">Daopolis</h2>
           <button class="home__item-info-button">Comming soon</button>
         </div>
       </div>
