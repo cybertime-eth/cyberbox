@@ -2,7 +2,6 @@ import Web3 from 'web3'
 import {ethers, Wallet, providers, BigNumber} from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import MarketMainABI from './../abis/MarketMain.json'
-import MarketPlaceABI from './../abis/marketplace.abi'
 import punksABI from './../abis/punks.abi'
 import toadsABI from './../abis/toads.abi'
 import {gql} from "nuxt-graphql-request";
