@@ -1,7 +1,7 @@
 import Web3 from 'web3'
 import {ethers, Wallet, providers, BigNumber} from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import MarketMainABI from './../abis/MarketMain.json'
+import MarketMainABI from '../abis/marketMain.json'
 import punksABI from './../abis/punks.abi'
 import toadsABI from './../abis/toads.abi'
 import {gql} from "nuxt-graphql-request";
@@ -29,6 +29,7 @@ export const state = () => ({
   successBuyToken: false,
   message: '',
   sort: `orderBy: contract_id`,
+
   collectionList: [
     {
       id: 1,
