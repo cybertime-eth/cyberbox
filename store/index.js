@@ -2,8 +2,8 @@ import Web3 from 'web3'
 import {ethers, Wallet, providers, BigNumber} from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import MarketMainABI from '../abis/marketMain.json'
-import punksABI from './../abis/punks.abi'
-import toadsABI from './../abis/toads.abi'
+import punksABI from '../abis/punks.json'
+import toadsABI from '../abis/toads.json'
 import {gql} from "nuxt-graphql-request";
 const ContractKit = require('@celo/contractkit')
 import filter from './../config.js'
@@ -34,7 +34,7 @@ export const state = () => ({
     {
       id: 1,
       name: 'CeloPunks',
-      route: 'CPUNK',
+      route: 'cpunk',
       image: '/collections/Celopunks.jpg',
       banner: '/collections/CeloPunks-banner.png',
       logo: '/collections/CeloPunks-logo.png',
@@ -48,7 +48,7 @@ export const state = () => ({
     {
       id: 2,
       name: 'CeloToadz',
-      route: 'CTOADS',
+      route: 'ctoadz',
       image: '/collections/celoToadz.png',
       banner: '/collections/celoToadz-banner.png',
       logo: '/collections/celoToadz-logo.png',
@@ -370,11 +370,12 @@ export const actions = {
     const resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
     let AbiNft = null
     switch (state.nft.contract) {
-      case 'CPUNK': AbiNft = punksABI
+      case 'cpunk': AbiNft = punksABI
         break;
-      case 'CTOADS': AbiNft = toadsABI
+      case 'ctoadz': AbiNft = toadsABI
         break;
     }
+    console.log(AbiNft)
     const contract = new ethers.Contract(state.nft.contract_address, AbiNft, signer)
     try {
       await contract.approve(resultAddress, state.nft.contract_id)
