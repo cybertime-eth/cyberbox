@@ -152,10 +152,14 @@ export default {
     SuccessfullBuy
   },
   async mounted() {
-    this.nft = await this.$store.dispatch('getNft', {
+    const nft = await this.$store.dispatch('getNft', {
       id: this.$route.params.nftid,
       collectionId: this.$route.params.collectionid
     })
+    this.nft = {
+      ...nft,
+      price: nft.price / 1000
+    }
     const price = await this.$store.dispatch('getPriceToken')
     this.priceToken = (price.value * this.nft.price).toFixed(1)
     await this.getAttributes()

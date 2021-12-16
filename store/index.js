@@ -375,7 +375,6 @@ export const actions = {
       case 'ctoadz': AbiNft = toadsABI
         break;
     }
-    console.log(AbiNft)
     const contract = new ethers.Contract(state.nft.contract_address, AbiNft, signer)
     try {
       await contract.approve(resultAddress, state.nft.contract_id)
@@ -395,7 +394,7 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
-      await contract.listToken(state.nft.contract_address, state.nft.contract_id, nft.price, nft.date.toFixed(0))
+      await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)), nft.date.toFixed(0))
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
       });
@@ -428,7 +427,8 @@ export const actions = {
     const kit = ContractKit.newKitFromWeb3(web3)
     const contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
     const parsePrice = ethers.utils.parseEther(String(token.price))
-    const result = await contract.methods.buyToken(state.nft.contract_address, token.id, token.price).send({
+    console.log(token.price)
+    const result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
       from: account,
       value: parsePrice,
       gas: 3000000
@@ -498,15 +498,27 @@ export const mutations = {
       .join("");
   },
   setNewNftList(state, list) {
-    state.nftList = list
+    state.nftList = []
+    for (let nft of list) {
+      state.nftList.push({
+        ...nft,
+        price: nft.price ? nft.price / 1000 : nft.price_total / 1000
+      })
+    }
   },
   addNftToList(state, list) {
     for (let nft of list) {
-      state.nftList.push(nft)
+      state.nftList.push({
+        ...nft,
+        price: nft.price / 1000
+      })
     }
   },
   setNewNft(state, nft) {
-    state.nft = nft
+    state.nft = {
+      ...nft,
+      price: nft.price / 1000
+    }
   },
   changelistToken(state, status) {
     state.listToken = status
@@ -515,7 +527,6 @@ export const mutations = {
     state.approveToken = approve
   },
   changeCountPage(state, count) {
-    console.log(count)
     state.countPage = count
   },
   changeSuccessBuyToken(state) {
@@ -528,7 +539,6 @@ export const mutations = {
     state.message = msg
   },
   changeSortData(state, type) {
-    console.log(type)
     switch (type) {
       case 'myNft': state.sort = `first: 200 where: { owner: "${localStorage.getItem('address').toLowerCase()}"} orderBy: contract_id`;
         break;
