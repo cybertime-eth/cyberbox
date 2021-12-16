@@ -243,7 +243,6 @@ export const actions = {
       rpc: {
         56: "https://bsc-dataseed1.ninicoin.io"
       },
-      qrcode: false,
       qrcodeModalOptions: {
         mobileLinks: ['metamask']
       },
