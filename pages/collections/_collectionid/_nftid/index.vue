@@ -232,8 +232,7 @@ export default {
       this.nftInfo = info
     },
     async getAttributes() {
-      const res =  await this.$axios.get(this.nft.attributes);
-      this.attributes = res.data.attributes
+      this.attributes = []
     }
   },
 }
