@@ -241,7 +241,8 @@ export const actions = {
   async walletConnect({commit}, isConnect) {
     const provider = new WalletConnectProvider({
       rpc: {
-        56: "https://bsc-dataseed1.ninicoin.io"
+        44787: "https://alfajores-forno.celo-testnet.org",
+        42220: "https://forno.celo.org",
       },
       qrcodeModalOptions: {
         mobileLinks: ['metamask']

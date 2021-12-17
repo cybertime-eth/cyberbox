@@ -22,7 +22,7 @@
             <h3 class="collection__header-info-block-subtitle">Volume traded</h3>
           </div>
           <div class="collection__header-info-block">
-            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ (collectionInfo.sell_max_price ? collectionInfo.sell_max_price / 1000 : 0).toFixed(2) }}</h3>
+            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ (collectionInfo.sell_min_price ? collectionInfo.sell_min_price / 1000 : 0).toFixed(2) }}</h3>
             <h3 class="collection__header-info-block-subtitle">Floor price</h3>
           </div>
         </div>

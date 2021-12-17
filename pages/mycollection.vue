@@ -41,16 +41,22 @@ export default {
       showTransfer: false,
       showPurchased: false,
       loading: true,
-      listNft: false,
+      listNft: [],
       filteredNft: false,
       activeFilter: 'all'
     }
   },
   async created() {
     this.$store.commit('changeCountPage', 1)
-    if (!this.listNft) {
+    if (!this.listNft.length) {
       this.$store.commit('changeSortData', 'myNft')
-      this.listNft = await this.$store.dispatch('getGraphData')
+      const result = await this.$store.dispatch('getGraphData')
+      for (let nft of result) {
+        this.listNft.push({
+          ...nft,
+          price: nft.price / 1000
+        })
+      }
       this.filteredNft = this.listNft
       this.loading = false
     }

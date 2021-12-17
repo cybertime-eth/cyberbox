@@ -4,12 +4,12 @@
     <div class="collection__item-modal" v-if="modalId === nft.id" @mouseleave="modalId = 0">
       <div class="collection__item-modal-button" @click="routeNft(true)">
         <img src="/outline-sell.svg" alt="sell">
-        <h3>Sell</h3>
+        <h3>Visit</h3>
       </div>
-      <div class="collection__item-modal-button">
-        <img src="/transfer-black.svg" alt="transfer">
-        <h3>Transfer</h3>
-      </div>
+<!--      <div class="collection__item-modal-button">-->
+<!--        <img src="/transfer-black.svg" alt="transfer">-->
+<!--        <h3>Transfer</h3>-->
+<!--      </div>-->
       <div class="collection__item-modal-button" @click="copyLink">
         <img src="/copy-link.svg" alt="copy">
         <h3>Copy link</h3>
@@ -111,7 +111,7 @@ export default {
       top: 3.8rem;
       left: .4rem;
       width: 19.2rem;
-      height: 18.6rem;
+      height: 12.6rem;
       background: $white;
       box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1);
       border-radius: .4rem;

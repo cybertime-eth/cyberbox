@@ -22,11 +22,11 @@
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
             <div class="nft__block-info-price" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/celo.svg" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= {{ priceToken }}$</span></div>
-            <p class="nft__block-info-date" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/time.svg" alt="time"> Sale ends in
-              {{ daysDifference }} days
-              {{ hoursDifference }} hours
-              {{ minutesDifference }} minutes
-            </p>
+<!--            <p class="nft__block-info-date" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/time.svg" alt="time"> Sale ends in-->
+<!--              {{ daysDifference }} days-->
+<!--              {{ hoursDifference }} hours-->
+<!--              {{ minutesDifference }} minutes-->
+<!--            </p>-->
             <div class="nft__block-info-status">
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
@@ -45,18 +45,18 @@
               <h1>{{ nft.price }} CELO</h1>
               <span>= {{ priceToken }}$</span>
             </div>
-            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in
-              {{ daysDifference }} days
-              {{ hoursDifference }} hours
-              {{ minutesDifference }} minutes
-            </p>
+<!--            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in-->
+<!--              {{ daysDifference }} days-->
+<!--              {{ hoursDifference }} hours-->
+<!--              {{ minutesDifference }} minutes-->
+<!--            </p>-->
             <div class="nft__block-info-status">
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">
                 {{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}
               </h3>
             </div>
-            <h3 class="nft__block-info-transfer"><img src="/transfer.svg" alt="transfer">Transfer</h3>
+<!--            <h3 class="nft__block-info-transfer"><img src="/transfer.svg" alt="transfer">Transfer</h3>-->
             <button class="nft__block-info-sell gradient-button" @click="listStatus = 'active'"  v-if="nft.market_status !== 'LISTED'">Sell</button>
             <div class="nft__content-buttons nft__content-buttons-mini" v-else>
               <button

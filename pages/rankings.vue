@@ -11,11 +11,11 @@
         <h3>#</h3>
         <h3>Collection</h3>
         <h3>Volume</h3>
+        <h3>Items</h3>
         <h3>24h %</h3>
         <h3>7d %</h3>
         <h3>Floor Price</h3>
         <h3>Owners</h3>
-        <h3>Items</h3>
       </div>
       <div class="rankings__table-content">
         <div class="rankings__table-content-item" v-for="item of list" @click="$router.push(`/collections/${item.route}`)">
@@ -32,13 +32,13 @@
           <div class="rankings__table-content-item-volume">
             <p class="rankings__table-content-item-volume-title"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</p>
           </div>
+          <h3 class="rankings__table-content-item-items">{{ item.items }}</h3>
           <h3 class="rankings__table-content-item-day">-</h3>
           <h3 class="rankings__table-content-item-week">-</h3>
           <div class="rankings__table-content-item-floor">
-            <p class="rankings__table-content-item-floor-title"><img src="/celo.svg" alt="celo">{{ item.floorPriceCelo }}</p>
+            <p class="rankings__table-content-item-floor-title">-</p>
           </div>
           <h3 class="rankings__table-content-item-owners">-</h3>
-          <h3 class="rankings__table-content-item-items">{{ item.items }}</h3>
         </div>
       </div>
     </div>
