@@ -32,12 +32,12 @@
           <div class="rankings__table-content-item-volume">
             <p class="rankings__table-content-item-volume-title"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</p>
           </div>
-          <h3 class="rankings__table-content-item-day">{{ item.statDay }}</h3>
+          <h3 class="rankings__table-content-item-day">-</h3>
           <h3 class="rankings__table-content-item-week">-</h3>
           <div class="rankings__table-content-item-floor">
             <p class="rankings__table-content-item-floor-title"><img src="/celo.svg" alt="celo">{{ item.floorPriceCelo }}</p>
           </div>
-          <h3 class="rankings__table-content-item-owners">{{ item.owners }}</h3>
+          <h3 class="rankings__table-content-item-owners">-</h3>
           <h3 class="rankings__table-content-item-items">{{ item.items }}</h3>
         </div>
       </div>
@@ -67,7 +67,7 @@ export default {
           collectionImage: `/${item.title}.png`,
           verification: false,
           new: false,
-          name: item.nftName,
+          name: index === 0 ? 'CeloToadz' : 'CeloPunks',
           volumePrice: 0,
           volumeCelo: item.sell_total_price / 1000,
           statDay: volume / (item.sell_total_price / 1000) * 100,

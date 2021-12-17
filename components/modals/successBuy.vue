@@ -6,13 +6,19 @@
       <h3 class="modal__success">You successfully purchased</h3>
       <h3 class="modal__name">{{ name }}</h3>
       <p class="modal__link">View on Celo Explorer <img src="/share.svg" alt="share"></p>
-      <button class="modal__button" @click="$router.push('/mycollection')">My collection</button>
+      <button class="modal__button" @click="routeMyCollection">My collection</button>
     </div>
   </div>
 </template>
 <script>
 export default {
   props: ['image', 'name'],
+  methods: {
+    routeMyCollection() {
+      this.$store.commit('changeSuccessBuyToken', false)
+      this.$router.push('/mycollection')
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

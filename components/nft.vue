@@ -28,7 +28,7 @@
         <h3 class="collection__item-info-price-text">{{ nftPrice(nft.price) }}</h3>
       </div>
       <h3 class="collection__item-info-price-null" v-else>Not for sale</h3>
-      <button class="collection__item-info-details">Details</button>
+      <button class="collection__item-info-details" @click="routeNft(true)">Details</button>
     </div>
   </div>
 </template>

@@ -31,7 +31,7 @@
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
             </div>
-            <button class="nft__block-info-buy" @click="showBuyTokenModal = true" v-if="isSellNFT && nft.market_status === 'LISTED'">Buy now</button>
+            <button class="nft__block-info-buy" @click="buyToken" v-if="isSellNFT && nft.market_status === 'LISTED'">Buy now</button>
           </div>
 
           <!-- INFO SELLER -->
@@ -104,7 +104,7 @@
       </div>
     </div>
   <Attributes :item="attributes" :info="nft"/>
-  <BuyToken v-if="showBuyTokenModal" :price="nft.price" @closeModal="closeModal"/>
+<!--  <BuyToken v-if="showBuyTokenModal" :price="nft.price" @closeModal="closeModal"/>-->
   <SuccessfullBuy v-if="showSuccessModal" :image="nft.image" :name="nft.name"/>
 <!--    <History />-->
   </section>
@@ -198,6 +198,16 @@ export default {
     }
   },
   methods: {
+    async buyToken() {
+      try {
+        await this.$store.dispatch('approveBuyToken', {
+          id: this.$route.params.nftid,
+          price: this.nft.price
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    },
     closeModal(payload) {
       this.showBuyTokenModal = payload
     },

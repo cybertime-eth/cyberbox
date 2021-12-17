@@ -434,14 +434,14 @@ export const actions = {
       gas: 3000000
     })
     this.getters.provider.once(result, async () => {
-      commit('changeSuccessBuyToken')
+      commit('changeSuccessBuyToken', true)
     });
   },
 
   // GET COLLECTION INFO
 
   async getCollectionInfo({commit, state}, isArray) {
-    const allArray = `first: 5`
+    const allArray = `where: { mint_count_gt: 0 }`
     const firstObject = `where: { title: "${$nuxt.$route.params.collectionid}"}`
     const query = gql`
       query Sample {
@@ -529,8 +529,8 @@ export const mutations = {
   changeCountPage(state, count) {
     state.countPage = count
   },
-  changeSuccessBuyToken(state) {
-    state.successBuyToken = true
+  changeSuccessBuyToken(state, status) {
+    state.successBuyToken = status
   },
   setChainId(state, chain) {
     state.chainId = chain
