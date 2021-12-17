@@ -55,4 +55,9 @@ export default {
     }
   }
 }
+@media screen and (max-width: 460px) {
+  .modal__connect-button {
+    width: 25rem;
+  }
+}
 </style>

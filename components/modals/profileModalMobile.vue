@@ -6,7 +6,8 @@
     </div>
     <div class="menu-mobile-list container-xl" @click="closeModal">
       <nuxt-link to="/" class="gradient-text menu-mobile-list-link">Marketplace</nuxt-link>
-      <nuxt-link to="/" class="menu-mobile-list-link">Rankings</nuxt-link>
+      <nuxt-link to="/rankings" class="menu-mobile-list-link">Rankings</nuxt-link>
+      <a href="https://forms.gle/R7LmANz7iqsCA88X8" target="_blank" class="menu-mobile-list-link">Launchpad</a>
     </div>
   </div>
 </template>

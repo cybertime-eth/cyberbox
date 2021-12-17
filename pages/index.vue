@@ -94,10 +94,10 @@ export default {
     }
     &__item {
       width: 100%;
-      height: 43.2rem;
+      height: 37.6rem;
       &-image {
         width: 100%;
-        height: 30.4rem;
+        height: 22.4rem;
       }
       &-info {
         padding-top: 1.5rem;

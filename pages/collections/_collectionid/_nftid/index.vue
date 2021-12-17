@@ -246,6 +246,13 @@ export default {
       this.nftInfo = info
     },
     async getAttributes() {
+      const getAttr = this.nft.trait
+      const test = {
+        background: 'violet'
+      }
+      const testParse = JSON.stringify(test)
+      const parse = this.nft.trait[0]
+      console.log(parse, testParse)
       this.attributes = []
     }
   },
@@ -382,6 +389,11 @@ export default {
     &-title {
       font-family: Cabin-Medium;
       font-weight: 500;
+    }
+    &-fee {
+      padding-top: 2.1rem;
+      color: $border;
+      letter-spacing: 0.03em;
     }
     &-time {
       margin-top: 2.4rem;

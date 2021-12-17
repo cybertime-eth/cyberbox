@@ -54,6 +54,10 @@ export default {
     z-index: -1;
     border-radius: 2.3rem;
   }
+  &:disabled {
+    color: $border;
+    border: .2rem solid $border;
+  }
 }
 
 .gradient-text {
@@ -242,6 +246,9 @@ ul {
 @media screen and (max-width: 460px) {
   .container-xl {
     width: 30.4rem;
+  }
+  .modal__block {
+    padding: 2.8rem 2.5rem;
   }
 }
 </style>
