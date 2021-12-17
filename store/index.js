@@ -408,7 +408,7 @@ export const actions = {
   // BUY NFT
 
   async approveBuyToken({commit,state, dispatch, getters}, token) {
-    const web3 = new Web3(getters.provider)
+    const web3 = new Web3(window.ethereum)
     const accounts = await web3.eth.getAccounts()
     const account = accounts[0]
     const kit = ContractKit.newKitFromWeb3(web3)

@@ -10,7 +10,7 @@
       </div>
       <div class="modal__balance">
         <p class="modal__balance-info">Balance <span>{{ balance }} CELO</span></p>
-        <p class="modal__balance-fee">Service fee <span>10%</span></p>
+        <!-- <p class="modal__balance-fee">Service fee <span>10%</span></p> -->
       </div>
       <div class="modal__buttons">
         <button class="modal__button" v-if="balance >= price" @click="buyToken">Confirm</button>
