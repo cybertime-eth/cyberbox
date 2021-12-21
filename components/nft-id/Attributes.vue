@@ -7,7 +7,7 @@
           class="attributes__block-header-image"
           src="/attr-array.svg" alt="array"
           :class="showLeftAttributes ? 'array-down' : 'array-up'"
-          @click="showLeftAttributes ? showLeftAttributes = false : showLeftAttributes = true"
+          @click="showLeftAttributes = !showLeftAttributes"
         >
       </div>
       <div class="attributes__block-content" v-if="showLeftAttributes">
@@ -24,7 +24,7 @@
           class="attributes__block-header-image"
           src="/attr-array.svg" alt="array"
           :class="showRightAttributes ? 'array-down' : 'array-up'"
-          @click="showRightAttributes ? showRightAttributes = false : showRightAttributes = true"
+          @click="showRightAttributes = !showRightAttributes"
         >
       </div>
       <div class="attributes__block-content" v-if="showRightAttributes">

@@ -236,14 +236,15 @@ export default {
       this.nftInfo = info
     },
     async getAttributes() {
-      const getAttr = this.nft.trait
-      const test = {
-        background: 'violet'
-      }
-      const testParse = JSON.stringify(test)
-      const parse = this.nft.trait[0]
-      console.log(parse, testParse)
-      this.attributes = []
+      const attributes = []
+      this.nft.trait.forEach(item => {
+        const attributeItem = JSON.parse(item);
+        attributes.push({
+          trait_type: Object.keys(attributeItem)[0],
+          value: Object.values(attributeItem)[0]
+        })
+      })
+      this.attributes = attributes
     }
   },
 }

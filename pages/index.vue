@@ -6,7 +6,7 @@
         <img src="/daopolis.JPG" alt="dao" class="home__item-image">
         <div class="home__item-info">
           <h2 class="home__item-info-name">Daopolis</h2>
-          <button class="home__item-info-button">Comming soon</button>
+          <button class="home__item-info-button">Coming soon</button>
         </div>
       </div>
       <div class="home__item" @click="$router.push(`/collections/${collection.route}`)" v-for="collection of list">
