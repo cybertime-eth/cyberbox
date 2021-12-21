@@ -41,11 +41,6 @@ export default {
      */
     clients: {
       default: {
-        // endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-new-marketmain-four',
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-shapes-add-four',
-        options: {}
-      },
-      celo: {
         endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-pixel-add-two',
         options: {}
       },

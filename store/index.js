@@ -17,7 +17,6 @@ export const state = () => ({
   celo: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
   celoToken: '0x471EcE3750Da237f93B8E339c536989b8978a438',
   user: {},
-  web3Modal: null,
   chainId: null,
   address: null,
   fullAddress: null,
@@ -104,10 +103,12 @@ export const getters = {
     const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
     return new ethers.providers.Web3Provider(web3 ? web3 : window.ethereum);
   },
-  getLibrary() {
-    const web3NoAccount = new ethers.providers.Web3Provider(window.ethereum)
-    web3NoAccount.pollingInterval = 12000;
-    return web3NoAccount
+  web3Provider() {
+	let web3Provider = window.ethereum
+	if (!web3Provider) {
+	  web3Provider = new Web3.providers.HttpProvider('https://forno.celo.org')
+	}
+	return web3Provider
   }
 }
 export const actions = {
@@ -200,14 +201,14 @@ export const actions = {
 
 
 
-  async updateUser({commit, state}) {
-    const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
-    const provider = new ethers.providers.Web3Provider(web3 ? web3 : window.ethereum);
-    const ethereum = window.ethereum || window.web3
+  async updateUser({commit, state, getters}) {
+	const web3Provider = getters.web3Provider
+	const provider = new ethers.providers.Web3Provider(web3Provider);
+	const ethereum = web3Provider
     if (localStorage.getItem('address') && !localStorage.getItem('walletconnect') && ethereum) {
       const signer = await provider.getSigner()
       const address = await signer.getAddress()
-      const chain = await provider.getNetwork()
+	  const chain = await provider.getNetwork()
       try {
         ethereum.on("chainChanged", async (chainId) => {
           commit('setChainId', BigNumber.from(chainId).toNumber())
@@ -217,7 +218,7 @@ export const actions = {
       }
       commit('setAddress', address)
       commit('setChainId', chain.chainId)
-    }
+	}
   },
   connectMobileMetamask() {
     try {
@@ -291,14 +292,14 @@ export const actions = {
 
   // GET INFORMATION USER
 
-  async getBalance({state}) {
-    const web3 = new Web3(window.ethereum)
-    const kit = ContractKit.newKitFromWeb3(web3)
-    const res = await kit.getTotalBalance(state.fullAddress)
-    return res.CELO.c[0] / 10000
+  async getBalance({state, getters}) {
+	const web3 = new Web3(getters.web3Provider)
+	const kit = ContractKit.newKitFromWeb3(web3)
+	const res = await kit.getTotalBalance(state.fullAddress)
+	return res.CELO.c[0] / 10000
   },
   async getPriceToken() {
-    return await redstone.getPrice('CELO')
+	return await redstone.getPrice('CELO')
   },
 
   // GET NFT
@@ -429,21 +430,21 @@ export const actions = {
   // BUY NFT
 
   async approveBuyToken({commit,state, dispatch, getters}, token) {
-    const web3 = new Web3(window.ethereum)
-    const accounts = await web3.eth.getAccounts()
-    const account = accounts[0]
-    const kit = ContractKit.newKitFromWeb3(web3)
-    const goldToken = await kit._web3Contracts.getGoldToken();
-    const parsePrice = ethers.utils.parseEther(String(token.price))
-    const result = await goldToken.methods.approve(account, parsePrice).send({
-      from: account,
-    })
-    this.getters.provider.once(result, async () => {
-     dispatch('buyNFT', token)
-    });
+	const web3 = new Web3(getters.web3Provider)
+	const accounts = await web3.eth.getAccounts()
+	const account = accounts[0]
+	const kit = ContractKit.newKitFromWeb3(web3)
+	const goldToken = await kit._web3Contracts.getGoldToken();
+	const parsePrice = ethers.utils.parseEther(String(token.price))
+	const result = await goldToken.methods.approve(account, parsePrice).send({
+	  from: account,
+	})
+	this.getters.provider.once(result, async () => {
+	  dispatch('buyNFT', token)
+	});
   },
-  async buyNFT({commit, state}, token) {
-    const web3 = new Web3(window.ethereum)
+  async buyNFT({commit, state, getters}, token) {
+    const web3 = new Web3(getters.web3Provider)
     const accounts = await web3.eth.getAccounts()
     const account = accounts[0]
     const kit = ContractKit.newKitFromWeb3(web3)
@@ -518,9 +519,6 @@ export const mutations = {
       .concat(dotArr)
       .concat(endID)
       .join("");
-  },
-  setWeb3Modal(state, web3modal) {
-    state.web3modal = web3modal
   },
   setNewNftList(state, list) {
     state.nftList = []
