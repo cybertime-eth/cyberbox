@@ -4,23 +4,20 @@
       <h2 class="modal__title">Connect your wallet</h2>
       <img src="/close.svg" alt="close" class="modal__close" @click="closeModal">
       <div class="modal__connect">
-        <button class="modal__connect-button" @click="connectMetaTrust" v-if="!isMobile">
+        <button class="modal__connect-button" @click="connectMetaTrust">
           MetaMask
           <img src="/auth/metamask.svg" alt="metamask" class="modal__connect-button-image">
         </button>
-<!--        <button class="modal__connect-button" @click="connectMetaTrust">-->
-<!--          TrustWallet-->
-<!--          <img src="/auth/trastwallet.svg" alt="metamask" class="modal__connect-button-image">-->
-<!--        </button>-->
         <button class="modal__connect-button" @click="connectWallet">
           WalletConnect
           <img src="/auth/WalletConnect.png" alt="metamask" class="modal__connect-button-image">
         </button>
       </div>
     </div>
-  </div>
+  </div>  
 </template>
 <script>
+
 export default {
   computed: {
     isMobile() {
@@ -31,7 +28,11 @@ export default {
   },
   methods: {
     async connectMetaTrust() {
-      await this.$store.dispatch('connectMetaTrust')
+      if (this.isMobile) {
+        this.$store.dispatch('connectMobileMetamask')
+      } else {
+        await this.$store.dispatch('connectMetaTrust')
+      }
     },
     async connectWallet() {
       await this.$store.dispatch('walletConnect', true)

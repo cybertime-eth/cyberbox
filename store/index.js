@@ -17,6 +17,7 @@ export const state = () => ({
   celo: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
   celoToken: '0x471EcE3750Da237f93B8E339c536989b8978a438',
   user: {},
+  web3Modal: null,
   chainId: null,
   address: null,
   fullAddress: null,
@@ -102,6 +103,11 @@ export const getters = {
   provider() {
     const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
     return new ethers.providers.Web3Provider(web3 ? web3 : window.ethereum);
+  },
+  getLibrary() {
+    const web3NoAccount = new ethers.providers.Web3Provider(window.ethereum)
+    web3NoAccount.pollingInterval = 12000;
+    return web3NoAccount
   }
 }
 export const actions = {
@@ -213,8 +219,23 @@ export const actions = {
       commit('setChainId', chain.chainId)
     }
   },
-  async connectMetaTrust({commit}) {
+  connectMobileMetamask() {
     try {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      if (/android/i.test(userAgent)) {
+        const appLink = 'https://metamask.app.link/dapp/' + window.location.host
+        window.location.replace(appLink)
+      }
+      else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+		const appLink = 'metamask://'
+        window.location.href = appLink
+      }
+    } catch(error) {
+	  throw new Error(error);
+    }
+  },
+  async connectMetaTrust({commit}) {
+	try {
       if (window.ethereum) {
         await window.ethereum.request({ method: 'eth_requestAccounts' })
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -497,6 +518,9 @@ export const mutations = {
       .concat(dotArr)
       .concat(endID)
       .join("");
+  },
+  setWeb3Modal(state, web3modal) {
+    state.web3modal = web3modal
   },
   setNewNftList(state, list) {
     state.nftList = []
