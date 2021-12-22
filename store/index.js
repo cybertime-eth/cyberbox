@@ -4,6 +4,8 @@ import WalletConnectProvider from "@walletconnect/web3-provider";
 import MarketMainABI from '../abis/marketMain.json'
 import punksABI from '../abis/punks.json'
 import toadsABI from '../abis/toads.json'
+import cshapeABI from '../abis/cshape.json'
+import pxaABI from '../abis/pixcel.json'
 import {gql} from "nuxt-graphql-request";
 const ContractKit = require('@celo/contractkit')
 import filter from './../config.js'
@@ -410,6 +412,10 @@ export const actions = {
       case 'cpunk': AbiNft = punksABI
         break;
       case 'ctoadz': AbiNft = toadsABI
+        break;
+      case 'cshape': AbiNft = cshapeABI
+        break;
+      case 'pxa': AbiNft = pxaABI
         break;
     }
     const contract = new ethers.Contract(state.nft.contract_address, AbiNft, signer)
