@@ -24,6 +24,9 @@
         </a>
       </div>
       <h4 class="modal__footer"  v-if="balance < price">Insufficiently funds</h4>
+      <button class="modal__close-button" @click="closeModal">
+        <img src="/close-bold.svg" class="modal__close-button-icon">
+      </button>
     </div>
   </div>
 </template>
@@ -131,6 +134,15 @@ export default {
     padding-top: 1.6rem;
     text-align: center;
     letter-spacing: 0.03em;
+  }
+  &__close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    &-icon {
+      width: 20px;
+    }
   }
 }
 </style>
