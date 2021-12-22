@@ -59,6 +59,26 @@ export const state = () => ({
       instagram: 'https://www.instagram.com/celotoadzofficial/',
       description: 'CeloToadz | First collection of 6969 randomly generated Toadz made up of more than 120 different traits on Celo Blockchain!'
     },
+    {
+      id: 3,
+      name: 'CeloShapes',
+      route: 'cshape',
+      image: '/collections/cshape.png',
+      banner: '/collections/cshape-banner.png',
+      logo: '/collections/cshape-logo.png'
+    },
+    {
+      id: 4,
+      name: 'PixelAva',
+      route: 'pxa',
+      image: '/collections/PixelAva.png',
+      banner: '/collections/PixelAva-banner.png',
+      logo: '/collections/PixelAva-logo.png',
+      wallet: '0xeBD0A580fabb5a5DBE98030D074e532F025C1367',
+      website: 'https://pixelava.space/',
+      twitter: 'https://twitter.com/NPixelava',
+      discord: 'https://discord.gg/sjjjFX2X'
+    },
     // {
     //   id: 3,
     //   name: 'DimsOfCelo',
@@ -70,18 +90,6 @@ export const state = () => ({
     //   website: 'https://dimsofcelo.art/',
     //   twitter: 'https://twitter.com/dimsofcelonft',
     //   discord: 'https://discord.com/invite/rhJjVUtKEs',
-    // },
-    // {
-    //   id: 4,
-    //   name: 'PixelAva',
-    //   route: 'pixelava',
-    //   image: '/collections/PixelAva.png',
-    //   banner: '/collections/PixelAva-banner.png',
-    //   logo: '/collections/PixelAva-logo.png',
-    //   wallet: '0xeBD0A580fabb5a5DBE98030D074e532F025C1367',
-    //   website: 'https://pixelava.space/',
-    //   twitter: 'https://twitter.com/NPixelava',
-    //   discord: 'https://discord.gg/sjjjFX2X',
     // },
     // {
     //   id: 5,
