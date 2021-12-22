@@ -66,7 +66,11 @@ export const state = () => ({
       route: 'cshape',
       image: '/collections/cshape.png',
       banner: '/collections/cshape-banner.png',
-      logo: '/collections/cshape-logo.png'
+      logo: '/collections/cshape-logo.png',
+      website: 'https://celoshapes.art',
+      twitter: 'https://twitter.com/CeloShapesNFT',
+      discord: 'https://discord.com/invite/H7NnhjHwWy',
+      description: 'CeloShapes is a generative art collection living on the Celo blockchain. Collection contains 4444 algorithmically generated colorful artwork.'
     },
     {
       id: 4,
@@ -78,7 +82,8 @@ export const state = () => ({
       wallet: '0xeBD0A580fabb5a5DBE98030D074e532F025C1367',
       website: 'https://pixelava.space/',
       twitter: 'https://twitter.com/NPixelava',
-      discord: 'https://discord.gg/sjjjFX2X'
+      discord: 'https://discord.gg/sjjjFX2X',
+      description: 'Pixaverse is a collection of GameFi worlds where PixelAva holders have extraordinary privileges.'
     },
     // {
     //   id: 3,
