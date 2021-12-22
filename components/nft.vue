@@ -15,7 +15,7 @@
         <h3>Copy link</h3>
       </div>
     </div>
-    <img :src="nftImage(nft)" alt="item" class="collection__item-image">
+    <img :src="getNFTImage(nft)" alt="item" class="collection__item-image">
     <div class="collection__item-info">
       <h2 class="collection__item-info-name">
         {{ nft.name || nft.contract_name }}
@@ -83,12 +83,6 @@ export default {
       } else {
         return id
       }
-    },
-    nftImage(nft) {
-      if (nft.contract === 'cshape' && nft.image.split('ipfs://').length > 1) {
-        return 'https://ipfs.io/ipfs/' + nft.image.split('ipfs://')[1]
-      }
-      return nft.image
     },
     routeNft(payload) {
       if (!this.seller) {

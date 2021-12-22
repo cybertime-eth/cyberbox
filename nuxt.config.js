@@ -26,7 +26,8 @@ export default {
   plugins: [
     '@/plugins/aos.client.js',
     '@/plugins/outside.js',
-    '@/plugins/components.js'
+    '@/plugins/components.js',
+    '@/plugins/utils.client.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

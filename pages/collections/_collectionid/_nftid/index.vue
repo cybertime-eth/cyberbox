@@ -10,7 +10,7 @@
 
 
         <div class="nft__block">
-          <img :src="nft.image" alt="item" class="nft__block-image" v-if="nft.image">
+          <img :src="getNFTImage(nft)" alt="item" class="nft__block-image" v-if="nft.image">
           <div class="nft__block-image-loading" v-else>
             <img src="/loading-button.svg" alt="load">
           </div>
@@ -105,7 +105,7 @@
     </div>
   <Attributes :item="attributes" :info="nft"/>
  <BuyToken v-if="showBuyTokenModal" :price="nft.price" @closeModal="closeModal"/>
-  <SuccessfullBuy v-if="showSuccessModal" :image="nft.image" :name="nft.name"/>
+  <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nft.name"/>
 <!--    <History />-->
   </section>
 </template>
@@ -152,14 +152,7 @@ export default {
     SuccessfullBuy
   },
   async mounted() {
-    const nft = await this.$store.dispatch('getNft', {
-      id: this.$route.params.nftid,
-      collectionId: this.$route.params.collectionid
-    })
-    this.nft = {
-      ...nft,
-      price: nft.price / 1000
-    }
+    await this.loadNft()
     const price = await this.$store.dispatch('getPriceToken')
     this.priceToken = (price.value * this.nft.price).toFixed(1)
     await this.getAttributes()
@@ -198,6 +191,16 @@ export default {
     }
   },
   methods: {
+    async loadNft() {
+      const nft = await this.$store.dispatch('getNft', {
+        id: this.$route.params.nftid,
+        collectionId: this.$route.params.collectionid
+      })
+      this.nft = {
+        ...nft,
+        price: nft.price / 1000
+      }
+    },
     closeModal(payload) {
       this.showBuyTokenModal = payload
     },
@@ -217,20 +220,22 @@ export default {
    async removeFromMarket() {
       this.loadButton = true
       const res = await this.$store.dispatch('removeNft', this.nft.contract_id)
+      console.log('0000', res)
       if (res) {
         this.step = 1
         this.listStatus = 'default'
         if (process.browser) {
-          window.reload()
+          await this.loadNft()
         }
       }
     },
     changeStep(step) {
       this.step = step
     },
-    changeList(list) {
+    async changeList(list) {
       this.listStatus = list
       this.step = 1
+      await this.loadNft()
     },
     setInfoNft(info) {
       this.nftInfo = info
