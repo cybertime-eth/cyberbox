@@ -46,6 +46,14 @@ export default {
       activeFilter: 'all'
     }
   },
+  beforeMount() {
+    if (process.browser) {
+      window.addEventListener('scroll', this.addCurrentPage)
+    }
+  },
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.addCurrentPage)
+  },
   async created() {
     this.$store.commit('changeCountPage', 1)
     if (!this.listNft.length) {
@@ -59,9 +67,6 @@ export default {
       }
       this.filteredNft = this.listNft
       this.loading = false
-    }
-    if (process.browser) {
-      addEventListener('scroll', this.addCurrentPage)
     }
   },
   computed: {

@@ -160,6 +160,7 @@ export default {
     changeFilter() {
       const filter = this.filter
       this.sort = '';
+      this.$store.commit('setNewNftList', [])
       this.$store.commit('changeSortData', 'all')
       let activeRequest = 'getGraphData'
       switch (filter) {
@@ -174,16 +175,20 @@ export default {
       this.$store.commit('changeCountPage', 1)
     },
   },
+  beforeMount() {
+    if (process.browser) {
+      window.addEventListener('scroll', this.addCurrentPage)
+    }
+  },
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.addCurrentPage)
+  },
   async created() {
     this.$store.commit('changeCountPage', 1)
     this.$store.commit('changeSortData', 'all')
     await this.$store.dispatch(this.activeRequest)
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
-    if (process.browser) {
-      addEventListener('scroll', this.addCurrentPage)
-    }
-
   },
   computed: {
     countItems() {
