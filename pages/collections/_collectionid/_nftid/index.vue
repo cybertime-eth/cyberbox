@@ -139,6 +139,13 @@ export default {
       secondsDifference: 0,
     }
   },
+  watch: {
+    successRemoveNft(newVal) {
+      if (this.$store.state.successRemoveToken) {
+        this.changeList('default')
+      }
+    }
+  },
   components: {
     Attributes,
     History,
@@ -168,6 +175,9 @@ export default {
     }, 1000)
   },
   computed: {
+    successRemoveNft() {
+      return this.$store.state.successRemoveToken
+    },
     isSellNFT() {
       return this.nft.market_status !== 'BOUGHT' && this.nft.price !== 0
     },
@@ -200,6 +210,7 @@ export default {
         ...nft,
         price: nft.price / 1000
       }
+      this.loadButton = false
     },
     closeModal(payload) {
       this.showBuyTokenModal = payload
@@ -218,24 +229,18 @@ export default {
       this.secondsDifference = Math.floor(difference/1000)
     },
    async removeFromMarket() {
+      if (this.loadButton) return;
       this.loadButton = true
-      const res = await this.$store.dispatch('removeNft', this.nft.contract_id)
-      console.log('0000', res)
-      if (res) {
-        this.step = 1
-        this.listStatus = 'default'
-        if (process.browser) {
-          await this.loadNft()
-        }
-      }
+      this.$store.commit('changeSuccessRemoveToken', false)
+      await this.$store.dispatch('removeNft', this.nft.contract_id)
     },
     changeStep(step) {
       this.step = step
     },
-    async changeList(list) {
+    changeList(list) {
       this.listStatus = list
       this.step = 1
-      await this.loadNft()
+      setTimeout(() => this.loadNft(), 1500)
     },
     setInfoNft(info) {
       this.nftInfo = info

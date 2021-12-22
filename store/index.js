@@ -27,6 +27,7 @@ export const state = () => ({
   countPage: 1,
   filter: filter.races.DAOS.layers,
   successBuyToken: false,
+  successRemoveToken: false,
   message: '',
   sort: `orderBy: contract_id`,
 
@@ -503,11 +504,12 @@ export const actions = {
     try {
       await contract.delistToken(state.nft.contract_address ,id)
       this.getters.provider.once(contract, async () => {
+        commit('changeSuccessRemoveToken', true)
         return true
-      });
+      })
     } catch (error) {
       console.log(error)
-      return false
+      commit('changeSuccessRemoveToken', true)
     }
   }
 }
@@ -562,6 +564,9 @@ export const mutations = {
   },
   changeSuccessBuyToken(state, status) {
     state.successBuyToken = status
+  },
+  changeSuccessRemoveToken(state, status) {
+    state.successRemoveToken = status
   },
   setChainId(state, chain) {
     state.chainId = chain
