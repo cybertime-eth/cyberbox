@@ -177,6 +177,20 @@ export const actions = {
     return data.contractInfos
   },
 
+  async getFloorPrice({}, contract) {
+    const query = gql`
+      query Sample {
+        contractInfos(first: 1 orderBy: price orderDirection: desc where: { market_status_not: "MINT" contract: "${contract}" }) {
+			id
+			contract
+			price
+        }
+      }`
+	const data = await this.$graphql.default.request(query)
+	const tokenPrice = data.contractInfos.length > 0 ? data.contractInfos[0].price : 0
+	return tokenPrice ? (tokenPrice / 1000).toFixed(2) : 0
+  },
+
   async getGraphDataListed({commit, state}) {
     const sort = state.sort
     const query = gql`

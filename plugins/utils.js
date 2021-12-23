@@ -8,11 +8,6 @@ Vue.mixin({
 	  }
 	  return nft.image
 	},
-	getFloorPrice(nftList) {
-	  const prices = (nftList || []).map(item => item.price || 0)
-	  const floorPrice = prices.length > 0 ?  prices.sort((a, b) => a - b)[0] : 0
-	  return floorPrice > 0 ? floorPrice.toFixed(2) : 0
-	},
 	isMobile() {
 		if(process.browser) {
 			const isMobile = /iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(navigator.userAgent.toLowerCase()) && navigator.userAgent.search('PC') === -1

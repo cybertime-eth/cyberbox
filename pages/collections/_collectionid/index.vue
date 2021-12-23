@@ -120,7 +120,8 @@ export default {
       activeRequest: 'getGraphData',
       sort: '',
       myNft: false,
-      collectionInfo: {}
+      collectionInfo: {},
+      floorPrice: 0
     }
   },
   components: {
@@ -189,6 +190,7 @@ export default {
     await this.$store.dispatch(this.activeRequest)
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
+    this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
   },
   computed: {
     countItems() {
@@ -203,9 +205,6 @@ export default {
     },
     collection() {
       return this.$store.state.collectionList.filter(item => item.route === this.$route.params.collectionid)[0]
-    },
-    floorPrice() {
-      return !!this.getFloorPrice ? this.getFloorPrice(this.nftList) : 0;
     }
   },
 }

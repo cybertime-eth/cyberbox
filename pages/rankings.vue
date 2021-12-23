@@ -55,6 +55,10 @@ export default {
    await this.renderlist();
   },
   methods: {
+	async loadFloorPrice(contract, idx) {
+	  const floorPrice = await this.$store.dispatch('getFloorPrice', contract)
+	  this.list[idx].floorPrice = floorPrice
+	},
     async renderlist() {
       const result = await this.$store.dispatch('getCollectionInfo', true)
       const resultCount =  await this.$store.dispatch('getStatisticCountNft')
@@ -90,12 +94,13 @@ export default {
 			volumeCelo: item.sell_total_price / 1000,
 			statDay: volume / (item.sell_total_price / 1000) * 100,
 			statWeek: 7,
-			floorPrice: item.sell_min_price ? (item.sell_min_price / 1000).toFixed(2) : 0,
+			floorPrice: 0,
 			floorPriceCelo: item.sell_max_price / 1000,
 			owners: item.ownerCount,
 			items: item.mint_count,
 			route: item.title
 		  })
+		  this.loadFloorPrice(item.nftSymbol, index)
 		}
       }
     }
