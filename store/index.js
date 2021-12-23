@@ -500,6 +500,7 @@ export const actions = {
           list_count
           dna_count
           nftName
+          nftSymbol
           ownerCount
         }
       }`;
