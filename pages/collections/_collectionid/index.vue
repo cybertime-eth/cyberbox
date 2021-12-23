@@ -21,10 +21,10 @@
             <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ (collectionInfo.sell_total_price ? collectionInfo.sell_total_price / 1000 : 0).toFixed(2) }}</h3>
             <h3 class="collection__header-info-block-subtitle">Volume traded</h3>
           </div>
-<!--          <div class="collection__header-info-block">-->
-<!--            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ (collectionInfo.sell_min_price ? collectionInfo.sell_min_price / 1000 : 0).toFixed(2) }}</h3>-->
-<!--            <h3 class="collection__header-info-block-subtitle">Floor price</h3>-->
-<!--          </div>-->
+         <div class="collection__header-info-block">
+           <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ floorPrice }}</h3>
+           <h3 class="collection__header-info-block-subtitle">Floor price</h3>
+         </div>
         </div>
         <h3 class="collection__header-content">
           {{ collection.description }}
@@ -104,7 +104,7 @@
         </div>
       </div>
       <div class="collection__items" v-if="nftList.length">
-        <nft :nft="nft" v-for="nft of nftList" :filter="filter" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
+        <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
       </div>
     </div>
   </section>
@@ -204,6 +204,9 @@ export default {
     collection() {
       return this.$store.state.collectionList.filter(item => item.route === this.$route.params.collectionid)[0]
     },
+    floorPrice() {
+      return !!this.getFloorPrice ? this.getFloorPrice(this.nftList) : 0;
+    }
   },
 }
 </script>
