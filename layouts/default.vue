@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <Header />
+    <Header v-if="!isMobile()" />
     <Nuxt />
     <h3 class="message" v-if="message">{{ message }}</h3>
   </div>

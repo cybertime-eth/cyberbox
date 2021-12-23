@@ -27,7 +27,7 @@ export default {
     '@/plugins/aos.client.js',
     '@/plugins/outside.js',
     '@/plugins/components.js',
-    '@/plugins/utils.client.js'
+    '@/plugins/utils.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -42,7 +42,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-pixel-add-two',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-pixel-add-three',
         options: {}
       },
       secondClient: {

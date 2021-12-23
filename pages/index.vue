@@ -1,27 +1,43 @@
 <template>
   <section class="home container-xl">
-    <h1 class="home__title">Discover, collect and trade NFTs</h1>
-    <div class="home__items">
-      <div class="home__item" @click="openDaopolis()">
-        <img src="/daopolis.JPG" alt="dao" class="home__item-image">
-        <div class="home__item-info">
-          <h2 class="home__item-info-name">Daopolis</h2>
-          <button class="home__item-info-button">Coming soon</button>
+    <div class="home__desktop-container" v-if="!isDesktop">
+      <h1 class="home__title">Discover, collect and trade NFTs</h1>
+      <div class="home__items">
+        <div class="home__item" @click="openDaopolis()">
+          <img src="/daopolis.JPG" alt="dao" class="home__item-image">
+          <div class="home__item-info">
+            <h2 class="home__item-info-name">Daopolis</h2>
+            <button class="home__item-info-button">Coming soon</button>
+          </div>
+        </div>
+        <div class="home__item" @click="$router.push(`/collections/${collection.route}`)" v-for="collection of list">
+          <img :src="collection.image" alt="dao" class="home__item-image">
+          <div class="home__item-info">
+            <h2 class="home__item-info-name">{{ collection.name }}</h2>
+            <button class="home__item-info-button">Marketplace</button>
+          </div>
         </div>
       </div>
-      <div class="home__item" @click="$router.push(`/collections/${collection.route}`)" v-for="collection of list">
-        <img :src="collection.image" alt="dao" class="home__item-image">
-        <div class="home__item-info">
-          <h2 class="home__item-info-name">{{ collection.name }}</h2>
-          <button class="home__item-info-button">Marketplace</button>
-        </div>
+    </div>
+    <div class="home__mobile-container" v-else>
+      <div class="home__title-box">
+        <img src="/mobile-logo.svg" alt="logo" class="home__logo-img">
+        <h1 class="home__title">CYBERBOX</h1>
       </div>
+      <div class="home__waiting-img-box">
+        <img src="/wait-animation.gif" class="home__wait-img">
+      </div>
+      <p class="home__info">The beta version of the site only <b>supports Desktop</b> devices
+CyberTime team is working to support a full mobile version for CELO</p>
     </div>
   </section>
 </template>
 <script>
 export default {
   computed: {
+    isDesktop() {
+      return this.isMobile()
+    },
     list() {
       return this.$store.state.collectionList
     }
@@ -82,10 +98,39 @@ export default {
 }
 @media screen and (max-width: 460px) {
   .home {
-    padding-top: 2.2rem;
+    // padding-top: 2.2rem;
+    padding-top: 10.6rem;
+    &__title-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
     &__title {
-      font-size: 1.8rem;
+      // font-size: 1.8rem;
+      margin-left: 1.2rem;
+      font-family: Orbitron-Black;
+      font-size: 1.6rem;
+      letter-spacing: 0.1em;
+      // letter-spacing: 0.03em;
+    }
+    &__waiting-img-box {
+      width: 22.8rem;
+      margin: 0 auto;
+      padding-top: 2.6rem;
+      padding-bottom: 2rem;
+      text-align: center;
+    }
+    &__wait-img {
+      width: 100%;
+    }
+    &__info {
+      padding: 0 2.6rem;
+      line-height: 20px;
       letter-spacing: 0.03em;
+      text-align: center;
+      font-size: 1.4rem;
+      color: $textColor;
     }
     &__items {
       grid-template-columns: 1fr;
@@ -100,7 +145,7 @@ export default {
         height: 22.4rem;
       }
       &-info {
-        padding-top: 1.5rem;
+        // padding-top: 1.5rem;
         &-button {
           margin-top: 2.2rem;
         }
