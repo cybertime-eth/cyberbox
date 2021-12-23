@@ -94,7 +94,7 @@ export default {
 			volumeCelo: item.sell_total_price / 1000,
 			statDay: volume / (item.sell_total_price / 1000) * 100,
 			statWeek: 7,
-			floorPrice: 0,
+			floorPrice: '-',
 			floorPriceCelo: item.sell_max_price / 1000,
 			owners: item.ownerCount,
 			items: item.mint_count,

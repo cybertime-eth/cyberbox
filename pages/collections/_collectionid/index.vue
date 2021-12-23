@@ -121,7 +121,7 @@ export default {
       sort: '',
       myNft: false,
       collectionInfo: {},
-      floorPrice: 0
+      floorPrice: '-'
     }
   },
   components: {
