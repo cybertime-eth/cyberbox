@@ -74,19 +74,19 @@ export const state = () => ({
       discord: 'https://discord.com/invite/H7NnhjHwWy',
       description: 'CeloShapes is a generative art collection living on the Celo blockchain. Collection contains 4444 algorithmically generated colorful artwork.'
     },
-    {
-      id: 4,
-      name: 'PixelAva',
-      route: 'pxa',
-      image: '/collections/PixelAva.png',
-      banner: '/collections/PixelAva-banner.png',
-      logo: '/collections/PixelAva-logo.png',
-      wallet: '0xeBD0A580fabb5a5DBE98030D074e532F025C1367',
-      website: 'https://pixelava.space/',
-      twitter: 'https://twitter.com/NPixelava',
-      discord: 'https://discord.gg/sjjjFX2X',
-      description: 'Pixaverse is a collection of GameFi worlds where PixelAva holders have extraordinary privileges.'
-    },
+    // {
+    //   id: 4,
+    //   name: 'PixelAva',
+    //   route: 'pxa',
+    //   image: '/collections/PixelAva.png',
+    //   banner: '/collections/PixelAva-banner.png',
+    //   logo: '/collections/PixelAva-logo.png',
+    //   wallet: '0xeBD0A580fabb5a5DBE98030D074e532F025C1367',
+    //   website: 'https://pixelava.space/',
+    //   twitter: 'https://twitter.com/NPixelava',
+    //   discord: 'https://discord.gg/sjjjFX2X',
+    //   description: 'Pixaverse is a collection of GameFi worlds where PixelAva holders have extraordinary privileges.'
+    // },
     // {
     //   id: 3,
     //   name: 'DimsOfCelo',

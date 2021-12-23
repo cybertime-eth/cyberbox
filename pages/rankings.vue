@@ -60,41 +60,43 @@ export default {
       const resultCount =  await this.$store.dispatch('getStatisticCountNft')
       let nftName = '';
       for (let [index, item] of result.entries()) {
-        let volume = 0;
-        let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
-        volume = volume + price
+		if (item.nftSymbol !== 'pxa') {
+		  let volume = 0;
+		  let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
+		  volume = volume + price
 
-        switch(item.nftSymbol) {
-          case 'cpunk':
-            nftName = 'CeloPunks'
-            break;
-          case 'ctoadz':
-            nftName = 'CeloToadz'
-            break;
-          case 'cshape':
-            nftName = 'CeloShapes'
-            break;
-          case 'pxa':
-            nftName = 'PixelAva'
-            break;
-        }
+		  switch(item.nftSymbol) {
+			case 'cpunk':
+			  nftName = 'CeloPunks'
+			  break;
+			case 'ctoadz':
+			  nftName = 'CeloToadz'
+			  break;
+			case 'cshape':
+			  nftName = 'CeloShapes'
+			  break;
+			case 'pxa':
+			  nftName = 'PixelAva'
+			  break;
+		  }
 
-        this.list.push({
-          id: index + 1,
-          collectionImage: `/${item.title}.png`,
-          verification: false,
-          new: false,
-          name: nftName,
-          volumePrice: 0,
-          volumeCelo: item.sell_total_price / 1000,
-          statDay: volume / (item.sell_total_price / 1000) * 100,
-          statWeek: 7,
-          floorPrice: item.sell_min_price ? (item.sell_min_price / 1000).toFixed(2) : 0,
-          floorPriceCelo: item.sell_max_price / 1000,
-          owners: item.ownerCount,
-          items: item.mint_count,
-          route: item.title
-        })
+		  this.list.push({
+			id: index + 1,
+			collectionImage: `/${item.title}.png`,
+			verification: false,
+			new: false,
+			name: nftName,
+			volumePrice: 0,
+			volumeCelo: item.sell_total_price / 1000,
+			statDay: volume / (item.sell_total_price / 1000) * 100,
+			statWeek: 7,
+			floorPrice: item.sell_min_price ? (item.sell_min_price / 1000).toFixed(2) : 0,
+			floorPriceCelo: item.sell_max_price / 1000,
+			owners: item.ownerCount,
+			items: item.mint_count,
+			route: item.title
+		  })
+		}
       }
     }
   }
