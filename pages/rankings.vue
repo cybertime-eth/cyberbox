@@ -36,7 +36,7 @@
           <h3 class="rankings__table-content-item-day">-</h3>
           <h3 class="rankings__table-content-item-week">-</h3>
           <div class="rankings__table-content-item-floor">
-            <p class="rankings__table-content-item-floor-title">-</p>
+            <p class="rankings__table-content-item-floor-title">{{ item.floorPrice }}</p>
           </div>
           <h3 class="rankings__table-content-item-owners">-</h3>
         </div>
@@ -89,7 +89,7 @@ export default {
           volumeCelo: item.sell_total_price / 1000,
           statDay: volume / (item.sell_total_price / 1000) * 100,
           statWeek: 7,
-          floorPrice: 0,
+          floorPrice: item.sell_min_price ? (item.sell_min_price / 1000).toFixed(2) : 0,
           floorPriceCelo: item.sell_max_price / 1000,
           owners: item.ownerCount,
           items: item.mint_count,
