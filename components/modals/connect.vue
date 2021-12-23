@@ -8,10 +8,10 @@
           MetaMask
           <img src="/auth/metamask.svg" alt="metamask" class="modal__connect-button-image">
         </button>
-        <button class="modal__connect-button" @click="connectWallet">
+        <!-- <button class="modal__connect-button" @click="connectWallet">
           WalletConnect
           <img src="/auth/WalletConnect.png" alt="metamask" class="modal__connect-button-image">
-        </button>
+        </button> -->
       </div>
     </div>
   </div>  
