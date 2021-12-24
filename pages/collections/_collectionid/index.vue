@@ -124,11 +124,42 @@ export default {
       floorPrice: '-'
     }
   },
+  metaInfo() {
+    return {
+      meta: [{
+        property: 'og:description',
+        content: this.getDescription()
+      }, {
+				property: 'og:image',
+        content: this.getImageSrc()
+			}]
+    }
+  },
   components: {
     nft,
     attributesFilter
   },
   methods: {
+    getDescription() {
+      let description = ''
+      switch (this.$route.params.collectionid) {
+        case 'cpunk': description = 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
+          break
+        case 'ctoadz': description = 'CeloToadz | First collection of 6969 randomly generated Toadz made up of more than 120 different traits on Celo Blockchain!'
+          break
+      }
+      return description
+		},
+		getImageSrc() {
+			let imageSrc = ''
+      switch (this.$route.params.collectionid) {
+        case 'cpunk': imageSrc = '/collections/Media_punks.png'
+          break
+        case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
+          break
+      }
+      return imageSrc
+		},
     addCurrentPage() {
       if(process.browser) {
         const count = this.$store.state.countPage
