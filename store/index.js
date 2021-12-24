@@ -180,7 +180,7 @@ export const actions = {
   async getFloorPrice({}, contract) {
     const query = gql`
       query Sample {
-        contractInfos(first: 1 orderBy: price orderDirection: desc where: { market_status: "LISTED" contract: "${contract}" }) {
+        contractInfos(first: 1 orderBy: price where: { market_status: "LISTED" contract: "${contract}" }) {
 			id
 			contract
 			price
