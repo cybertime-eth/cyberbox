@@ -60,7 +60,7 @@
         <div class="create-nft-info-form-block">
           <div class="create-nft-info-form-checkbox">
             <input type="checkbox" class="create-nft-info-form-checkbox-input">
-            <h3 class="create-nft-info-form-checkbox-text">Collectibies</h3>
+            <h3 class="create-nft-info-form-checkbox-text">Collectibles</h3>
           </div>
           <div class="create-nft-info-form-checkbox">
             <input type="checkbox" class="create-nft-info-form-checkbox-input">

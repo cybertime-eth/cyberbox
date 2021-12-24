@@ -56,7 +56,7 @@
           </div>
           <div class="step-first-info-form-checkbox">
             <input type="checkbox" class="step-first-info-form-checkbox-input">
-            <h3 class="step-first-info-form-checkbox-text">Collectibies</h3>
+            <h3 class="step-first-info-form-checkbox-text">Collectibles</h3>
           </div>
           <div class="step-first-info-form-checkbox">
             <input type="checkbox" class="step-first-info-form-checkbox-input">
