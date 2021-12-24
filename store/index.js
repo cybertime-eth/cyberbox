@@ -32,6 +32,7 @@ export const state = () => ({
   successRemoveToken: false,
   message: '',
   sort: `orderBy: contract_id`,
+  pagination: null,
 
   collectionList: [
     {
@@ -125,11 +126,14 @@ export const getters = {
 	  web3Provider = new Web3.providers.HttpProvider('https://forno.celo.org')
 	}
 	return web3Provider
+  },
+  paginationSort(state) {
+	return state.pagination ? `${state.pagination} ${state.sort}` : state.sort
   }
 }
 export const actions = {
-  async getGraphData({commit,state}) {
-    const sort = state.sort
+  async getGraphData({commit, state, getters}) {
+    const sort = getters.paginationSort
     const query = gql`
       query Sample {
         contractInfos(${sort} first: 48 where: { contract: "${$nuxt.$route.params.collectionid}"}) {
@@ -173,14 +177,14 @@ export const actions = {
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    sort === `skip: ${48 * (state.countPage - 1)} orderBy: contract_id` ? commit('addNftToList', data.contractInfos) : commit('setNewNftList', data.contractInfos)
+    state.pagination ? commit('addNftToList', data.contractInfos) : commit('setNewNftList', data.contractInfos)
     return data.contractInfos
   },
 
   async getFloorPrice({}, contract) {
     const query = gql`
       query Sample {
-        contractInfos(first: 1 orderBy: price where: { market_status: "LISTED" contract: "${contract}" }) {
+        contractInfos(first: 1 orderBy: price orderDirection: desc where: { market_status: "LISTED" contract: "${contract}" }) {
 			id
 			contract
 			price
@@ -191,8 +195,8 @@ export const actions = {
 	return tokenPrice ? (tokenPrice / 1000).toFixed(2) : '-'
   },
 
-  async getGraphDataListed({commit, state}) {
-    const sort = state.sort
+  async getGraphDataListed({commit, getters}) {
+    const sort = getters.paginationSort
     const query = gql`
       query Sample {
         contractLists(${sort} first: 48 where: { contract: "${$nuxt.$route.params.collectionid}"}) {
@@ -208,8 +212,8 @@ export const actions = {
     commit('setNewNftList', data.contractLists)
   },
 
-  async getGraphDataSells({commit, state}) {
-    const sort = state.sort
+  async getGraphDataSells({commit, getters}) {
+    const sort = getters.paginationSort
     const query = gql`
       query Sample {
         contractSells(${sort} first: 48 where: { contract: "${$nuxt.$route.params.collectionid}"}) {
@@ -563,7 +567,8 @@ export const mutations = {
         ...nft,
         price: nft.price ? nft.price / 1000 : nft.price_total / 1000
       })
-    }
+	}
+	state.pagination = null
   },
   addNftToList(state, list) {
     for (let nft of list) {
@@ -630,8 +635,12 @@ export const mutations = {
         break;
       case 'mint-highest-sold': state.sort = `orderBy: contract_id orderDirection: desc`;
         break;
-      case 'pagination': state.sort = `skip: ${48 * (state.countPage - 1)} orderBy: contract_id`;
+	  case 'pagination': state.pagination = `skip: ${48 * (state.countPage - 1)}`;
         break;
-    }
+	}
+	if (type !== 'pagination') {
+	  state.countPage = 1
+	  state.pagination = null
+	}
   }
 }
