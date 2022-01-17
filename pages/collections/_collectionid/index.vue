@@ -153,13 +153,10 @@ export default {
       return imageSrc
 		},
     addCurrentPage() {
-      if (!window.ethereum) {
-        alert(!!process.browser)
-      }
       if(process.browser) {
         const count = this.$store.state.countPage
         const element = document.body
-        if (!window.ethereum) {
+        if (!window.ethereum && element.scrollHeight <= (window.pageYOffset + window.innerHeight)) {
           alert(`${element.scrollHeight}, ${window.pageYOffset} ${window.innerHeight}, ${count}`)
         }
         if (element.scrollHeight === window.pageYOffset + window.innerHeight && count * 48 === this.nftList.length && this.nftList.length > 0) {
