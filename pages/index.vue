@@ -1,6 +1,6 @@
 <template>
   <section class="home container-xl">
-    <div class="home__desktop-container" v-if="!isDesktop">
+    <div class="home__desktop-container">
       <h1 class="home__title">Discover, collect and trade NFTs</h1>
       <div class="home__items">
         <div class="home__item" @click="openDaopolis()">
@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-    <div class="home__mobile-container" v-else>
+    <!-- <div class="home__mobile-container" v-else>
       <div class="home__title-box">
         <img src="/mobile-logo.svg" alt="logo" class="home__logo-img">
         <h1 class="home__title">CYBERBOX</h1>
@@ -29,15 +29,12 @@
       </div>
       <p class="home__info">The beta version of the site only <b>supports Desktop</b> devices
 CyberTime team is working to support a full mobile version for CELO</p>
-    </div>
+    </div> -->
   </section>
 </template>
 <script>
 export default {
   computed: {
-    isDesktop() {
-      return this.isMobile()
-    },
     list() {
       return this.$store.state.collectionList
     }
@@ -98,8 +95,7 @@ export default {
 }
 @media screen and (max-width: 460px) {
   .home {
-    // padding-top: 2.2rem;
-    padding-top: 10.6rem;
+    padding-top: 2.5rem;
     &__title-box {
       display: flex;
       align-items: center;

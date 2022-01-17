@@ -254,21 +254,6 @@ export const actions = {
       commit('setChainId', chain.chainId)
 	}
   },
-  connectMobileMetamask() {
-    try {
-      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-      if (/android/i.test(userAgent)) {
-        const appLink = 'https://metamask.app.link/dapp/' + window.location.host
-        window.location.replace(appLink)
-      }
-      else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-		const appLink = 'metamask://'
-        window.location.href = appLink
-      }
-    } catch(error) {
-	  throw new Error(error);
-    }
-  },
   async connectMetaTrust({commit}) {
 	try {
       if (window.ethereum) {
