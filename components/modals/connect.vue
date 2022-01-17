@@ -14,7 +14,10 @@
           </button> -->
         </div>
       </div>
-      <h2 class="modal__title" v-else>Open <span class="modal__title-domain">cyberbox.art</span> in your Metamask mobile app</h2>
+      <div class="modal__block-container" v-else>
+        <h2 class="modal__title">Open <span class="modal__title-domain">cyberbox.art</span> in your Metamask mobile app</h2>
+        <img src="/auth/metamask-mobile.svg" alt="metamask" class="modal__connect-metamask-image">
+      </div>
       <img src="/close.svg" alt="close" class="modal__close" @click="closeModal">
     </div>
   </div>  
@@ -64,20 +67,29 @@ export default {
   }
 }
 @media screen and (max-width: 460px) {
-  .modal__connect-button {
-    width: 25rem;
-  }
-  .modal__block {
-    width: 80%;
-  }
-  .modal__title {
-    width: 70%;
-    margin: 0 auto;
-    line-height: 2.2rem;
-    text-align: center;
-    font-size: 1.6rem;
-    &-domain {
-      color: $green;
+  .modal {
+    &__connect {
+      &-metamask-image {
+        margin-top: 4rem;
+      }
+    }
+    &__block {
+      width: 80%;
+      padding-top: 8rem !important;
+      padding-bottom: 4rem !important;
+      &-container {
+        text-align: center;
+      }
+    }
+    &__title {
+      width: 80%;
+      margin: 0 auto;
+      line-height: 2.2rem;
+      text-align: center;
+      font-size: 1.6rem;
+      &-domain {
+        color: $green;
+      }
     }
   }
 }
