@@ -59,14 +59,14 @@
           :class="{'collection__sort-button-active': sort === 'mint-lowest'}"
           @click="changeSort('mint-lowest')"
         >
-          Mint - Lowest
+          <span>Mint<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Lowest</span>
         </button>
         <button
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'mint-highest'}"
           @click="changeSort('mint-highest')"
         >
-          Mint - Highest
+          <span>Mint<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Highest</span>
         </button>
         <button
           class="collection__sort-button"
@@ -74,7 +74,7 @@
           @click="changeSort('price-lowest')"
           v-if="filter !== 'All'"
         >
-          Price - Lowest
+          <span>Price<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Lowest</span>  
         </button>
         <button
           class="collection__sort-button"
@@ -82,16 +82,8 @@
           @click="changeSort('price-highest')"
           v-if="filter !== 'All'"
         >
-          Price - Highest
+          <span>Price<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Highest</span>
         </button>
-<!--        <button-->
-<!--          class="collection__sort-button"-->
-<!--          :class="{'collection__sort-button-active': sort === 'traits'}"-->
-<!--          @click="changeSort('traits')"-->
-<!--        >-->
-<!--          Traits-->
-<!--          <img src="/sort.svg" alt="sort">-->
-<!--        </button>-->
       </div>
 <!--      <attributesFilter />-->
       <div class="collection__info">
@@ -367,6 +359,9 @@ export default {
       &-active {
         background: $modalColor;
       }
+      &-breakline {
+        display: none;
+      }
     }
   }
   &__info {
@@ -515,6 +510,13 @@ export default {
       &-button {
         width: 9.6rem;
         height: 5.2rem;
+        font-size: 1.3rem;
+        &-delimiter {
+          display: none;
+        }
+        &-breakline {
+          display: inline-block;
+        }
       }
     }
   }
