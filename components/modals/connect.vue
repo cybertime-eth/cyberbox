@@ -28,7 +28,7 @@ export default {
     }
   },
   mounted() {
-    // this.metamaskEnabled = !!window.ethereum
+    this.metamaskEnabled = !!window.ethereum
   },
   methods: {
     async connectMetaTrust() {

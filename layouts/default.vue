@@ -108,7 +108,11 @@ button {
   color: $textColor;
   font-family: OpenSans-SemiBold;
   padding: 0;
+  outline: 0;
   cursor: pointer;
+  &:focus {
+    outline: 0;
+  }
 }
 a {
   text-decoration: none;
@@ -133,6 +137,9 @@ input,textarea {
   &::placeholder {
     color: $border2;
   }
+}
+input, textarea, button, select, a {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 ul {
   margin: 0;

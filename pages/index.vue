@@ -19,17 +19,6 @@
         </div>
       </div>
     </div>
-    <!-- <div class="home__mobile-container" v-else>
-      <div class="home__title-box">
-        <img src="/mobile-logo.svg" alt="logo" class="home__logo-img">
-        <h1 class="home__title">CYBERBOX</h1>
-      </div>
-      <div class="home__waiting-img-box">
-        <img src="/wait-animation.gif" class="home__wait-img">
-      </div>
-      <p class="home__info">The beta version of the site only <b>supports Desktop</b> devices
-CyberTime team is working to support a full mobile version for CELO</p>
-    </div> -->
   </section>
 </template>
 <script>
