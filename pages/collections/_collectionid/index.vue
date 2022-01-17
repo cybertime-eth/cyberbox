@@ -156,10 +156,7 @@ export default {
       if(process.browser) {
         const count = this.$store.state.countPage
         const element = document.body
-        if (!window.ethereum && element.scrollHeight <= (window.pageYOffset + window.innerHeight)) {
-          alert(`${element.scrollHeight}, ${window.pageYOffset} ${window.innerHeight}, ${count}`)
-        }
-        if (element.scrollHeight === window.pageYOffset + window.innerHeight && count * 48 === this.nftList.length && this.nftList.length > 0) {
+        if (element.scrollHeight <= window.pageYOffset + window.innerHeight && count * 48 === this.nftList.length && this.nftList.length > 0) {
             this.$store.commit('changeCountPage', count + 1)
           this.$store.commit('changeSortData', 'pagination')
           this.$store.dispatch(this.activeRequest)
