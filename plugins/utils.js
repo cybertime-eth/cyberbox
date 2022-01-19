@@ -7,6 +7,6 @@ Vue.mixin({
 		return 'https://ipfs.io/ipfs/' + nft.image.split('ipfs://')[1]
 	  }
 	  return nft.image
-	},
+	}
   }
 })

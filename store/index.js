@@ -511,6 +511,30 @@ export const actions = {
     return isArray ? data.contracts : data.contracts[0]
   },
 
+  async getContractInfoTimePercent({commit, state}, contract) {
+    const currTime = new Date().getTime()
+    const timeBeforeOneDay = Math.floor((currTime - (24 * 3600 * 1000)) / 1000)
+    const timeBeforeTwoDays = Math.floor((currTime - (48 * 3600 * 1000)) / 1000)
+    const time24hNftsQuery = gql`
+      query Sample {
+        contractInfos(where: { market_status: "MINT" contract: "${contract}" updatedAt_gte: ${timeBeforeOneDay} }) {
+          id
+        }
+      }`;
+    const time48hNftsQuery = gql`
+      query Sample {
+        contractInfos(where: { market_status: "MINT" contract: "${contract}" updatedAt_gte: ${timeBeforeTwoDays} updatedAt_lt: ${timeBeforeOneDay} }) {
+          id
+        }
+      }`;
+    const data1 = await this.$graphql.default.request(time24hNftsQuery)
+    const data2 = await this.$graphql.default.request(time48hNftsQuery)
+    const ts1 = data1.contractInfos.length;
+    const ts2 = data2.contractInfos.length;
+    const tsOffset = ts1 - ts2;
+    return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
+  },
+
   // REMOVE NFT FROM LIST
 
   async removeNft({commit, state}, id) {
