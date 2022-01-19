@@ -2,10 +2,10 @@
   <div class="rankings container-xl">
     <h1 class="rankings__title">NFT Ranking</h1>
     <h3 class="rankings__subtitle">With trading volume, floor price and etc., you can find the most trending NFTs here.</h3>
-   <div class="rankings__navigation">
+   <!-- <div class="rankings__navigation">
      <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': !filterMonthly}" @click="updateFilter(false)">7 Days</button>
      <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': filterMonthly}" @click="updateFilter(true)">30 Days</button>
-   </div>
+   </div> -->
     <div class="rankings__table" :class="{empty: list.length === 0}">
       <div class="rankings__table-header">
         <div class="rankings__table-collection-group">
