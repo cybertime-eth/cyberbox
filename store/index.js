@@ -1,7 +1,7 @@
 import Web3 from 'web3'
 import {ethers, Wallet, providers, BigNumber} from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider";
-import CyberBoxMarketplaceABI from './../abis/cyberBoxMarketPlace.json'
+import MarketMainABI from './../abis/marketMain.json'
 import DaosABI from './../abis/daos.json'
 import MaosABI from './../abis/maos.json'
 import CeloToken from './../abis/celoToken.json'
@@ -11,7 +11,7 @@ import filter from './../config.js'
 import redstone from 'redstone-api';
 export const state = () => ({
   celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
-  cyberBoxMarketplace: '0x4Dbf292BAD2cc86B318036f55C876e96bb7863D5',
+  marketMain: '0x1aFedC8D8a4ACE7516266F1081EFD26a81a8095f',
   daosContract: '0x34d63dc2f8c5655bA6E05124B3D4a283A402CEd9',
   maosContract: '0x1FBB74537Bf8b8bbd2aF43fE2115638A67137D45',
   celo: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
@@ -265,7 +265,7 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.daosContract, DaosABI, signer)
     try {
-      await contract.approve(state.cyberBoxMarketplace, state.nft.contract_id)
+      await contract.approve(state.marketMain, state.nft.contract_id)
       contract.on("Approval", () => {
         commit('changeApproveToken', 'approve')
       });
@@ -280,7 +280,7 @@ export const actions = {
   },
   async listingNFT({commit, state}, nft) {
     const signer = this.getters.provider.getSigner()
-    const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer)
+    const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
       await contract.listToken(state.nft.contract_address, state.nft.contract_id, nft.price, nft.date.toFixed(0))
       this.getters.provider.once(contract, async () => {
@@ -313,10 +313,9 @@ export const actions = {
     const accounts = await web3.eth.getAccounts()
     const account = accounts[0]
     const kit = ContractKit.newKitFromWeb3(web3)
-    const contract = new kit.web3.eth.Contract(CyberBoxMarketplaceABI, state.cyberBoxMarketplace)
+    const contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
     const parsePrice = ethers.utils.parseEther(String(token.price))
-    const parseId = BigNumber.from(token.id).toNumber()
-    const result = await contract.methods.buyToken(state.nft.contract_address, parseId).send({
+    const result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
       from: account,
       value: parsePrice,
       gas: 3000000
@@ -351,7 +350,7 @@ export const actions = {
 
   async removeNft({commit, state}, id) {
     const signer = this.getters.provider.getSigner()
-    const contract = new ethers.Contract(state.cyberBoxMarketplace, CyberBoxMarketplaceABI, signer)
+    const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
       await contract.delistToken(state.nft.contract_address ,id)
       this.getters.provider.once(contract, async () => {

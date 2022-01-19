@@ -10,6 +10,14 @@ export default {
   components: {
     Header
   },
+  metaInfo: {
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { hid: 'description', name: 'description', content: '' },
+      { name: 'format-detection', content: 'telephone=no' }
+    ]
+  },
  async mounted() {
     await this.$store.dispatch('updateUser')
     await this.$store.dispatch('walletConnect', false)
