@@ -84,7 +84,7 @@
           <div class="nft__block-info" v-else-if="listStatus === 'active'">
             <h1 class="nft__block-info-name">List onto market</h1>
             <Navigation :step="step" />
-            <SellPrice @changeStep="changeStep" @setInfo="setInfoNft" v-if="step === 1"/>
+            <SellPrice :changeInfo="isApprovedNft" @changeStep="changeStep" @setInfo="setInfoNft" v-if="step === 1"/>
             <Approve @changeStep="changeStep" v-if="step === 2"/>
             <Sign @changeStep="changeStep" @setInfo="setInfoNft" :price="nftInfo.price" v-if="step === 3"/>
             <Listing @changeStep="changeStep" :nft="nftInfo" v-if="step === 4" />
@@ -175,6 +175,9 @@ export default {
     }, 1000)
   },
   computed: {
+    isApprovedNft() {
+      return this.$store.state.approvedContracts.includes(this.nft.contract)
+    },
     successRemoveNft() {
       return this.$store.state.successRemoveToken
     },

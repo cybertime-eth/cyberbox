@@ -25,6 +25,7 @@ export const state = () => ({
   nftList: [],
   nft: {},
   approveToken: '',
+  approvedContracts: [],
   listToken: '',
   countPage: 1,
   filter: filter.races.DAOS.layers,
@@ -423,9 +424,14 @@ export const actions = {
     }
     const contract = new ethers.Contract(state.nft.contract_address, AbiNft, signer)
     try {
-      await contract.approve(resultAddress, state.nft.contract_id)
-      contract.on("Approval", () => {
+      await contract.setApprovalForAll(resultAddress, state.nft.contract_id)
+      contract.on("ApprovalForAll", () => {
         commit('changeApproveToken', 'approve')
+        const newApprovedContracts = [
+          ...state.approvedContracts,
+          state.nft.contract
+        ]
+        commit('changeApprovedContracts', newApprovedContracts)
       });
     } catch (error) {
       commit('changeApproveToken', 'error')
@@ -598,6 +604,9 @@ export const mutations = {
   },
   changeApproveToken(state, approve) {
     state.approveToken = approve
+  },
+  changeApprovedContracts(state, approvedContracts) {
+    state.approvedContracts = approvedContracts
   },
   changeCountPage(state, count) {
     state.countPage = count
