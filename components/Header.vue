@@ -26,7 +26,7 @@
        My Collection
       </button>
       <button v-else class="header__null"></button>
-      <div class="header__wallet" v-if="address" @click="showProfileMenu = true">
+      <div class="header__wallet" ref="wallet" v-if="address" @click="showProfileMenu = !showProfileMenu">
         <h3 class="header__wallet-address">{{ address }}</h3>
         <div class="header__wallet-avatar gradient-button">
           <img src="/celo.svg" alt="avatar">
@@ -78,7 +78,20 @@ export default {
       return this.$store.state.address
     }
   },
+  beforeMount() {
+    if (process.browser) {
+      window.addEventListener('click', this.handleClickWindow)
+    }
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.handleClickWindow)
+  },
   methods: {
+    handleClickWindow(e) {
+      if (!this.$refs.wallet.contains(e.target)) {
+        this.showProfileMenu = false
+      }
+    },
     closeModal(payload) {
       this.showConnectModal = payload
       this.showProfileMenu = payload

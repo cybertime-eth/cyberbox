@@ -94,10 +94,8 @@ export default {
     &__title {
       // font-size: 1.8rem;
       margin-left: 1.2rem;
-      font-family: Orbitron-Black;
-      font-size: 1.6rem;
-      letter-spacing: 0.1em;
-      // letter-spacing: 0.03em;
+      font-size: 1.8rem;
+      letter-spacing: 0.03em;
     }
     &__waiting-img-box {
       width: 22.8rem;
