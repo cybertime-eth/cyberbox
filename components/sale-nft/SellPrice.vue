@@ -3,7 +3,9 @@
     <h1 class="nft__content-title">Sell price</h1>
     <div class="nft__content-form">
       <h3 class="nft__content-form-title">Enter price in CELO for this NFT</h3>
-      <input type="number" class="nft__content-form-input" v-model="price">
+      <span class="nft__content-form-input-box">
+        <input type="number" class="nft__content-form-input" v-model="price">
+      </span>
     </div>
     <div class="nft__content-buttons-mini">
       <button class="nft__content-buttons-button nft__content-buttons-button-cancel" @click="$router.push('/mycollection')">Cancel</button>

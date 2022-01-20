@@ -490,6 +490,7 @@ export default {
     width: 30.4rem;
   }
   .nft {
+    padding-bottom: 1.6rem;
     &__crumbs {
       display: none;
     }
@@ -540,6 +541,54 @@ export default {
         &-buy {
           margin-top: 4rem;
           width: 100%;
+        }
+        &-sell {
+          width: 100%;
+          height: 4.8rem;
+          margin-top: 3rem;
+        }
+      }
+    }
+    &__navigation {
+      display: none;
+    }
+    &__content {
+      padding-top: 3.2rem;
+      &-title {
+        font-size: 2.2rem;
+      }
+      &-form {
+        margin-top: 1.6rem;
+        &-input {
+          width: calc(100% - 2rem);
+          &:focus {
+            border: 1px solid $green;
+          }
+          &-box {
+            position: relative;
+            &::after {
+              content: 'CELO';
+              display: block;
+              position: absolute;
+              top: -0.7rem;
+              right: 1rem;
+              font-size: 1.6rem;
+            }
+          }
+        }
+      }
+    }
+  }
+  .attributes {
+    margin-top: 0;
+    &__block {
+      &-content-item {
+        &-title, &-subtitle {
+          font-size: 1.4rem;
+        }
+        &-subtitle {
+          font-weight: normal;
+          color: $textColor;
         }
       }
     }
