@@ -442,6 +442,7 @@ export default {
         width: 15rem;
       }
       &-info {
+        width: 100%;
         padding-top: 5.6rem;
         flex-wrap: wrap;
         &-block {
@@ -459,6 +460,13 @@ export default {
           }
           &-subtitle {
             font-size: 1rem;
+          }
+          &:last-child {
+            margin-right: 0;
+          }
+          &:nth-child(2), &:last-child {
+            flex: 1;
+            width: auto;
           }
         }
         :first-child {
