@@ -199,5 +199,14 @@ export default {
       transition: .3s;
     }
   }
+
+  @media(max-width: 460px) {
+    &__item {
+      &:hover {
+        top: 0;
+        transition: none;
+      }
+    }
+  }
 }
 </style>

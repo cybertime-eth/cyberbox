@@ -482,7 +482,7 @@ export default {
     }
     &__item {
       width: 14.4rem;
-      height: 32.8rem;
+      height: auto;
       &-image {
         width: 14.4rem;
         height: 14.4rem;
