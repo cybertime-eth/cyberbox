@@ -98,6 +98,7 @@
       <div class="collection__items" v-if="nftList.length">
         <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
       </div>
+      <p class="collection__empty-items">There are no results matching your selected criteria</p>
     </div>
   </section>
 </template>
@@ -409,6 +410,11 @@ export default {
     grid-row-gap: 3.2rem;
     padding-top: 3.2rem;
   }
+  &__empty-items {
+    padding: 36px 0;
+    text-align: center;
+    font-size: 14px;
+  }
 }
 @media screen and (max-width: 460px) {
   .collection {
@@ -508,8 +514,10 @@ export default {
     }
     &__sort {
       &-button {
-        width: 9.6rem;
+        flex: 1;
+        width: auto;
         height: 5.2rem;
+        margin-right: .5rem;
         font-size: 1.3rem;
         &-delimiter {
           display: none;
@@ -517,6 +525,14 @@ export default {
         &-breakline {
           display: inline-block;
         }
+        &:last-child {
+          margin: 0;
+        }
+      }
+    }
+    &__info {
+      &-items, &-nft-text {
+        font-size: 1.4rem;
       }
     }
   }
