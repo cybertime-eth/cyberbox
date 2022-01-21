@@ -2,7 +2,7 @@
   <div class="modal">
     <div class="modal__buy">
       <h1 class="modal__title gradient-text">Payment Confirmation</h1>
-      <p class="modal__subtitle">You are about to purchase a Daopolis from CyberTime</p>
+      <p class="modal__subtitle">You are about to purchase a <span class="modal__subtitle-bold">Daopolis</span> from <span class="modal__subtitle-bold">CyberTime</span></p>
       <div class="modal__information">
         <h3 class="modal__information-title">You pay</h3>
         <h3 class="modal__information-price">{{ price }} <span>CELO</span></h3>
@@ -32,18 +32,7 @@
 </template>
 <script>
 export default {
-  data() {
-    return {
-      balance: 0,
-      priceToken: 0
-    }
-  },
-  props: ['price'],
-  async created() {
-    this.balance = await this.$store.dispatch('getBalance')
-    const price = await this.$store.dispatch('getPriceToken')
-    this.priceToken = (price.value * this.price).toFixed(1)
-  },
+  props: ['price', 'priceToken', 'balance'],
   methods: {
     async buyToken() {
       try {
@@ -142,6 +131,34 @@ export default {
     background: transparent;
     &-icon {
       width: 20px;
+    }
+  }
+  @media(max-width: 460px) {
+    &__buy {
+      padding: 2.2rem 0.8rem;
+    }
+    &__title {
+      margin: 0;
+      text-align: left;
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+    &__subtitle {
+      font-size: 1.4rem;
+      &-bold {
+        font-weight: 600;
+      }
+    }
+    &__information {
+      padding-top: 3.2rem;
+      padding-bottom: 2.2rem;
+    }
+    &__balance {
+      padding-top: 1.8rem;
+    }
+    &__button {
+      height: 4.6rem;
+      margin-top: 2rem;
     }
   }
 }

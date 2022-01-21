@@ -104,7 +104,7 @@
       </div>
     </div>
   <Attributes :item="attributes" :info="nft"/>
- <BuyToken v-if="showBuyTokenModal" :price="nft.price" @closeModal="closeModal"/>
+  <BuyToken v-if="showBuyTokenModal" :price="nft.price" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
   <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nft.name"/>
 <!--    <History />-->
   </section>
@@ -137,6 +137,7 @@ export default {
       hoursDifference: 0,
       minutesDifference: 0,
       secondsDifference: 0,
+      balance: 0,
     }
   },
   watch: {
@@ -160,6 +161,7 @@ export default {
   },
   async mounted() {
     await this.loadNft()
+    this.balance = await this.$store.dispatch('getBalance')
     const price = await this.$store.dispatch('getPriceToken')
     this.priceToken = (price.value * this.nft.price).toFixed(1)
     await this.getAttributes()
@@ -487,7 +489,8 @@ export default {
 }
 @media screen and (max-width: 460px) {
   #nft {
-    width: 30.4rem;
+    width: auto;
+    margin: 0 0.8rem;
   }
   .nft {
     padding-bottom: 1.6rem;
@@ -496,8 +499,8 @@ export default {
     }
     &__block {
       grid-template-columns: 1fr;
-      padding: 0;
-      margin: 0;
+      margin: 0 -0.8rem;
+      padding: 0 0.8rem;
       &-image {
         width: 30.4rem;
         height: 30.4rem;
@@ -509,7 +512,7 @@ export default {
       &-info {
         text-align: left;
         padding-top: 1.8rem;
-        padding-bottom: 2rem;
+        padding-bottom: 1.6rem;
         &-company {
           font-size: 1.4rem;
         }
@@ -539,7 +542,7 @@ export default {
           display: none;
         }
         &-buy {
-          margin-top: 4rem;
+          margin-top: 1.6rem;
           width: 100%;
         }
         &-sell {
@@ -582,6 +585,8 @@ export default {
   .attributes {
     margin-top: 0;
     &__block {
+      width: calc(100% - 3.2rem);
+      margin-bottom: 1.6rem;
       &-content-item {
         &-title, &-subtitle {
           font-size: 1.4rem;

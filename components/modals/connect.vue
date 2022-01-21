@@ -68,6 +68,9 @@ export default {
 }
 @media screen and (max-width: 460px) {
   .modal {
+    > div:first-child {
+      margin: 0 .8rem;
+    }
     &__connect {
       &-metamask-image {
         margin-top: 4rem;

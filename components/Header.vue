@@ -1,6 +1,9 @@
 <template>
   <header>
     <div class="header container-xl">
+      <button class="header__back" v-if="nftId" @click="$router.go(-1)">
+        <img src="/arrow-left.svg" alt="back" class="header__back-img">
+      </button>
       <div class="header__logo" @click="$router.push('/')">
         <img src="/logo.svg" alt="logo" class="header__logo-img">
       </div>
@@ -76,6 +79,9 @@ export default {
     },
     address() {
       return this.$store.state.address
+    },
+    nftId() {
+      return this.$route.params.nftid
     }
   },
   beforeMount() {
@@ -109,6 +115,9 @@ header {
   display: grid;
   grid-template-columns: 14rem 34rem 44.3rem 17.5rem 22rem;
   align-items: center;
+  &__back {
+    display: none;
+  }
   &__logo {
     display: flex;
     align-items: center;
@@ -196,13 +205,20 @@ header {
 }
 @media screen and (max-width: 460px) {
   .header {
-    grid-template-columns: 15rem 1fr 1fr;
+    display: flex;
+    justify-content: space-between;
     height: 6.5rem;
     &__null {
       display: none;
     }
     &__navigation {
       display: none;
+    }
+    &__back {
+      display: block;
+      height: 2rem;
+      background: transparent;
+      margin-right: 2.2rem;
     }
     &__logo {
       img {
@@ -220,6 +236,7 @@ header {
       height: 2.4rem;
       justify-self: center;
       padding: .2rem 1rem;
+      margin-right: 1rem;
       background: $purpleLight;
       &-avatar {
         display: none;
