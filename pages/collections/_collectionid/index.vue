@@ -98,7 +98,7 @@
       <div class="collection__items" v-if="nftList.length">
         <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
       </div>
-      <p class="collection__empty-items">There are no results matching your selected criteria</p>
+      <p class="collection__empty-items" v-else>There are no results matching your selected criteria</p>
     </div>
   </section>
 </template>
@@ -166,21 +166,31 @@ export default {
     },
     changeSort(id) {
       this.sort = id
-      this.$store.commit('changeSortData', this.filter === 'bought' ? `${id}-sold` : id)
+      if (this.myNft && this.filter !== 'listed') {
+        this.$store.commit('changeSortData', this.filter === 'bought' ? `myNft-${id}-sold` : `myNft-${id}`)
+      } else {
+        this.$store.commit('changeSortData', this.filter === 'bought' ? `${id}-sold` : id)
+      }
+      this.$store.dispatch(this.activeRequest)
+    },
+    changeMyNftFilter() {
+      let sortMyNft = 'all'
+      if (this.myNft) {
+        switch (this.filter) {
+          case 'All':
+            sortMyNft = 'myNftAll'
+            break;
+          case 'bought':
+            sortMyNft = 'myNftSold'
+            break;
+        }
+      }
+      this.$store.commit('changeSortData', sortMyNft)
       this.$store.dispatch(this.activeRequest)
     },
     changeMyNftStatus() {
       this.myNft = !this.myNft
-      let sortMyNft = 'all'
-      if (this.myNft && this.activeRequest === 'getGraphDataSells') {
-        sortMyNft = 'myNftSold'
-      } else if (this.myNft) {
-        sortMyNft = 'myNftAll'
-      } else {
-        sortMyNft = 'all'
-      }
-      this.$store.commit('changeSortData', sortMyNft)
-      this.$store.dispatch(this.activeRequest)
+      this.changeMyNftFilter()
     },
     changeFilter() {
       const filter = this.filter
@@ -196,7 +206,11 @@ export default {
         case 'bought': activeRequest = 'getGraphDataSells'
       }
       this.activeRequest = activeRequest
-      this.$store.dispatch(activeRequest)
+      if (this.myNft) {
+        this.changeMyNftFilter()
+      } else {
+        this.$store.dispatch(activeRequest)
+      }
       this.$store.commit('changeCountPage', 1)
     },
   },
@@ -218,10 +232,14 @@ export default {
   },
   computed: {
     countItems() {
-      switch (this.filter) {
-        case 'All': return this.collectionInfo.mint_count;
-        case 'listed': return this.collectionInfo.list_count;
-        case 'bought': return this.collectionInfo.sell_count;
+      if (!this.myNft || this.filter === 'listed') {
+        switch (this.filter) {
+          case 'All': return this.collectionInfo.mint_count;
+          case 'listed': return this.collectionInfo.list_count;
+          case 'bought': return this.collectionInfo.sell_count;
+        }
+      } else {
+        return this.nftList.length
       }
     },
     nftList() {

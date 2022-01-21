@@ -624,14 +624,44 @@ export const mutations = {
     state.message = msg
   },
   changeSortData(state, type) {
+    let myNftSort = null
+    if (type.includes('myNft')) {
+      if (type === 'myNft') {
+        myNftSort = `first: 200 where: { owner: "${localStorage.getItem('address').toLowerCase()}"} orderBy: contract_id`
+      } else if (type.toLowerCase().includes('sold')) {
+        myNftSort = `where: { seller: "${localStorage.getItem('address').toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`
+      } else {
+        myNftSort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`        
+      }
+    }
     switch (type) {
-      case 'myNft': state.sort = `first: 200 where: { owner: "${localStorage.getItem('address').toLowerCase()}"} orderBy: contract_id`;
+      case 'myNft': state.sort = myNftSort;
         break;
-      case 'myNftAll': state.sort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
+      case 'myNftAll': state.sort = myNftSort + ` orderBy: contract_id`;
         break;
-      case 'myNftSold': state.sort = `where: { seller: "${localStorage.getItem('address').toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
+      case 'myNftSold': state.sort = myNftSort + ` orderBy: contract_id`;
         break;
       case 'all': state.sort =  `orderBy: contract_id`;
+        break;
+      case 'myNft-price-lowest': state.sort = myNftSort + ` orderBy: price, orderDirection: asc`;
+        break;
+      case 'myNft-price-lowest-sold': state.sort = myNftSort + ` orderBy: price_total, orderDirection: asc`;
+        break;
+      case 'myNft-price-highest': state.sort = myNftSort + ` orderBy: price, orderDirection: desc`;
+        break;
+      case 'myNft-price-highest-sold': state.sort = myNftSort + ` orderBy: price_total, orderDirection: desc`;
+        break;
+      case 'myNft-rarity-rare': state.sort =  myNftSort + ` orderBy: rarity_rank, orderDirection: asc`;
+        break;
+      case 'myNft-rarity-common': state.sort =  myNftSort + ` orderBy: rarity_rank, orderDirection: desc`;
+        break;
+      case 'myNft-mint-lowest': state.sort = myNftSort + ` orderBy: contract_id`;
+        break;
+      case 'myNft-mint-lowest-sold': state.sort = myNftSort + ` orderBy: contract_id`;
+        break;
+      case 'myNft-mint-highest': state.sort = myNftSort + ` orderBy: contract_id orderDirection: desc`;
+        break;
+      case 'myNft-mint-highest-sold': state.sort = myNftSort + ` orderBy: contract_id orderDirection: desc`;
         break;
       case 'price-lowest': state.sort = `orderBy: price, orderDirection: asc`;
         break;
