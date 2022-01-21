@@ -624,8 +624,8 @@ export const mutations = {
     state.message = msg
   },
   changeSortData(state, type) {
-    let myNftSort = null
-    if (type.includes('myNft')) {
+    let myNftSort = ''
+    if (type.includes('myNft') && state.address) {
       if (type === 'myNft') {
         myNftSort = `first: 200 where: { owner: "${localStorage.getItem('address').toLowerCase()}"} orderBy: contract_id`
       } else if (type.toLowerCase().includes('sold')) {

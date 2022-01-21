@@ -164,20 +164,30 @@ export default {
         }
       }
     },
+    fetchNftList() {
+      if (this.fetchEnabled) {
+        this.$store.dispatch(this.activeRequest)
+      } else {
+        this.$store.commit('setNewNftList', [])
+      }
+    },
     changeSort(id) {
       this.sort = id
-      if (this.myNft && this.filter !== 'listed') {
-        this.$store.commit('changeSortData', this.filter === 'bought' ? `myNft-${id}-sold` : `myNft-${id}`)
-      } else {
-        this.$store.commit('changeSortData', this.filter === 'bought' ? `${id}-sold` : id)
+      let sortPrefix = ''
+      if (this.myNft) {
+        if (this.address) {
+          sortPrefix = 'myNft-'
+        }
       }
-      this.$store.dispatch(this.activeRequest)
+      this.$store.commit('changeSortData', this.filter === 'bought' ? (sortPrefix + `${id}-sold`) : (sortPrefix + id))
+      this.fetchNftList()
     },
     changeMyNftFilter() {
       let sortMyNft = 'all'
       if (this.myNft) {
         switch (this.filter) {
           case 'All':
+          case 'listed':
             sortMyNft = 'myNftAll'
             break;
           case 'bought':
@@ -185,8 +195,11 @@ export default {
             break;
         }
       }
-      this.$store.commit('changeSortData', sortMyNft)
-      this.$store.dispatch(this.activeRequest)
+
+      if (this.address) {
+        this.$store.commit('changeSortData', sortMyNft)
+      }
+      this.fetchNftList()
     },
     changeMyNftStatus() {
       this.myNft = !this.myNft
@@ -232,7 +245,7 @@ export default {
   },
   computed: {
     countItems() {
-      if (!this.myNft || this.filter === 'listed') {
+      if (!this.myNft) {
         switch (this.filter) {
           case 'All': return this.collectionInfo.mint_count;
           case 'listed': return this.collectionInfo.list_count;
@@ -247,6 +260,12 @@ export default {
     },
     collection() {
       return this.$store.state.collectionList.filter(item => item.route === this.$route.params.collectionid)[0]
+    },
+    address() {
+      return this.$store.state.address
+    },
+    fetchEnabled() {
+      return this.address || (!this.address && !this.myNft)
     }
   },
 }

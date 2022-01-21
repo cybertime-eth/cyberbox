@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     handleClickWindow(e) {
-      if (!this.$refs.wallet.contains(e.target)) {
+      if (this.$refs.wallet && !this.$refs.wallet.contains(e.target)) {
         this.showProfileMenu = false
       }
     },

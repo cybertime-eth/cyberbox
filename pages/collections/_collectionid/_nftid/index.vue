@@ -161,7 +161,9 @@ export default {
   },
   async mounted() {
     await this.loadNft()
-    this.balance = await this.$store.dispatch('getBalance')
+    if (this.$store.state.address) {
+      this.balance = await this.$store.dispatch('getBalance')
+    }
     const price = await this.$store.dispatch('getPriceToken')
     this.priceToken = (price.value * this.nft.price).toFixed(1)
     await this.getAttributes()
