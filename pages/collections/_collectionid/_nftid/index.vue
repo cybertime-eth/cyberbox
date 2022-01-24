@@ -31,7 +31,7 @@
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
             </div>
-            <button class="nft__block-info-buy" @click="showBuyTokenModal = true" v-if="isSellNFT && nft.market_status === 'LISTED'">Buy now</button>
+            <button class="nft__block-info-buy" @click="handleClickBuyNow" v-if="isSellNFT && nft.market_status === 'LISTED'">Buy now</button>
           </div>
 
           <!-- INFO SELLER -->
@@ -57,7 +57,7 @@
               </h3>
             </div>
 <!--            <h3 class="nft__block-info-transfer"><img src="/transfer.svg" alt="transfer">Transfer</h3>-->
-            <button class="nft__block-info-sell gradient-button" @click="listStatus = 'active'"  v-if="nft.market_status !== 'LISTED'">Sell</button>
+            <button class="nft__block-info-sell gradient-button" @click="handleClickSell"  v-if="nft.market_status !== 'LISTED'">Sell</button>
             <div class="nft__content-buttons nft__content-buttons-mini" v-else>
               <button
                 class="
@@ -104,6 +104,7 @@
       </div>
     </div>
   <Attributes :item="attributes" :info="nft"/>
+  <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
   <BuyToken v-if="showBuyTokenModal" :price="nft.price" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
   <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nft.name"/>
 <!--    <History />-->
@@ -118,12 +119,14 @@ import Sign from '@/components/sale-nft/Sign';
 import Listing from '@/components/sale-nft/Listing';
 import Successful from '@/components/sale-nft/Successful';
 import Navigation from '@/components/sale-nft/Navigation';
+import WrongNetwork from '@/components/modals/wrongNetwork'
 import BuyToken from '@/components/modals/buyToken';
 import SuccessfullBuy from '@/components/modals/successBuy';
 export default {
   data() {
     return {
       attributes: [],
+      showWrongNetworkModal: false,
       showBuyTokenModal: false,
       nft: {
         price: 0
@@ -156,6 +159,7 @@ export default {
     Sign,
     Listing,
     Successful,
+    WrongNetwork,
     BuyToken,
     SuccessfullBuy
   },
@@ -262,6 +266,20 @@ export default {
         })
       })
       this.attributes = attributes
+    },
+    handleClickBuyNow() {
+      if (!this.$store.state.wrongNetwork) {
+        this.showBuyTokenModal = true
+      } else {
+        this.showWrongNetworkModal = true
+      }
+    },
+    handleClickSell() {
+      if (!this.$store.state.wrongNetwork) {
+        this.listStatus = 'active'
+      } else {
+        this.showWrongNetworkModal = true
+      }
     }
   },
 }

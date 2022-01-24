@@ -21,6 +21,7 @@ export const state = () => ({
   user: {},
   chainId: null,
   address: null,
+  wrongNetwork: false,
   fullAddress: null,
   nftList: [],
   nft: {},
@@ -239,7 +240,8 @@ export const actions = {
   async updateUser({commit, state, getters}) {
 	const web3Provider = getters.web3Provider
 	const provider = new ethers.providers.Web3Provider(web3Provider);
-	const ethereum = web3Provider
+  const ethereum = web3Provider
+  // localStorage.removeItem('address')
     if (localStorage.getItem('address') && !localStorage.getItem('walletconnect') && ethereum) {
       const signer = await provider.getSigner()
       const address = await signer.getAddress()
@@ -297,6 +299,37 @@ export const actions = {
       await provider.enable();
     }
     window.web3 = new Web3(provider);
+  },
+  async switchNetwork() {
+    try {
+      await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{"chainId": '0xa4ec'}] })
+    } catch(e) {
+      try {
+        if (e.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              "chainId": "0xa4ec",
+              "chainName": "Celo (Mainnet)",
+              "rpcUrls": [
+                "https://forno.celo.org"
+              ],
+              "nativeCurrency": {
+                "name": "Celo",
+                "symbol": "CELO",
+                "decimals": 18
+              },
+              "blockExplorerUrls": [
+                "https://explorer.celo.org"
+              ]
+          }]})
+        } else {
+          console.log(e)
+        }
+      } catch(e) {
+        console.log(e)
+      }
+    }
   },
   async logout({commit}) {
     try {
@@ -619,6 +652,7 @@ export const mutations = {
   },
   setChainId(state, chain) {
     state.chainId = chain
+    state.wrongNetwork = chain !== 42220
   },
   setMessage(state, msg) {
     state.message = msg

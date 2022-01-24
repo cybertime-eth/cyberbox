@@ -22,7 +22,7 @@
       </nav>
       <div class="header__error-network" v-if="showWrongNetwork">
         <img src="/pulse.svg" alt="pulse">
-        <p class="header__error-network-text">{{ wrongNetworkError }}</p>
+        <p class="header__error-network-text">{{ networkErrorText }}</p>
       </div>
       <div v-else class="header__null"></div>
       <button class="header__box gradient-button" v-if="address" @click="$router.push('/mycollection')">
@@ -40,6 +40,7 @@
       <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showProfileMenuMobile = true">
     </div>
     <connect v-if="showConnectModal && !address" @closeModal="closeModal"/>
+    <wrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
     <profileModal v-show="showProfileMenu" @closeModal="closeModal"/>
     <profileModalMobile v-show="showProfileMenuMobile" @closeModal="closeModal"/>
   </header>
@@ -48,6 +49,7 @@
 import connect from '@/components/modals/connect'
 import profileModal from '@/components/modals/profileModal'
 import profileModalMobile from '@/components/modals/profileModalMobile'
+import wrongNetwork from '@/components/modals/wrongNetwork'
 export default {
   data() {
     return {
@@ -56,17 +58,23 @@ export default {
       showProfileMenu: false,
       showProfileMenuMobile: false,
       showWrongNetwork: false,
-
+      showWrongNetworkModal: false
     }
   },
   watch: {
     chainId() {
       const id = this.$store.state.chainId
       id === 42220 || id === null ? this.showWrongNetwork = false :  this.showWrongNetwork = true
+    },
+    address() {
+      if (this.address && this.chainId !== 42220) {
+        this.showWrongNetworkModal = true
+      }
     }
   },
   components: {
     connect,
+    wrongNetwork,
     profileModal,
     profileModalMobile
   },
@@ -83,7 +91,7 @@ export default {
     nftId() {
       return this.$route.params.nftid
     },
-    wrongNetworkError() {
+    networkErrorText() {
       let errorText = 'You are on the wrong network'
       if (process.browser) {
         if (window.innerWidth < 460) {

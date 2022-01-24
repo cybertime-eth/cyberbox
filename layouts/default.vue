@@ -21,11 +21,6 @@ export default {
       { name: 'format-detection', content: 'telephone=no' }
     ]
   },
-  methods: {
-    closeModal(payload) {
-      this.showWrongNetwork = payload
-    }
-  },
   components: {
     Header,
   },
