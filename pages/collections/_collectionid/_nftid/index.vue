@@ -105,7 +105,7 @@
     </div>
   <Attributes :item="attributes" :info="nft"/>
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
-  <BuyToken v-if="showBuyTokenModal" :price="nft.price" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
+  <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
   <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nft.name"/>
 <!--    <History />-->
   </section>

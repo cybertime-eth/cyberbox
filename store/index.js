@@ -197,7 +197,7 @@ export const actions = {
 	return tokenPrice ? (tokenPrice / 1000).toFixed(2) : '-'
   },
 
-  async getGraphDataListed({commit, getters}) {
+  async getGraphDataListed({state, commit, getters}) {
     const sort = getters.paginationSort
     const query = gql`
       query Sample {
@@ -211,10 +211,10 @@ export const actions = {
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    commit('setNewNftList', data.contractLists)
+    state.pagination ? commit('addNftToList', data.contractLists) : commit('setNewNftList', data.contractLists)
   },
 
-  async getGraphDataSells({commit, getters}) {
+  async getGraphDataSells({state, commit, getters}) {
     const sort = getters.paginationSort
     const query = gql`
       query Sample {
@@ -231,7 +231,7 @@ export const actions = {
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    commit('setNewNftList', data.contractSells)
+    state.pagination ? commit('addNftToList', data.contractSells) : commit('setNewNftList', data.contractSells)
   },
 
   // AUTHORIZATION
@@ -673,13 +673,17 @@ export const mutations = {
   },
   changeSortData(state, type) {
     let myNftSort = ''
-    if (type.includes('myNft') && state.address) {
+    let address = state.fullAddress
+    if (!address && process.browser) {
+      address = localStorage.getItem('address')
+    }
+    if (type.includes('myNft') && address) {
       if (type === 'myNft') {
-        myNftSort = `first: 200 where: { owner: "${localStorage.getItem('address').toLowerCase()}"} orderBy: contract_id`
+        myNftSort = `first: 200 where: { owner: "${address.toLowerCase()}"} orderBy: contract_id`
       } else if (type.toLowerCase().includes('sold')) {
-        myNftSort = `where: { seller: "${localStorage.getItem('address').toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`
+        myNftSort = `where: { seller: "${address.toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`
       } else {
-        myNftSort = `where: { owner: "${localStorage.getItem('address').toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`        
+        myNftSort = `where: { owner: "${address.toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`        
       }
     }
     switch (type) {
@@ -737,6 +741,6 @@ export const mutations = {
 	if (type !== 'pagination') {
 	  state.countPage = 1
 	  state.pagination = null
-	}
+  }
   }
 }
