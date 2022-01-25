@@ -1,27 +1,38 @@
 <template>
   <div class="modal">
     <div class="modal__block">
-      <h2 class="modal__title">Connect your wallet</h2>
-      <img src="/close.svg" alt="close" class="modal__close" @click="closeModal">
-      <div class="modal__connect">
-        <button class="modal__connect-button" @click="connectMetaTrust">
-          MetaMask
-          <img src="/auth/metamask.svg" alt="metamask" class="modal__connect-button-image">
-        </button>
-<!--        <button class="modal__connect-button" @click="connectMetaTrust">-->
-<!--          TrustWallet-->
-<!--          <img src="/auth/trastwallet.svg" alt="metamask" class="modal__connect-button-image">-->
-<!--        </button>-->
-<!--        <button class="modal__connect-button" @click="connectWallet">-->
-<!--          WalletConnect-->
-<!--          <img src="/auth/WalletConnect.png" alt="metamask" class="modal__connect-button-image">-->
-<!--        </button>-->
+      <div v-if="metamaskEnabled">
+        <h2 class="modal__title">Connect your wallet</h2>
+        <div class="modal__connect">
+          <button class="modal__connect-button" @click="connectMetaTrust">
+            MetaMask
+            <img src="/auth/metamask.svg" alt="metamask" class="modal__connect-button-image">
+          </button>
+          <!-- <button class="modal__connect-button" @click="connectWallet">
+            WalletConnect
+            <img src="/auth/WalletConnect.png" alt="metamask" class="modal__connect-button-image">
+          </button> -->
+        </div>
       </div>
+      <div class="modal__block-container" v-else>
+        <h2 class="modal__title">Open <span class="modal__title-domain">cyberbox.art</span> in your Metamask mobile app</h2>
+        <img src="/auth/metamask-mobile.svg" alt="metamask" class="modal__connect-metamask-image">
+      </div>
+      <img src="/close.svg" alt="close" class="modal__close" @click="closeModal">
     </div>
-  </div>
+  </div>  
 </template>
 <script>
+
 export default {
+  data() {
+    return {
+      metamaskEnabled: false
+    }
+  },
+  mounted() {
+    this.metamaskEnabled = !!window.ethereum
+  },
   methods: {
     async connectMetaTrust() {
       await this.$store.dispatch('connectMetaTrust')
@@ -51,6 +62,36 @@ export default {
       cursor: pointer;
       &-image {
         width: 2.4rem;
+      }
+    }
+  }
+}
+@media screen and (max-width: 460px) {
+  .modal {
+    > div:first-child {
+      margin: 0 .8rem;
+    }
+    &__connect {
+      &-metamask-image {
+        margin-top: 4rem;
+      }
+    }
+    &__block {
+      width: 80%;
+      padding-top: 8rem !important;
+      padding-bottom: 4rem !important;
+      &-container {
+        text-align: center;
+      }
+    }
+    &__title {
+      width: 80%;
+      margin: 0 auto;
+      line-height: 2.2rem;
+      text-align: center;
+      font-size: 1.6rem;
+      &-domain {
+        color: $green;
       }
     }
   }

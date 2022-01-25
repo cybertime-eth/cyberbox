@@ -10,7 +10,7 @@
 
 
         <div class="nft__block">
-          <img :src="nft.image" alt="item" class="nft__block-image" v-if="nft.image">
+          <img :src="getNFTImage(nft)" alt="item" class="nft__block-image" v-if="nft.image">
           <div class="nft__block-image-loading" v-else>
             <img src="/loading-button.svg" alt="load">
           </div>
@@ -18,49 +18,46 @@
           <!-- INFO BUYER -->
 
           <div class="nft__block-info" v-if="!seller">
-            <h3 class="nft__block-info-company">Cybertime.finance</h3>
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
-            <p class="nft__block-info-price-text" v-if="isSellNFT">Price</p>
-            <div class="nft__block-info-price" v-if="isSellNFT"><img src="/celo.svg" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= {{ priceToken }}$</span></div>
-            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in
-              {{ daysDifference }} days
-              {{ hoursDifference }} hours
-              {{ minutesDifference }} minutes
-            </p>
+            <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
+            <div class="nft__block-info-price" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/celo.svg" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= {{ priceToken }}$</span></div>
+<!--            <p class="nft__block-info-date" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/time.svg" alt="time"> Sale ends in-->
+<!--              {{ daysDifference }} days-->
+<!--              {{ hoursDifference }} hours-->
+<!--              {{ minutesDifference }} minutes-->
+<!--            </p>-->
             <div class="nft__block-info-status">
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
             </div>
-            <h3 class="nft__block-info-owner" v-if="!isSellNFT">Owner: {{ nft.owner }}</h3>
-            <button class="nft__block-info-buy" @click="showBuyTokenModal = true" v-if="isSellNFT">Buy now</button>
+            <button class="nft__block-info-buy" @click="handleClickBuyNow" v-if="isSellNFT && nft.market_status === 'LISTED'">Buy now</button>
           </div>
 
           <!-- INFO SELLER -->
 
-          <div class="nft__block-info" v-else-if="listStatus === 'default'">
-            <h3 class="nft__block-info-company">Cybertime.finance</h3>
+          <div class="nft__block-info" v-else-if="listStatus === 'default' && seller">
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <p class="nft__block-info-description" v-if="isSellNFT">{{ nft.description }}</p>
-            <p class="nft__block-info-price-text" v-if="isSellNFT">Price</p>
-            <div class="nft__block-info-price" v-if="isSellNFT">
+            <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
+            <div class="nft__block-info-price" v-if="isSellNFT && nft.market_status === 'LISTED'">
               <img src="/celo.svg" alt="celo">
               <h1>{{ nft.price }} CELO</h1>
               <span>= {{ priceToken }}$</span>
             </div>
-            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in
-              {{ daysDifference }} days
-              {{ hoursDifference }} hours
-              {{ minutesDifference }} minutes
-            </p>
+<!--            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in-->
+<!--              {{ daysDifference }} days-->
+<!--              {{ hoursDifference }} hours-->
+<!--              {{ minutesDifference }} minutes-->
+<!--            </p>-->
             <div class="nft__block-info-status">
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">
                 {{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}
               </h3>
             </div>
-            <h3 class="nft__block-info-transfer"><img src="/transfer.svg" alt="transfer">Transfer</h3>
-            <button class="nft__block-info-sell gradient-button" @click="listStatus = 'active'" v-if="nft.market_status !== 'LISTED'">Sell</button>
+<!--            <h3 class="nft__block-info-transfer"><img src="/transfer.svg" alt="transfer">Transfer</h3>-->
+            <button class="nft__block-info-sell gradient-button" @click="handleClickSell"  v-if="nft.market_status !== 'LISTED'">Sell</button>
             <div class="nft__content-buttons nft__content-buttons-mini" v-else>
               <button
                 class="
@@ -87,7 +84,7 @@
           <div class="nft__block-info" v-else-if="listStatus === 'active'">
             <h1 class="nft__block-info-name">List onto market</h1>
             <Navigation :step="step" />
-            <SellPrice @changeStep="changeStep" @setInfo="setInfoNft" v-if="step === 1"/>
+            <SellPrice :changeInfo="isApprovedNft" @changeStep="changeStep" @setInfo="setInfoNft" v-if="step === 1"/>
             <Approve @changeStep="changeStep" v-if="step === 2"/>
             <Sign @changeStep="changeStep" @setInfo="setInfoNft" :price="nftInfo.price" v-if="step === 3"/>
             <Listing @changeStep="changeStep" :nft="nftInfo" v-if="step === 4" />
@@ -107,8 +104,9 @@
       </div>
     </div>
   <Attributes :item="attributes" :info="nft"/>
-  <BuyToken v-if="showBuyTokenModal" :price="nft.price" @closeModal="closeModal"/>
-  <SuccessfullBuy v-if="showSuccessModal" :image="nft.image" :name="nft.name"/>
+  <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
+  <BuyToken v-if="showBuyTokenModal" :price="nft.price" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
+  <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nft.name"/>
 <!--    <History />-->
   </section>
 </template>
@@ -121,12 +119,14 @@ import Sign from '@/components/sale-nft/Sign';
 import Listing from '@/components/sale-nft/Listing';
 import Successful from '@/components/sale-nft/Successful';
 import Navigation from '@/components/sale-nft/Navigation';
+import WrongNetwork from '@/components/modals/wrongNetwork'
 import BuyToken from '@/components/modals/buyToken';
 import SuccessfullBuy from '@/components/modals/successBuy';
 export default {
   data() {
     return {
       attributes: [],
+      showWrongNetworkModal: false,
       showBuyTokenModal: false,
       nft: {
         price: 0
@@ -140,6 +140,14 @@ export default {
       hoursDifference: 0,
       minutesDifference: 0,
       secondsDifference: 0,
+      balance: 0,
+    }
+  },
+  watch: {
+    successRemoveNft(newVal) {
+      if (this.$store.state.successRemoveToken) {
+        this.changeList('default')
+      }
     }
   },
   components: {
@@ -151,18 +159,14 @@ export default {
     Sign,
     Listing,
     Successful,
+    WrongNetwork,
     BuyToken,
     SuccessfullBuy
   },
   async mounted() {
-    console.log('work')
-    const nft = await this.$store.dispatch('getNft', {
-      id: this.$route.params.nftid,
-      collectionId: this.$route.params.collectionid
-    })
-    this.nft = {
-      ...nft,
-      price: nft.price / 1000
+    await this.loadNft()
+    if (this.$store.state.address) {
+      this.balance = await this.$store.dispatch('getBalance')
     }
     const price = await this.$store.dispatch('getPriceToken')
     this.priceToken = (price.value * this.nft.price).toFixed(1)
@@ -179,12 +183,14 @@ export default {
     }, 1000)
   },
   computed: {
+    isApprovedNft() {
+      return this.$store.state.approvedContracts.includes(this.nft.contract)
+    },
+    successRemoveNft() {
+      return this.$store.state.successRemoveToken
+    },
     isSellNFT() {
-      if (this.nft.market_status !== 'BOUGHT' && this.nft.price !== 0) {
-        return true
-      } else {
-        return false
-      }
+      return this.nft.market_status !== 'BOUGHT' && this.nft.price !== 0
     },
     showSuccessModal() {
       return this.$store.state.successBuyToken
@@ -206,6 +212,17 @@ export default {
     }
   },
   methods: {
+    async loadNft() {
+      const nft = await this.$store.dispatch('getNft', {
+        id: this.$route.params.nftid,
+        collectionId: this.$route.params.collectionid
+      })
+      this.nft = {
+        ...nft,
+        price: nft.price / 1000
+      }
+      this.loadButton = false
+    },
     closeModal(payload) {
       this.showBuyTokenModal = payload
     },
@@ -223,15 +240,10 @@ export default {
       this.secondsDifference = Math.floor(difference/1000)
     },
    async removeFromMarket() {
+      if (this.loadButton) return;
       this.loadButton = true
-      const res = await this.$store.dispatch('removeNft', this.nft.contract_id)
-      if (res) {
-        this.step = 1
-        this.listStatus = 'default'
-        if (process.browser) {
-          window.reload()
-        }
-      }
+      this.$store.commit('changeSuccessRemoveToken', false)
+      await this.$store.dispatch('removeNft', this.nft.contract_id)
     },
     changeStep(step) {
       this.step = step
@@ -239,13 +251,35 @@ export default {
     changeList(list) {
       this.listStatus = list
       this.step = 1
+      setTimeout(() => this.loadNft(), 2000)
     },
     setInfoNft(info) {
       this.nftInfo = info
     },
     async getAttributes() {
-      const res =  await this.$axios.get(this.nft.attributes);
-      this.attributes = res.data.attributes
+      const attributes = []
+      this.nft.trait.forEach(item => {
+        const attributeItem = JSON.parse(item);
+        attributes.push({
+          trait_type: Object.keys(attributeItem)[0],
+          value: Object.values(attributeItem)[0]
+        })
+      })
+      this.attributes = attributes
+    },
+    handleClickBuyNow() {
+      if (!this.$store.state.wrongNetwork) {
+        this.showBuyTokenModal = true
+      } else {
+        this.showWrongNetworkModal = true
+      }
+    },
+    handleClickSell() {
+      if (!this.$store.state.wrongNetwork) {
+        this.listStatus = 'active'
+      } else {
+        this.showWrongNetworkModal = true
+      }
     }
   },
 }
@@ -382,6 +416,11 @@ export default {
       font-family: Cabin-Medium;
       font-weight: 500;
     }
+    &-fee {
+      padding-top: 2.1rem;
+      color: $border;
+      letter-spacing: 0.03em;
+    }
     &-time {
       margin-top: 2.4rem;
       display: flex;
@@ -470,16 +509,18 @@ export default {
 }
 @media screen and (max-width: 460px) {
   #nft {
-    width: 30.4rem;
+    width: auto;
+    margin: 0 0.8rem;
   }
   .nft {
+    padding-bottom: 1.6rem;
     &__crumbs {
       display: none;
     }
     &__block {
       grid-template-columns: 1fr;
-      padding: 0;
-      margin: 0;
+      margin: 0 -0.8rem;
+      padding: 0 0.8rem;
       &-image {
         width: 30.4rem;
         height: 30.4rem;
@@ -491,7 +532,7 @@ export default {
       &-info {
         text-align: left;
         padding-top: 1.8rem;
-        padding-bottom: 2rem;
+        padding-bottom: 1.6rem;
         &-company {
           font-size: 1.4rem;
         }
@@ -521,8 +562,58 @@ export default {
           display: none;
         }
         &-buy {
-          margin-top: 4rem;
+          margin-top: 1.6rem;
           width: 100%;
+        }
+        &-sell {
+          width: 100%;
+          height: 4.8rem;
+          margin-top: 3rem;
+        }
+      }
+    }
+    &__navigation {
+      display: none;
+    }
+    &__content {
+      padding-top: 3.2rem;
+      &-title {
+        font-size: 2.2rem;
+      }
+      &-form {
+        margin-top: 1.6rem;
+        &-input {
+          width: calc(100% - 2rem);
+          &:focus {
+            border: 1px solid $green;
+          }
+          &-box {
+            position: relative;
+            &::after {
+              content: 'CELO';
+              display: block;
+              position: absolute;
+              top: -0.7rem;
+              right: 1rem;
+              font-size: 1.6rem;
+            }
+          }
+        }
+      }
+    }
+  }
+  .attributes {
+    margin-top: 0;
+    &__block {
+      width: calc(100% - 3.2rem);
+      margin-bottom: 1.6rem;
+      &-content-item {
+        &-title, &-subtitle {
+          font-size: 1.4rem;
+        }
+        &-subtitle {
+          font-weight: normal;
+          color: $textColor;
         }
       }
     }

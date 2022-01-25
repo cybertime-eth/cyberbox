@@ -19,61 +19,40 @@ export const state = () => ({
   user: {},
   chainId: null,
   address: null,
+  wrongNetwork: false,
   fullAddress: null,
   nftList: [],
   nft: {},
   approveToken: '',
+  approvedContracts: [],
   listToken: '',
   countPage: 1,
   filter: filter.races.DAOS.layers,
   successBuyToken: false,
+  successRemoveToken: false,
+  message: '',
+  sort: `orderBy: contract_id`,
+  pagination: null,
 })
 export const getters = {
   provider() {
     const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
     return new ethers.providers.Web3Provider(web3 ? web3 : window.ethereum);
+  },
+  web3Provider() {
+	let web3Provider = window.ethereum
+	if (!web3Provider) {
+	  web3Provider = new Web3.providers.HttpProvider('https://forno.celo.org')
+	}
+	return web3Provider
+  },
+  paginationSort(state) {
+	return state.pagination ? `${state.pagination} ${state.sort}` : state.sort
   }
 }
 export const actions = {
-  async getGraphData({commit,state}, type) {
-    let prefixAddress = ''
-    let suffixAddress = ''
-    let sort = `orderBy: contract_id`
-    if (state.address) {
-      const addressSplits = state.address.split('...')
-      prefixAddress = addressSplits[0].toLowerCase()
-      suffixAddress = addressSplits[1].toLowerCase()
-    }
-    switch (type) {
-      case 'myNft': sort = `where: { owner_starts_with: "${prefixAddress}" owner_ends_with: "${suffixAddress}" } orderBy: contract_id`;
-        break;
-      case 'myNftAll': sort = `where: { owner_starts_with: "${prefixAddress}" owner_ends_with: "${suffixAddress}" contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
-        break;
-      case 'myNftlisted': sort = `where: { owner_starts_with: "${prefixAddress}" owner_ends_with: "${suffixAddress}" market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
-        break;
-      case 'myNftbought': sort = `where: { seller_starts_with: "${prefixAddress}" seller_ends_with: "${suffixAddress}" market_status: "BOUGHT"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
-        break;
-      case 'listed': sort = `where: { market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
-        break;
-      case 'all': sort =  `orderBy: contract_id`;
-        break;
-      case 'bought': sort = `where: { market_status: "BOUGHT"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
-        break;
-      case 'price-lowest': sort = `orderBy: price, orderDirection: asc`;
-        break;
-      case 'price-highest': sort = `orderBy: price, orderDirection: desc`;
-        break;
-      case 'rarity-rare': sort =  `orderBy: rarity_rank, orderDirection: asc`;
-        break;
-      case 'rarity-common': sort =  `orderBy: rarity_rank, orderDirection: desc`;
-        break;
-      case 'mint-lowest': sort = `orderBy: contract_id`;
-        break;
-      case 'mint-highest': sort = `orderBy: contract_id orderDirection: desc`;
-        break;
-      case 'pagination': sort = `skip: ${48 * (state.countPage - 1)} orderBy: contract_id`;
-        break;
-    }
+  async getGraphData({commit, state, getters}) {
+    const sort = getters.paginationSort
     const query = gql`
       query Sample {
         contractInfos(${sort} first: 48 where: { contract: "${$nuxt.$route.params.collectionid}"}) {
@@ -117,31 +96,92 @@ export const actions = {
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    type === 'pagination' ? commit('addNftToList', data.contractInfos) : commit('setNewNftList', data.contractInfos)
+    state.pagination ? commit('addNftToList', data.contractInfos) : commit('setNewNftList', data.contractInfos)
     return data.contractInfos
   },
 
+  async getFloorPrice({}, contract) {
+    const query = gql`
+      query Sample {
+        contractInfos(first: 1 orderBy: price where: { market_status: "LISTED" contract: "${contract}" }) {
+			id
+			contract
+			price
+        }
+      }`
+	const data = await this.$graphql.default.request(query)
+	const tokenPrice = data.contractInfos.length > 0 ? data.contractInfos[0].price : 0
+	return tokenPrice ? (tokenPrice / 1000).toFixed(2) : '-'
+  },
 
+  async getGraphDataListed({commit, getters}) {
+    const sort = getters.paginationSort
+    const query = gql`
+      query Sample {
+        contractLists(${sort} first: 48 where: { contract: "${$nuxt.$route.params.collectionid}"}) {
+          id
+          contract
+          contract_id
+          price
+          image
+          contract_name
+        }
+      }`;
+    const data = await this.$graphql.default.request(query)
+    commit('setNewNftList', data.contractLists)
+  },
+
+  async getGraphDataSells({commit, getters}) {
+    const sort = getters.paginationSort
+    const query = gql`
+      query Sample {
+        contractSells(${sort} first: 48 where: { contract: "${$nuxt.$route.params.collectionid}"}) {
+          id
+          contract
+          contract_id
+          price_total
+          price_value
+          price_fee
+          image
+          contract_name
+        }
+      }`;
+    const data = await this.$graphql.default.request(query)
+    commit('setNewNftList', data.contractSells)
+  },
 
   // AUTHORIZATION
 
 
 
-  async updateUser({commit, state}) {
-    const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
-    const provider = new ethers.providers.Web3Provider(web3 ? web3 : window.ethereum);
-    if (localStorage.getItem('address') && !localStorage.getItem('walletconnect')) {
+  async updateUser({commit, state, getters}) {
+	const web3Provider = getters.web3Provider
+	const provider = new ethers.providers.Web3Provider(web3Provider);
+  const ethereum = web3Provider
+  // localStorage.removeItem('address')
+    if (localStorage.getItem('address') && !localStorage.getItem('walletconnect') && ethereum) {
       const signer = await provider.getSigner()
       const address = await signer.getAddress()
+	  const chain = await provider.getNetwork()
+      try {
+        ethereum.on("chainChanged", async (chainId) => {
+          commit('setChainId', BigNumber.from(chainId).toNumber())
+        })
+      } catch (error) {
+        console.log(error)
+      }
       commit('setAddress', address)
-    }
+      commit('setChainId', chain.chainId)
+	}
   },
   async connectMetaTrust({commit}) {
-    try {
+	try {
       if (window.ethereum) {
         await window.ethereum.request({ method: 'eth_requestAccounts' })
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const address = await provider.getSigner().getAddress();
+        const chainId = await provider.getNetwork()
+        commit('setChainId', chainId.chainId)
         commit('setAddress', address)
       } else if (window.web3) {
         window.web3 = new ethers.providers.Web3Provider(
@@ -149,6 +189,8 @@ export const actions = {
         );
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const address = await provider.getSigner().getAddress();
+        const chainId = await provider.getNetwork()
+        commit('setChainId', chainId.chainId)
         commit('setAddress', address)
       } else {
         alert("please use web3 enabled browser.");
@@ -160,10 +202,11 @@ export const actions = {
   async walletConnect({commit}, isConnect) {
     const provider = new WalletConnectProvider({
       rpc: {
-        56: "https://bsc-dataseed1.ninicoin.io"
+        44787: "https://alfajores-forno.celo-testnet.org",
+        42220: "https://forno.celo.org",
       },
       qrcodeModalOptions: {
-        mobileLinks: ['metamask', 'trust', 'safepal', 'math']
+        mobileLinks: ['metamask']
       },
     });
     provider.on("accountsChanged", (accounts) => {
@@ -173,6 +216,37 @@ export const actions = {
       await provider.enable();
     }
     window.web3 = new Web3(provider);
+  },
+  async switchNetwork() {
+    try {
+      await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{"chainId": '0xa4ec'}] })
+    } catch(e) {
+      try {
+        if (e.code === 4902) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              "chainId": "0xa4ec",
+              "chainName": "Celo (Mainnet)",
+              "rpcUrls": [
+                "https://forno.celo.org"
+              ],
+              "nativeCurrency": {
+                "name": "Celo",
+                "symbol": "CELO",
+                "decimals": 18
+              },
+              "blockExplorerUrls": [
+                "https://explorer.celo.org"
+              ]
+          }]})
+        } else {
+          console.log(e)
+        }
+      } catch(e) {
+        console.log(e)
+      }
+    }
   },
   async logout({commit}) {
     try {
@@ -188,14 +262,14 @@ export const actions = {
 
   // GET INFORMATION USER
 
-  async getBalance({state}) {
-    const web3 = new Web3(window.ethereum)
-    const kit = ContractKit.newKitFromWeb3(web3)
-    const res = await kit.getTotalBalance(state.fullAddress)
-    return res.CELO.c[0] / 10000
+  async getBalance({state, getters}) {
+	const web3 = new Web3(getters.web3Provider)
+	const kit = ContractKit.newKitFromWeb3(web3)
+	const res = await kit.getTotalBalance(state.fullAddress)
+	return res.CELO.c[0] / 10000
   },
   async getPriceToken() {
-    return await redstone.getPrice('CELO')
+	return await redstone.getPrice('CELO')
   },
 
   // GET NFT
@@ -203,7 +277,7 @@ export const actions = {
   async getNft({commit, state}, token) {
     const query = gql`
       query Sample {
-        contractInfo(id: "${token.id}_${token.collectionId ? token.collectionId : 'daos'}") {
+        contractInfo(id: "${token.id}_${token.collectionId}") {
           id
           contract
           contract_id
@@ -219,6 +293,7 @@ export const actions = {
           description
           updatedAt
           dna
+          trait
           listData {
             id
             owner
@@ -266,6 +341,20 @@ export const actions = {
       return data.contracts[0]
   },
 
+
+  async getStatisticCountNft() {
+    const timeYesterday = ((Date.now() / 1000) - 186400).toFixed(0)
+    const query = gql`
+      query Sample {
+        contractSells(where:{ updatedAt_gt: ${timeYesterday} }) {
+          updatedAt
+          price_total
+        }
+      }`;
+    const data = await this.$graphql.default.request(query)
+    return data.contractSells
+  },
+
   // SELL NFT
 
   async approveToken({commit, state, dispatch}) {
@@ -277,6 +366,11 @@ export const actions = {
       await contract.approve(resultAddress, state.nft.contract_id)
       contract.on("Approval", () => {
         commit('changeApproveToken', 'approve')
+        const newApprovedContracts = [
+          ...state.approvedContracts,
+          state.nft.contract
+        ]
+        commit('changeApprovedContracts', newApprovedContracts)
       });
     } catch (error) {
       commit('changeApproveToken', 'error')
@@ -303,49 +397,47 @@ export const actions = {
 
   // BUY NFT
 
-  async approveBuyToken({commit,state, dispatch}, token) {
-    const web3 = new Web3(window.ethereum)
+  async approveBuyToken({commit,state, dispatch, getters}, token) {
+	const web3 = new Web3(getters.web3Provider)
+	const accounts = await web3.eth.getAccounts()
+	const account = accounts[0]
+	const kit = ContractKit.newKitFromWeb3(web3)
+	const goldToken = await kit._web3Contracts.getGoldToken();
+	const parsePrice = ethers.utils.parseEther(String(token.price))
+	const result = await goldToken.methods.approve(account, parsePrice).send({
+	  from: account,
+	})
+	this.getters.provider.once(result, async () => {
+	  dispatch('buyNFT', token)
+	});
+  },
+  async buyNFT({commit, state, getters}, token) {
+    const web3 = new Web3(getters.web3Provider)
     const accounts = await web3.eth.getAccounts()
     const account = accounts[0]
     const kit = ContractKit.newKitFromWeb3(web3)
-    const goldToken = await kit._web3Contracts.getGoldToken();
+    const contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
     const parsePrice = ethers.utils.parseEther(String(token.price))
-    console.log()
-    const result = await goldToken.methods.approve(account, parsePrice).send({
+    console.log(token.price)
+    const result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
       from: account,
+      value: parsePrice,
+      gas: 3000000
     })
     this.getters.provider.once(result, async () => {
-     dispatch('buyNFT', token)
+      commit('changeSuccessBuyToken', true)
     });
-  },
-  async buyNFT({commit, state}, token) {
-    try {
-      const web3 = new Web3(window.ethereum)
-      const accounts = await web3.eth.getAccounts()
-      const account = accounts[0]
-      const kit = ContractKit.newKitFromWeb3(web3)
-      const contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
-      const parsePrice = ethers.utils.parseEther(String(token.price))
-      const result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
-        from: account,
-        value: parsePrice,
-        gas: 3000000
-      })
-      this.getters.provider.once(result, async () => {
-        commit('changeSuccessBuyToken')
-      });
-    } catch(e) {
-      console.log(e)
-    }
   },
 
   // GET COLLECTION INFO
 
-  async getCollectionInfo({commit, state}) {
+  async getCollectionInfo({commit, state}, isArray) {
+    const allArray = `orderBy: sell_total_price, orderDirection: desc where: { mint_count_gt: 0 }`
+    const firstObject = `where: { title: "${$nuxt.$route.params.collectionid}"}`
     const query = gql`
       query Sample {
-        contracts(first: 5) {
-           id
+        contracts(${isArray ? allArray : firstObject}) {
+          id
           title
           mint_count
           bid_count
@@ -353,11 +445,39 @@ export const actions = {
           sell_max_price
           sell_min_price
           sell_total_price
+          list_count
           dna_count
+          nftName
+          nftSymbol
+          ownerCount
         }
       }`;
     let data = await this.$graphql.default.request(query)
-    return data.contracts[0]
+    return isArray ? data.contracts : data.contracts[0]
+  },
+
+  async getContractInfoTimePercent({commit, state}, contract) {
+    const currTime = new Date().getTime()
+    const timeBeforeOneDay = Math.floor((currTime - (24 * 3600 * 1000)) / 1000)
+    const timeBeforeTwoDays = Math.floor((currTime - (48 * 3600 * 1000)) / 1000)
+    const time24hNftsQuery = gql`
+      query Sample {
+        contractInfos(where: { market_status: "MINT" contract: "${contract}" updatedAt_gte: ${timeBeforeOneDay} }) {
+          id
+        }
+      }`;
+    const time48hNftsQuery = gql`
+      query Sample {
+        contractInfos(where: { market_status: "MINT" contract: "${contract}" updatedAt_gte: ${timeBeforeTwoDays} updatedAt_lt: ${timeBeforeOneDay} }) {
+          id
+        }
+      }`;
+    const data1 = await this.$graphql.default.request(time24hNftsQuery)
+    const data2 = await this.$graphql.default.request(time48hNftsQuery)
+    const ts1 = data1.contractInfos.length;
+    const ts2 = data2.contractInfos.length;
+    const tsOffset = ts1 - ts2;
+    return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
   },
 
   // REMOVE NFT FROM LIST
@@ -368,11 +488,12 @@ export const actions = {
     try {
       await contract.delistToken(state.nft.contract_address ,id)
       this.getters.provider.once(contract, async () => {
+        commit('changeSuccessRemoveToken', true)
         return true
-      });
+      })
     } catch (error) {
       console.log(error)
-      return false
+      commit('changeSuccessRemoveToken', true)
     }
   }
 }
@@ -394,15 +515,28 @@ export const mutations = {
       .join("");
   },
   setNewNftList(state, list) {
-    state.nftList = list
+    state.nftList = []
+    for (let nft of list) {
+      state.nftList.push({
+        ...nft,
+        price: nft.price ? nft.price / 1000 : nft.price_total / 1000
+      })
+	}
+	state.pagination = null
   },
   addNftToList(state, list) {
     for (let nft of list) {
-      state.nftList.push(nft)
+      state.nftList.push({
+        ...nft,
+        price: nft.price / 1000
+      })
     }
   },
   setNewNft(state, nft) {
-    state.nft = nft
+    state.nft = {
+      ...nft,
+      price: nft.price / 1000
+    }
   },
   changelistToken(state, status) {
     state.listToken = status
@@ -410,10 +544,98 @@ export const mutations = {
   changeApproveToken(state, approve) {
     state.approveToken = approve
   },
+  changeApprovedContracts(state, approvedContracts) {
+    state.approvedContracts = approvedContracts
+  },
   changeCountPage(state, count) {
     state.countPage = count
   },
-  changeSuccessBuyToken(state) {
-    state.successBuyToken = true
+  changeSuccessBuyToken(state, status) {
+    state.successBuyToken = status
+  },
+  changeSuccessRemoveToken(state, status) {
+    state.successRemoveToken = status
+  },
+  setChainId(state, chain) {
+    state.chainId = chain
+    // state.wrongNetwork = chain !== 42220
+  },
+  setMessage(state, msg) {
+    state.message = msg
+  },
+  changeSortData(state, type) {
+    let myNftSort = ''
+    let prefixAddress = ''
+    let suffixAddress = ''
+    if (state.address) {
+      const addressSplits = state.address.split('...')
+      prefixAddress = addressSplits[0].toLowerCase()
+      suffixAddress = addressSplits[1].toLowerCase()
+    }
+    if (type.includes('myNft') && state.address) {
+      if (type === 'myNft') {
+        myNftSort = `first: 200 where: { owner_starts_with: "${prefixAddress}" owner_ends_with: "${suffixAddress}" } orderBy: contract_id`
+      } else if (type.toLowerCase().includes('sold')) {
+        myNftSort = `where: { seller_starts_with: "${prefixAddress}" seller_ends_with: "${suffixAddress}" contract: "${$nuxt.$route.params.collectionid}"}`
+      } else {
+        myNftSort = `where: { owner_starts_with: "${prefixAddress}" owner_ends_with: "${suffixAddress}" contract: "${$nuxt.$route.params.collectionid}"}`        
+      }
+    }
+    switch (type) {
+      case 'myNft': state.sort = myNftSort;
+        break;
+      case 'myNftAll': state.sort = myNftSort + ` orderBy: contract_id`;
+        break;
+      case 'myNftSold': state.sort = myNftSort + ` orderBy: contract_id`;
+        break;
+      case 'all': state.sort =  `orderBy: contract_id`;
+        break;
+      case 'myNft-price-lowest': state.sort = myNftSort + ` orderBy: price, orderDirection: asc`;
+        break;
+      case 'myNft-price-lowest-sold': state.sort = myNftSort + ` orderBy: price_total, orderDirection: asc`;
+        break;
+      case 'myNft-price-highest': state.sort = myNftSort + ` orderBy: price, orderDirection: desc`;
+        break;
+      case 'myNft-price-highest-sold': state.sort = myNftSort + ` orderBy: price_total, orderDirection: desc`;
+        break;
+      case 'myNft-rarity-rare': state.sort =  myNftSort + ` orderBy: rarity_rank, orderDirection: asc`;
+        break;
+      case 'myNft-rarity-common': state.sort =  myNftSort + ` orderBy: rarity_rank, orderDirection: desc`;
+        break;
+      case 'myNft-mint-lowest': state.sort = myNftSort + ` orderBy: contract_id`;
+        break;
+      case 'myNft-mint-lowest-sold': state.sort = myNftSort + ` orderBy: contract_id`;
+        break;
+      case 'myNft-mint-highest': state.sort = myNftSort + ` orderBy: contract_id orderDirection: desc`;
+        break;
+      case 'myNft-mint-highest-sold': state.sort = myNftSort + ` orderBy: contract_id orderDirection: desc`;
+        break;
+      case 'price-lowest': state.sort = `orderBy: price, orderDirection: asc`;
+        break;
+      case 'price-lowest-sold': state.sort = `orderBy: price_total, orderDirection: asc`;
+        break;
+      case 'price-highest': state.sort = `orderBy: price, orderDirection: desc`;
+        break;
+      case 'price-highest-sold': state.sort = `orderBy: price_total, orderDirection: desc`;
+        break;
+      case 'rarity-rare': state.sort =  `orderBy: rarity_rank, orderDirection: asc`;
+        break;
+      case 'rarity-common': state.sort =  `orderBy: rarity_rank, orderDirection: desc`;
+        break;
+      case 'mint-lowest': state.sort = `orderBy: contract_id`;
+        break;
+      case 'mint-lowest-sold': state.sort = `orderBy: contract_id`;
+        break;
+      case 'mint-highest': state.sort = `orderBy: contract_id orderDirection: desc`;
+        break;
+      case 'mint-highest-sold': state.sort = `orderBy: contract_id orderDirection: desc`;
+        break;
+	  case 'pagination': state.pagination = `skip: ${48 * (state.countPage - 1)}`;
+        break;
+	}
+	if (type !== 'pagination') {
+	  state.countPage = 1
+	  state.pagination = null
+	}
   }
 }

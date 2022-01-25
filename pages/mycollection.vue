@@ -17,19 +17,19 @@
         <p class="my-collection-filters-item-text">For sale</p>
         <p class="my-collection-filters-item-content">{{ forSaleInfo }}</p>
       </div>
-      <div class="my-collection-filters-item my-collection-filters-item-nft" :class="{'my-collection-filters-item-active': activeFilter === 'daos'}" @click="filter('daos')">
-        <img src="/daopolis-nft.png" alt="nft" class="my-collection-filters-item-image">
-        <p class="my-collection-filters-item-content">{{ contractDaosLength('daos') }}</p>
-        <h4 class="my-collection-filters-item-hover">Daopolis</h4>
-      </div>
-      <div class="my-collection-filters-item my-collection-filters-item-nft" :class="{'my-collection-filters-item-active': activeFilter === 'daos'}" @click="filter('maos')">
-        <img src="/default-avatar.png" alt="nft" class="my-collection-filters-item-image">
-        <p class="my-collection-filters-item-content">{{ contractDaosLength('maos') }}</p>
-        <h4 class="my-collection-filters-item-hover">Maos</h4>
-      </div>
+<!--      <div class="my-collection-filters-item my-collection-filters-item-nft" :class="{'my-collection-filters-item-active': activeFilter === 'daos'}" @click="filter('daos')">-->
+<!--        <img src="/daopolis-nft.png" alt="nft" class="my-collection-filters-item-image">-->
+<!--        <p class="my-collection-filters-item-content">{{ contractDaosLength('daos') }}</p>-->
+<!--        <h4 class="my-collection-filters-item-hover">Daopolis</h4>-->
+<!--      </div>-->
+<!--      <div class="my-collection-filters-item my-collection-filters-item-nft" :class="{'my-collection-filters-item-active': activeFilter === 'maos'}" @click="filter('maos')">-->
+<!--        <img src="/default-avatar.png" alt="nft" class="my-collection-filters-item-image">-->
+<!--        <p class="my-collection-filters-item-content">{{ contractDaosLength('maos') }}</p>-->
+<!--        <h4 class="my-collection-filters-item-hover">Maos</h4>-->
+<!--      </div>-->
     </div>
     <div class="my-collection__items">
-      <nft :nft="nft" :route="`/collections/${nft.contract}/${nft.contract_id}`" :seller="true" v-for="nft of filteredNft" v-if="filteredNft" />
+      <nft :nft="nft" :key="idx" :route="`/collections/${nft.contract}/${nft.contract_id}`" :seller="true" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
     </div>
   </section>
 </template>
@@ -41,14 +41,30 @@ export default {
       showTransfer: false,
       showPurchased: false,
       loading: true,
-      listNft: false,
+      listNft: [],
       filteredNft: false,
       activeFilter: 'all'
     }
   },
+  beforeMount() {
+    if (process.browser) {
+      window.addEventListener('scroll', this.addCurrentPage)
+    }
+  },
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.addCurrentPage)
+  },
   async created() {
-    if (!this.listNft) {
-      this.listNft = await this.$store.dispatch('getGraphData', 'myNft')
+    this.$store.commit('changeCountPage', 1)
+    if (!this.listNft.length) {
+      this.$store.commit('changeSortData', 'myNft')
+      const result = await this.$store.dispatch('getGraphData')
+      for (let nft of result) {
+        this.listNft.push({
+          ...nft,
+          price: nft.price / 1000
+        })
+      }
       this.filteredNft = this.listNft
       this.loading = false
     }
@@ -63,6 +79,17 @@ export default {
     },
   },
   methods: {
+    addCurrentPage() {
+      if(process.browser) {
+        const count = this.$store.state.countPage
+        const element = document.body
+        if (element.scrollHeight <= window.pageYOffset + window.innerHeight && count * 48 === this.listNft.length) {
+          this.$store.commit('changeCountPage', count + 1)
+          this.$store.commit('changeSortData', 'pagination')
+          this.$store.dispatch('getGraphData')
+        }
+      }
+    },
     contractDaosLength(contract) {
       if (this.listNft) {
         const list = this.listNft
@@ -74,7 +101,8 @@ export default {
       if (payload === 'sale') {
         this.filteredNft = this.listNft.filter(item => item.market_status === 'LISTED')
       } else if (payload === 'all') {
-        this.filteredNft = await this.$store.dispatch('getGraphData', 'myNft')
+        this.$store.commit('changeSortData', 'myNft')
+        this.filteredNft = await this.$store.dispatch('getGraphData')
       } else {
         this.filteredNft = this.listNft.filter(item => item.contract === payload)
       }

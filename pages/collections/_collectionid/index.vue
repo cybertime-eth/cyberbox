@@ -13,11 +13,11 @@
           <img src="/socials/web.svg" alt="social">
         </div>
         <div class="collection__header-info">
-          <div class="collection__header-info-block" data-aos="fade-right">
+          <div class="collection__header-info-block">
             <h3 class="collection__header-info-block-title">{{ collectionInfo.mint_count }}</h3>
             <h3 class="collection__header-info-block-subtitle">Items</h3>
           </div>
-          <div class="collection__header-info-block" data-aos="fade-left">
+          <div class="collection__header-info-block">
             <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ collectionInfo.sell_total_price }} CELO</h3>
             <h3 class="collection__header-info-block-subtitle">Volume traded</h3>
           </div>
@@ -56,19 +56,25 @@
       <div class="collection__sort">
         <button
           class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 'mint-lowest'}"
+          @click="changeSort('mint-lowest')"
+        >
+          <span>Mint<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Lowest</span>
+        </button>
+        <button
+          class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 'mint-highest'}"
+          @click="changeSort('mint-highest')"
+        >
+          <span>Mint<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Highest</span>
+        </button>
+        <button
+          class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'price-lowest'}"
           @click="changeSort('price-lowest')"
           v-if="filter !== 'All'"
         >
-          Price - Lowest
-        </button>
-        <button
-          class="collection__sort-button"
-          :class="{'collection__sort-button-active': sort === 'mint-lowest'}"
-          @click="changeSort('mint-lowest')"
-          v-if="filter === 'All'"
-        >
-          Mint - Lowest
+          <span>Price<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Lowest</span>  
         </button>
         <button
           class="collection__sort-button"
@@ -76,24 +82,8 @@
           @click="changeSort('price-highest')"
           v-if="filter !== 'All'"
         >
-          Price - Highest
+          <span>Price<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Highest</span>
         </button>
-        <button
-          class="collection__sort-button"
-          :class="{'collection__sort-button-active': sort === 'mint-highest'}"
-          @click="changeSort('mint-highest')"
-          v-if="filter === 'All'"
-        >
-          Mint - Highest
-        </button>
-<!--        <button-->
-<!--          class="collection__sort-button"-->
-<!--          :class="{'collection__sort-button-active': sort === 'traits'}"-->
-<!--          @click="changeSort('traits')"-->
-<!--        >-->
-<!--          Traits-->
-<!--          <img src="/sort.svg" alt="sort">-->
-<!--        </button>-->
       </div>
 <!--      <attributesFilter />-->
       <div class="collection__info">
@@ -105,9 +95,10 @@
           </div>
         </div>
       </div>
-      <div class="collection__items">
-        <nft :nft="nft" v-for="nft of nftList" :filter="filter" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
+      <div class="collection__items" v-if="nftList.length">
+        <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
       </div>
+      <p class="collection__empty-items" v-else>There are no results matching your selected criteria</p>
     </div>
   </section>
 </template>
@@ -119,9 +110,22 @@ export default {
   data() {
     return {
       filter: 'All',
+      activeRequest: 'getGraphData',
       sort: '',
       myNft: false,
-      collectionInfo: {}
+      collectionInfo: {},
+      floorPrice: '-'
+    }
+  },
+  metaInfo() {
+    return {
+      meta: [{
+        property: 'og:description',
+        content: this.getDescription()
+      }, {
+				property: 'og:image',
+        content: this.getImageSrc()
+			}]
     }
   },
   components: {
@@ -129,47 +133,136 @@ export default {
     attributesFilter
   },
   methods: {
+    getDescription() {
+      let description = ''
+      switch (this.$route.params.collectionid) {
+        case 'cpunk': description = 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
+          break
+        case 'ctoadz': description = 'CeloToadz | First collection of 6969 randomly generated Toadz made up of more than 120 different traits on Celo Blockchain!'
+          break
+      }
+      return description
+		},
+		getImageSrc() {
+			let imageSrc = ''
+      switch (this.$route.params.collectionid) {
+        case 'cpunk': imageSrc = '/collections/Media_punks.png'
+          break
+        case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
+          break
+      }
+      return imageSrc
+		},
     addCurrentPage() {
       if(process.browser) {
         const count = this.$store.state.countPage
         const element = document.body
-        if (element.scrollHeight === window.pageYOffset + window.innerHeight && count * 48 === this.nftList.length) {
+        if (element.scrollHeight <= window.pageYOffset + window.innerHeight && count * 48 === this.nftList.length && this.nftList.length > 0) {
             this.$store.commit('changeCountPage', count + 1)
-            this.$store.dispatch('getGraphData', 'pagination')
+          this.$store.commit('changeSortData', 'pagination')
+          this.$store.dispatch(this.activeRequest)
         }
+      }
+    },
+    fetchNftList() {
+      if (this.fetchEnabled) {
+        this.$store.dispatch(this.activeRequest)
+      } else {
+        this.$store.commit('setNewNftList', [])
       }
     },
     changeSort(id) {
       this.sort = id
-      this.$store.dispatch('getGraphData', id)
+      let sortPrefix = ''
+      if (this.myNft) {
+        if (this.address) {
+          sortPrefix = 'myNft-'
+        }
+      }
+      this.$store.commit('changeSortData', this.filter === 'bought' ? (sortPrefix + `${id}-sold`) : (sortPrefix + id))
+      this.fetchNftList()
+    },
+    changeMyNftFilter() {
+      let sortMyNft = 'all'
+      if (this.myNft) {
+        switch (this.filter) {
+          case 'All':
+          case 'listed':
+            sortMyNft = 'myNftAll'
+            break;
+          case 'bought':
+            sortMyNft = 'myNftSold'
+            break;
+        }
+      }
+
+      if (this.address) {
+        this.$store.commit('changeSortData', sortMyNft)
+      }
+      this.fetchNftList()
     },
     changeMyNftStatus() {
       this.myNft = !this.myNft
-      this.$store.dispatch('getGraphData', this.myNft ? 'myNft' + this.filter : this.filter)
+      this.changeMyNftFilter()
     },
     changeFilter() {
-      this.$store.dispatch('getGraphData', this.myNft ? 'myNft' + this.filter : this.filter)
+      const filter = this.filter
+      this.sort = '';
+      this.$store.commit('setNewNftList', [])
+      this.$store.commit('changeSortData', 'all')
+      let activeRequest = 'getGraphData'
+      switch (filter) {
+        case 'All': activeRequest = 'getGraphData'
+          break;
+        case 'listed': activeRequest = 'getGraphDataListed'
+          break;
+        case 'bought': activeRequest = 'getGraphDataSells'
+      }
+      this.activeRequest = activeRequest
+      if (this.myNft) {
+        this.changeMyNftFilter()
+      } else {
+        this.$store.dispatch(activeRequest)
+      }
+      this.$store.commit('changeCountPage', 1)
     },
+  },
+  beforeMount() {
+    if (process.browser) {
+      window.addEventListener('scroll', this.addCurrentPage)
+    }
+  },
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.addCurrentPage)
   },
   async created() {
     this.$store.commit('changeCountPage', 1)
-    await this.$store.dispatch('getGraphData')
-    this.collectionInfo = await this.$store.dispatch('getCollectionInfo')
-
-    if (process.browser) {
-      addEventListener('scroll', this.addCurrentPage)
-    }
-
+    this.$store.commit('changeSortData', 'all')
+    await this.$store.dispatch(this.activeRequest)
+    const collectionResult = await this.$store.dispatch('getCollectionInfo')
+    collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
+    this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
   },
   computed: {
     countItems() {
-      switch (this.filter) {
-        case 'All': return this.collectionInfo.mint_count;
-        case 'listed': return this.collectionInfo.sell_count;
+      if (!this.myNft) {
+        switch (this.filter) {
+          case 'All': return this.collectionInfo.mint_count;
+          case 'listed': return this.collectionInfo.list_count;
+          case 'bought': return this.collectionInfo.sell_count;
+        }
+      } else {
+        return this.nftList.length
       }
     },
     nftList() {
       return this.$store.state.nftList
+    },
+    address() {
+      return this.$store.state.address
+    },
+    fetchEnabled() {
+      return this.address || (!this.address && !this.myNft)
     }
   },
 }
@@ -194,6 +287,7 @@ export default {
       width: 12.6rem;
       height: 12.6rem;
       border-radius: 50%;
+      border: .2rem solid $white;
     }
     &-title {
       padding-top: 2rem;
@@ -212,11 +306,13 @@ export default {
       :first-child {
         width: 2.1rem;
       }
-      img {
-        width: 2rem;
-        cursor: pointer;
-        &:hover {
-          animation: shaking .5s;
+      a {
+        img {
+          width: 2rem;
+          cursor: pointer;
+          &:hover {
+            animation: shaking .5s;
+          }
         }
       }
     }
@@ -298,6 +394,9 @@ export default {
       &-active {
         background: $modalColor;
       }
+      &-breakline {
+        display: none;
+      }
     }
   }
   &__info {
@@ -345,6 +444,11 @@ export default {
     grid-row-gap: 3.2rem;
     padding-top: 3.2rem;
   }
+  &__empty-items {
+    padding: 36px 0;
+    text-align: center;
+    font-size: 14px;
+  }
 }
 @media screen and (max-width: 460px) {
   .collection {
@@ -372,17 +476,31 @@ export default {
         width: 15rem;
       }
       &-info {
+        width: 100%;
         padding-top: 5.6rem;
         flex-wrap: wrap;
         &-block {
           width: 14rem;
           height: 5.6rem;
           margin-bottom: .8rem;
+          text-align: center;
           &-title {
             font-size: 1.4rem;
+            justify-content: center;
+            img {
+              width: 1.6rem !important;
+              margin-right: .8rem !important;
+            }
           }
           &-subtitle {
             font-size: 1rem;
+          }
+          &:last-child {
+            margin-right: 0;
+          }
+          &:nth-child(2), &:last-child {
+            flex: 1;
+            width: auto;
           }
         }
         :first-child {
@@ -412,7 +530,7 @@ export default {
     }
     &__item {
       width: 14.4rem;
-      height: 32.8rem;
+      height: auto;
       &-image {
         width: 14.4rem;
         height: 14.4rem;
@@ -438,8 +556,25 @@ export default {
     }
     &__sort {
       &-button {
-        width: 9.6rem;
+        flex: 1;
+        width: auto;
         height: 5.2rem;
+        margin-right: .5rem;
+        font-size: 1.3rem;
+        &-delimiter {
+          display: none;
+        }
+        &-breakline {
+          display: inline-block;
+        }
+        &:last-child {
+          margin: 0;
+        }
+      }
+    }
+    &__info {
+      &-items, &-nft-text {
+        font-size: 1.4rem;
       }
     }
   }

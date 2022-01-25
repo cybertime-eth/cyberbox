@@ -7,7 +7,7 @@
           class="attributes__block-header-image"
           src="/attr-array.svg" alt="array"
           :class="showLeftAttributes ? 'array-down' : 'array-up'"
-          @click="showLeftAttributes ? showLeftAttributes = false : showLeftAttributes = true"
+          @click="showLeftAttributes = !showLeftAttributes"
         >
       </div>
       <div class="attributes__block-content" v-if="showLeftAttributes">
@@ -24,13 +24,13 @@
           class="attributes__block-header-image"
           src="/attr-array.svg" alt="array"
           :class="showRightAttributes ? 'array-down' : 'array-up'"
-          @click="showRightAttributes ? showRightAttributes = false : showRightAttributes = true"
+          @click="showRightAttributes = !showRightAttributes"
         >
       </div>
       <div class="attributes__block-content" v-if="showRightAttributes">
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Owned by</h3>
-          <h3 class="attributes__block-content-item-subtitle">{{ cutAddress(info.owner) }}</h3>
+          <h3 class="attributes__block-content-item-subtitle">{{ cutAddress( info.owner) }}</h3>
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Token ID</h3>
@@ -38,7 +38,14 @@
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Contract Address</h3>
-          <h3 class="attributes__block-content-item-subtitle">{{ cutAddress(info.contract_address) }} <img src="/send.svg" alt="send"></h3>
+          <a
+            :href="`https://explorer.celo.org/address/${info.contract_address}`"
+            target="_blank"
+            class="attributes__block-content-item-subtitle"
+          >
+            {{ cutAddress(info.contract_address) }}
+            <img src="/send.svg" alt="send">
+          </a>
         </div>
       </div>
     </div>
@@ -46,17 +53,14 @@
 </template>
 <script>
 export default {
-  props: ['info'],
+  props: ['item', 'info'],
   data() {
     return {
       showLeftAttributes: true,
       showRightAttributes: true,
-      owner: '',
       id: 0,
-      info: {}
     }
   },
-  props: ['item'],
   methods: {
      cutAddress(address) {
       if (address) {

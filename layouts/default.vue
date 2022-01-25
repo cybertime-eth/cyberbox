@@ -2,13 +2,27 @@
   <div class="app">
     <Header />
     <Nuxt />
+    <h3 class="message" v-if="message">{{ message }}</h3>
   </div>
 </template>
 <script>
 import Header from './../components/Header'
 export default {
+  computed: {
+    message() {
+      return this.$store.state.message
+    }
+  },
+  metaInfo: {
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { hid: 'description', name: 'description', content: '' },
+      { name: 'format-detection', content: 'telephone=no' }
+    ]
+  },
   components: {
-    Header
+    Header,
   },
   metaInfo: {
     meta: [
@@ -25,7 +39,14 @@ export default {
 }
 </script>
 <style lang="scss">
-
+.message {
+  position: fixed;
+  bottom: 2.4rem;
+  left: 6rem;
+  padding: 1.2rem 2.5rem;
+  background: $lightGreen;
+  border-radius: .8rem;
+}
 .gradient-button {
   position: relative;
   background-clip: padding-box;
@@ -43,6 +64,10 @@ export default {
     content: '';
     z-index: -1;
     border-radius: 2.3rem;
+  }
+  &:disabled {
+    color: $border;
+    border: .2rem solid $border;
   }
 }
 
@@ -94,7 +119,11 @@ button {
   color: $textColor;
   font-family: OpenSans-SemiBold;
   padding: 0;
+  outline: 0;
   cursor: pointer;
+  &:focus {
+    outline: 0;
+  }
 }
 a {
   text-decoration: none;
@@ -119,6 +148,9 @@ input,textarea {
   &::placeholder {
     color: $border2;
   }
+}
+input, textarea, button, select, a {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 ul {
   margin: 0;
@@ -232,6 +264,9 @@ ul {
 @media screen and (max-width: 460px) {
   .container-xl {
     width: 30.4rem;
+  }
+  .modal__block {
+    padding: 2.8rem 2.5rem;
   }
 }
 </style>

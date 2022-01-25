@@ -1,7 +1,10 @@
 <template>
   <header>
     <div class="header container-xl">
-      <div class="header__logo">
+      <button class="header__back" v-if="nftId" @click="$router.go(-1)">
+        <img src="/arrow-left.svg" alt="back" class="header__back-img">
+      </button>
+      <div class="header__logo" @click="$router.push('/')">
         <img src="/logo.svg" alt="logo" class="header__logo-img">
       </div>
       <nav class="header__navigation">
@@ -17,21 +20,27 @@
           </li>
         </ul>
       </nav>
+      <div class="header__error-network" v-if="showWrongNetwork">
+        <img src="/pulse.svg" alt="pulse">
+        <p class="header__error-network-text">{{ networkErrorText }}</p>
+      </div>
+      <div v-else class="header__null"></div>
       <button class="header__box gradient-button" v-if="address" @click="$router.push('/mycollection')">
        My Collection
       </button>
       <button v-else class="header__null"></button>
-      <div class="header__wallet" v-if="address" @click="showProfileMenu = true">
+      <div class="header__wallet" ref="wallet" v-if="address" @click="showProfileMenu = !showProfileMenu">
         <h3 class="header__wallet-address">{{ address }}</h3>
         <div class="header__wallet-avatar gradient-button">
-          <img :src="user.image" alt="avatar" v-if="user.image">
+          <img src="/celo.svg" alt="avatar">
         </div>
       </div>
-      <button class="gradient-button header__connect" v-else @click="showConnectModal = true">Connect Wallet</button>
+      <button class="gradient-button header__connect" v-if="!address" @click="showConnectModal = true">Connect Wallet</button>
       <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
       <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showProfileMenuMobile = true">
     </div>
     <connect v-if="showConnectModal && !address" @closeModal="closeModal"/>
+    <wrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
     <profileModal v-show="showProfileMenu" @closeModal="closeModal"/>
     <profileModalMobile v-show="showProfileMenuMobile" @closeModal="closeModal"/>
   </header>
@@ -40,29 +49,72 @@
 import connect from '@/components/modals/connect'
 import profileModal from '@/components/modals/profileModal'
 import profileModalMobile from '@/components/modals/profileModalMobile'
+import wrongNetwork from '@/components/modals/wrongNetwork'
 export default {
   data() {
     return {
       image: false,
       showConnectModal: false,
       showProfileMenu: false,
-      showProfileMenuMobile: false
+      showProfileMenuMobile: false,
+      showWrongNetwork: false,
+      showWrongNetworkModal: false
     }
+  },
+  watch: {
+    // chainId() {
+    //   const id = this.$store.state.chainId
+    //   id === 42220 || id === null ? this.showWrongNetwork = false :  this.showWrongNetwork = true
+    // },
+    // address() {
+    //   if (this.address && this.chainId !== 42220) {
+    //     this.showWrongNetworkModal = true
+    //   }
+    // }
   },
   components: {
     connect,
+    wrongNetwork,
     profileModal,
     profileModalMobile
   },
   computed: {
+    chainId() {
+      return this.$store.state.chainId
+    },
     user() {
       return this.$store.state.user
     },
     address() {
       return this.$store.state.address
+    },
+    nftId() {
+      return this.$route.params.nftid
+    },
+    networkErrorText() {
+      let errorText = 'You are on the wrong network'
+      if (process.browser) {
+        if (window.innerWidth < 460) {
+          errorText = 'Wrong Network'
+        }
+      }
+      return errorText
     }
   },
+  beforeMount() {
+    if (process.browser) {
+      window.addEventListener('click', this.handleClickWindow)
+    }
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.handleClickWindow)
+  },
   methods: {
+    handleClickWindow(e) {
+      if (this.$refs.wallet && !this.$refs.wallet.contains(e.target)) {
+        this.showProfileMenu = false
+      }
+    },
     closeModal(payload) {
       this.showConnectModal = payload
       this.showProfileMenu = payload
@@ -78,8 +130,11 @@ header {
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 14rem 34rem 61.3rem 22.5rem;
+  grid-template-columns: 14rem 34rem 44.3rem 17.5rem 22rem;
   align-items: center;
+  &__back {
+    display: none;
+  }
   &__logo {
     display: flex;
     align-items: center;
@@ -100,6 +155,21 @@ header {
     width: 15.8rem;
     height: 4.8rem;
     cursor: pointer;
+  }
+  &__error {
+    &-network {
+      padding: 1.2rem .8rem;
+      background: $pink;
+      display: flex;
+      align-items: center;
+      border-radius: .8rem;
+      width: 24rem;
+      justify-self: flex-end;
+      &-text {
+        color: $white;
+        padding-left: .8rem;
+      }
+    }
   }
   &__wallet {
     background: #E9FCEE;
@@ -128,10 +198,10 @@ header {
         border-radius: 50% !important;
       }
       img {
-        width: 4.2rem;
-        height: 4.5rem;
+        width: 2.4rem;
+        height: 2.4rem;
         object-fit: cover;
-        border-radius: 2.5rem;
+        border-radius: 25%;
       }
     }
   }
@@ -152,13 +222,20 @@ header {
 }
 @media screen and (max-width: 460px) {
   .header {
-    grid-template-columns: 15rem 1fr 1fr;
+    display: flex;
+    justify-content: space-between;
     height: 6.5rem;
     &__null {
       display: none;
     }
     &__navigation {
       display: none;
+    }
+    &__back {
+      display: block;
+      height: 2rem;
+      background: transparent;
+      margin-right: 2.2rem;
     }
     &__logo {
       img {
@@ -171,11 +248,26 @@ header {
     &__connect {
       display: none;
     }
+    &__error {
+      &-network {
+        width: auto;
+        padding: 0.8rem 0.5rem;
+        margin-right: 0.8rem;
+        img {
+          width: 1.4rem;
+        }
+        &-text {
+          white-space: nowrap;
+          font-size: 1.2rem;
+        }
+      }
+    }
     &__wallet {
       width: 9.2rem;
       height: 2.4rem;
       justify-self: center;
       padding: .2rem 1rem;
+      margin-right: 1rem;
       background: $purpleLight;
       &-avatar {
         display: none;

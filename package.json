@@ -21,6 +21,7 @@
     "net": "^1.0.2",
     "nuxt": "^2.15.7",
     "redstone-api": "^0.4.7",
+    "vue-clipboard2": "^0.3.3",
     "web3": "^1.6.0"
   },
   "devDependencies": {
