@@ -60,7 +60,7 @@
               </h3>
             </div>
             <h3 class="nft__block-info-transfer"><img src="/transfer.svg" alt="transfer">Transfer</h3>
-            <button class="nft__block-info-sell gradient-button" @click="listStatus = 'active'"  v-if="nft.price === 0">Sell</button>
+            <button class="nft__block-info-sell gradient-button" @click="listStatus = 'active'" v-if="nft.market_status !== 'LISTED'">Sell</button>
             <div class="nft__content-buttons nft__content-buttons-mini" v-else>
               <button
                 class="
@@ -156,10 +156,14 @@ export default {
   },
   async mounted() {
     console.log('work')
-    this.nft = await this.$store.dispatch('getNft', {
+    const nft = await this.$store.dispatch('getNft', {
       id: this.$route.params.nftid,
       collectionId: this.$route.params.collectionid
     })
+    this.nft = {
+      ...nft,
+      price: nft.price / 1000
+    }
     const price = await this.$store.dispatch('getPriceToken')
     this.priceToken = (price.value * this.nft.price).toFixed(1)
     await this.getAttributes()

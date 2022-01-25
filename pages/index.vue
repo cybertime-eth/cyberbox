@@ -2,14 +2,14 @@
   <section class="home container-xl">
     <h1 class="home__title">Discover, collect and trade NFTs (TEST BRANCH)</h1>
     <div class="home__items">
-      <div class="home__item" @click="$router.push('/collections/daos')">
+      <div class="home__item" @click="$router.push('/collections/Daos')">
         <img src="/banner-1.png" alt="dao" class="home__item-image">
         <div class="home__item-info">
           <h2 class="home__item-info-name">Daos</h2>
           <button class="home__item-info-button">Marketplace</button>
         </div>
       </div>
-      <div class="home__item" @click="$router.push('/collections/maos')">
+      <div class="home__item" @click="$router.push('/collections/T721')">
         <img src="/daopolis-nft.png" alt="dao" class="home__item-image">
         <div class="home__item-info">
           <h2 class="home__item-info-name">Maos</h2>

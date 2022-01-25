@@ -46,6 +46,7 @@
 </template>
 <script>
 export default {
+  props: ['info'],
   data() {
     return {
       showLeftAttributes: true,
@@ -56,12 +57,6 @@ export default {
     }
   },
   props: ['item'],
-  async created() {
-    this.info = await this.$store.dispatch('getNft', {
-      id: this.$route.params.nftid,
-      collectionid: this.$route.params.collectionid
-    })
-  },
   methods: {
      cutAddress(address) {
       if (address) {

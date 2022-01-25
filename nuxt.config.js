@@ -40,7 +40,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/big-price-conv-two',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cyber-box-alfa-four',
         options: {},
       },
       secondClient: {

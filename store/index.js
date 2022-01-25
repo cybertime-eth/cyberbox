@@ -11,8 +11,8 @@ import filter from './../config.js'
 import redstone from 'redstone-api';
 export const state = () => ({
   celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
-  marketMain: '0x1aFedC8D8a4ACE7516266F1081EFD26a81a8095f',
-  daosContract: '0x34d63dc2f8c5655bA6E05124B3D4a283A402CEd9',
+  marketMain: '0x6575e9e5eC3d000CdcE68FC3236dC4AEe6e93b71',
+  daosContract: '0xd72F0884eC13673a86D28686539e1cCF34de5c51',
   maosContract: '0x1FBB74537Bf8b8bbd2aF43fE2115638A67137D45',
   celo: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
   celoToken: '0x471EcE3750Da237f93B8E339c536989b8978a438',
@@ -36,15 +36,22 @@ export const getters = {
 }
 export const actions = {
   async getGraphData({commit,state}, type) {
+    let prefixAddress = ''
+    let suffixAddress = ''
     let sort = `orderBy: contract_id`
+    if (state.address) {
+      const addressSplits = state.address.split('...')
+      prefixAddress = addressSplits[0].toLowerCase()
+      suffixAddress = addressSplits[1].toLowerCase()
+    }
     switch (type) {
-      case 'myNft': sort = `where: { owner: "${localStorage.getItem('address')}"} orderBy: contract_id`;
+      case 'myNft': sort = `where: { owner_starts_with: "${prefixAddress}" owner_ends_with: "${suffixAddress}" } orderBy: contract_id`;
         break;
-      case 'myNftAll': sort = `where: { owner: "${localStorage.getItem('address')}" contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
+      case 'myNftAll': sort = `where: { owner_starts_with: "${prefixAddress}" owner_ends_with: "${suffixAddress}" contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
         break;
-      case 'myNftlisted': sort = `where: { owner: "${localStorage.getItem('address')}" market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
+      case 'myNftlisted': sort = `where: { owner_starts_with: "${prefixAddress}" owner_ends_with: "${suffixAddress}" market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
         break;
-      case 'myNftbought': sort = `where: { owner: "${localStorage.getItem('address')}" market_status: "BOUGHT"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
+      case 'myNftbought': sort = `where: { seller_starts_with: "${prefixAddress}" seller_ends_with: "${suffixAddress}" market_status: "BOUGHT"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
         break;
       case 'listed': sort = `where: { market_status: "LISTED"  contract: "${$nuxt.$route.params.collectionid}"} orderBy: contract_id`;
         break;
@@ -263,9 +270,11 @@ export const actions = {
 
   async approveToken({commit, state, dispatch}) {
     const signer = this.getters.provider.getSigner()
-    const contract = new ethers.Contract(state.daosContract, DaosABI, signer)
+    const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
+    const resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
+    const contract = new ethers.Contract(state.nft.contract_address, DaosABI, signer)
     try {
-      await contract.approve(state.marketMain, state.nft.contract_id)
+      await contract.approve(resultAddress, state.nft.contract_id)
       contract.on("Approval", () => {
         commit('changeApproveToken', 'approve')
       });
@@ -282,7 +291,7 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
-      await contract.listToken(state.nft.contract_address, state.nft.contract_id, nft.price, nft.date.toFixed(0))
+      await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)))
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
       });
@@ -300,7 +309,8 @@ export const actions = {
     const account = accounts[0]
     const kit = ContractKit.newKitFromWeb3(web3)
     const goldToken = await kit._web3Contracts.getGoldToken();
-    const parsePrice = ethers.utils.parseEther(String(token.price + token.price * 30 / 1000))
+    const parsePrice = ethers.utils.parseEther(String(token.price))
+    console.log()
     const result = await goldToken.methods.approve(account, parsePrice).send({
       from: account,
     })
@@ -309,20 +319,24 @@ export const actions = {
     });
   },
   async buyNFT({commit, state}, token) {
-    const web3 = new Web3(window.ethereum)
-    const accounts = await web3.eth.getAccounts()
-    const account = accounts[0]
-    const kit = ContractKit.newKitFromWeb3(web3)
-    const contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
-    const parsePrice = ethers.utils.parseEther(String(token.price))
-    const result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
-      from: account,
-      value: parsePrice,
-      gas: 3000000
-    })
-    this.getters.provider.once(result, async () => {
-      commit('changeSuccessBuyToken')
-    });
+    try {
+      const web3 = new Web3(window.ethereum)
+      const accounts = await web3.eth.getAccounts()
+      const account = accounts[0]
+      const kit = ContractKit.newKitFromWeb3(web3)
+      const contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
+      const parsePrice = ethers.utils.parseEther(String(token.price))
+      const result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
+        from: account,
+        value: parsePrice,
+        gas: 3000000
+      })
+      this.getters.provider.once(result, async () => {
+        commit('changeSuccessBuyToken')
+      });
+    } catch(e) {
+      console.log(e)
+    }
   },
 
   // GET COLLECTION INFO
@@ -397,7 +411,6 @@ export const mutations = {
     state.approveToken = approve
   },
   changeCountPage(state, count) {
-    console.log(count)
     state.countPage = count
   },
   changeSuccessBuyToken(state) {
