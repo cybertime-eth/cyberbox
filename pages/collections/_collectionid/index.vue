@@ -96,7 +96,7 @@
         </div>
       </div>
       <div class="collection__items" v-if="nftList.length">
-        <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
+        <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :owner="nftOwned(nft)" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
       </div>
       <p class="collection__empty-items" v-else>There are no results matching your selected criteria</p>
     </div>
@@ -152,7 +152,10 @@ export default {
           break
       }
       return imageSrc
-		},
+    },
+    nftOwned(nft) {
+      return nft.owner === this.$store.state.fullAddress
+    },
     addCurrentPage() {
       if(process.browser) {
         const count = this.$store.state.countPage

@@ -227,6 +227,7 @@ export const actions = {
           price_fee
           image
           contract_name
+          seller
         }
       }`;
     const data = await this.$graphql.default.request(query)
@@ -480,6 +481,19 @@ export const actions = {
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
       await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)), nft.date.toFixed(0))
+      this.getters.provider.once(contract, async () => {
+        commit('changelistToken', true)
+      });
+    } catch (error) {
+      commit('changelistToken', false)
+      console.log(error)
+    }
+  },
+  async changeNFTPrice({commit, state}, price) {
+    const signer = this.getters.provider.getSigner()
+    const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
+    try {
+      await contract.changePrice(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(price)))
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
       });
