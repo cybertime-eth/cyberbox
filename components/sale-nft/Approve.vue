@@ -31,6 +31,7 @@ export default {
     }
   },
   async created() {
+    this.$store.commit('changeApproveToken', '')
     await this.$store.dispatch('approveToken')
   },
 }

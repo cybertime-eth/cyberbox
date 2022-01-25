@@ -12,7 +12,7 @@
         <p class="modal__balance-info">Balance <span>{{ balance }} CELO</span></p>
         <!-- <p class="modal__balance-fee">Service fee <span>10%</span></p> -->
       </div>
-      <div class="modal__buttons">
+      <div class="modal__buttons" v-if="!pending">
         <button class="modal__button" v-if="balance >= price" @click="buyToken">Confirm</button>
         <a
           href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438"
@@ -23,6 +23,9 @@
           Buy CELO
         </a>
       </div>
+      <button class="modal__button modal__button-confirm gradient-button" v-else>
+        Pending confirmation <img src="/loading-button.svg" alt="load">
+      </button>
       <h4 class="modal__footer"  v-if="balance < price">Insufficiently funds</h4>
       <button class="modal__close-button" @click="closeModal">
         <img src="/close-bold.svg" class="modal__close-button-icon">
@@ -33,9 +36,15 @@
 <script>
 export default {
   props: ['price', 'priceToken', 'balance'],
+  data() {
+    return {
+      pending: false
+    }
+  },
   methods: {
     async buyToken() {
       try {
+        this.pending = true
         await this.$store.dispatch('approveBuyToken', {
           id: this.$route.params.nftid,
           price: this.price
@@ -117,6 +126,14 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    &-confirm {
+      border: 0;
+      cursor: default;
+      img {
+        margin-left: 1rem;
+        animation: loading 1s infinite;
+      }
+    }
   }
   &__footer {
     color: $border;

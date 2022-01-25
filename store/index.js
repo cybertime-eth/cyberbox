@@ -567,12 +567,21 @@ export const mutations = {
     let myNftSort = ''
     let prefixAddress = ''
     let suffixAddress = ''
-    if (state.address) {
-      const addressSplits = state.address.split('...')
+    let address = state.address
+    if (address) {
+      const addressSplits = address.split('...')
       prefixAddress = addressSplits[0].toLowerCase()
       suffixAddress = addressSplits[1].toLowerCase()
+    } else {
+      if (process.browser) {
+        address = localStorage.getItem('address')
+        if (address) {
+          prefixAddress = address.substr(0, 6).toLowerCase()
+          suffixAddress = address.substr(-4).toLowerCase()
+        }
+      }
     }
-    if (type.includes('myNft') && state.address) {
+    if (type.includes('myNft') && address) {
       if (type === 'myNft') {
         myNftSort = `first: 200 where: { owner_starts_with: "${prefixAddress}" owner_ends_with: "${suffixAddress}" } orderBy: contract_id`
       } else if (type.toLowerCase().includes('sold')) {
@@ -636,6 +645,6 @@ export const mutations = {
 	if (type !== 'pagination') {
 	  state.countPage = 1
 	  state.pagination = null
-	}
+  }
   }
 }
