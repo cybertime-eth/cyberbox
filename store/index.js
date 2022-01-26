@@ -39,6 +39,19 @@ export const state = () => ({
   collectionList: [
     {
       id: 1,
+      name: 'Daopolis',
+      route: 'daos',
+      image: '/collections/daopolis.jpg',
+      banner: '/collections/daopolis.jpg',
+      logo: '/collections/daopolis-nft.png',
+      website: 'https://www.daopolis.city',
+      twitter: 'https://twitter.com/cybertime_eth',
+      discord: 'https://discord.gg/cKcWfCux4s',
+      telegram: 'https://t.me/cybertime_eth',
+      description: "Automatically generated 9192 NFT's. Born in the CyberTime era, Daopolis citizens will be the foundation of a new gaming metaverse on Celo. Find your digital avatar, gain access to a private club and participate in unique NFT games!"
+    },
+    {
+      id: 2,
       name: 'CeloPunks',
       route: 'cpunk',
       image: '/collections/Celopunks.jpg',
@@ -52,7 +65,7 @@ export const state = () => ({
       description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
     },
     {
-      id: 2,
+      id: 3,
       name: 'CeloToadz',
       route: 'ctoadz',
       image: '/collections/celoToadz.png',
@@ -66,7 +79,7 @@ export const state = () => ({
       description: 'CeloToadz | First collection of 6969 randomly generated Toadz made up of more than 120 different traits on Celo Blockchain!'
     },
     {
-      id: 3,
+      id: 4,
       name: 'CeloShapes',
       route: 'cshape',
       image: '/collections/cshape.png',
@@ -76,6 +89,80 @@ export const state = () => ({
       twitter: 'https://twitter.com/CeloShapesNFT',
       discord: 'https://discord.com/invite/H7NnhjHwWy',
       description: 'CeloShapes is a generative art collection living on the Celo blockchain. Collection contains 4444 algorithmically generated colorful artwork.'
+    },
+    {
+      id: 5,
+      name: 'CeloApes',
+      route: 'cak',
+      image: '/collections/cak.png',
+      banner: '/collections/cak-banner.png',
+      logo: '/collections/cak-logo.png',
+      website: 'https://www.celoapes.club',
+      twitter: 'https://twitter.com/Celo_Apes',
+      discord: 'https://discord.gg/bxEAVV8Fcj',
+      description: 'The Celo Apes Kingdom is an collection of 10000 APE NFT (10000 minted!) on Celo Blockchain. Own an Ape to become part of the most epic Ape Kingdom. 10% of all money goes towards eradicating poverty.'
+    },
+    {
+      id: 6,
+      name: 'CeloPunks Christmas Edition',
+      route: 'christmaspunk',
+      image: '/collections/christmaspunk.png',
+      banner: '/collections/christmaspunk-banner.png',
+      logo: '/collections/christmaspunk-logo.png',
+      website: 'https://celopunks.club/',
+      twitter: 'https://twitter.com/CeloPunks',
+      discord: 'https://discord.com/invite/Dzukufsrqe',
+      telegram: 'https://t.me/celopunksclub',
+      description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
+    },
+    {
+      id: 7,
+      name: 'CeloPunks Neon',
+      route: 'cpunkneon',
+      image: '/collections/cpunkneon.png',
+      banner: '/collections/cpunkneon-banner.png',
+      logo: '/collections/cpunkneon-logo.png',
+      website: 'https://celopunks.club/',
+      twitter: 'https://twitter.com/CeloPunks',
+      discord: 'https://discord.com/invite/Dzukufsrqe',
+      telegram: 'https://t.me/celopunksclub',
+      description: 'CeloPunksNeon are a special collection of CeloPunks with a unique Neon style designed for CeloPunks holders. Not affiliated with LarvaLabs.'
+    },
+    {
+      id: 8,
+      name: 'Nomstranaut',
+      route: 'nomstronaut',
+      image: '/collections/nomstronaut.png',
+      banner: '/collections/nomstronaut-banner.png',
+      logo: '/collections/nomstronaut-logo.png',
+      website: 'https://www.nom.space/',
+      twitter: 'https://twitter.com/nomspace_nom',
+      discord: 'https://discord.gg/byMNXabAxZ',
+      description: "All .nom's are NFTs which means you can easily transfer and sell them."
+    },
+    {
+      id: 9,
+      name: 'CeloPaints',
+      route: 'cpaint',
+      image: '/collections/cpaint.png',
+      banner: '/collections/cpaint-banner.png',
+      logo: '/collections/cpaint-logo.png',
+      website: 'https://celopaints.art',
+      twitter: 'https://twitter.com/CeloPaintsNFT',
+      discord: 'https://discord.com/invite/H7NnhjHwWy',
+      description: 'CeloPaints is a generative abstract art collection living on the Celo blockchain. Collection contains 444 algorithmically generated colorful abstract paintings.'
+    },
+    {
+      id: 10,
+      name: 'DimsOfCelo',
+      route: 'dimcelo',
+      image: '/collections/DimsOfCelo.png',
+      banner: '/collections/DimsOfCelo-banner.png',
+      logo: '/collections/DimsOfCelo-logo.png',
+      website: 'https://dimsofcelo.art',
+      twitter: 'https://twitter.com/dimsofcelonft',
+      discord: 'https://discord.com/invite/rhJjVUtKEs',
+      description: 'Dimensions of Celo a.k.a. DimsOfCelo NFTs are 10,000 tokens of appreciation on Celo Blockchain, trying to reach their way into generative art.'
     },
     // {
     //   id: 4,

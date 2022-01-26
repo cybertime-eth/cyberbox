@@ -3,13 +3,6 @@
     <div class="home__desktop-container">
       <h1 class="home__title">Discover, collect and trade NFTs</h1>
       <div class="home__items">
-        <div class="home__item" @click="openDaopolis()">
-          <img src="/daopolis.JPG" alt="dao" class="home__item-image">
-          <div class="home__item-info">
-            <h2 class="home__item-info-name">Daopolis</h2>
-            <button class="home__item-info-button">Coming soon</button>
-          </div>
-        </div>
         <div class="home__item" @click="$router.push(`/collections/${collection.route}`)" v-for="collection of list">
           <img :src="collection.image" alt="dao" class="home__item-image">
           <div class="home__item-info">
