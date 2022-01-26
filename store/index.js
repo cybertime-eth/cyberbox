@@ -13,7 +13,7 @@ import redstone from 'redstone-api';
 export const state = () => ({
   celoPunks: '0x9f46B8290A6D41B28dA037aDE0C3eBe24a5D1160',
   cyberBoxMarketplace: '0x78253a54a7FD429605E8815f96EedB91c92073e0',
-  marketMain: '0x1c39c7ef3FbEFEc96e1E6563Fd8270f27C00c232',
+  marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   daosContract: '0x34d63dc2f8c5655bA6E05124B3D4a283A402CEd9',
   maosContract: '0x1FBB74537Bf8b8bbd2aF43fE2115638A67137D45',
   celo: '0xf194afdf50b03e69bd7d057c1aa9e10c9954e4c9',
@@ -485,7 +485,7 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
-      await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)), nft.date.toFixed(0))
+      await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)))
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
       });

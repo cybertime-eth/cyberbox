@@ -781,12 +781,7 @@
     "inputs": [
       { "type": "address", "name": "_nftAddress", "internalType": "address" },
       { "type": "uint256", "name": "tokenId", "internalType": "uint256" },
-      { "type": "uint256", "name": "value", "internalType": "uint256" },
-      {
-        "type": "uint256",
-        "name": "expireTimestamp",
-        "internalType": "uint256"
-      }
+      { "type": "uint256", "name": "value", "internalType": "uint256" }
     ]
   },
   {
