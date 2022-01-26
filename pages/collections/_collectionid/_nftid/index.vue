@@ -30,7 +30,6 @@
             <div class="nft__block-info-status" v-if="!soldByMe">
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
-              <h3 class="nft__block-info-owner" v-if="nft.market_status === 'BOUGHT' || nft.market_status === 'MINT'">Owner: {{ nft.owner }}</h3>
             </div>
             <div class="nft__block-info-status" v-else>
               <p class="nft__block-info-status-title">Last sold</p>
@@ -39,7 +38,6 @@
                 <h1>{{ nft.price }} CELO</h1>
                 <span>= {{ priceToken }}$</span>
               </div>
-              <h3 class="nft__block-info-owner">Owner: {{ nft.owner }}</h3>
             </div>
             <button class="nft__block-info-buy" @click="handleClickBuyNow" v-if="isSellNFT && nft.market_status === 'LISTED'">Buy now</button>
           </div>

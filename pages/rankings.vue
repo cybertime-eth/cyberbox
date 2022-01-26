@@ -125,29 +125,15 @@ export default {
       const resultCount =  await this.$store.dispatch('getStatisticCountNft')
       let nftName = '';
       for (let [index, item] of result.entries()) {
-		if (item.nftSymbol !== 'pxa') {
+		if (item.nftSymbol !== 'pxa' && item.nftSymbol !== 'nom') {
 		  let volume = 0;
 		  let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
-      volume = volume + price
-
-		  switch(item.nftSymbol) {
-			case 'cpunk':
-			  nftName = 'CeloPunks'
-			  break;
-			case 'ctoadz':
-			  nftName = 'CeloToadz'
-			  break;
-			case 'cshape':
-			  nftName = 'CeloShapes'
-			  break;
-			case 'pxa':
-			  nftName = 'PixelAva'
-			  break;
-		  }
+		  volume = volume + price
+		  nftName = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
 
 		  this.list.push({
 			id: index + 1,
-			collectionImage: `/${item.title}.png`,
+			collectionImage: `/${item.nftSymbol}.png`,
 			verification: false,
 			new: false,
 			name: nftName,
