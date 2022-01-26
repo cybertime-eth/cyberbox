@@ -27,9 +27,19 @@
 <!--              {{ hoursDifference }} hours-->
 <!--              {{ minutesDifference }} minutes-->
 <!--            </p>-->
-            <div class="nft__block-info-status">
+            <div class="nft__block-info-status" v-if="!soldByMe">
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
+              <h3 class="nft__block-info-owner" v-if="nft.market_status === 'BOUGHT' || nft.market_status === 'MINT'">Owner: {{ nft.owner }}</h3>
+            </div>
+            <div class="nft__block-info-status" v-else>
+              <p class="nft__block-info-status-title">Last sold</p>
+              <div class="nft__block-info-price sold">
+                <img src="/celo.svg" alt="celo">
+                <h1>{{ nft.price }} CELO</h1>
+                <span>= {{ priceToken }}$</span>
+              </div>
+              <h3 class="nft__block-info-owner">Owner: {{ nft.owner }}</h3>
             </div>
             <button class="nft__block-info-buy" @click="handleClickBuyNow" v-if="isSellNFT && nft.market_status === 'LISTED'">Buy now</button>
           </div>
@@ -204,6 +214,9 @@ export default {
     },
     seller() {
       return this.nft.owner === this.$store.state.fullAddress
+    },
+    soldByMe() {
+      return this.nft.seller === this.$store.state.fullAddress
     }
   },
   methods: {
@@ -367,8 +380,11 @@ export default {
         display: flex;
         align-items: center;
         img {
-          width: 3.2rem;
+          width: 2.46rem;
           margin-right: 1rem;
+        }
+        h1 {
+          font-size: 2.46rem;
         }
         &-text {
           padding-top: 3rem;
@@ -376,8 +392,11 @@ export default {
         }
         span {
           margin-left: 1.4rem;
-          font-size: 1.3rem;
+          font-size: 1rem;
           color: $span;
+        }
+        &.sold {
+          margin-top: 9px;
         }
       }
       &-status {
@@ -387,6 +406,11 @@ export default {
           padding-top: .4rem;
           font-family: OpenSans-SemiBold;
         }
+      }
+      &-owner {
+        padding-top: 2.2rem;
+        font-size: 1.23rem;
+        color: $span;
       }
       &-buy {
         margin-top: 10rem;

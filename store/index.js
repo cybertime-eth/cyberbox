@@ -441,7 +441,7 @@ export const actions = {
 
   // SELL NFT
 
-  async approveToken({commit, state, dispatch}) {
+  async approveToken({commit, state, dispatch}, listingMethod) {
     const signer = this.getters.provider.getSigner()
     const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     const resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
@@ -466,6 +466,11 @@ export const actions = {
           state.nft.contract
         ]
         commit('changeApprovedContracts', newApprovedContracts)
+        const listDate = new Date().getTime() / 1000 + 604800 // 7 days
+        dispatch(listingMethod, {
+          ...state.nft,
+          date: listDate
+        })
       });
     } catch (error) {
       commit('changeApproveToken', 'error')
@@ -529,8 +534,7 @@ export const actions = {
     console.log(token.price)
     const result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
       from: account,
-      value: parsePrice,
-      gas: 3000000
+      value: parsePrice
     })
     this.getters.provider.once(result, async () => {
       commit('changeSuccessBuyToken', true)
