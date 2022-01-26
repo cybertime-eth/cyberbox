@@ -114,7 +114,7 @@ export const actions = {
 	return tokenPrice ? (tokenPrice / 1000).toFixed(2) : '-'
   },
 
-  async getGraphDataListed({commit, getters}) {
+  async getGraphDataListed({state, commit, getters}) {
     const sort = getters.paginationSort
     const query = gql`
       query Sample {
@@ -125,13 +125,14 @@ export const actions = {
           price
           image
           contract_name
+          owner
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    commit('setNewNftList', data.contractLists)
+    state.pagination ? commit('addNftToList', data.contractLists) : commit('setNewNftList', data.contractLists)
   },
 
-  async getGraphDataSells({commit, getters}) {
+  async getGraphDataSells({state, commit, getters}) {
     const sort = getters.paginationSort
     const query = gql`
       query Sample {
@@ -144,10 +145,11 @@ export const actions = {
           price_fee
           image
           contract_name
+          seller
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    commit('setNewNftList', data.contractSells)
+    state.pagination ? commit('addNftToList', data.contractSells) : commit('setNewNftList', data.contractSells)
   },
 
   // AUTHORIZATION
@@ -394,6 +396,19 @@ export const actions = {
       console.log(error)
     }
   },
+  async changeNFTPrice({commit, state}, price) {
+    const signer = this.getters.provider.getSigner()
+    const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
+    try {
+      await contract.changePrice(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(price)))
+      this.getters.provider.once(contract, async () => {
+        commit('changelistToken', true)
+      });
+    } catch (error) {
+      commit('changelistToken', false)
+      console.log(error)
+    }
+  },
 
   // BUY NFT
 
@@ -421,8 +436,7 @@ export const actions = {
     console.log(token.price)
     const result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
       from: account,
-      value: parsePrice,
-      gas: 3000000
+      value: parsePrice
     })
     this.getters.provider.once(result, async () => {
       commit('changeSuccessBuyToken', true)

@@ -2,10 +2,10 @@
   <div class="modal">
     <div class="modal__buy">
       <h1 class="modal__title gradient-text">Payment Confirmation</h1>
-      <p class="modal__subtitle">You are about to purchase a <span class="modal__subtitle-bold">Daopolis</span> from <span class="modal__subtitle-bold">CyberTime</span></p>
+      <p class="modal__subtitle">You are about to purchase a <span class="modal__subtitle-bold">{{ nft.name }}</span> from <span class="modal__subtitle-bold">{{ collectionName }}</span></p>
       <div class="modal__information">
         <h3 class="modal__information-title">You pay</h3>
-        <h3 class="modal__information-price">{{ price }} <span>CELO</span></h3>
+        <h3 class="modal__information-price">{{ nft.price }} <span>CELO</span></h3>
         <p class="modal__information-price-usd">{{ priceToken }}$</p>
       </div>
       <div class="modal__balance">
@@ -13,7 +13,7 @@
         <!-- <p class="modal__balance-fee">Service fee <span>10%</span></p> -->
       </div>
       <div class="modal__buttons" v-if="!pending">
-        <button class="modal__button" v-if="balance >= price" @click="buyToken">Confirm</button>
+        <button class="modal__button" v-if="balance >= nft.price" @click="buyToken">Confirm</button>
         <a
           href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438"
           target="_blank"
@@ -26,7 +26,7 @@
       <button class="modal__button modal__button-confirm gradient-button" v-else>
         Pending confirmation <img src="/loading-button.svg" alt="load">
       </button>
-      <h4 class="modal__footer"  v-if="balance < price">Insufficiently funds</h4>
+      <h4 class="modal__footer"  v-if="balance < nft.price">Insufficiently funds</h4>
       <button class="modal__close-button" @click="closeModal">
         <img src="/close-bold.svg" class="modal__close-button-icon">
       </button>
@@ -35,7 +35,12 @@
 </template>
 <script>
 export default {
-  props: ['price', 'priceToken', 'balance'],
+  props: ['nft', 'priceToken', 'balance'],
+  computed: {
+    collectionName() {
+      return this.$route.params.collectionid
+    }
+  },
   data() {
     return {
       pending: false
@@ -47,7 +52,7 @@ export default {
         this.pending = true
         await this.$store.dispatch('approveBuyToken', {
           id: this.$route.params.nftid,
-          price: this.price
+          price: this.nft.price
         })
       } catch (error) {
         this.closeModal()

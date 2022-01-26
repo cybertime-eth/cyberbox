@@ -1,6 +1,6 @@
 <template>
   <div class="collection__item" @click="routeNft(false)">
-    <img src="/more.png" alt="more" v-if="seller" class="collection__item-more" @click="openModal(nft.id)">
+    <img src="/more.png" alt="more" v-if="moreButtonVisible" class="collection__item-more" @click="openModal(nft.id, $event)">
     <div class="collection__item-modal" v-if="modalId === nft.id" @mouseleave="modalId = 0">
       <div class="collection__item-modal-button" @click="routeNft(true)">
         <img src="/outline-sell.svg" alt="sell">
@@ -40,17 +40,32 @@ export default {
       modalId: 0
     }
   },
-  props: ['nft', 'route', 'seller', 'filter'],
+  computed: {
+    moreButtonVisible() {
+      return this.seller || (!this.seller && this.owner)
+    }
+  },
+  props: ['nft', 'route', 'owner', 'seller', 'filter'],
   methods: {
-    copyLink() {
+    copyLink(e) {
       this.$copyText(`https://cyberbox.vercel.app/collections/${this.nft.contract}/${this.nft.contract_id}`)
       this.$store.commit('setMessage', 'Link copied!')
       setTimeout(() => {
         this.$store.commit('setMessage', '')
       }, 2000)
+      e.preventDefault()
+      e.stopPropagation()
     },
-    openModal(id) {
-      this.modalId = id
+    openModal(id, e) {
+      if (this.modalId !== id) {
+        this.modalId = id
+      } else {
+        this.modalId = 0
+      }
+      if (this.owner) {
+        e.preventDefault()
+        e.stopPropagation()
+      }
     },
     nftPrice(number) {
       let decPlaces = 1;
@@ -147,6 +162,9 @@ export default {
     &-info {
       padding: 1.6rem .8rem 2.4rem;
       &-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         font-size: 1.8rem;
         font-family: OpenSans-SemiBold;
       }

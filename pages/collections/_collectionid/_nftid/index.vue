@@ -58,7 +58,7 @@
             </div>
 <!--            <h3 class="nft__block-info-transfer"><img src="/transfer.svg" alt="transfer">Transfer</h3>-->
             <button class="nft__block-info-sell gradient-button" @click="handleClickSell"  v-if="nft.market_status !== 'LISTED'">Sell</button>
-            <div class="nft__content-buttons nft__content-buttons-mini" v-else>
+            <div class="nft__content-buttons nft__content-buttons-mini delist-buttons" v-else>
               <button
                 class="
                 nft__content-buttons-button
@@ -69,12 +69,12 @@
                 Remove from market
                 <img src="/loading-button.svg" alt="load" v-if="loadButton">
               </button>
-<!--              <button-->
-<!--                class="nft__content-buttons-button nft__content-buttons-button-confirm gradient-button"-->
-<!--                @click="listStatus = 'change'"-->
-<!--              >-->
-<!--                Change sell price-->
-<!--              </button>-->
+              <button
+                class="nft__content-buttons-button nft__content-buttons-button-confirm gradient-button"
+                @click="handleClickChangePrice"
+              >
+                Change price
+              </button>
             </div>
           </div>
 
@@ -82,30 +82,30 @@
 
 
           <div class="nft__block-info" v-else-if="listStatus === 'active'">
-            <h1 class="nft__block-info-name">List onto market</h1>
-            <Navigation :step="step" />
-            <SellPrice :changeInfo="isApprovedNft" @changeStep="changeStep" @setInfo="setInfoNft" v-if="step === 1"/>
-            <Approve @changeStep="changeStep" v-if="step === 2"/>
-            <Sign @changeStep="changeStep" @setInfo="setInfoNft" :price="nftInfo.price" v-if="step === 3"/>
-            <Listing @changeStep="changeStep" :nft="nftInfo" v-if="step === 4" />
-            <Successful @changeList="changeList" :price="nftInfo.price" v-if="step === 5"/>
+            <h1 class="nft__block-info-name">List into market</h1>
+            <!-- <Navigation :step="step" /> -->
+            <!-- <SellPrice :changeInfo="isApprovedNft" @changeStep="changeStep" @setInfo="setInfoNft" v-if="step === 1"/> -->
+            <!-- <Sign @changeStep="changeStep" @setInfo="setInfoNft" :price="nftPrice" v-if="step === 2"/> -->
+            <Listing :nft="nft" @changeStep="changeStep" @setPrice="setNftPrice" v-if="step === 1" />
+            <Successful @changeList="changeList" :price="nftPrice" v-if="step === 2"/>
           </div>
 
           <!-- LIST INFO CHANGE -->
 
           <div class="nft__block-info" v-else-if="listStatus === 'change'">
-            <h1 class="nft__block-info-name">List onto market</h1>
-            <Navigation :step="step" :changeInfo="true" />
-            <SellPrice @changeStep="changeStep" :changeInfo="true" v-if="step === 1"/>
-            <Sign @changeStep="changeStep" :changeInfo="true" :price="nftInfo.price"  v-if="step === 3"/>
-            <Successful @changeList="changeList" :price="nftInfo.price" v-if="step === 4"/>
+            <h1 class="nft__block-info-name">Change price</h1>
+            <!-- <Navigation :step="step" :changeInfo="true" /> -->
+            <!-- <SellPrice @changeStep="changeStep" :changeInfo="true" v-if="step === 1"/> -->
+            <!-- <Sign @changeStep="changeStep" :changeInfo="true" :price="nftInfo.price"  v-if="step === 3"/> -->
+            <Listing :nft="nft" @changeStep="changeStep" :changeInfo="true" @setPrice="setNftPrice" v-if="step === 1" />
+            <Successful @changeList="changeList" :price="nftPrice" v-if="step === 2"/>
           </div>
         </div>
       </div>
     </div>
   <Attributes :item="attributes" :info="nft"/>
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
-  <BuyToken v-if="showBuyTokenModal" :price="nft.price" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
+  <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
   <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nft.name"/>
 <!--    <History />-->
   </section>
@@ -118,7 +118,6 @@ import Approve from '@/components/sale-nft/Approve';
 import Sign from '@/components/sale-nft/Sign';
 import Listing from '@/components/sale-nft/Listing';
 import Successful from '@/components/sale-nft/Successful';
-import Navigation from '@/components/sale-nft/Navigation';
 import WrongNetwork from '@/components/modals/wrongNetwork'
 import BuyToken from '@/components/modals/buyToken';
 import SuccessfullBuy from '@/components/modals/successBuy';
@@ -135,7 +134,7 @@ export default {
       listStatus: 'default',
       step: 1,
       loadButton: false,
-      nftInfo: {},
+      nftPrice: 0,
       daysDifference: 0,
       hoursDifference: 0,
       minutesDifference: 0,
@@ -153,7 +152,6 @@ export default {
   components: {
     Attributes,
     History,
-    Navigation,
     SellPrice,
     Approve,
     Sign,
@@ -183,9 +181,6 @@ export default {
     }, 1000)
   },
   computed: {
-    isApprovedNft() {
-      return this.$store.state.approvedContracts.includes(this.nft.contract)
-    },
     successRemoveNft() {
       return this.$store.state.successRemoveToken
     },
@@ -253,8 +248,8 @@ export default {
       this.step = 1
       setTimeout(() => this.loadNft(), 2000)
     },
-    setInfoNft(info) {
-      this.nftInfo = info
+    setNftPrice(price) {
+      this.nftPrice = price
     },
     async getAttributes() {
       const attributes = []
@@ -280,7 +275,14 @@ export default {
       } else {
         this.showWrongNetworkModal = true
       }
-    }
+    },
+    handleClickChangePrice() {
+      if (!this.$store.state.wrongNetwork) {
+        this.listStatus = 'change'
+      } else {
+        this.showWrongNetworkModal = true
+      }
+    },
   },
 }
 </script>
@@ -337,6 +339,8 @@ export default {
       }
       &-name {
         font-family: Cabin-Bold;
+        font-size: 2.46rem;
+        color: $span;
         padding-top: 1.5rem;
       }
       &-minted {
@@ -412,14 +416,24 @@ export default {
   }
   &__content {
     padding-top: 2rem;
+    &-header {
+      display: flex;
+      align-items: center;
+    }
     &-title {
       font-family: Cabin-Medium;
       font-weight: 500;
+      font-size: 2.46rem;
+      color: $span;
+    }
+    &-success-icon {
+      margin-left: 1.6rem;
     }
     &-fee {
-      padding-top: 2.1rem;
+      padding-top: 1.61rem;
       color: $border;
       letter-spacing: 0.03em;
+      font-size: 1.08rem;
     }
     &-time {
       margin-top: 2.4rem;
@@ -450,10 +464,29 @@ export default {
         width: 97%;
         height: 1.5rem;
         border-radius: .4rem;
+        &:focus {
+          border: 1px solid $green;
+        }
+        &-box {
+          position: relative;
+          &::after {
+            content: 'CELO';
+            display: block;
+            position: absolute;
+            top: -0.7rem;
+            right: 1rem;
+            font-size: 1.6rem;
+          }
+        }
+      }
+      input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
       }
     }
     &-subtitle {
       padding-top: 3.2rem;
+      color: $black;
       &-second {
         padding-top: 1.6rem;
       }
@@ -503,6 +536,15 @@ export default {
             animation: loading 1s infinite;
           }
         }
+        &.gradient-button {
+          border-width: 1px;
+          &:disabled {
+            opacity: 0.5;
+            &::after {
+              display: none;
+            }
+          }
+        }
       }
     }
   }
@@ -518,7 +560,7 @@ export default {
       display: none;
     }
     &__block {
-      grid-template-columns: 1fr;
+      display: block;
       margin: 0 -0.8rem;
       padding: 0 0.8rem;
       &-image {
@@ -582,23 +624,34 @@ export default {
       }
       &-form {
         margin-top: 1.6rem;
+        &-title {
+          font-size: 1.4rem;
+        }
         &-input {
-          width: calc(100% - 2rem);
-          &:focus {
-            border: 1px solid $green;
-          }
-          &-box {
-            position: relative;
-            &::after {
-              content: 'CELO';
-              display: block;
-              position: absolute;
-              top: -0.7rem;
-              right: 1rem;
-              font-size: 1.6rem;
-            }
+          width: calc(100% - 2.2rem);
+        }
+      }
+      &-buttons {
+        &-mini {
+          padding-top: 3.2rem;
+          &.delist-buttons {
+            flex-direction: column-reverse;
           }
         }
+        &-button {
+          width: 100%;
+          height: 4.8rem;
+          margin: 0;
+          &-confirm {
+            margin-top: 1.6rem;
+          }
+          &-done {
+            margin-top: 0.8rem;
+          }
+        }
+      }
+      &-fee {
+        font-size: 1.3rem;
       }
     }
   }
