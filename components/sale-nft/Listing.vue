@@ -42,6 +42,9 @@ export default {
   },
   props: ['nft', 'changeInfo'],
   watch: {
+    price() {
+      this.$emit('setPrice', this.price)
+    },
     approve() {
       const status = this.$store.state.approveToken
       console.log(status)
@@ -62,9 +65,6 @@ export default {
     changePrice(event) {
       this.$store.commit('changeApproveToken', '')
       this.$store.commit('changelistToken', '')
-      if (event.keyCode === 13) {
-        this.$emit('setPrice', this.price)
-      }
     },
     listNft() {
       this.pending = true
