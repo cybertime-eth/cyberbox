@@ -582,7 +582,7 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
-      await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)),{
+      await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)), {
         gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
       })
       this.getters.provider.once(contract, async () => {
@@ -633,7 +633,8 @@ export const actions = {
     console.log(token.price)
     const result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
       from: account,
-      value: parsePrice
+      value: parsePrice,
+      gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
     })
     this.getters.provider.once(result, async () => {
       commit('changeSuccessBuyToken', true)
