@@ -42,7 +42,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cyberbox-main-on-celo-two',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cyberbox-main-on-celo-three',
         options: {}
       },
       secondClient: {
