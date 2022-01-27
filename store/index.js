@@ -647,7 +647,7 @@ export const actions = {
 
   async getCollectionInfo({commit, state}, isArray) {
     const allArray = `orderBy: sell_total_price, orderDirection: desc where: { mint_count_gt: 0 }`
-    const firstObject = `where: { title: "${$nuxt.$route.params.collectionid}"}`
+    const firstObject = `where: { nftSymbol: "${$nuxt.$route.params.collectionid}"}`
     const query = gql`
       query Sample {
         contracts(${isArray ? allArray : firstObject}) {
@@ -664,6 +664,8 @@ export const actions = {
           nftName
           nftSymbol
           ownerCount
+          createrFee
+          producerFee
         }
       }`;
     let data = await this.$graphql.default.request(query)
