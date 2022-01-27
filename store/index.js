@@ -27,7 +27,6 @@ export const state = () => ({
   nftList: [],
   nft: {},
   approveToken: '',
-  approvedContracts: [],
   listToken: '',
   countPage: 1,
   filter: filter.races.DAOS.layers,
@@ -529,7 +528,20 @@ export const actions = {
 
   // SELL NFT
 
-  async approveToken({commit, state, dispatch}, listingMethod) {
+  async approveListing({state, commit, dispatch}, { listingMethod, price }) {
+    commit('changeApproveToken', 'approve')
+
+    if (listingMethod === 'listingNFT') {
+      dispatch(listingMethod, {
+        ...state.nft,
+        price
+      })
+    } else {
+      dispatch(listingMethod, price)
+    }
+  },
+
+  async approveToken({commit, state, dispatch}, { listingMethod, price }) {
     const signer = this.getters.provider.getSigner()
     const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     const resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
@@ -546,22 +558,17 @@ export const actions = {
       case 'pxa': AbiNft = pxaABI
         break;
     }
-    const contract = new ethers.Contract(state.nft.contract_address, AbiNft, signer)
     try {
-      await contract.setApprovalForAll(resultAddress, state.nft.contract_id)
-      contract.on("ApprovalForAll", () => {
-        commit('changeApproveToken', 'approve')
-        const newApprovedContracts = [
-          ...state.approvedContracts,
-          state.nft.contract
-        ]
-        commit('changeApprovedContracts', newApprovedContracts)
-        const listDate = new Date().getTime() / 1000 + 604800 // 7 days
-        dispatch(listingMethod, {
-          ...state.nft,
-          date: listDate
-        })
-      });
+      const contract = new ethers.Contract(state.nft.contract_address, AbiNft, signer)
+      const approvedForAll = await contract.isApprovedForAll(state.fullAddress, resultAddress)
+      if (!approvedForAll) {
+        await contract.setApprovalForAll(resultAddress, state.nft.contract_id)
+        contract.on("ApprovalForAll", () => {
+          dispatch('approveListing', { listingMethod, price })
+        });
+      } else {
+        dispatch('approveListing', { listingMethod, price })
+      }
     } catch (error) {
       commit('changeApproveToken', 'error')
     }
@@ -619,14 +626,12 @@ export const actions = {
     const accounts = await web3.eth.getAccounts()
     const account = accounts[0]
     const kit = ContractKit.newKitFromWeb3(web3)
-    let cUSDcontract = await kit.contracts.getStableToken()
     const contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
     const parsePrice = ethers.utils.parseEther(String(token.price))
     console.log(token.price)
     const result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
       from: account,
-      value: parsePrice,
-      feeCurrency: cUSDcontract.address
+      value: parsePrice
     })
     this.getters.provider.once(result, async () => {
       commit('changeSuccessBuyToken', true)
@@ -747,9 +752,6 @@ export const mutations = {
   },
   changeApproveToken(state, approve) {
     state.approveToken = approve
-  },
-  changeApprovedContracts(state, approvedContracts) {
-    state.approvedContracts = approvedContracts
   },
   changeCountPage(state, count) {
     state.countPage = count

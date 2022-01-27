@@ -68,20 +68,11 @@ export default {
     },
     listNft() {
       this.pending = true
-      if (!this.$store.state.approvedContracts.includes(this.nft.contract)) {
-        const listingMethod = !this.changeInfo ? 'listingNFT' : 'changeNFTPrice'
-        this.$store.dispatch('approveToken', listingMethod)
-      } else {
-        if (!this.changeInfo) {
-          const listDate = new Date().getTime() / 1000 + 604800 // 7 days
-          this.$store.dispatch('listingNFT', {
-            price: this.price,
-            date: listDate,
-          })
-        } else {
-          this.$store.dispatch('changeNFTPrice', this.price)
-        }
-      }
+      const listingMethod = !this.changeInfo ? 'listingNFT' : 'changeNFTPrice'
+      this.$store.dispatch('approveToken', {
+        listingMethod,
+        price: this.price
+      })
     }
   }
 }
