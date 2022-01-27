@@ -104,7 +104,7 @@ export const state = () => ({
     },
     {
       id: 6,
-      name: 'CeloPunks Christmas Edition',
+      name: 'PunksChristmas',
       route: 'christmaspunk',
       image: '/collections/christmaspunk.png',
       banner: '/collections/christmaspunk-banner.png',
@@ -117,7 +117,7 @@ export const state = () => ({
     },
     {
       id: 7,
-      name: 'CeloPunks Neon',
+      name: 'PunksNeon',
       route: 'cpunkneon',
       image: '/collections/cpunkneon.png',
       banner: '/collections/cpunkneon-banner.png',
@@ -130,7 +130,7 @@ export const state = () => ({
     },
     {
       id: 8,
-      name: 'Nomstranaut',
+      name: 'Nomstronaut',
       route: 'nomstronaut',
       image: '/collections/nomstronaut.png',
       banner: '/collections/nomstronaut-banner.png',
