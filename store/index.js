@@ -582,7 +582,9 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
-      await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)))
+      await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)),{
+        gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+      })
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
       });
