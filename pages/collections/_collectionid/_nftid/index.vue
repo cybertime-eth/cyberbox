@@ -46,7 +46,7 @@
 
           <div class="nft__block-info" v-else-if="listStatus === 'default' && seller">
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
-            <p class="nft__block-info-description" v-if="isSellNFT">{{ nft.description }}</p>
+            <p class="nft__block-info-description">{{ nft.description }}</p>
             <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
             <div class="nft__block-info-price" v-if="isSellNFT && nft.market_status === 'LISTED'">
               <img src="/celo.svg" alt="celo">

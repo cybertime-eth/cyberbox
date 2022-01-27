@@ -534,32 +534,6 @@ export default {
       grid-row-gap: 1.6rem;
       padding-top: 2.2rem;
     }
-    &__item {
-      width: 14.4rem;
-      height: auto;
-      &-image {
-        width: 14.4rem;
-        height: 14.4rem;
-      }
-      &-info {
-        padding: .5rem 0.8rem 3.4rem;
-        &-details {
-          margin-top: 1rem;
-          width: 100%;
-        }
-        &-price {
-          &-null {
-            font-size: 1.4rem;
-          }
-          &-text {
-            font-size: 1.4rem;
-          }
-        }
-        &-id {
-          padding-bottom: 1rem;
-        }
-      }
-    }
     &__sort {
       &-button {
         flex: 1;
