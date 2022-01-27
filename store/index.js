@@ -431,12 +431,14 @@ export const actions = {
     const accounts = await web3.eth.getAccounts()
     const account = accounts[0]
     const kit = ContractKit.newKitFromWeb3(web3)
+    let cUSDcontract = await kit.contracts.getStableToken()
     const contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
     const parsePrice = ethers.utils.parseEther(String(token.price))
     console.log(token.price)
     const result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
       from: account,
-      value: parsePrice
+      value: parsePrice,
+      feeCurrency: cUSDcontract.address
     })
     this.getters.provider.once(result, async () => {
       commit('changeSuccessBuyToken', true)
