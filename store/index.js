@@ -562,7 +562,7 @@ export const actions = {
       const contract = new ethers.Contract(state.nft.contract_address, AbiNft, signer)
       const approvedForAll = await contract.isApprovedForAll(state.fullAddress, resultAddress)
       if (!approvedForAll) {
-        await contract.setApprovalForAll(resultAddress, state.nft.contract_id)
+        await contract.setApprovalForAll(resultAddress, state.nft.contract_id, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
         contract.on("ApprovalForAll", () => {
           dispatch('approveListing', { listingMethod, price })
         });
@@ -597,7 +597,9 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
-      await contract.changePrice(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(price)))
+      await contract.changePrice(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(price)), {
+        gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+      })
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
       });
@@ -698,7 +700,7 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
-      await contract.delistToken(state.nft.contract_address ,id)
+      await contract.delistToken(state.nft.contract_address ,id, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
       this.getters.provider.once(contract, async () => {
         commit('changeSuccessRemoveToken', true)
         return true
