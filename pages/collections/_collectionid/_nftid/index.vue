@@ -27,9 +27,17 @@
 <!--              {{ hoursDifference }} hours-->
 <!--              {{ minutesDifference }} minutes-->
 <!--            </p>-->
-            <div class="nft__block-info-status">
+            <div class="nft__block-info-status" v-if="!soldByMe">
               <p class="nft__block-info-status-title">Market status</p>
               <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
+            </div>
+            <div class="nft__block-info-status" v-else>
+              <p class="nft__block-info-status-title">Last sold</p>
+              <div class="nft__block-info-price sold">
+                <img src="/celo.svg" alt="celo">
+                <h1>{{ nft.price }} CELO</h1>
+                <span>= {{ priceToken }}$</span>
+              </div>
             </div>
             <button class="nft__block-info-buy" @click="handleClickBuyNow" v-if="isSellNFT && nft.market_status === 'LISTED'">Buy now</button>
           </div>
@@ -147,6 +155,11 @@ export default {
       if (this.$store.state.successRemoveToken) {
         this.changeList('default')
       }
+    },
+    address() {
+      if (this.$store.state.address && !this.balance) {
+        this.loadBalance()
+      }
     }
   },
   components: {
@@ -163,11 +176,7 @@ export default {
   },
   async mounted() {
     await this.loadNft()
-    if (this.$store.state.address) {
-      this.balance = await this.$store.dispatch('getBalance')
-    }
-    const price = await this.$store.dispatch('getPriceToken')
-    this.priceToken = (price.value * this.nft.price).toFixed(1)
+    await this.loadBalance()
     await this.getAttributes()
     setInterval(() => {
       if(Date.now() / 1000 <= this.nft.updatedAt * 1000) {
@@ -181,6 +190,9 @@ export default {
     }, 1000)
   },
   computed: {
+    address() {
+      return this.$store.state.address
+    },
     successRemoveNft() {
       return this.$store.state.successRemoveToken
     },
@@ -204,6 +216,9 @@ export default {
     },
     seller() {
       return this.nft.owner === this.$store.state.fullAddress
+    },
+    soldByMe() {
+      return this.nft.market_status === 'BOUGHT' && this.nft.seller === this.$store.state.fullAddress
     }
   },
   methods: {
@@ -217,6 +232,13 @@ export default {
         price: nft.price / 1000
       }
       this.loadButton = false
+    },
+    async loadBalance() {
+      if (this.$store.state.address) {
+        this.balance = await this.$store.dispatch('getBalance')
+      }
+      const price = await this.$store.dispatch('getPriceToken')
+      this.priceToken = (price.value * this.nft.price).toFixed(1)
     },
     closeModal(payload) {
       this.showBuyTokenModal = payload
@@ -367,8 +389,11 @@ export default {
         display: flex;
         align-items: center;
         img {
-          width: 3.2rem;
+          width: 2.46rem;
           margin-right: 1rem;
+        }
+        h1 {
+          font-size: 2.46rem;
         }
         &-text {
           padding-top: 3rem;
@@ -376,8 +401,11 @@ export default {
         }
         span {
           margin-left: 1.4rem;
-          font-size: 1.3rem;
+          font-size: 1rem;
           color: $span;
+        }
+        &.sold {
+          margin-top: 9px;
         }
       }
       &-status {
@@ -387,6 +415,11 @@ export default {
           padding-top: .4rem;
           font-family: OpenSans-SemiBold;
         }
+      }
+      &-owner {
+        padding-top: 2.2rem;
+        font-size: 1.23rem;
+        color: $span;
       }
       &-buy {
         margin-top: 10rem;

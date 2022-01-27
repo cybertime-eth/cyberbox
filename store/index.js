@@ -359,7 +359,7 @@ export const actions = {
 
   // SELL NFT
 
-  async approveToken({commit, state, dispatch}) {
+  async approveToken({commit, state, dispatch}, listingMethod) {
     const signer = this.getters.provider.getSigner()
     const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     const resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
@@ -373,6 +373,11 @@ export const actions = {
           state.nft.contract
         ]
         commit('changeApprovedContracts', newApprovedContracts)
+        const listDate = new Date().getTime() / 1000 + 604800 // 7 days
+        dispatch(listingMethod, {
+          ...state.nft,
+          date: listDate
+        })
       });
     } catch (error) {
       commit('changeApproveToken', 'error')

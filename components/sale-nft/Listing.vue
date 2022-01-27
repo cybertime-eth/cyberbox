@@ -9,7 +9,7 @@
     </div>
     <div class="nft__content-buttons nft__content-buttons-mini">
       <button class="nft__content-buttons-button nft__content-buttons-button-cancel" @click="$router.go(0)" v-if="isCancelVisible">Cancel</button>
-      <button class="nft__content-buttons-button gradient-button" :disabled="price < 0.01 || !approve" @click="listNft" v-if="!pending">Listing</button>
+      <button class="nft__content-buttons-button gradient-button" :disabled="price < 0.01" @click="listNft" v-if="!pending">Listing</button>
       <button class="nft__content-buttons-button nft__content-buttons-button-confirm gradient-button" v-else>
         Pending confirmation <img src="/loading-button.svg" alt="load">
       </button>
@@ -26,18 +26,14 @@ export default {
     }
   },
   computed: {
+    approve() {
+      return this.$store.state.approveToken
+    },
     isCancelVisible() {
       if (process.browser) {
         return window.innerWidth > 460
       } else {
         return  true
-      }
-    },
-    approve() {
-      if (!this.$store.state.approvedContracts.includes(this.nft.contract)) {
-        return this.$store.state.approveToken === 'approve'
-      } else {
-        return true
       }
     },
     listToken() {
@@ -49,11 +45,9 @@ export default {
     approve() {
       const status = this.$store.state.approveToken
       console.log(status)
-      if (status === 'approve') {
-        this.pending = false
-      } else if (status === 'error') {
-        this.$router.push('/mycollection')
-      } 
+      if (status === 'error') {
+        this.$router.go(0)
+      }
     },
     listToken() {
       this.pending = false
@@ -66,25 +60,27 @@ export default {
   },
   methods: {
     changePrice(event) {
+      this.$store.commit('changeApproveToken', '')
       this.$store.commit('changelistToken', '')
       if (event.keyCode === 13) {
         this.$emit('setPrice', this.price)
-        if (!this.$store.state.approvedContracts.includes(this.nft.contract)) {
-          this.pending = true
-          this.$store.dispatch('approveToken')
-        }
       }
     },
     listNft() {
-      const listDate = new Date().getTime() / 1000 + 604800 // 7 days
       this.pending = true
-      if (!this.changeInfo) {
-        this.$store.dispatch('listingNFT', {
-          price: this.price,
-          date: listDate,
-        })
+      if (!this.$store.state.approvedContracts.includes(this.nft.contract)) {
+        const listingMethod = !this.changeInfo ? 'listingNFT' : 'changeNFTPrice'
+        this.$store.dispatch('approveToken', listingMethod)
       } else {
-        this.$store.dispatch('changeNFTPrice', this.price)
+        if (!this.changeInfo) {
+          const listDate = new Date().getTime() / 1000 + 604800 // 7 days
+          this.$store.dispatch('listingNFT', {
+            price: this.price,
+            date: listDate,
+          })
+        } else {
+          this.$store.dispatch('changeNFTPrice', this.price)
+        }
       }
     }
   }
