@@ -359,19 +359,21 @@ export const actions = {
 
   // SELL NFT
 
-  async approveListing({state, commit, dispatch}, listingMethod) {
+  async approveListing({state, commit, dispatch}, listingParam) {
     commit('changeApproveToken', 'approve')
 
+    const listingMethod = listingParam.listingMethod
     if (listingMethod === 'listingNFT') {
       dispatch(listingMethod, {
         ...state.nft,
+        price: listingParam.price
       })
     } else {
-      dispatch(listingMethod, state.nft.price)
+      dispatch(listingMethod, listingParam.price)
     }
   },
 
-  async approveToken({commit, state, dispatch}, listingMethod) {
+  async approveToken({commit, state, dispatch}, listingParam) {
     const signer = this.getters.provider.getSigner()
     const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     const resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
@@ -381,10 +383,10 @@ export const actions = {
       if (!approvedForAll) {
         await contract.setApprovalForAll(resultAddress, state.nft.contract_id)
         contract.on("ApprovalForAll", () => {
-          dispatch('approveListing', listingMethod)
+          dispatch('approveListing', listingParam)
         });
       } else {
-        dispatch('approveListing', listingMethod)
+        dispatch('approveListing', listingParam)
       }
     } catch (error) {
       commit('changeApproveToken', 'error')
