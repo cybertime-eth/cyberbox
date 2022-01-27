@@ -60,10 +60,12 @@ export default {
       this.$store.commit('changeSortData', 'myNft')
       const result = await this.$store.dispatch('getGraphData')
       for (let nft of result) {
-        this.listNft.push({
-          ...nft,
-          price: nft.price / 1000
-        })
+        if (nft.contract !== 'nom') {
+          this.listNft.push({
+            ...nft,
+            price: nft.price / 1000
+          })
+        }
       }
       this.filteredNft = this.listNft
       this.loading = false
