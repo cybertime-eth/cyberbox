@@ -155,6 +155,11 @@ export default {
       if (this.$store.state.successRemoveToken) {
         this.changeList('default')
       }
+    },
+    address() {
+      if (this.$store.state.address && !this.balance) {
+        this.loadBalance()
+      }
     }
   },
   components: {
@@ -171,11 +176,7 @@ export default {
   },
   async mounted() {
     await this.loadNft()
-    if (this.$store.state.address) {
-      this.balance = await this.$store.dispatch('getBalance')
-    }
-    const price = await this.$store.dispatch('getPriceToken')
-    this.priceToken = (price.value * this.nft.price).toFixed(1)
+    await this.loadBalance()
     await this.getAttributes()
     setInterval(() => {
       if(Date.now() / 1000 <= this.nft.updatedAt * 1000) {
@@ -189,6 +190,9 @@ export default {
     }, 1000)
   },
   computed: {
+    address() {
+      return this.$store.state.address
+    },
     successRemoveNft() {
       return this.$store.state.successRemoveToken
     },
@@ -214,7 +218,7 @@ export default {
       return this.nft.owner === this.$store.state.fullAddress
     },
     soldByMe() {
-      return this.nft.seller === this.$store.state.fullAddress
+      return this.nft.market_status === 'BOUGHT' && this.nft.seller === this.$store.state.fullAddress
     }
   },
   methods: {
@@ -228,6 +232,13 @@ export default {
         price: nft.price / 1000
       }
       this.loadButton = false
+    },
+    async loadBalance() {
+      if (this.$store.state.address) {
+        this.balance = await this.$store.dispatch('getBalance')
+      }
+      const price = await this.$store.dispatch('getPriceToken')
+      this.priceToken = (price.value * this.nft.price).toFixed(1)
     },
     closeModal(payload) {
       this.showBuyTokenModal = payload
