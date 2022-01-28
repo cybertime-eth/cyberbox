@@ -106,9 +106,7 @@ export default {
       }
     },
     contractPercentInfo(percentVal) {
-      if (percentVal > 0) {
-        return `+${percentVal}%`
-      } else if (percentVal < 0) {
+      if (percentVal !== 0) {
         return `${percentVal}%`
       } else {
         return '-'
