@@ -130,7 +130,7 @@ header {
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 14rem 23rem 44.3rem 17.5rem 22rem;
+  grid-template-columns: 14rem 20rem 58.3rem 17.5rem 22rem;
   align-items: center;
   &__back {
     display: none;

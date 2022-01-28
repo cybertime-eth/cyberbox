@@ -42,7 +42,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cybertime-mint-update',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/mint-count-cyber-last',
         options: {}
       },
       secondClient: {
