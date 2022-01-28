@@ -126,11 +126,11 @@ export default {
       }, {
         hid: 'image',
         name: 'image',
-        content: this.getDescription()
+        content: this.getImageSrc()
       }, {
         hid: 'og:description',
         name: 'og:description',
-        content: this.getImageSrc()
+        content: this.getDescription()
       }, {
         hid: 'og:image',
 				name: 'og:image',
