@@ -25,6 +25,7 @@ export const state = () => ({
   wrongNetwork: false,
   fullAddress: null,
   nftList: [],
+  myNftList: [],
   nft: {},
   approveToken: '',
   listToken: '',
@@ -35,6 +36,7 @@ export const state = () => ({
   message: '',
   sort: `orderBy: contract_id`,
   pagination: null,
+  collectionSetting: null,
 
   collectionList: [
     {
@@ -755,6 +757,9 @@ export const mutations = {
       price: nft.price / 1000
     }
   },
+  setMyNftList(state, list) {
+    state.myNftList = list
+	},
   changelistToken(state, status) {
     state.listToken = status
   },
@@ -848,5 +853,8 @@ export const mutations = {
 	  state.countPage = 1
 	  state.pagination = null
   }
+  },
+  updateCollectionSetting(state, setting) {
+    state.collectionSetting = setting
   }
 }

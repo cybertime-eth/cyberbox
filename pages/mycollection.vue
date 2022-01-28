@@ -55,6 +55,7 @@ export default {
     window.removeEventListener('scroll', this.addCurrentPage)
   },
   async created() {
+    localStorage.removeItem('move_back')
     this.$store.commit('changeCountPage', 1)
     if (!this.listNft.length) {
       this.$store.commit('changeSortData', 'myNft')

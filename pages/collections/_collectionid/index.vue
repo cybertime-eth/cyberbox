@@ -174,6 +174,13 @@ export default {
         this.$store.commit('setNewNftList', [])
       }
     },
+    changeCollectionSetting(setting) {
+      const collectionSetting = this.$store.state.collectionSetting
+      this.$store.commit('updateCollectionSetting', {
+        ...collectionSetting,
+        ...setting
+      })
+    },
     changeSort(id) {
       this.sort = id
       let sortPrefix = ''
@@ -184,6 +191,7 @@ export default {
       }
       this.$store.commit('changeSortData', this.filter === 'bought' ? (sortPrefix + `${id}-sold`) : (sortPrefix + id))
       this.fetchNftList()
+      this.changeCollectionSetting({ sort: id })
     },
     changeMyNftFilter() {
       let sortMyNft = 'all'
@@ -207,6 +215,7 @@ export default {
     changeMyNftStatus() {
       this.myNft = !this.myNft
       this.changeMyNftFilter()
+      this.changeCollectionSetting({ myNft: this.myNft })
     },
     changeFilter() {
       const filter = this.filter
@@ -228,6 +237,10 @@ export default {
         this.$store.dispatch(activeRequest)
       }
       this.$store.commit('changeCountPage', 1)
+      this.changeCollectionSetting({
+        filter: this.filter,
+        fetchRequest: activeRequest
+      })
     },
   },
   beforeMount() {
@@ -239,9 +252,19 @@ export default {
     window.removeEventListener('scroll', this.addCurrentPage)
   },
   async created() {
-    this.$store.commit('changeCountPage', 1)
-    this.$store.commit('changeSortData', 'all')
-    await this.$store.dispatch(this.activeRequest)
+    if (process.browser && localStorage.getItem('move_back')) {
+      localStorage.removeItem('move_back')
+      const collectionSetting = this.$store.state.collectionSetting
+      this.activeRequest = collectionSetting.fetchRequest || this.activeRequest
+      this.filter = collectionSetting.filter || this.filter
+      this.sort = collectionSetting.sort || this.sort
+      this.myNft = collectionSetting.myNft || this.myNft
+    } else {
+      this.$store.commit('updateCollectionSetting', null)
+      this.$store.commit('changeCountPage', 1)
+      this.$store.commit('changeSortData', 'all')
+      await this.$store.dispatch(this.activeRequest)
+    }
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)

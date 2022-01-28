@@ -2,11 +2,11 @@
   <section id="nft">
     <div class="nft">
       <div>
-        <nuxt-link :to="'/collections/' + nft.contract" class="nft__crumbs">
-          Marketplace
+        <a class="nft__crumbs" @click="handleClickBack">
+          Back
           <img src="/array-right.svg" alt="array">
           <span>{{ nft.name }}</span>
-        </nuxt-link>
+        </a>
 
 
         <div class="nft__block">
@@ -261,6 +261,10 @@ export default {
 
       this.secondsDifference = Math.floor(difference/1000)
     },
+    handleClickBack() {
+      localStorage.setItem('move_back', true)
+      this.$router.go(-1)
+    },
    async removeFromMarket() {
       if (this.loadButton) return;
       this.loadButton = true
@@ -330,6 +334,7 @@ export default {
     display: flex;
     align-items: center;
     color: $border;
+    cursor: pointer;
     img {
       margin-left: 1rem;
     }

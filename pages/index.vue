@@ -21,6 +21,10 @@ export default {
       return this.$store.state.collectionList
     }
   },
+  created() {
+    localStorage.removeItem('move_back')
+    this.$store.commit('updateCollectionSetting', null)
+  },
   methods: {
     openDaopolis() {
       window.open('https://daopolis.city')
