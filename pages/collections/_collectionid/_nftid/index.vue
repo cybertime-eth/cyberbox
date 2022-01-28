@@ -112,6 +112,7 @@
       </div>
     </div>
   <Attributes :item="attributes" :info="nft"/>
+  <connect v-if="showConnectModal" @closeModal="closeModal"/>
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
   <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
   <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nft.name"/>
@@ -126,6 +127,7 @@ import Approve from '@/components/sale-nft/Approve';
 import Sign from '@/components/sale-nft/Sign';
 import Listing from '@/components/sale-nft/Listing';
 import Successful from '@/components/sale-nft/Successful';
+import connect from '@/components/modals/connect'
 import WrongNetwork from '@/components/modals/wrongNetwork'
 import BuyToken from '@/components/modals/buyToken';
 import SuccessfullBuy from '@/components/modals/successBuy';
@@ -133,6 +135,7 @@ export default {
   data() {
     return {
       attributes: [],
+      showConnectModal: false,
       showWrongNetworkModal: false,
       showBuyTokenModal: false,
       nft: {
@@ -170,6 +173,7 @@ export default {
     Sign,
     Listing,
     Successful,
+    connect,
     WrongNetwork,
     BuyToken,
     SuccessfullBuy
@@ -241,6 +245,7 @@ export default {
       this.priceToken = (price.value * this.nft.price).toFixed(1)
     },
     closeModal(payload) {
+      this.showConnectModal = payload
       this.showBuyTokenModal = payload
     },
     timeDifference() {
@@ -285,10 +290,14 @@ export default {
       this.attributes = attributes
     },
     handleClickBuyNow() {
-      if (!this.$store.state.wrongNetwork) {
-        this.showBuyTokenModal = true
+      if (!this.address) {
+        this.showConnectModal = true
       } else {
-        this.showWrongNetworkModal = true
+        if (!this.$store.state.wrongNetwork) {
+          this.showBuyTokenModal = true
+        } else {
+          this.showWrongNetworkModal = true
+        }
       }
     },
     handleClickSell() {
