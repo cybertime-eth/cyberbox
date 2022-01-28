@@ -646,8 +646,9 @@ export const actions = {
   // GET COLLECTION INFO
 
   async getCollectionInfo({commit, state}, isArray) {
+    const collectionId = $nuxt.$route.params.collectionid
     const allArray = `orderBy: sell_total_price, orderDirection: desc where: { mint_count_gt: 0 }`
-    const firstObject = `where: { nftSymbol: "${$nuxt.$route.params.collectionid}"}`
+    const firstObject = collectionId === 'nomstronaut' ? `where: { id: "0x8237f38694211f25b4c872f147f027044466fa80" }` : `where: { nftSymbol: "${$nuxt.$route.params.collectionid}"}`
     const query = gql`
       query Sample {
         contracts(${isArray ? allArray : firstObject}) {
