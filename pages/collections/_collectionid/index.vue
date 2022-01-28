@@ -120,10 +120,20 @@ export default {
   metaInfo() {
     return {
       meta: [{
-        property: 'og:description',
+        hid: 'description',
+        property: 'description',
         content: this.getDescription()
       }, {
-				property: 'og:image',
+        hid: 'image',
+        name: 'image',
+        content: this.getDescription()
+      }, {
+        hid: 'og:description',
+        name: 'og:description',
+        content: this.getImageSrc()
+      }, {
+        hid: 'og:image',
+				name: 'og:image',
         content: this.getImageSrc()
 			}]
     }
