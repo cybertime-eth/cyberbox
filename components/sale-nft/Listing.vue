@@ -21,7 +21,7 @@
 export default {
   data() {
     return {
-      price: 0,
+      price: null,
       pending: false,
       nftRoyalty: 0,
     }
