@@ -277,7 +277,10 @@ export default {
     changeList(list) {
       this.listStatus = list
       this.step = 1
-      setTimeout(() => this.loadNft(), 2000)
+      setTimeout(() => {
+        this.loadNft()
+        this.loadBalance()
+      }, 2000)
     },
     setNftPrice(price) {
       this.nftPrice = price
