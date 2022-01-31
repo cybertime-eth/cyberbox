@@ -148,7 +148,12 @@ export default {
         padding-left: 1rem;
         width: 18.2rem;
         height: 6.2rem;
-        border-radius: .4rem .4rem 0 0;
+        &:first-child {
+          border-radius: .4rem .4rem 0 0;
+        }
+        &:last-child {
+          border-radius: 0 0 .4rem .4rem;
+        }
         img {
           width: 1.6rem;
         }
