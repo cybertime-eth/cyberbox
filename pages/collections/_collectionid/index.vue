@@ -265,10 +265,12 @@ export default {
     if (process.browser && localStorage.getItem('move_back')) {
       localStorage.removeItem('move_back')
       const collectionSetting = this.$store.state.collectionSetting
-      this.activeRequest = collectionSetting.fetchRequest || this.activeRequest
-      this.filter = collectionSetting.filter || this.filter
-      this.sort = collectionSetting.sort || this.sort
-      this.myNft = collectionSetting.myNft || this.myNft
+      if (collectionSetting) {
+        this.activeRequest = collectionSetting.fetchRequest || this.activeRequest
+        this.filter = collectionSetting.filter || this.filter
+        this.sort = collectionSetting.sort || this.sort
+        this.myNft = collectionSetting.myNft || this.myNft
+      }
     } else {
       this.$store.commit('updateCollectionSetting', null)
       this.$store.commit('changeCountPage', 1)

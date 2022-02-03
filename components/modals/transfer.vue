@@ -1,6 +1,13 @@
 <template>
   <div class="modal">
     <div class="modal__block transfer">
+        <div class="modal__transfer-header">
+          <a class="modal__transfer-header-link" href="/">
+            <img src="/logo.svg">
+          </a>
+          <button class="modal__transfer-header-button" @click="closeModal">Cancel</button>
+        </div>
+        <img class="modal__image" :src="nft.image">
         <h2 class="modal__title">Transfer Ownership</h2>
         <div class="modal__transfer">
           <p class="modal__transfer-description" :class="{ success: successTransferToken }">{{ transferDescription }}</p>
@@ -59,6 +66,7 @@ export default {
   methods: {
     closeModal() {
       this.$emit('closeModal', false)
+      this.$store.commit('changeSuccessTransferToken', false)
     },
     transferToken() {
       if (this.receiver.length === 42) {
@@ -88,8 +96,14 @@ export default {
     text-align: left;
     font-size: 2.46rem;
   }
+  &__image {
+    display: none;
+  }
   &__transfer {
     padding-top: 1.85rem;
+    &-header {
+      display: none;
+    }
     &-description {
       font-weight: 600;
       font-size: 1.38rem;
@@ -115,6 +129,7 @@ export default {
           border-color: $green;
         }
         &:read-only {
+          background: transparent;
           border-color: $border;
           color: #9CA3AF;
         }
@@ -173,22 +188,82 @@ export default {
         width: 100%;
       }
     }
+    &__image {
+      display: block;
+      width: 100%;
+      padding-bottom: 1.6rem;
+    }
     &__block {
-      width: 80%;
-      padding-top: 8rem !important;
-      padding-bottom: 4rem !important;
+      &.transfer {
+        width: 100%;
+        height: calc(100% - 3.4rem);
+        background: $white;
+        padding: 0 .8rem 3.2rem !important;
+        margin: 0 !important;
+        border-radius: 0;
+      }
       &-container {
         text-align: center;
       }
     }
     &__title {
       width: 80%;
-      margin: 0 auto;
+      margin: 0;
       line-height: 2.2rem;
-      text-align: center;
-      font-size: 1.6rem;
+      text-align: left;
+      font-size: 2.2rem;
       &-domain {
         color: $green;
+      }
+    }
+    &__transfer {
+      padding-top: 2.4rem;
+      &-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 4rem;
+        &-link {
+          height: 4rem;
+          margin-left: -1rem;
+          img {
+            width: 4rem;
+          }
+        }
+        &-button {
+          background: transparent;
+          font-weight: 600;
+          font-size: 1.4rem;
+        }
+      }
+      &-description {
+        font-size: 1.6rem;
+      }
+      &-form {
+        padding-top: 2.4rem;
+        padding-bottom: 3rem;
+        &-name {
+          padding-bottom: 1.6rem;
+          font-size: 1.6rem;
+        }
+        &-input {
+          width: calc(100% - 2rem);
+          padding: 1.2rem 1rem;
+          border-color: $border2;
+          font-size: 1.4rem;
+        }
+      }
+      &-buttons {
+        &-button {
+          width: 100%;
+          font-size: 1.6rem;
+          &-cancel {
+            display: none;
+          }
+          &-confirm {
+            justify-content: center;
+          }
+        }
       }
     }
   }
