@@ -56,33 +56,9 @@ export default {
       movedBack = true
       localStorage.removeItem('move_back')
     }
-    this.$store.commit('changeCountPage', 1)
-    if (!this.listNft.length) {
-      this.$store.commit('changeSortData', 'myNft')
-      const result = await this.$store.dispatch('getGraphData')
-      for (let nft of result) {
-        if (nft.contract !== 'nom') {
-          this.listNft.push({
-            ...nft,
-            price: nft.price / 1000
-          })
-          const filterIndex = this.collectionFilters.findIndex(item => item.contract === nft.contract)
-          if (filterIndex >= 0) {
-            this.collectionFilters[filterIndex].items.push(nft)
-          } else {
-            const collectionInfo = this.$store.state.collectionList.find(item => item.route === nft.contract)
-            this.collectionFilters.push({
-              contract: nft.contract,
-              name: nft.name || nft.contract_name,
-              image: `/${nft.contract}.png`,
-              items: [nft]
-            })
-          }
-        }
-      }
-      this.filteredNft = this.listNft
-      this.loading = false
-    }
+    
+
+    await this.fetchMyCollection()
 
     const collectionSetting = this.$store.state.collectionSetting
     if (movedBack && collectionSetting?.myFilter) {
@@ -101,8 +77,49 @@ export default {
         return countListing.length
       }
     },
+    successTransferToken() {
+      return this.$store.state.successTransferToken
+    }
+  },
+  watch: {
+    successTransfer() {
+      if (this.$store.state.successTransferToken) {
+        this.listNft = []
+        this.fetchMyCollection()
+      }
+    }
   },
   methods: {
+    async fetchMyCollection() {
+      this.$store.commit('changeCountPage', 1)
+      if (!this.listNft.length) {
+        this.loading = true
+        this.$store.commit('changeSortData', 'myNft')
+        const result = await this.$store.dispatch('getGraphData')
+        for (let nft of result) {
+          if (nft.contract !== 'nom') {
+            this.listNft.push({
+              ...nft,
+              price: nft.price / 1000
+            })
+            const filterIndex = this.collectionFilters.findIndex(item => item.contract === nft.contract)
+            if (filterIndex >= 0) {
+              this.collectionFilters[filterIndex].items.push(nft)
+            } else {
+              const collectionInfo = this.$store.state.collectionList.find(item => item.route === nft.contract)
+              this.collectionFilters.push({
+                contract: nft.contract,
+                name: nft.name || nft.contract_name,
+                image: `/${nft.contract}.png`,
+                items: [nft]
+              })
+            }
+          }
+        }
+        this.filteredNft = this.listNft
+        this.loading = false
+      }
+    },
     addCurrentPage() {
       if(process.browser) {
         const count = this.$store.state.countPage

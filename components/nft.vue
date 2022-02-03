@@ -6,10 +6,10 @@
         <img src="/outline-sell.svg" alt="sell">
         <h3>{{ visitMenuName }}</h3>
       </div>
-     <!-- <div class="collection__item-modal-button" @click="showTransferModal = true">
+     <div class="collection__item-modal-button" @click="showTransferModal = true">
        <img src="/transfer-black.svg" alt="transfer">
        <h3>Transfer</h3>
-     </div> -->
+     </div>
       <div class="collection__item-modal-button" @click="copyLink">
         <img src="/copy-link.svg" alt="copy">
         <h3>Copy link</h3>
@@ -30,7 +30,7 @@
       <h3 class="collection__item-info-price-null" v-else>Not for sale</h3>
       <button class="collection__item-info-details" @click="routeNft(true)">Details</button>
     </div>
-    <transfer @closeModal="showTransferModal = false" v-if="showTransferModal" />
+    <transfer :nft="nft" @closeModal="showTransferModal = false" v-if="showTransferModal" />
   </div>
 </template>
 <script>

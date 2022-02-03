@@ -64,7 +64,7 @@
                 {{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}
               </h3>
             </div>
-<!--            <h3 class="nft__block-info-transfer"><img src="/transfer.svg" alt="transfer">Transfer</h3>-->
+            <button class="nft__block-info-transfer" @click="showTransferModal = true" v-if="nft.market_status !== 'LISTED' && seller"><img src="/transfer.svg" alt="transfer">Transfer</button>
             <button class="nft__block-info-sell gradient-button" @click="handleClickSell"  v-if="nft.market_status !== 'LISTED'">Sell</button>
             <div class="nft__content-buttons nft__content-buttons-mini delist-buttons" v-else>
               <button
@@ -114,6 +114,7 @@
   <Attributes :item="attributes" :info="nft"/>
   <connect v-if="showConnectModal" @closeModal="closeModal"/>
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
+  <Transfer :nft="nft" @closeModal="closeTransfer" v-if="showTransferModal" />
   <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
   <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nft.name"/>
 <!--    <History />-->
@@ -129,6 +130,7 @@ import Listing from '@/components/sale-nft/Listing';
 import Successful from '@/components/sale-nft/Successful';
 import connect from '@/components/modals/connect'
 import WrongNetwork from '@/components/modals/wrongNetwork'
+import Transfer from '@/components/modals/transfer'
 import BuyToken from '@/components/modals/buyToken';
 import SuccessfullBuy from '@/components/modals/successBuy';
 export default {
@@ -137,6 +139,7 @@ export default {
       attributes: [],
       showConnectModal: false,
       showWrongNetworkModal: false,
+      showTransferModal: false,
       showBuyTokenModal: false,
       nft: {
         price: 0
@@ -175,6 +178,7 @@ export default {
     Successful,
     connect,
     WrongNetwork,
+    Transfer,
     BuyToken,
     SuccessfullBuy
   },
@@ -243,6 +247,10 @@ export default {
       }
       const price = await this.$store.dispatch('getPriceToken')
       this.priceToken = (price.value * this.nft.price).toFixed(1)
+    },
+    closeTransfer(payload) {
+      this.showTransferModal = payload
+      this.loadNft()
     },
     closeModal(payload) {
       this.showConnectModal = payload
@@ -452,14 +460,15 @@ export default {
         color: $pink;
       }
       &-transfer {
-        padding-top: 3.2rem;
+        margin-top: 3.2rem;
+        background: transparent;
         font-family: OpenSans-SemiBold;
         display: flex;
-        align-self: center;
+        align-items: center;
         cursor: pointer;
         img {
           width: 1.6rem;
-          padding-right: 1.1rem;
+          padding-right: 0.9rem;
         }
       }
     }

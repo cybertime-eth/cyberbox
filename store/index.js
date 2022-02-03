@@ -33,6 +33,7 @@ export const state = () => ({
   filter: filter.races.DAOS.layers,
   successBuyToken: false,
   successRemoveToken: false,
+  successTransferToken: false,
   message: '',
   sort: `orderBy: contract_id`,
   pagination: null,
@@ -645,6 +646,24 @@ export const actions = {
     });
   },
 
+  // Transfer NFT
+
+  async transferNFT({commit, state, getters}, params) {
+    const signer = getters.provider.getSigner()
+    const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
+    try {
+      await contract.transfer(params.nft.contract_address, params.toAddress, params.nft.contract_id, {
+        gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+      })
+      this.getters.provider.once(contract, async () => {
+        commit('changeSuccessTransferToken', true)
+      });
+    } catch (error) {
+      commit('changeSuccessTransferToken', false)
+      console.log(error)
+    }
+  },
+
   // GET COLLECTION INFO
 
   async getCollectionInfo({commit, state}, isArray) {
@@ -797,6 +816,9 @@ export const mutations = {
   },
   changeSuccessRemoveToken(state, status) {
     state.successRemoveToken = status
+  },
+  changeSuccessTransferToken(state, status) {
+    state.successTransferToken = status
   },
   setChainId(state, chain) {
     state.chainId = chain
