@@ -123,7 +123,7 @@ export default {
         width: calc(100% - 1.85rem);
         height: 1.54rem;
         padding: 0.92rem 0.78rem;
-        border: 1px solid transparent;
+        border: 1px solid $border;
         font-size: 1.38rem;
         &:focus {
           border-color: $green;
@@ -201,6 +201,7 @@ export default {
         padding: 0 .8rem 3.2rem !important;
         margin: 0 !important;
         border-radius: 0;
+        overflow-y: auto;
       }
       &-container {
         text-align: center;
