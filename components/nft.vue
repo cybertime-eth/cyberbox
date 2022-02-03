@@ -6,7 +6,7 @@
         <img src="/outline-sell.svg" alt="sell">
         <h3>{{ visitMenuName }}</h3>
       </div>
-     <div class="collection__item-modal-button" @click="showTransferModal = true">
+     <div class="collection__item-modal-button" @click="showTransferModal = true" v-if="seller">
        <img src="/transfer-black.svg" alt="transfer">
        <h3>Transfer</h3>
      </div>
