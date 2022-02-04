@@ -64,7 +64,7 @@
                 {{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}
               </h3>
             </div>
-            <button class="nft__block-info-transfer" @click="showTransferModal = true" v-if="nft.market_status !== 'LISTED' && seller"><img src="/transfer.svg" alt="transfer">Transfer</button>
+            <button class="nft__block-info-transfer" @click="showTransferModal = true" v-if="seller"><img src="/transfer.svg" alt="transfer">Transfer</button>
             <button class="nft__block-info-sell gradient-button" @click="handleClickSell"  v-if="nft.market_status !== 'LISTED'">Sell</button>
             <div class="nft__content-buttons nft__content-buttons-mini delist-buttons" v-else>
               <button

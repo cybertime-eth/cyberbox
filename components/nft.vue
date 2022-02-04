@@ -21,7 +21,7 @@
         {{ nft.name || nft.contract_name }}
       </h2>
       <p class="collection__item-info-id">Token ID {{ nftID(nft.contract_id) }}</p>
-      <p class="collection__item-info-type" v-if="filter === 'bought'">Last sell</p>
+      <p class="collection__item-info-type" v-if="sellInfo">Last sell</p>
       <p class="collection__item-info-type" v-else>Price</p>
       <div class="collection__item-info-price" v-if="nft.price > 0 && nft.market_status !== 'BOUGHT' || filter === 'bought'">
         <img src="/celo.svg" alt="celo">
@@ -47,6 +47,9 @@ export default {
     }
   },
   computed: {
+    sellInfo() {
+      return this.filter === 'bought' || this.nft.seller === this.$store.state.fullAddress
+    },
     moreButtonVisible() {
       return this.seller || (!this.seller && this.owner)
     },

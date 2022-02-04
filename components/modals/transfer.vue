@@ -63,6 +63,9 @@ export default {
       }
     }
   },
+  mounted() {
+    this.$store.commit('changeSuccessTransferToken', false)
+  },
   methods: {
     closeModal() {
       this.$emit('closeModal', false)
