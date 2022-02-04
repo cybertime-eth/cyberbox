@@ -86,7 +86,10 @@
         </button>
       </div>
 <!--      <attributesFilter />-->
-      <div class="collection__info">
+      <div class="collection__loading" v-if="loading">
+        <img src="/loading-button.svg" alt="load">
+      </div>
+      <div class="collection__info" v-else>
         <h3 class="collection__info-items">{{ countItems }} items</h3>
         <div class="collection__info-nft" @click="changeMyNftStatus">
           <h3 class="collection__info-nft-text">My NFTs</h3>
@@ -95,10 +98,10 @@
           </div>
         </div>
       </div>
-      <div class="collection__items" v-if="nftList.length">
+      <div class="collection__items" v-if="nftList.length && !loading">
         <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :owner="nftOwned(nft)" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
       </div>
-      <p class="collection__empty-items" v-else>There are no results matching your selected criteria</p>
+      <p class="collection__empty-items" v-else-if="!loading">There are no results matching your selected criteria</p>
     </div>
   </section>
 </template>
@@ -109,6 +112,7 @@ import {BigNumber} from 'ethers'
 export default {
   data() {
     return {
+      loading: false,
       filter: 'All',
       activeRequest: 'getGraphData',
       sort: '',
@@ -272,6 +276,7 @@ export default {
         this.myNft = collectionSetting.myNft || this.myNft
       }
     } else {
+      this.loading = true
       this.$store.commit('updateCollectionSetting', null)
       this.$store.commit('changeCountPage', 1)
       this.$store.commit('changeSortData', 'all')
@@ -280,6 +285,7 @@ export default {
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
+    this.loading = false
   },
   computed: {
     countItems() {
@@ -438,6 +444,16 @@ export default {
       &-breakline {
         display: none;
       }
+    }
+  }
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20rem;
+    img {
+      width: 8rem;
+      animation: loading 1s infinite;
     }
   }
   &__info {
