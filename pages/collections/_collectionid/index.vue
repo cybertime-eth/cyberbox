@@ -277,6 +277,7 @@ export default {
       }
     } else {
       this.loading = true
+      this.$store.commit('setNewNftList', [])
       this.$store.commit('updateCollectionSetting', null)
       this.$store.commit('changeCountPage', 1)
       this.$store.commit('changeSortData', 'all')
