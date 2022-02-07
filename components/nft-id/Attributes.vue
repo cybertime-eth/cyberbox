@@ -30,7 +30,10 @@
       <div class="attributes__block-content" v-if="showRightAttributes">
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Owned by</h3>
-          <h3 class="attributes__block-content-item-subtitle">{{ cutAddress( info.owner) }}</h3>
+          <div class="attributes__block-content-item-address" @click="copyOwnerAddress">
+            <h3 class="attributes__block-content-item-subtitle attributes__block-content-item-address-info">{{ cutAddress( info.owner) }}</h3>
+            <img src="/copy.svg" alt="copy">
+          </div>
         </div>
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Token ID</h3>
@@ -62,6 +65,15 @@ export default {
     }
   },
   methods: {
+    copyOwnerAddress(e) {
+      this.$copyText(this.info.owner)
+      this.$store.commit('setMessage', 'Address copied!')
+      setTimeout(() => {
+        this.$store.commit('setMessage', '')
+      }, 2000)
+      e.preventDefault()
+      e.stopPropagation()
+    },
      cutAddress(address) {
       if (address) {
         const startID = address.split("").slice(0, 6);
@@ -87,6 +99,9 @@ export default {
     border-radius: .4rem;
     height: 100%;
     width: 53.6rem;
+    &:first-child {
+      margin-right: 24px;
+    }
     &-header {
       display: flex;
       align-items: center;
@@ -118,6 +133,14 @@ export default {
         &-title {
           font-family: OpenSans-Bold;
         }
+        &-address {
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+          &-info {
+            margin-right: 10px;
+          }
+        }
         &-subtitle {
           font-family: OpenSans-Regular;
           display: flex;
@@ -148,6 +171,9 @@ export default {
     flex-direction: column;
     &__block {
       width: 26.4rem;
+      &:first-child {
+        margin: 0;
+      }
     }
   }
 }

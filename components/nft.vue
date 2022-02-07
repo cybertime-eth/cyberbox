@@ -4,12 +4,12 @@
     <div class="collection__item-modal" v-if="modalId === nft.id" @mouseleave="modalId = 0">
       <div class="collection__item-modal-button" @click="routeNft(true)">
         <img src="/outline-sell.svg" alt="sell">
-        <h3>Visit</h3>
+        <h3>{{ visitMenuName }}</h3>
       </div>
-<!--      <div class="collection__item-modal-button">-->
-<!--        <img src="/transfer-black.svg" alt="transfer">-->
-<!--        <h3>Transfer</h3>-->
-<!--      </div>-->
+     <div class="collection__item-modal-button" @click="showTransferModal = true" v-if="seller">
+       <img src="/transfer-black.svg" alt="transfer">
+       <h3>Transfer</h3>
+     </div>
       <div class="collection__item-modal-button" @click="copyLink">
         <img src="/copy-link.svg" alt="copy">
         <h3>Copy link</h3>
@@ -21,7 +21,7 @@
         {{ nft.name || nft.contract_name }}
       </h2>
       <p class="collection__item-info-id">Token ID {{ nftID(nft.contract_id) }}</p>
-      <p class="collection__item-info-type" v-if="filter === 'bought'">Last sell</p>
+      <p class="collection__item-info-type" v-if="sellInfo">Last sell</p>
       <p class="collection__item-info-type" v-else>Price</p>
       <div class="collection__item-info-price" v-if="nft.price > 0 && nft.market_status !== 'BOUGHT' || filter === 'bought'">
         <img src="/celo.svg" alt="celo">
@@ -30,19 +30,35 @@
       <h3 class="collection__item-info-price-null" v-else>Not for sale</h3>
       <button class="collection__item-info-details" @click="routeNft(true)">Details</button>
     </div>
+    <transfer :nft="nft" @closeModal="showTransferModal = false" v-if="showTransferModal" />
   </div>
 </template>
 <script>
+import transfer from '@/components/modals/transfer'
 import {BigNumber} from "ethers";
 export default {
+  components: {
+    transfer
+  },
   data() {
     return {
-      modalId: 0
+      modalId: 0,
+      showTransferModal: false
     }
   },
   computed: {
+    sellInfo() {
+      return this.filter === 'bought' || this.nft.seller === this.$store.state.fullAddress
+    },
     moreButtonVisible() {
       return this.seller || (!this.seller && this.owner)
+    },
+    visitMenuName() {
+      if (this.nft.market_status === 'LISTED') {
+        return 'Remove from sale'
+      } else {
+        return 'Sell'
+      }
     }
   },
   props: ['nft', 'route', 'owner', 'seller', 'filter'],
@@ -126,7 +142,6 @@ export default {
       top: 3.8rem;
       left: .4rem;
       width: 19.2rem;
-      height: 12.6rem;
       background: $white;
       box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1);
       border-radius: .4rem;
@@ -136,6 +151,12 @@ export default {
         padding-left: 1rem;
         width: 18.2rem;
         height: 6.2rem;
+        &:first-child {
+          border-radius: .4rem .4rem 0 0;
+        }
+        &:last-child {
+          border-radius: 0 0 .4rem .4rem;
+        }
         img {
           width: 1.6rem;
         }
@@ -220,9 +241,39 @@ export default {
 
   @media(max-width: 460px) {
     &__item {
+      width: 14.4rem;
+      height: auto;
+      &-image {
+        width: 14.4rem;
+        height: 14.4rem;
+      }
+      &-info {
+        padding: .5rem 0.8rem 3.4rem;
+        &-details {
+          margin-top: 1rem;
+          width: 100%;
+        }
+        &-price {
+          &-null {
+            font-size: 1.4rem;
+          }
+          &-text {
+            font-size: 1.4rem;
+          }
+        }
+        &-id {
+          padding-bottom: 1rem;
+        }
+      }
       &:hover {
         top: 0;
         transition: none;
+      }
+      &-modal {
+        width: 14rem;
+        &-button {
+          width: 13rem;
+        }
       }
     }
   }

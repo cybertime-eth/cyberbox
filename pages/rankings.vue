@@ -46,8 +46,8 @@
               <p class="rankings__table-content-item-volume-title"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</p>
             </div>
             <h3 class="rankings__table-content-item-items">{{ item.items }}</h3>
-            <h3 class="rankings__table-content-item-day">-</h3>
-            <h3 class="rankings__table-content-item-week">-</h3>
+            <h3 class="rankings__table-content-item-day rankings__table-content-item-percent-info" :class="{ positive: item.percentPer24h > 0, negative: item.percentPer24h < 0 }">{{ contractPercentInfo(item.percentPer24h) }}</h3>
+            <h3 class="rankings__table-content-item-week  rankings__table-content-item-percent-info"  :class="{ positive: item.percentPer7d > 0, negative: item.percentPer7d < 0 }">{{ contractPercentInfo(item.percentPer7d) }}</h3>
             <div class="rankings__table-content-item-floor">
               <p class="rankings__table-content-item-floor-title">{{ item.floorPriceCelo }}</p>
             </div>
@@ -85,7 +85,10 @@ export default {
     }
   },
   async created() {
-   await this.renderlist();
+    if (process.browser) {
+      localStorage.removeItem('move_back')
+    }
+    await this.renderlist();
   },
   methods: {
     nftMoreIcon(nftIndex) {
@@ -102,6 +105,13 @@ export default {
         return 'Less';
       }
     },
+    contractPercentInfo(percentVal) {
+      if (percentVal !== 0) {
+        return `${percentVal}%`
+      } else {
+        return '-'
+      }
+    },
 	formatPriceToString(price) {
 		if (price && !isNaN(parseFloat(price.toString()))) {
 		const priceVal = price * this.celoPrice
@@ -115,7 +125,8 @@ export default {
 	  this.list[idx].floorPriceCelo = floorPrice
 	  this.list[idx].floorPrice = this.formatPriceToString(floorPrice)
 	  this.list[idx].volumePrice = this.formatPriceToString(this.list[idx].volumeCelo)
-	  this.list[idx].percentPer24h = await this.$store.dispatch('getContractInfoTimePercent', contract)
+    this.list[idx].percentPer24h = await this.$store.dispatch('getContractInfoTimePercent', contract)
+    this.list[idx].percentPer7d = await this.$store.dispatch('getContractInfoWeekPercent', contract)
 	},
     async renderlist() {
       this.loading = true
@@ -160,7 +171,8 @@ export default {
 			owners: item.ownerCount,
 			items: item.mint_count,
 			shortenedItems: `${parseFloat((item.mint_count / 1000).toString()).toFixed(1)}K`,
-			percentPer24h: 0,
+      percentPer24h: 0,
+      percentPer7d: 0,
 			route: item.title
 		  })
 		  this.loadNftDetail(item.nftSymbol, index)
@@ -324,6 +336,14 @@ export default {
         }
         &-week {
           justify-self: flex-end;
+        }
+        &-percent-info {
+          &.positive {
+            color: $green;
+          }
+          &.negative {
+            color: $red;
+          }
         }
         &-floor {
           justify-self: flex-end;

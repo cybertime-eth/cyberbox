@@ -86,7 +86,10 @@
         </button>
       </div>
 <!--      <attributesFilter />-->
-      <div class="collection__info">
+      <div class="collection__loading" v-if="loading">
+        <img src="/loading-button.svg" alt="load">
+      </div>
+      <div class="collection__info" v-else>
         <h3 class="collection__info-items">{{ countItems }} items</h3>
         <div class="collection__info-nft" @click="changeMyNftStatus">
           <h3 class="collection__info-nft-text">My NFTs</h3>
@@ -95,10 +98,10 @@
           </div>
         </div>
       </div>
-      <div class="collection__items" v-if="nftList.length">
+      <div class="collection__items" v-if="nftList.length && !loading">
         <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :owner="nftOwned(nft)" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
       </div>
-      <p class="collection__empty-items" v-else>There are no results matching your selected criteria</p>
+      <p class="collection__empty-items" v-else-if="!loading">There are no results matching your selected criteria</p>
     </div>
   </section>
 </template>
@@ -109,6 +112,7 @@ import {BigNumber} from 'ethers'
 export default {
   data() {
     return {
+      loading: false,
       filter: 'All',
       activeRequest: 'getGraphData',
       sort: '',
@@ -120,10 +124,20 @@ export default {
   metaInfo() {
     return {
       meta: [{
-        property: 'og:description',
+        hid: 'description',
+        property: 'description',
         content: this.getDescription()
       }, {
-				property: 'og:image',
+        hid: 'image',
+        name: 'image',
+        content: this.getImageSrc()
+      }, {
+        hid: 'og:description',
+        name: 'og:description',
+        content: this.getDescription()
+      }, {
+        hid: 'og:image',
+				name: 'og:image',
         content: this.getImageSrc()
 			}]
     }
@@ -174,6 +188,13 @@ export default {
         this.$store.commit('setNewNftList', [])
       }
     },
+    changeCollectionSetting(setting) {
+      const collectionSetting = this.$store.state.collectionSetting
+      this.$store.commit('updateCollectionSetting', {
+        ...collectionSetting,
+        ...setting
+      })
+    },
     changeSort(id) {
       this.sort = id
       let sortPrefix = ''
@@ -184,6 +205,7 @@ export default {
       }
       this.$store.commit('changeSortData', this.filter === 'bought' ? (sortPrefix + `${id}-sold`) : (sortPrefix + id))
       this.fetchNftList()
+      this.changeCollectionSetting({ sort: id })
     },
     changeMyNftFilter() {
       let sortMyNft = 'all'
@@ -207,6 +229,7 @@ export default {
     changeMyNftStatus() {
       this.myNft = !this.myNft
       this.changeMyNftFilter()
+      this.changeCollectionSetting({ myNft: this.myNft })
     },
     changeFilter() {
       const filter = this.filter
@@ -228,6 +251,10 @@ export default {
         this.$store.dispatch(activeRequest)
       }
       this.$store.commit('changeCountPage', 1)
+      this.changeCollectionSetting({
+        filter: this.filter,
+        fetchRequest: activeRequest
+      })
     },
   },
   beforeMount() {
@@ -239,12 +266,27 @@ export default {
     window.removeEventListener('scroll', this.addCurrentPage)
   },
   async created() {
-    this.$store.commit('changeCountPage', 1)
-    this.$store.commit('changeSortData', 'all')
-    await this.$store.dispatch(this.activeRequest)
+    if (process.browser && localStorage.getItem('move_back')) {
+      localStorage.removeItem('move_back')
+      const collectionSetting = this.$store.state.collectionSetting
+      if (collectionSetting) {
+        this.activeRequest = collectionSetting.fetchRequest || this.activeRequest
+        this.filter = collectionSetting.filter || this.filter
+        this.sort = collectionSetting.sort || this.sort
+        this.myNft = collectionSetting.myNft || this.myNft
+      }
+    } else {
+      this.loading = true
+      this.$store.commit('setNewNftList', [])
+      this.$store.commit('updateCollectionSetting', null)
+      this.$store.commit('changeCountPage', 1)
+      this.$store.commit('changeSortData', 'all')
+      await this.$store.dispatch(this.activeRequest)
+    }
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
+    this.loading = false
   },
   computed: {
     countItems() {
@@ -402,6 +444,16 @@ export default {
       }
     }
   }
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20rem;
+    img {
+      width: 8rem;
+      animation: loading 1s infinite;
+    }
+  }
   &__info {
     padding-top: 4rem;
     display: flex;
@@ -530,32 +582,6 @@ export default {
       grid-column-gap: 1.6rem;
       grid-row-gap: 1.6rem;
       padding-top: 2.2rem;
-    }
-    &__item {
-      width: 14.4rem;
-      height: auto;
-      &-image {
-        width: 14.4rem;
-        height: 14.4rem;
-      }
-      &-info {
-        padding: .5rem 0.8rem 3.4rem;
-        &-details {
-          margin-top: 1rem;
-          width: 100%;
-        }
-        &-price {
-          &-null {
-            font-size: 1.4rem;
-          }
-          &-text {
-            font-size: 1.4rem;
-          }
-        }
-        &-id {
-          padding-bottom: 1rem;
-        }
-      }
     }
     &__sort {
       &-button {

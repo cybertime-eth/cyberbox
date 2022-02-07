@@ -22,17 +22,187 @@ export const state = () => ({
   wrongNetwork: false,
   fullAddress: null,
   nftList: [],
+  myNftList: [],
   nft: {},
   approveToken: '',
-  approvedContracts: [],
   listToken: '',
   countPage: 1,
   filter: filter.races.DAOS.layers,
   successBuyToken: false,
   successRemoveToken: false,
+  successTransferToken: false,
   message: '',
   sort: `orderBy: contract_id`,
   pagination: null,
+  collectionSetting: null,
+
+  collectionList: [
+    {
+      id: 1,
+      name: 'Daopolis',
+      route: 'daos',
+      image: '/collections/daopolis.jpg',
+      banner: '/collections/daopolis-banner.jpg',
+      logo: '/collections/daopolis-logo.png',
+      website: 'https://www.daopolis.city',
+      twitter: 'https://twitter.com/cybertime_eth',
+      discord: 'https://discord.gg/cKcWfCux4s',
+      telegram: 'https://t.me/cybertime_eth',
+      description: "Automatically generated 9192 NFT's. Born in the CyberTime era, Daopolis citizens will be the foundation of a new gaming metaverse on Celo. Find your digital avatar, gain access to a private club and participate in unique NFT games!"
+    },
+    {
+      id: 2,
+      name: 'CeloPunks',
+      route: 'cpunk',
+      image: '/collections/Celopunks.jpg',
+      banner: '/collections/CeloPunks-banner.png',
+      logo: '/collections/CeloPunks-logo.png',
+      wallet: '0x29a6520A99656e5b17A34471D5d458eFD3696695',
+      website: 'https://celopunks.club/',
+      twitter: 'https://twitter.com/CeloPunks',
+      discord: 'https://discord.com/invite/Dzukufsrqe',
+      telegram: 'https://t.me/celopunksclub',
+      description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
+    },
+    {
+      id: 3,
+      name: 'CeloToadz',
+      route: 'ctoadz',
+      image: '/collections/celoToadz.png',
+      banner: '/collections/celoToadz-banner.png',
+      logo: '/collections/celoToadz-logo.png',
+      wallet: '0xdbde524ed479f9effe777ba6b708ed8463fba445',
+      website: 'https://www.celotoadz.com/',
+      twitter: 'https://twitter.com/c_ToadzOfficial',
+      discord: 'https://discord.gg/dD3D223k8N',
+      instagram: 'https://www.instagram.com/celotoadzofficial/',
+      description: 'CeloToadz | First collection of 6969 randomly generated Toadz made up of more than 120 different traits on Celo Blockchain!'
+    },
+    {
+      id: 4,
+      name: 'CeloShapes',
+      route: 'cshape',
+      image: '/collections/cshape.png',
+      banner: '/collections/cshape-banner.png',
+      logo: '/collections/cshape-logo.png',
+      website: 'https://celoshapes.art',
+      twitter: 'https://twitter.com/CeloShapesNFT',
+      discord: 'https://discord.com/invite/H7NnhjHwWy',
+      description: 'CeloShapes is a generative art collection living on the Celo blockchain. Collection contains 4444 algorithmically generated colorful artwork.'
+    },
+    {
+      id: 5,
+      name: 'CeloApes',
+      route: 'cak',
+      image: '/collections/cak.png',
+      banner: '/collections/cak-banner.png',
+      logo: '/collections/cak-logo.png',
+      website: 'https://www.celoapes.club',
+      twitter: 'https://twitter.com/Celo_Apes',
+      discord: 'https://discord.gg/bxEAVV8Fcj',
+      description: 'The Celo Apes Kingdom is an collection of 10000 APE NFT (10000 minted!) on Celo Blockchain. Own an Ape to become part of the most epic Ape Kingdom. 10% of all money goes towards eradicating poverty.'
+    },
+    {
+      id: 6,
+      name: 'PunksChristmas',
+      route: 'christmaspunk',
+      image: '/collections/christmaspunk.png',
+      banner: '/collections/christmaspunk-banner.png',
+      logo: '/collections/christmaspunk-logo.png',
+      website: 'https://celopunks.club/',
+      twitter: 'https://twitter.com/CeloPunks',
+      discord: 'https://discord.com/invite/Dzukufsrqe',
+      telegram: 'https://t.me/celopunksclub',
+      description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
+    },
+    {
+      id: 7,
+      name: 'PunksNeon',
+      route: 'cpunkneon',
+      image: '/collections/cpunkneon.png',
+      banner: '/collections/cpunkneon-banner.png',
+      logo: '/collections/cpunkneon-logo.png',
+      website: 'https://celopunks.club/',
+      twitter: 'https://twitter.com/CeloPunks',
+      discord: 'https://discord.com/invite/Dzukufsrqe',
+      telegram: 'https://t.me/celopunksclub',
+      description: 'CeloPunksNeon are a special collection of CeloPunks with a unique Neon style designed for CeloPunks holders. Not affiliated with LarvaLabs.'
+    },
+    {
+      id: 8,
+      name: 'Nomstronaut',
+      route: 'nomstronaut',
+      image: '/collections/nomstronaut.png',
+      banner: '/collections/nomstronaut-banner.png',
+      logo: '/collections/nomstronaut-logo.png',
+      website: 'https://www.nom.space/',
+      twitter: 'https://twitter.com/nomspace_nom',
+      discord: 'https://discord.gg/byMNXabAxZ',
+      description: "All .nom's are NFTs which means you can easily transfer and sell them."
+    },
+    {
+      id: 9,
+      name: 'CeloPaints',
+      route: 'cpaint',
+      image: '/collections/cpaint.png',
+      banner: '/collections/cpaint-banner.png',
+      logo: '/collections/cpaint-logo.png',
+      website: 'https://celopaints.art',
+      twitter: 'https://twitter.com/CeloPaintsNFT',
+      discord: 'https://discord.com/invite/H7NnhjHwWy',
+      description: 'CeloPaints is a generative abstract art collection living on the Celo blockchain. Collection contains 444 algorithmically generated colorful abstract paintings.'
+    },
+    {
+      id: 10,
+      name: 'DimsOfCelo',
+      route: 'dimcelo',
+      image: '/collections/DimsOfCelo.png',
+      banner: '/collections/DimsOfCelo-banner.png',
+      logo: '/collections/DimsOfCelo-logo.png',
+      website: 'https://dimsofcelo.art',
+      twitter: 'https://twitter.com/dimsofcelonft',
+      discord: 'https://discord.com/invite/rhJjVUtKEs',
+      description: 'Dimensions of Celo a.k.a. DimsOfCelo NFTs are 10,000 tokens of appreciation on Celo Blockchain, trying to reach their way into generative art.'
+    },
+    // {
+    //   id: 4,
+    //   name: 'PixelAva',
+    //   route: 'pxa',
+    //   image: '/collections/PixelAva.png',
+    //   banner: '/collections/PixelAva-banner.png',
+    //   logo: '/collections/PixelAva-logo.png',
+    //   wallet: '0xeBD0A580fabb5a5DBE98030D074e532F025C1367',
+    //   website: 'https://pixelava.space/',
+    //   twitter: 'https://twitter.com/NPixelava',
+    //   discord: 'https://discord.gg/sjjjFX2X',
+    //   description: 'Pixaverse is a collection of GameFi worlds where PixelAva holders have extraordinary privileges.'
+    // },
+    // {
+    //   id: 3,
+    //   name: 'DimsOfCelo',
+    //   route: 'dimsofcelo',
+    //   image: '/collections/DimsOfCelo.png',
+    //   banner: '/collections/DimsOfCelo-banner.png',
+    //   logo: '/collections/DimsOfCelo-logo.png',
+    //   wallet: '0x462BFAFE102e9EAFd3A8c95097cFcb21B6A3c9B2',
+    //   website: 'https://dimsofcelo.art/',
+    //   twitter: 'https://twitter.com/dimsofcelonft',
+    //   discord: 'https://discord.com/invite/rhJjVUtKEs',
+    // },
+    // {
+    //   id: 5,
+    //   name: 'CeloPunksNeon',
+    //   route: 'celopunksneon',
+    //   image: '/collections/celopunksneon.png',
+    //   banner: '/collections/celopunksneon-banner.png',
+    //   logo: '/collections/celopunksneon-logo.png',
+    //   wallet: '0x29a6520A99656e5b17A34471D5d458eFD3696695',
+    //   website: 'https://celopunks.club/',
+    //   twitter: 'https://twitter.com/CeloPunks',
+    //   discord: 'https://discord.com/invite/Dzukufsrqe',
+    //   telegram: 'https://t.me/celopunksclub'
+    // },
+  ],
 })
 export const getters = {
   provider() {
@@ -359,34 +529,46 @@ export const actions = {
 
   // SELL NFT
 
-  async approveListing({state, commit, dispatch}, listingParam) {
+  async approveListing({state, commit, dispatch}, { listingMethod, price }) {
     commit('changeApproveToken', 'approve')
 
-    const listingMethod = listingParam.listingMethod
     if (listingMethod === 'listingNFT') {
       dispatch(listingMethod, {
         ...state.nft,
-        price: listingParam.price
+        price
       })
     } else {
-      dispatch(listingMethod, listingParam.price)
+      dispatch(listingMethod, price)
     }
   },
 
-  async approveToken({commit, state, dispatch}, listingParam) {
+  async approveToken({commit, state, dispatch}, { listingMethod, price }) {
     const signer = this.getters.provider.getSigner()
     const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     const resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
-    const contract = new ethers.Contract(state.nft.contract_address, DaosABI, signer)
+    let AbiNft = null
+    switch (state.nft.contract) {
+      case 'daos': AbiNft = daosABI
+        break;
+      case 'cpunk': AbiNft = punksABI
+        break;
+      case 'ctoadz': AbiNft = toadsABI
+        break;
+      case 'cshape': AbiNft = cshapeABI
+        break;
+      case 'pxa': AbiNft = pxaABI
+        break;
+    }
     try {
+      const contract = new ethers.Contract(state.nft.contract_address, AbiNft, signer)
       const approvedForAll = await contract.isApprovedForAll(state.fullAddress, resultAddress)
       if (!approvedForAll) {
-        await contract.setApprovalForAll(resultAddress, state.nft.contract_id)
+        await contract.setApprovalForAll(resultAddress, state.nft.contract_id, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
         contract.on("ApprovalForAll", () => {
-          dispatch('approveListing', listingParam)
+          dispatch('approveListing', { listingMethod, price })
         });
       } else {
-        dispatch('approveListing', listingParam)
+        dispatch('approveListing', { listingMethod, price })
       }
     } catch (error) {
       commit('changeApproveToken', 'error')
@@ -401,7 +583,9 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
-      await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)))
+      await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)), {
+        gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+      })
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
       });
@@ -414,7 +598,9 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
-      await contract.changePrice(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(price)))
+      await contract.changePrice(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(price)), {
+        gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+      })
       this.getters.provider.once(contract, async () => {
         commit('changelistToken', true)
       });
@@ -450,18 +636,38 @@ export const actions = {
     console.log(token.price)
     const result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
       from: account,
-      value: parsePrice
+      value: parsePrice,
+      gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
     })
     this.getters.provider.once(result, async () => {
       commit('changeSuccessBuyToken', true)
     });
   },
 
+  // Transfer NFT
+
+  async transferNFT({commit, state, getters}, params) {
+    const signer = getters.provider.getSigner()
+    const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
+    try {
+      await contract.transfer(params.nft.contract_address, params.toAddress, params.nft.contract_id, {
+        gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+      })
+      this.getters.provider.once(contract, async () => {
+        commit('changeSuccessTransferToken', true)
+      });
+    } catch (error) {
+      commit('changeSuccessTransferToken', false)
+      console.log(error)
+    }
+  },
+
   // GET COLLECTION INFO
 
   async getCollectionInfo({commit, state}, isArray) {
+    const collectionId = $nuxt.$route.params.collectionid
     const allArray = `orderBy: sell_total_price, orderDirection: desc where: { mint_count_gt: 0 }`
-    const firstObject = `where: { title: "${$nuxt.$route.params.collectionid}"}`
+    const firstObject = collectionId === 'nomstronaut' ? `where: { id: "0x8237f38694211f25b4c872f147f027044466fa80" }` : `where: { nftSymbol: "${$nuxt.$route.params.collectionid}"}`
     const query = gql`
       query Sample {
         contracts(${isArray ? allArray : firstObject}) {
@@ -478,6 +684,8 @@ export const actions = {
           nftName
           nftSymbol
           ownerCount
+          createrFee
+          producerFee
         }
       }`;
     let data = await this.$graphql.default.request(query)
@@ -507,6 +715,29 @@ export const actions = {
     const tsOffset = ts1 - ts2;
     return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
   },
+  async getContractInfoWeekPercent({commit, state}, contract) {
+    const currTime = new Date().getTime()
+    const timeBefore7Days = Math.floor((currTime - (7 * 24 * 3600 * 1000)) / 1000)
+    const timeBefore14Days = Math.floor((currTime - (14 * 24 * 3600 * 1000)) / 1000)
+    const time7dNftsQuery = gql`
+      query Sample {
+        contractInfos(where: { market_status: "MINT" contract: "${contract}" updatedAt_gte: ${timeBefore7Days} }) {
+          id
+        }
+      }`;
+    const time14dNftsQuery = gql`
+      query Sample {
+        contractInfos(where: { market_status: "MINT" contract: "${contract}" updatedAt_gte: ${timeBefore14Days} updatedAt_lt: ${timeBefore7Days} }) {
+          id
+        }
+      }`;
+    const data1 = await this.$graphql.default.request(time7dNftsQuery)
+    const data2 = await this.$graphql.default.request(time14dNftsQuery)
+    const ts1 = data1.contractInfos.length;
+    const ts2 = data2.contractInfos.length;
+    const tsOffset = ts1 - ts2;
+    return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
+  },
 
   // REMOVE NFT FROM LIST
 
@@ -514,7 +745,7 @@ export const actions = {
     const signer = this.getters.provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
-      await contract.delistToken(state.nft.contract_address ,id)
+      await contract.delistToken(state.nft.contract_address ,id, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
       this.getters.provider.once(contract, async () => {
         commit('changeSuccessRemoveToken', true)
         return true
@@ -566,14 +797,14 @@ export const mutations = {
       price: nft.price / 1000
     }
   },
+  setMyNftList(state, list) {
+    state.myNftList = list
+	},
   changelistToken(state, status) {
     state.listToken = status
   },
   changeApproveToken(state, approve) {
     state.approveToken = approve
-  },
-  changeApprovedContracts(state, approvedContracts) {
-    state.approvedContracts = approvedContracts
   },
   changeCountPage(state, count) {
     state.countPage = count
@@ -583,6 +814,9 @@ export const mutations = {
   },
   changeSuccessRemoveToken(state, status) {
     state.successRemoveToken = status
+  },
+  changeSuccessTransferToken(state, status) {
+    state.successTransferToken = status
   },
   setChainId(state, chain) {
     state.chainId = chain
@@ -674,5 +908,8 @@ export const mutations = {
 	  state.countPage = 1
 	  state.pagination = null
   }
+  },
+  updateCollectionSetting(state, setting) {
+    state.collectionSetting = setting
   }
 }

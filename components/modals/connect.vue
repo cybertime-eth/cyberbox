@@ -13,7 +13,7 @@
             <img src="/auth/WalletConnect.png" alt="metamask" class="modal__connect-button-image">
           </button> -->
         </div>
-      </div>
+      </div> 
       <div class="modal__block-container" v-else>
         <h2 class="modal__title">Open <span class="modal__title-domain">cyberbox.art</span> in your Metamask mobile app</h2>
         <img src="/auth/metamask-mobile.svg" alt="metamask" class="modal__connect-metamask-image">
@@ -74,6 +74,9 @@ export default {
     &__connect {
       &-metamask-image {
         margin-top: 4rem;
+      }
+      &-button {
+        width: 100%;
       }
     }
     &__block {

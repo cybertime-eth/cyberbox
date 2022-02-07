@@ -2,11 +2,11 @@
   <section id="nft">
     <div class="nft">
       <div>
-        <nuxt-link :to="'/collections/' + nft.contract" class="nft__crumbs">
-          Marketplace
+        <a class="nft__crumbs" @click="handleClickBack">
+          Back
           <img src="/array-right.svg" alt="array">
           <span>{{ nft.name }}</span>
-        </nuxt-link>
+        </a>
 
 
         <div class="nft__block">
@@ -46,7 +46,7 @@
 
           <div class="nft__block-info" v-else-if="listStatus === 'default' && seller">
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
-            <p class="nft__block-info-description" v-if="isSellNFT">{{ nft.description }}</p>
+            <p class="nft__block-info-description">{{ nft.description }}</p>
             <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
             <div class="nft__block-info-price" v-if="isSellNFT && nft.market_status === 'LISTED'">
               <img src="/celo.svg" alt="celo">
@@ -64,7 +64,7 @@
                 {{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}
               </h3>
             </div>
-<!--            <h3 class="nft__block-info-transfer"><img src="/transfer.svg" alt="transfer">Transfer</h3>-->
+            <button class="nft__block-info-transfer" @click="showTransferModal = true" v-if="seller"><img src="/transfer.svg" alt="transfer">Transfer</button>
             <button class="nft__block-info-sell gradient-button" @click="handleClickSell"  v-if="nft.market_status !== 'LISTED'">Sell</button>
             <div class="nft__content-buttons nft__content-buttons-mini delist-buttons" v-else>
               <button
@@ -112,7 +112,9 @@
       </div>
     </div>
   <Attributes :item="attributes" :info="nft"/>
+  <connect v-if="showConnectModal" @closeModal="closeModal"/>
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
+  <Transfer :nft="nft" @closeModal="closeTransfer" v-if="showTransferModal" />
   <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
   <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nft.name"/>
 <!--    <History />-->
@@ -126,14 +128,18 @@ import Approve from '@/components/sale-nft/Approve';
 import Sign from '@/components/sale-nft/Sign';
 import Listing from '@/components/sale-nft/Listing';
 import Successful from '@/components/sale-nft/Successful';
+import connect from '@/components/modals/connect'
 import WrongNetwork from '@/components/modals/wrongNetwork'
+import Transfer from '@/components/modals/transfer'
 import BuyToken from '@/components/modals/buyToken';
 import SuccessfullBuy from '@/components/modals/successBuy';
 export default {
   data() {
     return {
       attributes: [],
+      showConnectModal: false,
       showWrongNetworkModal: false,
+      showTransferModal: false,
       showBuyTokenModal: false,
       nft: {
         price: 0
@@ -170,7 +176,9 @@ export default {
     Sign,
     Listing,
     Successful,
+    connect,
     WrongNetwork,
+    Transfer,
     BuyToken,
     SuccessfullBuy
   },
@@ -240,7 +248,12 @@ export default {
       const price = await this.$store.dispatch('getPriceToken')
       this.priceToken = (price.value * this.nft.price).toFixed(1)
     },
+    closeTransfer(payload) {
+      this.showTransferModal = payload
+      this.loadNft()
+    },
     closeModal(payload) {
+      this.showConnectModal = payload
       this.showBuyTokenModal = payload
     },
     timeDifference() {
@@ -256,6 +269,10 @@ export default {
 
       this.secondsDifference = Math.floor(difference/1000)
     },
+    handleClickBack() {
+      localStorage.setItem('move_back', true)
+      this.$router.go(-1)
+    },
    async removeFromMarket() {
       if (this.loadButton) return;
       this.loadButton = true
@@ -268,7 +285,10 @@ export default {
     changeList(list) {
       this.listStatus = list
       this.step = 1
-      setTimeout(() => this.loadNft(), 2000)
+      setTimeout(() => {
+        this.loadNft()
+        this.loadBalance()
+      }, 2000)
     },
     setNftPrice(price) {
       this.nftPrice = price
@@ -285,10 +305,14 @@ export default {
       this.attributes = attributes
     },
     handleClickBuyNow() {
-      if (!this.$store.state.wrongNetwork) {
-        this.showBuyTokenModal = true
+      if (!this.address) {
+        this.showConnectModal = true
       } else {
-        this.showWrongNetworkModal = true
+        if (!this.$store.state.wrongNetwork) {
+          this.showBuyTokenModal = true
+        } else {
+          this.showWrongNetworkModal = true
+        }
       }
     },
     handleClickSell() {
@@ -321,6 +345,7 @@ export default {
     display: flex;
     align-items: center;
     color: $border;
+    cursor: pointer;
     img {
       margin-left: 1rem;
     }
@@ -435,14 +460,15 @@ export default {
         color: $pink;
       }
       &-transfer {
-        padding-top: 3.2rem;
+        margin-top: 3.2rem;
+        background: transparent;
         font-family: OpenSans-SemiBold;
         display: flex;
-        align-self: center;
+        align-items: center;
         cursor: pointer;
         img {
           width: 1.6rem;
-          padding-right: 1.1rem;
+          padding-right: 0.9rem;
         }
       }
     }
