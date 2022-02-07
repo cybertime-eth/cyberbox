@@ -1,33 +1,33 @@
 <template>
   <section class="collection">
-    <img src="/CeloPunks.png" alt="banner" class="collection__banner">
+    <img :src="collection.banner" alt="banner" class="collection__banner">
     <div class="collection__content container-xl">
       <div class="collection__header">
-        <img src="/avatar-punks.png" alt="avatar" class="collection__header-avatar">
-        <h1 class="collection__header-title" >CeloPunks <img src="/confirmed.svg" alt="confirm"></h1>
-        <p class="collection__header-subtitle">Collectibes</p>
+        <img :src="collection.logo" alt="avatar" class="collection__header-avatar">
+        <h1 class="collection__header-title" >{{ collection.name }} <img src="/confirmed.svg" alt="confirm"></h1>
+        <p class="collection__header-subtitle">Collectibles</p>
         <div class="collection__header-socials">
-          <img src="/socials/disckord.svg" alt="social">
-          <img src="/socials/telegram.svg" alt="social">
-          <img src="/socials/twitter.svg" alt="social">
-          <img src="/socials/web.svg" alt="social">
+          <a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
+          <a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
+          <a :href="collection.twitter" target="_blank" v-if="collection.twitter"><img src="/socials/twitter.svg" alt="social"></a>
+          <a :href="collection.website" target="_blank" v-if="collection.website"><img src="/socials/web.svg" alt="social"></a>
         </div>
         <div class="collection__header-info">
           <div class="collection__header-info-block">
-            <h3 class="collection__header-info-block-title">{{ collectionInfo.mint_count }}</h3>
+            <h3 class="collection__header-info-block-title">{{ collectionInfo.mint_count ? collectionInfo.mint_count : 0 }}</h3>
             <h3 class="collection__header-info-block-subtitle">Items</h3>
           </div>
           <div class="collection__header-info-block">
-            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ collectionInfo.sell_total_price }} CELO</h3>
+            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ (collectionInfo.sell_total_price ? collectionInfo.sell_total_price / 1000 : 0).toFixed(2) }}</h3>
             <h3 class="collection__header-info-block-subtitle">Volume traded</h3>
           </div>
-          <div class="collection__header-info-block" data-aos="fade-left">
-            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ collectionInfo.sell_max_price }} CELO</h3>
-            <h3 class="collection__header-info-block-subtitle">Floor price</h3>
-          </div>
+         <div class="collection__header-info-block">
+           <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ floorPrice }}</h3>
+           <h3 class="collection__header-info-block-subtitle">Floor price</h3>
+         </div>
         </div>
-        <h3 class="collection__header-content" data-aos="fade-up">
-          This NFT is part of DAOS
+        <h3 class="collection__header-content">
+          {{ collection.description }}
         </h3>
       </div>
       <div class="collection__filter" @click="changeFilter">
@@ -299,6 +299,9 @@ export default {
       } else {
         return this.nftList.length
       }
+    },
+    collection() {
+      return this.$store.state.collectionList.filter(item => item.route === this.$route.params.collectionid)[0]
     },
     nftList() {
       return this.$store.state.nftList

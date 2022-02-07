@@ -140,21 +140,7 @@ export default {
 		  let volume = 0;
 		  let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
       volume = volume + price
-
-		  switch(item.nftSymbol) {
-			case 'cpunk':
-			  nftName = 'CeloPunks'
-			  break;
-			case 'ctoadz':
-			  nftName = 'CeloToadz'
-			  break;
-			case 'cshape':
-			  nftName = 'CeloShapes'
-			  break;
-			case 'pxa':
-			  nftName = 'PixelAva'
-			  break;
-		  }
+		  nftName = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
 
 		  this.list.push({
 			id: index + 1,
