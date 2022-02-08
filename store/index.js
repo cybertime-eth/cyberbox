@@ -560,6 +560,8 @@ export const actions = {
         break;
       case 'pxa': AbiNft = pxaABI
         break;
+      default: AbiNft = daosABI
+        break;
     }
     try {
       const contract = new ethers.Contract(state.nft.contract_address, AbiNft, signer)
@@ -575,11 +577,6 @@ export const actions = {
     } catch (error) {
       commit('changeApproveToken', 'error')
     }
-  },
-  async startSale({commit, state}) {
-    const signer = this.getters.provider.getSigner()
-    const contract = new ethers.Contract(state.daosContract, DaosABI, signer);
-    contract.startSale();
   },
   async listingNFT({commit, state}, nft) {
     const signer = this.getters.provider.getSigner()
