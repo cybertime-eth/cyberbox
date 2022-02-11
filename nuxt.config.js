@@ -34,7 +34,7 @@ export default {
   components: true,
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
-  buildModules: ['@nuxtjs/style-resources', 'nuxt-graphql-request'],
+  buildModules: ['@nuxtjs/style-resources', 'nuxt-graphql-request', '@nuxtjs/google-analytics'],
 
   graphql: {
     /**
@@ -56,11 +56,25 @@ export default {
     modules: [
       // https://go.nuxtjs.dev/axios
       '@nuxtjs/axios',
-      '@nuxtjs/proxy'
+      '@nuxtjs/proxy',
+      '@nuxtjs/gtm'
     ],
 
     axios: {
       proxy: true
+    },
+
+    googleAnalytics: {
+      id: 'G-55W61832ZQ',
+      layer: 'dataLayer',
+      pageTracking: true
+    },
+
+    gtm: {
+      id: 'GTM-WR8Q7LM',
+      layer: 'dataLayer',
+      pageTracking: true,
+      enabled: true
     },
 
     // Build Configuration: https://go.nuxtjs.dev/config-build
