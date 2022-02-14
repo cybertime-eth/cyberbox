@@ -38,6 +38,9 @@ export const state = () => ({
   sort: `orderBy: contract_id`,
   pagination: null,
   collectionSetting: null,
+  isRankingPage: false,
+  rankingFilterMode: 1, // 1 - 30 days, 2 - 7 days
+
 
   collectionList: [
     {
@@ -273,18 +276,28 @@ export const actions = {
     return data.contractInfos
   },
 
-  async getFloorPrice({}, contract) {
+  async getFloorPrice({state}, contract) {
+    let startTime = 0
+    
+    if (state.isRankingPage) {
+      if (state.rankingFilterMode === 0) {
+        startTime = Math.floor((Date.now() - (7 * 3600 * 1000)) / 1000)
+      } else {
+        startTime = Math.floor((Date.now() - (30 * 3600 * 1000)) / 1000)
+      }
+    }
+    
     const query = gql`
       query Sample {
-        contractInfos(first: 1 orderBy: price where: { market_status: "LISTED" contract: "${contract}" }) {
-			id
-			contract
-			price
+        contractInfos(first: 1 orderBy: price where: { market_status: "LISTED" contract: "${contract}" updatedAt_gte: ${startTime} }) {
+          id
+          contract
+          price
         }
-      }`
-	const data = await this.$graphql.default.request(query)
-	const tokenPrice = data.contractInfos.length > 0 ? data.contractInfos[0].price : 0
-	return tokenPrice ? (tokenPrice / 1000).toFixed(2) : '-'
+      }`;
+	  const data = await this.$graphql.default.request(query)
+	  const tokenPrice = data.contractInfos.length > 0 ? data.contractInfos[0].price : 0
+	  return tokenPrice ? (tokenPrice / 1000).toFixed(2) : '-'
   },
 
   async getGraphDataListed({state, commit, getters}) {
@@ -692,7 +705,7 @@ export const actions = {
   },
 
   async getContractInfoTimePercent({commit, state}, contract) {
-    const currTime = new Date().getTime()
+    const currTime = Date.now()
     const timeBeforeOneDay = Math.floor((currTime - (24 * 3600 * 1000)) / 1000)
     const timeBeforeTwoDays = Math.floor((currTime - (48 * 3600 * 1000)) / 1000)
     const time24hNftsQuery = gql`
@@ -715,7 +728,7 @@ export const actions = {
     return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
   },
   async getContractInfoWeekPercent({commit, state}, contract) {
-    const currTime = new Date().getTime()
+    const currTime = Date.now()
     const timeBefore7Days = Math.floor((currTime - (7 * 24 * 3600 * 1000)) / 1000)
     const timeBefore14Days = Math.floor((currTime - (14 * 24 * 3600 * 1000)) / 1000)
     const time7dNftsQuery = gql`
@@ -823,6 +836,12 @@ export const mutations = {
   },
   setMessage(state, msg) {
     state.message = msg
+  },
+  setRankingFilter(state, filterMode) {
+    state.rankingFilterMode = filterMode
+  },
+  setRankingPage(state, isRankingPage) {
+    state.isRankingPage = isRankingPage
   },
   changeSortData(state, type) {
     let myNftSort = ''

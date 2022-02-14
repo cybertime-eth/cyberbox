@@ -266,6 +266,7 @@ export default {
     window.removeEventListener('scroll', this.addCurrentPage)
   },
   async created() {
+    this.$store.commit('setRankingPage', false)
     if (process.browser && localStorage.getItem('move_back')) {
       localStorage.removeItem('move_back')
       const collectionSetting = this.$store.state.collectionSetting

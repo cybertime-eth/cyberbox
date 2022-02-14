@@ -2,10 +2,10 @@
   <div class="rankings container-xl">
     <h1 class="rankings__title">NFT Ranking</h1>
     <h3 class="rankings__subtitle">With trading volume, floor price and etc., you can find the most trending NFTs here.</h3>
-   <!-- <div class="rankings__navigation">
+   <div class="rankings__navigation">
      <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': !filterMonthly}" @click="updateFilter(false)">7 Days</button>
      <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': filterMonthly}" @click="updateFilter(true)">30 Days</button>
-   </div> -->
+   </div>
     <div class="rankings__table" :class="{empty: list.length === 0}">
       <div class="rankings__table-header">
         <div class="rankings__table-collection-group">
@@ -87,6 +87,7 @@ export default {
     }
   },
   async created() {
+    this.$store.commit('setRankingPage', true)
     if (process.browser) {
       localStorage.removeItem('move_back')
     }
@@ -135,14 +136,14 @@ export default {
       const tokenPrice = await this.$store.dispatch('getPriceToken')
       this.celoPrice = tokenPrice.value
       const result = await this.$store.dispatch('getCollectionInfo', true)
-      const resultCount =  await this.$store.dispatch('getStatisticCountNft')
+      // const resultCount =  await this.$store.dispatch('getStatisticCountNft')
 	  let nftName = ''
 	  let itemNum = 0
       for (let [index, item] of result.entries()) {
 		if (item.nftSymbol !== 'pxa' && item.nftSymbol !== 'nom') {
-		  let volume = 0;
-		  let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
-		  volume = volume + price
+		  // let volume = 0;
+		  // let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
+		  // volume = volume + price
 		  nftName = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
 		  this.list.push({
 			id: ++itemNum,
@@ -152,7 +153,7 @@ export default {
 			name: nftName,
 			volumePrice: '-',
 			volumeCelo: item.sell_total_price / 1000,
-			statDay: volume / (item.sell_total_price / 1000) * 100,
+			// statDay: volume / (item.sell_total_price / 1000) * 100,
 			statWeek: 7,
 			floorPrice: '-',
 			floorPriceCelo: '-',
@@ -176,6 +177,11 @@ export default {
       e.stopPropagation()
     },
     updateFilter(filterMonthly) {
+      if (this.filterMonthly !== filterMonthly) {
+        this.$store.commit('setRankingFilter', filterMonthly ? 1 : 0)
+        this.list = []
+        this.renderlist()
+      }
       this.filterMonthly = filterMonthly
     }
   }
@@ -194,7 +200,7 @@ export default {
     font-family: OpenSans-SemiBold;
   }
   &__navigation {
-    display: none;
+    display: flex;
     align-items: center;
     padding-top: 5rem;
     &-button {
@@ -203,7 +209,7 @@ export default {
       border-radius: .8rem;
       box-shadow: 0 .2rem .8rem rgba(0, 0, 0, 0.05);
       background: $white;
-      margin-right: 2rem;
+      margin-right: 1.54rem;
       font-family: OpenSans-Regular;
       &-active {
         background: $modalColor;
@@ -390,12 +396,15 @@ export default {
       font-size: 14px;
     }
     &__navigation {
-      display: flex;
       justify-content: center;
       padding-top: 3rem;
       padding-bottom: 1.6rem;
       &-button {
+        margin-right: 2rem;
         font-size: 14px;
+        &:last-child {
+          margin-right: 0;
+        }
       }
     }
     &__table {
