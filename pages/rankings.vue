@@ -14,11 +14,11 @@
         </div>
         <div class="rankings__table-detail-group">
           <h3>Volume</h3>
-          <h3>Items</h3>
           <h3>24h %</h3>
           <h3>7d %</h3>
           <h3>Floor Price</h3>
-          <h3>Owners</h3>
+          <!-- <h3>Owners</h3> -->
+          <h3>Items</h3>
         </div>
       </div>
       <div class="rankings__table-content">
@@ -45,13 +45,15 @@
             <div class="rankings__table-content-item-volume">
               <p class="rankings__table-content-item-volume-title"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</p>
             </div>
-            <h3 class="rankings__table-content-item-items">{{ item.items }}</h3>
+            <!-- <h3 class="rankings__table-content-item-items">{{ item.items }}</h3> -->
             <h3 class="rankings__table-content-item-day rankings__table-content-item-percent-info" :class="{ positive: item.percentPer24h > 0, negative: item.percentPer24h < 0 }">{{ contractPercentInfo(item.percentPer24h) }}</h3>
             <h3 class="rankings__table-content-item-week  rankings__table-content-item-percent-info"  :class="{ positive: item.percentPer7d > 0, negative: item.percentPer7d < 0 }">{{ contractPercentInfo(item.percentPer7d) }}</h3>
             <div class="rankings__table-content-item-floor">
+              <img class="rankings__table-content-item-floor-icon" src="/celo.svg" alt="celo" v-if="item.floorPriceCelo !== '-'">
               <p class="rankings__table-content-item-floor-title">{{ item.floorPriceCelo }}</p>
             </div>
-            <h3 class="rankings__table-content-item-owners">-</h3>
+            <!-- <h3 class="rankings__table-content-item-owners">-</h3> -->
+            <h3 class="rankings__table-content-item-items">{{ item.items }}</h3>
           </div>
           <div class="rankings__table-content-item-price-box">
             <h3 class="rankings__table-content-item-prices">{{ item.volumePrice }}</h3>
@@ -236,7 +238,7 @@ export default {
       }
     }
     &-detail-group {
-      grid-template-columns: 15rem 17rem 16.5rem 17rem 17rem 16.5rem;
+      grid-template-columns: 15rem 17rem 16.5rem 17rem 33.5rem;
       justify-items: flex-end;
     }
     &-content {
@@ -332,8 +334,12 @@ export default {
           }
         }
         &-floor {
-          justify-self: flex-end;
+          display: flex;
+          align-items: center;
           text-align: right;
+          &-icon {
+            margin-right: 8px;
+          }
           &-title {
             letter-spacing: 0.03em;
             display: flex;
