@@ -1,7 +1,7 @@
 <template>
   <header>
     <div class="header container-xl">
-      <button class="header__back" v-if="nftId" @click="$router.go(-1)">
+      <button class="header__back" v-if="nftId" @click="handleClickBack">
         <img src="/arrow-left.svg" alt="back" class="header__back-img">
       </button>
       <div class="header__logo" @click="$router.push('/')">
@@ -114,6 +114,10 @@ export default {
       if (this.$refs.wallet && !this.$refs.wallet.contains(e.target)) {
         this.showProfileMenu = false
       }
+    },
+    handleClickBack() {
+      localStorage.setItem('move_back', true)
+      this.$router.go(-1)
     },
     closeModal(payload) {
       this.showConnectModal = payload

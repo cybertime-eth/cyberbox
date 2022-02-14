@@ -10,9 +10,9 @@
 
 
         <div class="nft__block">
-          <img :src="getNFTImage(nft)" alt="item" class="nft__block-image" v-if="nft.image">
+          <img :src="getNFTImage(nft)" alt="item" class="nft__block-image" v-if="nft.image && nftImageLoaded">
           <div class="nft__block-image-loading" v-else>
-            <img src="/loading-button.svg" alt="load">
+            <img src="/loading-nft.gif" alt="load">
           </div>
 
           <!-- INFO BUYER -->
@@ -141,6 +141,7 @@ export default {
       showWrongNetworkModal: false,
       showTransferModal: false,
       showBuyTokenModal: false,
+      nftImageLoaded: true,
       nft: {
         price: 0
       },
@@ -183,6 +184,19 @@ export default {
     SuccessfullBuy
   },
   async mounted() {
+    const imageURL = this.getNFTImage(this.nft)
+    if (imageURL && !this.nftImageLoaded) {
+      const request = new XMLHttpRequest()
+      const self = this
+      request.open("GET", imageURL, true)
+      request.send()
+      request.onload = function() {
+        if (request.status === 200) {
+          self.nftImageLoaded = true
+        }
+      }
+    }
+
     await this.loadNft()
     await this.loadBalance()
     await this.getAttributes()
@@ -375,8 +389,7 @@ export default {
         justify-content: center;
         border: .1rem solid $pink;
         img {
-          width: 8rem;
-          animation: loading 1s infinite;
+          width: 100%;
         }
       }
     }
