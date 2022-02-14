@@ -7,6 +7,9 @@
       <h3 class="modal__name">{{ name }}</h3>
       <p class="modal__link">View on Celo Explorer <img src="/share.svg" alt="share"></p>
       <button class="modal__button" @click="routeMyCollection">My collection</button>
+      <button class="modal__close-button" @click="closeModal">
+        <img src="/close-bold.svg" class="modal__close-button-icon">
+      </button>
     </div>
   </div>
 </template>
@@ -14,6 +17,9 @@
 export default {
   props: ['image', 'name'],
   methods: {
+    closeModal() {
+      this.$store.commit('changeSuccessBuyToken', false)
+    },
     routeMyCollection() {
       this.$store.commit('changeSuccessBuyToken', false)
       this.$router.push('/mycollection')
@@ -68,6 +74,15 @@ export default {
     color: $pink;
     background: $white;
     margin-top: 2.8rem;
+  }
+  &__close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    &-icon {
+      width: 20px;
+    }
   }
 }
 </style>
