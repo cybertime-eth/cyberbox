@@ -47,42 +47,47 @@
           <div class="nft__block-info" v-else-if="listStatus === 'default' && seller">
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
-            <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
-            <div class="nft__block-info-price" v-if="isSellNFT && nft.market_status === 'LISTED'">
-              <img src="/celo.svg" alt="celo">
-              <h1>{{ nft.price }} CELO</h1>
-              <span>= {{ priceToken }}$</span>
+            <div v-if="!nftReloading">
+              <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
+              <div class="nft__block-info-price" v-if="isSellNFT && nft.market_status === 'LISTED'">
+                <img src="/celo.svg" alt="celo">
+                <h1>{{ nft.price }} CELO</h1>
+                <span>= {{ priceToken }}$</span>
+              </div>
+  <!--            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in-->
+  <!--              {{ daysDifference }} days-->
+  <!--              {{ hoursDifference }} hours-->
+  <!--              {{ minutesDifference }} minutes-->
+  <!--            </p>-->
+              <div class="nft__block-info-status">
+                <p class="nft__block-info-status-title">Market status</p>
+                <h3 class="nft__block-info-status-content">
+                  {{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}
+                </h3>
+              </div>
+              <button class="nft__block-info-transfer" @click="showTransferModal = true" v-if="seller"><img src="/transfer.svg" alt="transfer">Transfer</button>
+              <button class="nft__block-info-sell gradient-button" @click="handleClickSell"  v-if="nft.market_status !== 'LISTED'">Sell</button>
+              <div class="nft__content-buttons nft__content-buttons-mini delist-buttons" v-else>
+                <button
+                  class="
+                  nft__content-buttons-button
+                  nft__content-buttons-button-confirm
+                  nft__content-buttons-button-cancel"
+                  @click="removeFromMarket"
+                >
+                  Remove from market
+                  <img src="/loading-button.svg" alt="load" v-if="loadButton">
+                </button>
+                <button
+                  class="nft__content-buttons-button nft__content-buttons-button-confirm gradient-button"
+                  @click="handleClickChangePrice"
+                >
+                  Change price
+                </button>
+              </div>
             </div>
-<!--            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in-->
-<!--              {{ daysDifference }} days-->
-<!--              {{ hoursDifference }} hours-->
-<!--              {{ minutesDifference }} minutes-->
-<!--            </p>-->
-            <div class="nft__block-info-status">
-              <p class="nft__block-info-status-title">Market status</p>
-              <h3 class="nft__block-info-status-content">
-                {{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}
-              </h3>
-            </div>
-            <button class="nft__block-info-transfer" @click="showTransferModal = true" v-if="seller"><img src="/transfer.svg" alt="transfer">Transfer</button>
-            <button class="nft__block-info-sell gradient-button" @click="handleClickSell"  v-if="nft.market_status !== 'LISTED'">Sell</button>
-            <div class="nft__content-buttons nft__content-buttons-mini delist-buttons" v-else>
-              <button
-                class="
-                nft__content-buttons-button
-                nft__content-buttons-button-confirm
-                nft__content-buttons-button-cancel"
-                @click="removeFromMarket"
-              >
-                Remove from market
-                <img src="/loading-button.svg" alt="load" v-if="loadButton">
-              </button>
-              <button
-                class="nft__content-buttons-button nft__content-buttons-button-confirm gradient-button"
-                @click="handleClickChangePrice"
-              >
-                Change price
-              </button>
+            <div class="nft__block-info-loading" v-else>
+              <img src="/loading-nft.gif" alt="load">
             </div>
           </div>
 
@@ -141,6 +146,8 @@ export default {
       showWrongNetworkModal: false,
       showTransferModal: false,
       showBuyTokenModal: false,
+      nftReloading: false,
+      oldNftStatus: null,
       nftImageLoaded: true,
       nft: {
         price: 0
@@ -166,6 +173,11 @@ export default {
     address() {
       if (this.$store.state.address && !this.balance) {
         this.loadBalance()
+      }
+    },
+    showSuccessModal() {
+      if (this.$store.state.successBuyToken) {
+        this.startReloading()
       }
     }
   },
@@ -262,6 +274,21 @@ export default {
       const price = await this.$store.dispatch('getPriceToken')
       this.priceToken = (price.value * this.nft.price).toFixed(1)
     },
+    startReloading() {
+      this.nftReloading = true
+      this.oldNftStatus = this.nft.market_status
+      this.reloadNft()
+    },
+    async reloadNft() {
+      await this.loadNft()
+      if (this.nft.market_status === this.oldNftStatus) {
+        setTimeout(() => this.reloadNft, 200)
+      } else {
+        this.nftReloading = false
+        this.oldNftStatus = null
+        await this.loadBalance()
+      }
+    },
     closeTransfer(payload) {
       this.showTransferModal = payload
       this.loadNft()
@@ -299,10 +326,9 @@ export default {
     changeList(list) {
       this.listStatus = list
       this.step = 1
-      setTimeout(() => {
-        this.loadNft()
-        this.loadBalance()
-      }, 2000)
+      if (list === 'default') {
+        this.startReloading()
+      }
     },
     setNftPrice(price) {
       this.nftPrice = price
@@ -482,6 +508,12 @@ export default {
         img {
           width: 1.6rem;
           padding-right: 0.9rem;
+        }
+      }
+      &-loading {
+        width: 100%;
+        img {
+          width: 100%;
         }
       }
     }
