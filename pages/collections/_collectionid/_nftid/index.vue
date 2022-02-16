@@ -282,7 +282,7 @@ export default {
     async reloadNft() {
       await this.loadNft()
       if (this.nft.market_status === this.oldNftStatus) {
-        setTimeout(() => this.reloadNft, 200)
+        setTimeout(() => this.reloadNft(), 200)
       } else {
         this.nftReloading = false
         this.oldNftStatus = null
