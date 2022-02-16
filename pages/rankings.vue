@@ -134,35 +134,37 @@ export default {
       this.celoPrice = tokenPrice.value
       const result = await this.$store.dispatch('getCollectionInfo', true)
       const resultCount =  await this.$store.dispatch('getStatisticCountNft')
-	  let nftName = ''
-	  let itemNum = 0
+      let nftName = ''
+      let itemNum = 0
+      const invisibleTokens = ['pxa', 'nom', 'cdp', 'mpunk', 'wmxn']
       for (let [index, item] of result.entries()) {
-		if (item.nftSymbol !== 'pxa' && item.nftSymbol !== 'nom') {
-		  let volume = 0;
-		  let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
-		  volume = volume + price
-		  nftName = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
-		  this.list.push({
-			id: ++itemNum,
-			collectionImage: `/${item.nftSymbol}.png`,
-			verification: false,
-			new: false,
-			name: nftName,
-			volumePrice: '-',
-			volumeCelo: item.sell_total_price / 1000,
-			statDay: volume / (item.sell_total_price / 1000) * 100,
-			statWeek: 7,
-			floorPrice: '-',
-			floorPriceCelo: '-',
-			owners: item.ownerCount,
-			items: item.mint_count,
-			shortenedItems: `${parseFloat((item.mint_count / 1000).toString()).toFixed(1)}K`,
-      percentPer24h: 0,
-      percentPer7d: 0,
-			route: item.title
-		  })
-		  this.loadNftDetail(item.nftSymbol, index)
-		}
+        if (!invisibleTokens.includes(item.nftSymbol)) {
+          let volume = 0;
+          let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
+          volume = volume + price
+          nftName = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
+          this.list.push({
+            id: (itemNum + 1),
+            collectionImage: `/${item.nftSymbol}.png`,
+            verification: false,
+            new: false,
+            name: nftName,
+            volumePrice: '-',
+            volumeCelo: item.sell_total_price / 1000,
+            statDay: volume / (item.sell_total_price / 1000) * 100,
+            statWeek: 7,
+            floorPrice: '-',
+            floorPriceCelo: '-',
+            owners: item.ownerCount,
+            items: item.mint_count,
+            shortenedItems: `${parseFloat((item.mint_count / 1000).toString()).toFixed(1)}K`,
+            percentPer24h: 0,
+            percentPer7d: 0,
+            route: item.title
+          })
+          this.loadNftDetail(item.nftSymbol, itemNum)
+          itemNum++
+        }
       }
       this.loading = false
 	},

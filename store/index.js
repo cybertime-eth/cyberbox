@@ -167,6 +167,19 @@ export const state = () => ({
       discord: 'https://discord.com/invite/rhJjVUtKEs',
       description: 'Dimensions of Celo a.k.a. DimsOfCelo NFTs are 10,000 tokens of appreciation on Celo Blockchain, trying to reach their way into generative art.'
     },
+    {
+      id: 11,
+      name: 'Celostrials',
+      route: 'nfet',
+      image: '/collections/celostrials.jpg',
+      banner: '/collections/celostrials-banner.jpg',
+      logo: '/collections/celostrials-logo.png',
+      website: 'https://celostrials.com/#/',
+      twitter: 'https://mobile.twitter.com/celostrials',
+      discord: 'https://discord.gg/HvvtgPuWHe',
+      instagram: 'https://www.instagram.com/celostrials/',
+      description: 'Celostrials are an intergalactic collection of unique beings, found exclusively on the Celo Blockchain. Their features are algorithmically generated resulting in an interstellar collectible completely unique to you!'
+    },
     // {
     //   id: 4,
     //   name: 'PixelAva',

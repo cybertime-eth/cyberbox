@@ -42,7 +42,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cyber-time-history',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-add-four-nft-four',
         options: {}
       },
       secondClient: {
