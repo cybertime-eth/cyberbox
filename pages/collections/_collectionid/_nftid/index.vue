@@ -20,26 +20,31 @@
           <div class="nft__block-info" v-if="!seller">
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
-            <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
-            <div class="nft__block-info-price" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/celo.svg" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= {{ priceToken }}$</span></div>
-<!--            <p class="nft__block-info-date" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/time.svg" alt="time"> Sale ends in-->
-<!--              {{ daysDifference }} days-->
-<!--              {{ hoursDifference }} hours-->
-<!--              {{ minutesDifference }} minutes-->
-<!--            </p>-->
-            <div class="nft__block-info-status" v-if="!soldByMe">
-              <p class="nft__block-info-status-title">Market status</p>
-              <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
-            </div>
-            <div class="nft__block-info-status" v-else>
-              <p class="nft__block-info-status-title">Last sold</p>
-              <div class="nft__block-info-price sold">
-                <img src="/celo.svg" alt="celo">
-                <h1>{{ nft.price }} CELO</h1>
-                <span>= {{ priceToken }}$</span>
+            <div v-if="!nftReloading">
+              <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
+              <div class="nft__block-info-price" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/celo.svg" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= {{ priceToken }}$</span></div>
+  <!--            <p class="nft__block-info-date" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/time.svg" alt="time"> Sale ends in-->
+  <!--              {{ daysDifference }} days-->
+  <!--              {{ hoursDifference }} hours-->
+  <!--              {{ minutesDifference }} minutes-->
+  <!--            </p>-->
+              <div class="nft__block-info-status" v-if="!soldByMe">
+                <p class="nft__block-info-status-title">Market status</p>
+                <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
               </div>
+              <div class="nft__block-info-status" v-else>
+                <p class="nft__block-info-status-title">Last sold</p>
+                <div class="nft__block-info-price sold">
+                  <img src="/celo.svg" alt="celo">
+                  <h1>{{ nft.price }} CELO</h1>
+                  <span>= {{ priceToken }}$</span>
+                </div>
+              </div>
+              <button class="nft__block-info-buy" @click="handleClickBuyNow" v-if="isSellNFT && nft.market_status === 'LISTED'">Buy now</button>
             </div>
-            <button class="nft__block-info-buy" @click="handleClickBuyNow" v-if="isSellNFT && nft.market_status === 'LISTED'">Buy now</button>
+            <div class="nft__block-info-loading" v-else>
+              <img src="/loading-nft.gif" alt="load">
+            </div>
           </div>
 
           <!-- INFO SELLER -->
@@ -177,6 +182,7 @@ export default {
     },
     showSuccessModal() {
       if (this.$store.state.successBuyToken) {
+        this.showBuyTokenModal = false
         this.startReloading()
       }
     }
