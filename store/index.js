@@ -42,6 +42,19 @@ export const state = () => ({
   collectionList: [
     {
       id: 1,
+      name: 'Celostrials',
+      route: 'nfet',
+      image: '/collections/celostrials.jpg',
+      banner: '/collections/celostrials-banner.jpg',
+      logo: '/collections/celostrials-logo.png',
+      website: 'https://celostrials.com/#/',
+      twitter: 'https://mobile.twitter.com/celostrials',
+      discord: 'https://discord.gg/HvvtgPuWHe',
+      instagram: 'https://www.instagram.com/celostrials/',
+      description: 'Celostrials are an intergalactic collection of unique beings, found exclusively on the Celo Blockchain. Their features are algorithmically generated resulting in an interstellar collectible completely unique to you!'
+    },
+    {
+      id: 2,
       name: 'Daopolis',
       route: 'daos',
       image: '/collections/daopolis.jpg',
@@ -54,7 +67,7 @@ export const state = () => ({
       description: "Automatically generated 9192 NFT's. Born in the CyberTime era, Daopolis citizens will be the foundation of a new gaming metaverse on Celo. Find your digital avatar, gain access to a private club and participate in unique NFT games!"
     },
     {
-      id: 2,
+      id: 3,
       name: 'CeloPunks',
       route: 'cpunk',
       image: '/collections/Celopunks.jpg',
@@ -68,7 +81,7 @@ export const state = () => ({
       description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
     },
     {
-      id: 3,
+      id: 4,
       name: 'CeloToadz',
       route: 'ctoadz',
       image: '/collections/celoToadz.png',
@@ -82,7 +95,7 @@ export const state = () => ({
       description: 'CeloToadz | First collection of 6969 randomly generated Toadz made up of more than 120 different traits on Celo Blockchain!'
     },
     {
-      id: 4,
+      id: 5,
       name: 'CeloShapes',
       route: 'cshape',
       image: '/collections/cshape.png',
@@ -94,7 +107,7 @@ export const state = () => ({
       description: 'CeloShapes is a generative art collection living on the Celo blockchain. Collection contains 4444 algorithmically generated colorful artwork.'
     },
     {
-      id: 5,
+      id: 6,
       name: 'CeloApes',
       route: 'cak',
       image: '/collections/cak.png',
@@ -106,7 +119,7 @@ export const state = () => ({
       description: 'The Celo Apes Kingdom is an collection of 10000 APE NFT (10000 minted!) on Celo Blockchain. Own an Ape to become part of the most epic Ape Kingdom. 10% of all money goes towards eradicating poverty.'
     },
     {
-      id: 6,
+      id: 7,
       name: 'PunksChristmas',
       route: 'christmaspunk',
       image: '/collections/christmaspunk.png',
@@ -119,7 +132,7 @@ export const state = () => ({
       description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
     },
     {
-      id: 7,
+      id: 8,
       name: 'PunksNeon',
       route: 'cpunkneon',
       image: '/collections/cpunkneon.png',
@@ -132,7 +145,7 @@ export const state = () => ({
       description: 'CeloPunksNeon are a special collection of CeloPunks with a unique Neon style designed for CeloPunks holders. Not affiliated with LarvaLabs.'
     },
     {
-      id: 8,
+      id: 9,
       name: 'Nomstronaut',
       route: 'nomstronaut',
       image: '/collections/nomstronaut.png',
@@ -144,7 +157,7 @@ export const state = () => ({
       description: "All .nom's are NFTs which means you can easily transfer and sell them."
     },
     {
-      id: 9,
+      id: 10,
       name: 'CeloPaints',
       route: 'cpaint',
       image: '/collections/cpaint.png',
@@ -156,7 +169,7 @@ export const state = () => ({
       description: 'CeloPaints is a generative abstract art collection living on the Celo blockchain. Collection contains 444 algorithmically generated colorful abstract paintings.'
     },
     {
-      id: 10,
+      id: 11,
       name: 'DimsOfCelo',
       route: 'dimcelo',
       image: '/collections/DimsOfCelo.png',
