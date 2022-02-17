@@ -180,6 +180,27 @@ export const state = () => ({
       discord: 'https://discord.com/invite/rhJjVUtKEs',
       description: 'Dimensions of Celo a.k.a. DimsOfCelo NFTs are 10,000 tokens of appreciation on Celo Blockchain, trying to reach their way into generative art.'
     },
+    {
+      id: 12,
+      name: 'CeloDAOPunks',
+      route: 'cdp',
+      image: '/collections/cdp.png',
+      banner: '/collections/cdp-banner.png',
+      logo: '/collections/cdp-logo.jpg',
+      description: '7777 Generated Celo DAO Punks On Celo blockchain'
+    },
+    {
+      id: 13,
+      name: 'Womxn of Celo',
+      route: 'wmxn',
+      image: '/collections/womxnofcelo.png',
+      banner: '/collections/womxnofcelo-banner.png',
+      logo: '/collections/womxnofcelo-logo.png',
+      website: 'https://www.womxnofcelo.com/',
+      twitter: 'https://twitter.com/WomxnOfCelo',
+      discord: 'https://discord.com/invite/SuFUEn2Vzn',
+      description: 'Womxn of Celo is the 1st generation of the (Womxn of) series for different blockchains. This Collection was created to empower women in the NFT space as well as women artists from all parts of the globe. To choose to write "womxn" so that we represent different cultures and gender expressions in the women in NFT community. The collection is based on the Celo blockchain and includes 5k unique gorgeous girls. Every girl has various rare attributes and features.'
+    },
     // {
     //   id: 4,
     //   name: 'PixelAva',
