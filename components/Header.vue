@@ -39,7 +39,8 @@
       <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
       <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showProfileMenuMobile = true">
     </div>
-    <connect v-if="showConnectModal && !address" @closeModal="closeModal"/>
+    <connect v-if="showConnectModal && !address" @showValora="openValoraModal" @closeModal="closeModal"/>
+    <valoraConnect v-if="showValoraModal"  @closeModal="showValoraModal = false" />
     <wrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
     <profileModal v-show="showProfileMenu" @closeModal="closeModal"/>
     <profileModalMobile v-show="showProfileMenuMobile" @closeModal="closeModal"/>
@@ -47,6 +48,7 @@
 </template>
 <script>
 import connect from '@/components/modals/connect'
+import valoraConnect from '@/components/modals/valoraConnect'
 import profileModal from '@/components/modals/profileModal'
 import profileModalMobile from '@/components/modals/profileModalMobile'
 import wrongNetwork from '@/components/modals/wrongNetwork'
@@ -55,6 +57,7 @@ export default {
     return {
       image: false,
       showConnectModal: false,
+      showValoraModal: false,
       showProfileMenu: false,
       showProfileMenuMobile: false,
       showWrongNetwork: false,
@@ -74,6 +77,7 @@ export default {
   },
   components: {
     connect,
+    valoraConnect,
     wrongNetwork,
     profileModal,
     profileModalMobile
@@ -114,6 +118,10 @@ export default {
       if (this.$refs.wallet && !this.$refs.wallet.contains(e.target)) {
         this.showProfileMenu = false
       }
+    },
+    openValoraModal() {
+      this.showValoraModal = true
+      this.showConnectModal = false
     },
     closeModal(payload) {
       this.showConnectModal = payload

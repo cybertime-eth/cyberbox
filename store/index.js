@@ -1,6 +1,7 @@
 import Web3 from 'web3'
 import {ethers, Wallet, providers, BigNumber} from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import { uuid } from "@walletconnect/utils"
 import MarketMainABI from './../abis/marketMain.json'
 import DaosABI from './../abis/daos.json'
 // import MaosABI from './../abis/maos.json'
@@ -14,6 +15,8 @@ export const state = () => ({
   user: {},
   chainId: null,
   address: null,
+  walletUri: null,
+  walletConnected: false,
   wrongNetwork: false,
   fullAddress: null,
   nftList: [],
@@ -161,16 +164,19 @@ export const state = () => ({
   ],
 })
 export const getters = {
-  provider() {
-    const web3 = window.web3.eth ? window.web3.eth.currentProvider.connected : window.web3.eth
-    return new ethers.providers.Web3Provider(web3 ? web3 : window.ethereum);
+  walletConnectProvider() {
+    return new WalletConnectProvider({
+      rpc: {
+        44787: "https://alfajores-forno.celo-testnet.org",
+      },
+      qrcodeModalOptions: {
+        mobileLinks: !window.ethereum ? ['metamask', 'valora'] : []
+      }
+    })
   },
-  web3Provider() {
-	let web3Provider = window.ethereum
-	if (!web3Provider) {
-	  web3Provider = new Web3.providers.HttpProvider('https://forno.celo.org')
-	}
-	return web3Provider
+  provider(state, getters) {
+    console.log('00000', state.walletConnected)
+    return state.walletConnected ? getters.walletConnectProvider : (window.ethereum || getters.walletConnectProvider)
   },
   paginationSort(state) {
 	return state.pagination ? `${state.pagination} ${state.sort}` : state.sort
@@ -283,9 +289,9 @@ export const actions = {
 
 
   async updateUser({commit, state, getters}) {
-	const web3Provider = getters.web3Provider
-	const provider = new ethers.providers.Web3Provider(web3Provider);
-  const ethereum = web3Provider
+    const ethereum = window.ethereum
+	  if (!ethereum) return
+	  const provider = new ethers.providers.Web3Provider(ethereum);
   // localStorage.removeItem('address')
     if (localStorage.getItem('address') && !localStorage.getItem('walletconnect') && ethereum) {
       const signer = await provider.getSigner()
@@ -327,25 +333,71 @@ export const actions = {
       throw new Error(error);
     }
   },
-  async walletConnect({commit}, isConnect) {
-    const provider = new WalletConnectProvider({
-      rpc: {
-        44787: "https://alfajores-forno.celo-testnet.org",
-        42220: "https://forno.celo.org",
-      },
-      qrcodeModalOptions: {
-        mobileLinks: ['metamask']
-      },
-    });
-    provider.on("accountsChanged", (accounts) => {
+  addEventHandlerForWalletProvider({commit}, provider) {
+    provider.on("accountsChanged", async (accounts) => {
       commit('setAddress', accounts[0])
+      commit('setWalletConnected', true)
     });
-    if (localStorage.getItem('walletconnect') || isConnect) {
-      await provider.enable();
+
+    provider.on("chainChanged", async (chainId) => {
+      commit('setChainId', BigNumber.from(chainId).toNumber())
+    })
+  },
+  async createWalletConnect({state, getters, commit, dispatch}) {
+    const provider = getters.walletConnectProvider
+    const wc = provider.wc
+    dispatch('addEventHandlerForWalletProvider', provider)
+
+    // create session
+    wc._key = await wc._generateKey()
+    const request = wc._formatRequest({
+      method: "wc_sessionRequest",
+      params: [
+        {
+          peerId: wc.clientId,
+          peerMeta: wc.clientMeta,
+          chainId: state.chainId,
+        }
+      ],
+    })
+    wc.handshakeId = request.id
+    wc.handshakeTopic = uuid()
+    wc._sendSessionRequest(request, "Session update rejected", { topic: wc.handshakeTopic })
+    commit('setWalletUri', wc.uri)
+    // create session end
+
+    provider.start()
+    provider.subscribeWalletConnector()
+  },
+  disconnectWallet({ getters }, provider) {
+    let walletProvider = provider
+    if (!walletProvider) {
+      walletProvider = getters.walletConnectProvider
     }
-    window.web3 = new Web3(provider);
+    walletProvider.wc._handshakeTopic = ""
+    walletProvider.isConnecting = false
+  },
+  async walletConnect({getters, dispatch}, isConnect) {
+    const provider = getters.walletConnectProvider
+    try {
+      dispatch('addEventHandlerForWalletProvider', provider)
+
+      if (localStorage.getItem('walletconnect') || isConnect) {
+        provider.isConnecting = false
+        provider.wc._handshakeTopic = ""
+        await provider.enable();
+      }
+      window.web3 = new Web3(provider);
+    } catch(e) {
+      console.log(e)
+      dispatch('disconnectWallet', provider)
+    }
   },
   async switchNetwork() {
+    if (!window.ethereum) {
+      alert('Please switch network manaully')
+      return
+    }
     try {
       await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{"chainId": '0xa4ec'}] })
     } catch(e) {
@@ -379,6 +431,7 @@ export const actions = {
   async logout({commit}) {
     try {
       commit('setAddress', '')
+      commit('setWalletConnected', false)
       localStorage.removeItem('walletconnect')
       localStorage.removeItem('address')
       window.location.reload();
@@ -391,7 +444,7 @@ export const actions = {
   // GET INFORMATION USER
 
   async getBalance({state, getters}) {
-	const web3 = new Web3(getters.web3Provider)
+	const web3 = new Web3(getters.provider)
 	const kit = ContractKit.newKitFromWeb3(web3)
 	const res = await kit.getTotalBalance(state.fullAddress)
 	return res.CELO.c[0] / 10000
@@ -498,8 +551,9 @@ export const actions = {
     }
   },
 
-  async approveToken({commit, state, dispatch}, { listingMethod, price }) {
-    const signer = this.getters.provider.getSigner()
+  async approveToken({commit, state, dispatch, getters}, { listingMethod, price }) {
+    const provider = new ethers.providers.Web3Provider(getters.provider)
+    const signer = provider.getSigner()
     const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     const resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
     const AbiNft = DaosABI
@@ -531,14 +585,15 @@ export const actions = {
       commit('changeApproveToken', 'error')
     }
   },
-  async listingNFT({commit, state}, nft) {
-    const signer = this.getters.provider.getSigner()
+  async listingNFT({commit, state, getters}, nft) {
+    const provider = new ethers.providers.Web3Provider(getters.provider)
+    const signer = provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
       await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)), {
         gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
       })
-      this.getters.provider.once(contract, async () => {
+      provider.once(contract, async () => {
         commit('changelistToken', true)
       });
     } catch (error) {
@@ -546,14 +601,15 @@ export const actions = {
       console.log(error)
     }
   },
-  async changeNFTPrice({commit, state}, price) {
-    const signer = this.getters.provider.getSigner()
+  async changeNFTPrice({commit, state, getters}, price) {
+    const provider = new ethers.providers.Web3Provider(getters.provider)
+    const signer = provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
       await contract.changePrice(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(price)), {
         gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
       })
-      this.getters.provider.once(contract, async () => {
+      provider.once(contract, async () => {
         commit('changelistToken', true)
       });
     } catch (error) {
@@ -564,22 +620,30 @@ export const actions = {
 
   // BUY NFT
 
-  async approveBuyToken({commit,state, dispatch, getters}, token) {
-	const web3 = new Web3(getters.web3Provider)
-	const accounts = await web3.eth.getAccounts()
+  async approveBuyToken({state, dispatch, getters}, token) {
+    // let walletProvider = window.ethereum
+    // if (state.walletConnected) {
+    //   walletProvider = new Web3.providers.HttpProvider('https://alfajores-forno.celo-testnet.org')
+    // }
+  const ethereumProvider = getters.provider
+  const provider = new ethers.providers.Web3Provider(ethereumProvider)
+  const web3 = new Web3(ethereumProvider)
+  const accounts = await web3.eth.getAccounts()
 	const account = accounts[0]
 	const kit = ContractKit.newKitFromWeb3(web3)
-	const goldToken = await kit._web3Contracts.getGoldToken();
-	const parsePrice = ethers.utils.parseEther(String(token.price))
+  const goldToken = await kit._web3Contracts.getGoldToken();
+  const parsePrice = ethers.utils.parseEther(String(token.price))
 	const result = await goldToken.methods.approve(account, parsePrice).send({
 	  from: account,
-	})
-	this.getters.provider.once(result, async () => {
+  })
+	provider.once(result, async () => {
 	  dispatch('buyNFT', token)
 	});
   },
   async buyNFT({commit, state, getters}, token) {
-    const web3 = new Web3(getters.web3Provider)
+    const ethereumProvider = getters.provider
+    const provider = new ethers.providers.Web3Provider(ethereumProvider)
+    const web3 = new Web3(ethereumProvider)
     const accounts = await web3.eth.getAccounts()
     const account = accounts[0]
     const kit = ContractKit.newKitFromWeb3(web3)
@@ -589,9 +653,9 @@ export const actions = {
     const result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
       from: account,
       value: parsePrice,
-      gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+      gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
     })
-    this.getters.provider.once(result, async () => {
+    provider.once(result, async () => {
       commit('changeSuccessBuyToken', true)
     });
   },
@@ -599,13 +663,14 @@ export const actions = {
   // Transfer NFT
 
   async transferNFT({commit, state, getters}, params) {
-    const signer = getters.provider.getSigner()
+    const provider = new ethers.providers.Web3Provider(getters.provider)
+    const signer = provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
       await contract.transfer(params.nft.contract_address, params.toAddress, params.nft.contract_id, {
         gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
       })
-      this.getters.provider.once(contract, async () => {
+      provider.once(contract, async () => {
         commit('changeSuccessTransferToken', true)
       });
     } catch (error) {
@@ -693,12 +758,13 @@ export const actions = {
 
   // REMOVE NFT FROM LIST
 
-  async removeNft({commit, state}, id) {
-    const signer = this.getters.provider.getSigner()
+  async removeNft({commit, state, getters}, id) {
+    const provider = new ethers.providers.Web3Provider(getters.provider)
+    const signer = provider.getSigner()
     const contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     try {
       await contract.delistToken(state.nft.contract_address ,id, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
-      this.getters.provider.once(contract, async () => {
+      provider.once(contract, async () => {
         commit('changeSuccessRemoveToken', true)
         return true
       })
@@ -724,6 +790,9 @@ export const mutations = {
       .concat(dotArr)
       .concat(endID)
       .join("");
+  },
+  setWalletConnected(state, connected) {
+    state.walletConnected = connected
   },
   setNewNftList(state, list) {
     state.nftList = []
@@ -773,6 +842,9 @@ export const mutations = {
   setChainId(state, chain) {
     state.chainId = chain
     // state.wrongNetwork = chain !== 42220
+  },
+  setWalletUri(state, uri) {
+    state.walletUri = uri
   },
   setMessage(state, msg) {
     state.message = msg
