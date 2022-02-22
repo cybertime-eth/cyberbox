@@ -202,7 +202,33 @@ export const state = () => ({
       description: 'Womxn of Celo is the 1st generation of the (Womxn of) series for different blockchains. This Collection was created to empower women in the NFT space as well as women artists from all parts of the globe. To choose to write "womxn" so that we represent different cultures and gender expressions in the women in NFT community. The collection is based on the Celo blockchain and includes 5k unique gorgeous girls. Every girl has various rare attributes and features.'
     },
     // {
-    //   id: 4,
+    //   id: 14,
+    //   name: 'Moola',
+    //   route: 'mo',
+    //   image: '/collections/mo.png',
+    //   banner: '/collections/mo-banner.png',
+    //   logo: '/collections/mo-logo.png',
+    //   website: 'https://app.moola.market/',
+    //   telegram: 'https://t.me/moolamarket',
+    //   twitter: 'https://twitter.com/Moola_Market',
+    //   discord: 'https://discord.com/invite/NsphyqbESK',
+    //   description: 'Moola is a non-custodial liquidity protocol built on the Celo blockchain that is democratizing access to yield and credit. Depositors earn yield which is paid for by borrowers who are able to take over-collateralized loans in perpetuity or under-collateralized flash loans.'
+    // },
+    // {
+    //   id: 15,
+    //   name: 'ChinChilla Gang',
+    //   route: 'gang',
+    //   image: '/collections/gang.png',
+    //   banner: '/collections/gang-banner.png',
+    //   logo: '/collections/gang-logo.png',
+    //   wallet: '0xAfd1dEE2Ac3790aA28d679E82Aaad6Fb9aba24f1',
+    //   website: 'https://www.chinchillagang.com/',
+    //   twitter: 'https://twitter.com/Chinchilla_Gang',
+    //   telegram: 'https://t.co/E8XPvASIrz',
+    //   description: `The ChinChilla Gang collection is composed by 8888 ultra HD NFTs living on Celo blockchain. With this collection we want to create a durable brand and for this reason we didn't put "Celo" in our name like all other NFT projects on this blockchain.`
+    // },
+    // {
+    //   id: 14,
     //   name: 'PixelAva',
     //   route: 'pxa',
     //   image: '/collections/PixelAva.png',
@@ -213,31 +239,6 @@ export const state = () => ({
     //   twitter: 'https://twitter.com/NPixelava',
     //   discord: 'https://discord.gg/sjjjFX2X',
     //   description: 'Pixaverse is a collection of GameFi worlds where PixelAva holders have extraordinary privileges.'
-    // },
-    // {
-    //   id: 3,
-    //   name: 'DimsOfCelo',
-    //   route: 'dimsofcelo',
-    //   image: '/collections/DimsOfCelo.png',
-    //   banner: '/collections/DimsOfCelo-banner.png',
-    //   logo: '/collections/DimsOfCelo-logo.png',
-    //   wallet: '0x462BFAFE102e9EAFd3A8c95097cFcb21B6A3c9B2',
-    //   website: 'https://dimsofcelo.art/',
-    //   twitter: 'https://twitter.com/dimsofcelonft',
-    //   discord: 'https://discord.com/invite/rhJjVUtKEs',
-    // },
-    // {
-    //   id: 5,
-    //   name: 'CeloPunksNeon',
-    //   route: 'celopunksneon',
-    //   image: '/collections/celopunksneon.png',
-    //   banner: '/collections/celopunksneon-banner.png',
-    //   logo: '/collections/celopunksneon-logo.png',
-    //   wallet: '0x29a6520A99656e5b17A34471D5d458eFD3696695',
-    //   website: 'https://celopunks.club/',
-    //   twitter: 'https://twitter.com/CeloPunks',
-    //   discord: 'https://discord.com/invite/Dzukufsrqe',
-    //   telegram: 'https://t.me/celopunksclub'
     // },
   ],
 })
