@@ -175,7 +175,6 @@ export const getters = {
     })
   },
   provider(state, getters) {
-    console.log('00000', state.walletConnected)
     return state.walletConnected ? getters.walletConnectProvider : (window.ethereum || getters.walletConnectProvider)
   },
   paginationSort(state) {
