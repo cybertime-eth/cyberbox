@@ -145,7 +145,7 @@ header {
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 14rem 28rem 58.3rem 17.5rem 14rem;
+  grid-template-columns: 14rem 28rem 50.3rem 17.5rem 22rem;
   align-items: center;
   &__back {
     display: none;
