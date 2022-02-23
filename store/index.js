@@ -211,19 +211,19 @@ export const state = () => ({
       telegram: 'https://t.co/E8XPvASIrz',
       description: `The ChinChilla Gang collection is composed by 8888 ultra HD NFTs living on Celo blockchain. With this collection we want to create a durable brand and for this reason we didn't put "Celo" in our name like all other NFT projects on this blockchain.`
     },
-    // {
-    //   id: 15,
-    //   name: 'Moola',
-    //   route: 'mo',
-    //   image: '/collections/mo.png',
-    //   banner: '/collections/mo-banner.png',
-    //   logo: '/collections/mo-logo.png',
-    //   website: 'https://app.moola.market/',
-    //   telegram: 'https://t.me/moolamarket',
-    //   twitter: 'https://twitter.com/Moola_Market',
-    //   discord: 'https://discord.com/invite/NsphyqbESK',
-    //   description: 'Moola is a non-custodial liquidity protocol built on the Celo blockchain that is democratizing access to yield and credit. Depositors earn yield which is paid for by borrowers who are able to take over-collateralized loans in perpetuity or under-collateralized flash loans.'
-    // },
+    {
+      id: 15,
+      name: 'MooPunks',
+      route: 'mpunk',
+      image: '/collections/mpunk.png',
+      banner: '/collections/mpunk-banner.png',
+      logo: '/collections/mpunk-logo.png',
+      website: 'https://app.moola.market/',
+      telegram: 'https://t.me/moolamarket',
+      twitter: 'https://twitter.com/Moola_Market',
+      discord: 'https://discord.com/invite/NsphyqbESK',
+      description: 'Moola is a non-custodial liquidity protocol built on the Celo blockchain that is democratizing access to yield and credit. Depositors earn yield which is paid for by borrowers who are able to take over-collateralized loans in perpetuity or under-collateralized flash loans.'
+    },
     // {
     //   id: 14,
     //   name: 'PixelAva',
@@ -929,7 +929,7 @@ export const mutations = {
     }
     if (type.includes('myNft') && address) {
       if (type === 'myNft') {
-        myNftSort = `first: 200 where: { owner: "${address.toLowerCase()}"} orderBy: contract_id`
+        myNftSort = `where: { owner: "${address.toLowerCase()}"}`
       } else if (type.toLowerCase().includes('sold')) {
         myNftSort = `where: { seller: "${address.toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`
       } else {
@@ -937,7 +937,7 @@ export const mutations = {
       }
     }
     switch (type) {
-      case 'myNft': state.sort = myNftSort;
+      case 'myNft': state.sort = myNftSort + ` orderBy: contract_id`;
         break;
       case 'myNftAll': state.sort = myNftSort + ` orderBy: contract_id`;
         break;
