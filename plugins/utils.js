@@ -3,7 +3,7 @@ import Vue from 'vue'
 Vue.mixin({
   methods: {
 	getNFTImage(nft) {
-		const ipfsIconContracts = ['cshape', 'cak', 'cpaint', 'nfet']
+		const ipfsIconContracts = ['cshape', 'cak', 'cpaint', 'nfet', 'cdp']
 	  if (ipfsIconContracts.includes(nft.contract) && nft.image.split('ipfs://').length > 1) {
 		return 'https://ipfs.io/ipfs/' + nft.image.split('ipfs://')[1]
 	  }
