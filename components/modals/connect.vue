@@ -68,6 +68,14 @@ export default {
 .modal {
   &__title {
     text-align: center;
+    color: $titleColor;
+  }
+  @media screen and (max-width: 460px) {
+    &__title {
+      width: 100%;
+      text-align: center;
+      color: $titleColor;
+    } 
   }
 }
 </style>
