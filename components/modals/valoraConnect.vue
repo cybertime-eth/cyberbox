@@ -60,7 +60,13 @@ export default {
 <style lang="scss" scoped>
 .modal {
   &__title {
+    width: 100%;
     text-align: center;
+  }
+  @media (max-width: 460px) {
+    &__block {
+      padding-top: 0.8rem !important;
+    }  
   }
 }
 </style>
