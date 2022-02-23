@@ -201,8 +201,21 @@ export const state = () => ({
       discord: 'https://discord.com/invite/SuFUEn2Vzn',
       description: 'Womxn of Celo is the 1st generation of the (Womxn of) series for different blockchains. This Collection was created to empower women in the NFT space as well as women artists from all parts of the globe. To choose to write "womxn" so that we represent different cultures and gender expressions in the women in NFT community. The collection is based on the Celo blockchain and includes 5k unique gorgeous girls. Every girl has various rare attributes and features.'
     },
+    {
+      id: 14,
+      name: 'ChinChilla Gang',
+      route: 'gang',
+      image: '/collections/gang.png',
+      banner: '/collections/gang-banner.png',
+      logo: '/collections/gang-logo.png',
+      wallet: '0xAfd1dEE2Ac3790aA28d679E82Aaad6Fb9aba24f1',
+      website: 'https://www.chinchillagang.com/',
+      twitter: 'https://twitter.com/Chinchilla_Gang',
+      telegram: 'https://t.co/E8XPvASIrz',
+      description: `The ChinChilla Gang collection is composed by 8888 ultra HD NFTs living on Celo blockchain. With this collection we want to create a durable brand and for this reason we didn't put "Celo" in our name like all other NFT projects on this blockchain.`
+    },
     // {
-    //   id: 14,
+    //   id: 15,
     //   name: 'Moola',
     //   route: 'mo',
     //   image: '/collections/mo.png',
@@ -213,19 +226,6 @@ export const state = () => ({
     //   twitter: 'https://twitter.com/Moola_Market',
     //   discord: 'https://discord.com/invite/NsphyqbESK',
     //   description: 'Moola is a non-custodial liquidity protocol built on the Celo blockchain that is democratizing access to yield and credit. Depositors earn yield which is paid for by borrowers who are able to take over-collateralized loans in perpetuity or under-collateralized flash loans.'
-    // },
-    // {
-    //   id: 15,
-    //   name: 'ChinChilla Gang',
-    //   route: 'gang',
-    //   image: '/collections/gang.png',
-    //   banner: '/collections/gang-banner.png',
-    //   logo: '/collections/gang-logo.png',
-    //   wallet: '0xAfd1dEE2Ac3790aA28d679E82Aaad6Fb9aba24f1',
-    //   website: 'https://www.chinchillagang.com/',
-    //   twitter: 'https://twitter.com/Chinchilla_Gang',
-    //   telegram: 'https://t.co/E8XPvASIrz',
-    //   description: `The ChinChilla Gang collection is composed by 8888 ultra HD NFTs living on Celo blockchain. With this collection we want to create a durable brand and for this reason we didn't put "Celo" in our name like all other NFT projects on this blockchain.`
     // },
     // {
     //   id: 14,
