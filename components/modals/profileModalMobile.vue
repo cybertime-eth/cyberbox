@@ -7,6 +7,7 @@
     <div class="menu-mobile-list container-xl" @click="closeModal">
       <nuxt-link to="/" class="gradient-text menu-mobile-list-link">Marketplace</nuxt-link>
       <nuxt-link to="/rankings" class="menu-mobile-list-link">Rankings</nuxt-link>
+      <a class="menu-mobile-list-link" href="https://docs.cybertime.finance/" target="_blank">About</a>
       <!-- <a href="https://forms.gle/R7LmANz7iqsCA88X8" target="_blank" class="menu-mobile-list-link">Launchpad</a> -->
     </div>
   </div>
@@ -50,6 +51,7 @@ export default {
     flex-direction: column;
     padding-top: 4rem;
     &-link {
+      width: 100%;
       padding-bottom: 2.5rem;
     }
   }

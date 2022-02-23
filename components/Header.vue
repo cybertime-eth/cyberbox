@@ -15,6 +15,9 @@
           <li class="header__list">
             <nuxt-link class="header__link" active-class="gradient-text" to="/rankings"  exact>Rankings</nuxt-link>
           </li>
+          <li class="header__list">
+            <a class="header__link" href="https://docs.cybertime.finance/" target="_blank">About</a>
+          </li>
           <!-- <li class="header__list">
             <a class="header__link" href="https://forms.gle/R7LmANz7iqsCA88X8" target="_blank">Launchpad</a>
           </li> -->
@@ -142,7 +145,7 @@ header {
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 14rem 20rem 58.3rem 17.5rem 22rem;
+  grid-template-columns: 14rem 28rem 58.3rem 17.5rem 14rem;
   align-items: center;
   &__back {
     display: none;
