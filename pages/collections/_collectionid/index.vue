@@ -168,7 +168,7 @@ export default {
       return imageSrc
     },
     nftOwned(nft) {
-      return nft.owner === this.$store.state.fullAddress
+      return nft.owner && nft.owner.toLowerCase() === this.$store.state.fullAddress
     },
     addCurrentPage() {
       if(process.browser) {
@@ -300,11 +300,11 @@ export default {
         return this.nftList.length
       }
     },
-    nftList() {
-      return this.$store.state.nftList
-    },
     collection() {
       return this.$store.state.collectionList.filter(item => item.route === this.$route.params.collectionid)[0]
+    },
+    nftList() {
+      return this.$store.state.nftList
     },
     address() {
       return this.$store.state.address

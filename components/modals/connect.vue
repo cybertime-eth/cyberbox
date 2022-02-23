@@ -1,22 +1,20 @@
 <template>
   <div class="modal">
     <div class="modal__block">
-      <div v-if="metamaskEnabled">
-        <h2 class="modal__title">Connect your wallet</h2>
-        <div class="modal__connect">
-          <button class="modal__connect-button" @click="connectMetaTrust">
-            MetaMask
-            <img src="/auth/metamask.svg" alt="metamask" class="modal__connect-button-image">
-          </button>
-          <!-- <button class="modal__connect-button" @click="connectWallet">
-            WalletConnect
-            <img src="/auth/WalletConnect.png" alt="metamask" class="modal__connect-button-image">
-          </button> -->
-        </div>
-      </div> 
-      <div class="modal__block-container" v-else>
-        <h2 class="modal__title">Open <span class="modal__title-domain">cyberbox.art</span> in your Metamask mobile app</h2>
-        <img src="/auth/metamask-mobile.svg" alt="metamask" class="modal__connect-metamask-image">
+      <h2 class="modal__title">Connect your wallet</h2>
+      <div class="modal__connect">
+        <button class="modal__connect-button" @click="connectValora">
+          Valora
+          <img src="/auth/valora.svg" alt="valora" class="modal__connect-button-image">
+        </button>
+        <button class="modal__connect-button" @click="connectMetaTrust">
+          MetaMask
+          <img src="/auth/metamask.svg" alt="metamask" class="modal__connect-button-image">
+        </button>
+        <button class="modal__connect-button" @click="connectWallet">
+          WalletConnect
+          <img src="/auth/WalletConnect.png" alt="metamask" class="modal__connect-button-image">
+        </button>
       </div>
       <img src="/close.svg" alt="close" class="modal__close" @click="closeModal">
     </div>
@@ -25,17 +23,37 @@
 <script>
 
 export default {
-  data() {
-    return {
-      metamaskEnabled: false
+  computed: {
+    walletUri() {
+      return this.$store.state.walletUri
     }
   },
-  mounted() {
-    this.metamaskEnabled = !!window.ethereum
+  watch: {
+    walletUri() {
+      if (this.$store.state.walletUri) {
+        this.openMetamaskAppFromMobile()
+      }
+    }
   },
   methods: {
     async connectMetaTrust() {
-      await this.$store.dispatch('connectMetaTrust')
+      if (window.ethereum) {
+        await this.$store.dispatch('connectMetaTrust')
+      } else {
+        if (!this.walletUri) {
+          this.$store.dispatch('createWalletConnect')
+        } else {
+          this.openMetamaskAppFromMobile()
+        }
+      }
+    },
+    openMetamaskAppFromMobile() {
+      if (this.isMobile()) {
+        location.href = `https://metamask.app.link/wc?uri=${encodeURIComponent(this.walletUri)}`
+      }
+    },
+    connectValora() {
+      this.$emit('showValora')
     },
     async connectWallet() {
       await this.$store.dispatch('walletConnect', true)
@@ -46,8 +64,18 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.modal {
+  &__title {
+    text-align: center;
+  }
+}
+</style>
 <style lang="scss">
 .modal {
+  &__title {
+    text-align: center;
+  }
   &__connect {
     padding-top: 4.4rem;
     &-button {

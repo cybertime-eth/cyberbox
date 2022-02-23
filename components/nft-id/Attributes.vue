@@ -56,6 +56,7 @@
 </template>
 <script>
 export default {
+  props: ['item', 'info'],
   data() {
     return {
       showLeftAttributes: true,
@@ -63,7 +64,6 @@ export default {
       id: 0,
     }
   },
-  props: ['item', 'info'],
   methods: {
     copyOwnerAddress(e) {
       this.$copyText(this.info.owner)

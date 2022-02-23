@@ -38,7 +38,7 @@ export default {
   props: ['nft', 'priceToken', 'balance'],
   computed: {
     collectionName() {
-      return this.$store.state.collectionList.find(item => item.route === this.$route.params.collectionid).name
+      return this.$route.params.collectionid
     }
   },
   data() {
