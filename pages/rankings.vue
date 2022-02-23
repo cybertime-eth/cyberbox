@@ -341,6 +341,7 @@ export default {
           text-align: right;
           &-icon {
             margin-right: 8px;
+            width: 1.4rem;
           }
           &-title {
             letter-spacing: 0.03em;
