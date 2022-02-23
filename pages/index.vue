@@ -1,6 +1,6 @@
 <template>
   <section class="home container-xl">
-    <h1 class="home__title">Discover, collect and trade NFTs (TEST BRANCH)</h1>
+    <h1 class="home__title">Discover, collect and trade NFTs</h1>
     <div class="home__items">
       <div class="home__item" @click="$router.push(`/collections/${collection.route}`)" v-for="collection of list">
         <img :src="collection.image" alt="dao" class="home__item-image">
