@@ -50,6 +50,7 @@ export default {
       }
     },
     closeModal() {
+      this.$store.dispatch('disconnectWallet', null)
       this.$emit('closeModal')
     }
   }
