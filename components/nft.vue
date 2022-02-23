@@ -48,7 +48,6 @@ export default {
   },
   computed: {
     sellInfo() {
-      console.log('00000', this.filter)
       return this.filter === 'bought' || this.nft.seller === this.$store.state.fullAddress
     },
     moreButtonVisible() {
