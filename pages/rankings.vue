@@ -143,6 +143,7 @@ export default {
         if (!invisibleTokens.includes(item.nftSymbol)) {
           let volume = 0;
           let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
+          const mintCountDiff = Math.ceil(item.mint_count / 1000) - (item.mint_count / 1000)
           volume = volume + price
           nftName = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
           this.list.push({
@@ -159,7 +160,7 @@ export default {
             floorPriceCelo: '-',
             owners: item.ownerCount,
             items: item.mint_count,
-            shortenedItems: `${parseFloat((item.mint_count / 1000).toString()).toFixed(1)}K`,
+            shortenedItems: `${parseFloat((item.mint_count / 1000).toString()).toFixed(mintCountDiff === 0 ? 1 : 2)}K`,
             percentPer24h: 0,
             percentPer7d: 0,
             route: item.title
