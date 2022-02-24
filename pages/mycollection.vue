@@ -131,7 +131,9 @@ export default {
           this.$store.commit('changeCountPage', count + 1)
           this.$store.commit('changeSortData', 'pagination')
           await this.addMyCollection()
-          this.filter(this.activeFilter)
+          if (this.activeFilter !== 'all') {
+            this.filter(this.activeFilter)
+          }
         }
       }
     },
