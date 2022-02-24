@@ -775,6 +775,7 @@ export const actions = {
           ownerCount
           createrFee
           producerFee
+          marketFee
         }
       }`;
     let data = await this.$graphql.default.request(query)

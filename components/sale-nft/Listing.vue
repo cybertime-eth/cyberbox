@@ -14,7 +14,7 @@
         Pending confirmation <img src="/loading-button.svg" alt="load">
       </button>
     </div>
-    <p class="nft__content-fee">Ones sold, the following fees will be deducted:<br/>2,5% service fee | {{ nftRoyalty }}% creator royalty</p>
+    <p class="nft__content-fee">Ones sold, the following fees will be deducted:<br/>{{ nftServiceFee }}% service fee | {{ nftRoyalty }}% creator royalty</p>
   </div>
 </template>
 <script>
@@ -23,6 +23,7 @@ export default {
     return {
       price: null,
       pending: false,
+      nftServiceFee: 0,
       nftRoyalty: 0,
     }
   },
@@ -64,6 +65,7 @@ export default {
   },
   async mounted() {
     const collectionInfo = await this.$store.dispatch('getCollectionInfo')
+    this.nftServiceFee = collectionInfo.marketFee / 10
     this.nftRoyalty = (collectionInfo.createrFee + collectionInfo.producerFee) / 10
   },
   methods: {
