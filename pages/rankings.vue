@@ -116,10 +116,10 @@ export default {
     },
 	formatPriceToString(price) {
 		if (price && !isNaN(parseFloat(price.toString()))) {
-		const priceVal = price * this.celoPrice
-		return '$' + parseFloat(priceVal.toLocaleString('en-US')).toFixed(2)
+		  const priceVal = price * this.celoPrice
+		  return '$' + parseFloat(parseFloat(priceVal).toFixed(2)).toLocaleString('en-US')
 		} else {
-		return '-'
+		  return '-'
 		}
 	},
 	async loadNftDetail(contract, idx) {
@@ -127,8 +127,8 @@ export default {
 	  this.list[idx].floorPriceCelo = floorPrice
 	  this.list[idx].floorPrice = this.formatPriceToString(floorPrice)
 	  this.list[idx].volumePrice = this.formatPriceToString(this.list[idx].volumeCelo)
-    this.list[idx].percentPer24h = await this.$store.dispatch('getContractInfoTimePercent', contract)
-    this.list[idx].percentPer7d = await this.$store.dispatch('getContractInfoWeekPercent', contract)
+	  this.list[idx].percentPer24h = await this.$store.dispatch('getContractInfoTimePercent', contract)
+	  this.list[idx].percentPer7d = await this.$store.dispatch('getContractInfoWeekPercent', contract)
 	},
     async renderlist() {
       this.loading = true
