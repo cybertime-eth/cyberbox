@@ -101,7 +101,7 @@ export default {
       &-info {
         padding-top: 1.5rem;
         &-name {
-          font-size: 1.8rem;
+          font-size: 1.4rem;
         }
         &-button {
           display: none;

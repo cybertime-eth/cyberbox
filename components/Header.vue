@@ -261,10 +261,10 @@ header {
       }
     }
     &__box {
-      // display: none;
       min-width: 9.6rem;
       height: 2.4rem;
       margin-right: .8rem;
+      font-size: 1.3rem;
     }
     &__connect {
       display: none;
