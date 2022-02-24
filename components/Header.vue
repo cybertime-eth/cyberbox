@@ -29,7 +29,7 @@
       </div>
       <div v-else class="header__null"></div>
       <button class="header__box gradient-button" v-if="address" @click="$router.push('/mycollection')">
-       My Collection
+       {{ myCollectionTitle }}
       </button>
       <button v-else class="header__null"></button>
       <div class="header__wallet" ref="wallet" v-if="address" @click="showProfileMenu = !showProfileMenu">
@@ -97,6 +97,9 @@ export default {
     },
     nftId() {
       return this.$route.params.nftid
+    },
+    myCollectionTitle() {
+      return !this.isMobile() || window.innerWidth > 460 ? 'My Collection' : 'My NFT'
     },
     networkErrorText() {
       let errorText = 'You are on the wrong network'
@@ -258,7 +261,10 @@ header {
       }
     }
     &__box {
-      display: none;
+      // display: none;
+      min-width: 9.6rem;
+      height: 2.4rem;
+      margin-right: .8rem;
     }
     &__connect {
       display: none;

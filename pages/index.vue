@@ -87,21 +87,24 @@ export default {
       letter-spacing: 0.03em;
     }
     &__items {
-      grid-template-columns: 1fr;
+      grid-template-columns: 14.4rem 14.4rem;
       padding-top: 2.1rem;
-      grid-row-gap: 2rem;
+      grid-row-gap: 1.6rem;
     }
     &__item {
       width: 100%;
-      height: 43.2rem;
+      height: 15rem;
       &-image {
         width: 100%;
-        height: 30.4rem;
+        height: 9.6rem;
       }
       &-info {
         padding-top: 1.5rem;
+        &-name {
+          font-size: 1.8rem;
+        }
         &-button {
-          margin-top: 2.2rem;
+          display: none;
         }
       }
     }
