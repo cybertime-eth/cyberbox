@@ -260,9 +260,10 @@ export const getters = {
 export const actions = {
   async getGraphData({commit, state, getters}) {
     const sort = getters.paginationSort
+    const condition = $nuxt.$route.params.collectionid ? `where: { contract: "${$nuxt.$route.params.collectionid}"}` : ''
     const query = gql`
       query Sample {
-        contractInfos(${sort} first: 48 where: { contract: "${$nuxt.$route.params.collectionid}"}) {
+        contractInfos(${sort} first: 48 ${condition}) {
           id
           contract
           contract_id
