@@ -20,7 +20,7 @@
 							<img class="footer__links-social-link-icon" src="/socials/discord-gray.svg" alt="discord">
 						</a>
 					</div>
-					<a class="footer__links-link" href="https://cybertime.finance/" target="_blank">
+					<a class="footer__links-link" href="https://docs.cybertime.finance/	" target="_blank">
 						<img class="footer__links-link-icon" src="/help.svg" alt="help">
 					</a>
 				</div>
@@ -44,13 +44,15 @@ export default {
 
 <style lang="scss">
 .footer {
-	position: fixed;
-	left: 0;
-	right: 0;
-	bottom: 0;
 	background: $white2;
 	padding: 2.8rem 5.1rem;
 	border: 1px solid #F3F4F6;
+	&.fixed {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
 	&__container {
 		display: flex;
 		align-items: center;
