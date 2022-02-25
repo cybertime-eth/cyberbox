@@ -2,11 +2,13 @@
   <div class="app">
     <Header />
     <Nuxt />
+    <Footer />
     <h3 class="message" v-if="message">{{ message }}</h3>
   </div>
 </template>
 <script>
 import Header from './../components/Header'
+import Footer from './../components/Footer'
 export default {
   computed: {
     message() {
@@ -23,6 +25,7 @@ export default {
   },
   components: {
     Header,
+    Footer,
   },
   metaInfo: {
     meta: [
