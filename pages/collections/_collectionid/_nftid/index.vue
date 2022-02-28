@@ -204,13 +204,12 @@ export default {
   async mounted() {
     const imageURL = this.getNFTImage(this.nft)
     if (imageURL && !this.nftImageLoaded) {
-      const request = new XMLHttpRequest()
-      const self = this
-      request.open("GET", imageURL, true)
-      request.send()
-      request.onload = function() {
-        if (request.status === 200) {
-          self.nftImageLoaded = true
+      const img = new Image(imageURL)
+      if (img.complete) {
+        this.nftImageLoaded = true
+      } else {
+        img.onload = () => {
+          this.nftImageLoaded = true
         }
       }
     }
