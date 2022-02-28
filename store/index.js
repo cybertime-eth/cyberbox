@@ -322,7 +322,9 @@ export const actions = {
 	return tokenPrice ? (tokenPrice / 1000).toFixed(2) : '-'
   },
 
-  async getCollectionCountNft({state}, contract) {
+  async getCollectionCountNft({state, commit}, contract) {
+    if (!state.fullAddress) return 0
+
     let countCondition = `contract: "${contract}"`
     if (contract === 'all') {
       countCondition = ''
@@ -333,8 +335,7 @@ export const actions = {
       query Sample {
         contractInfos(where: { owner: "${state.fullAddress.toLowerCase()}" ${countCondition} }) {
 			    id
-			    contract
-			    price
+          contract
         }
       }`
     const data = await this.$graphql.default.request(query)

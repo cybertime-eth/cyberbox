@@ -69,6 +69,9 @@ export default {
     }
   },
   computed: {
+    address() {
+      return this.$store.state.fullAddress
+    },
     currCollectionFilter() {
       const filteredCollection = this.$store.state.collectionList.find(item => item.route === this.activeFilter)
       return filteredCollection?.name || ''
@@ -90,6 +93,11 @@ export default {
     }
   },
   watch: {
+    address() {
+      if (this.totalNftCount === 0) {
+        this.loadNftCounts()
+      }
+    },
     successTransfer() {
       if (this.$store.state.successTransferToken) {
         this.listNft = []
@@ -106,22 +114,9 @@ export default {
             ...nft,
             price: nft.price / 1000
           })
-          const filterIndex = this.collectionFilters.findIndex(item => item.contract === nft.contract)
-          if (filterIndex >= 0) {
-            this.collectionFilters[filterIndex].items.push(nft)
-          } else {
-            const collectionInfo = this.$store.state.collectionList.find(item => item.route === nft.contract)
-            this.collectionFilters.push({
-              contract: nft.contract,
-              name: nft.name || nft.contract_name,
-              image: `/${nft.contract}.png`,
-              items: [nft]
-            })
-          }
         }
       }
       this.filteredNft = this.listNft
-      this.collectionFilters.map(filter => filter.count = filter.items.length)
     },
     async fetchMyCollection() {
       this.$store.commit('changeCountPage', 1)
@@ -133,8 +128,26 @@ export default {
       }
     },
     async loadNftCounts() {
-      this.totalNftCount = await this.getCollectionCountNft('all')
-      this.saleNftCount = await this.getCollectionCountNft('sale')
+      this.totalNftCount = await this.$store.dispatch('getCollectionCountNft', 'all')
+      this.saleNftCount = await this.$store.dispatch('getCollectionCountNft', 'sale')
+      const newCollectionFilters = this.collectionFilters
+      for (let collection of this.$store.state.collectionList) {
+        const nftCount = await this.$store.dispatch('getCollectionCountNft', collection.route)
+        if (nftCount > 0) {
+          const filterIndex = newCollectionFilters.findIndex(item => item.contract === collection.route)
+          if (filterIndex >= 0) {
+            newCollectionFilters[filterIndex].count = nftCount
+          } else {
+            newCollectionFilters.push({
+              contract: collection.route,
+              name: collection.name,
+              image: `/${collection.route}.png`,
+              count: nftCount
+            })
+          }
+          this.collectionFilters = newCollectionFilters
+        }
+      }
     },
     async addCurrentPage() {
       if(process.browser) {
@@ -157,6 +170,9 @@ export default {
     async filter(payload) {
       if (payload === 'all') {
         this.$store.commit('changeSortData', 'myNft')
+        this.listNft = await this.$store.dispatch('getGraphData')
+        this.listNft.map(item => item.price = item.price / 1000)
+        this.filteredNft = this.listNft
       } else {
         let filteredNftList = []
         let filterNftCount = 0
@@ -165,15 +181,21 @@ export default {
           filterNftCount = this.saleNftCount
         } else {
           filteredNftList = this.listNft.filter(item => item.contract === payload)
+          const filterCollection = this.collectionFilters.find(item => item.contract === payload)
+          if (filterCollection) {
+            filterNftCount = filterCollection.count
+          }
         }
         if (filteredNftList.length === this.$store.state.countPage * 48 || (filteredNftList.length === filterNftCount && filterNftCount > 0)) {
           this.filteredNft = filteredNftList
         } else {
           this.$store.commit('changeMyCollectionSort', payload)
+          this.listNft = await this.$store.dispatch('getGraphData')
+          this.listNft.map(item => item.price = item.price / 1000)
+          this.filteredNft = this.listNft
         }
       }
-      this.filteredNft = await this.$store.dispatch('getGraphData')
-      this.filteredNft.map(item => item.price = item.price / 1000)
+
       this.activeFilter = payload
       const collectionSetting = this.$store.state.collectionSetting
       this.$store.commit('updateCollectionSetting', {
