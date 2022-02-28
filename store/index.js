@@ -322,25 +322,6 @@ export const actions = {
 	return tokenPrice ? (tokenPrice / 1000).toFixed(2) : '-'
   },
 
-  async getCollectionCountNft({state}, contract) {
-    let countCondition = `contract: "${contract}"`
-    if (contract === 'all') {
-      countCondition = ''
-    } else if (contract === 'sale') {
-      countCondition = 'market_status: "LISTED"'
-    }
-    const query = gql`
-      query Sample {
-        contractInfos(where: { owner: "${state.fullAddress.toLowerCase()}" ${countCondition} }) {
-			    id
-			    contract
-			    price
-        }
-      }`
-    const data = await this.$graphql.default.request(query)
-    return data.contractInfos.length
-  },
-
   async getGraphDataListed({state, commit, getters}) {
     const sort = getters.paginationSort
     const query = gql`
@@ -954,7 +935,7 @@ export const mutations = {
       } else if (type.toLowerCase().includes('sold')) {
         myNftSort = `where: { seller: "${address.toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`
       } else {
-        myNftSort = `where: { owner: "${address.toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`
+        myNftSort = `where: { owner: "${address.toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`        
       }
     }
     switch (type) {
@@ -1013,19 +994,6 @@ export const mutations = {
 	  state.countPage = 1
 	  state.pagination = null
   }
-  },
-  changeMyCollectionSort(state, contract) {
-    let address = state.fullAddress
-    if (!address && process.browser) {
-      address = localStorage.getItem('address')
-    }
-    if (contract === 'sale') {
-      state.sort = `where: { owner: "${address.toLowerCase()}" market_status: "LISTED"} orderBy: contract_id`  
-    } else {
-      state.sort = `where: { owner: "${address.toLowerCase()}" contract: "${contract}"} orderBy: contract_id`  
-    }
-    state.countPage = 1
-    state.pagination = null
   },
   updateCollectionSetting(state, setting) {
     state.collectionSetting = setting
