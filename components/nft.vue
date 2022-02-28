@@ -77,7 +77,7 @@ export default {
         img.onload = () => {
           this.cdnImage = imageURL
         }
-        image.onerror = (e) => {
+        img.onerror = (e) => {
           console.log(e)
         }
       }
