@@ -15,7 +15,7 @@
         <h3>Copy link</h3>
       </div>
     </div>
-    <img :src="getNFTImage(nft)" alt="item" class="collection__item-image">
+    <img :src="realNftImage(nft)" alt="item" class="collection__item-image">
     <div class="collection__item-info">
       <h2 class="collection__item-info-name">
         {{ nft.name || nft.contract_name }}
@@ -36,6 +36,7 @@
 <script>
 import transfer from '@/components/modals/transfer'
 import {BigNumber} from "ethers";
+import { CDN_ROOT } from "@/config";
 export default {
   components: {
     transfer
@@ -43,7 +44,8 @@ export default {
   data() {
     return {
       modalId: 0,
-      showTransferModal: false
+      showTransferModal: false,
+      cdnImage: null
     }
   },
   computed: {
@@ -62,7 +64,27 @@ export default {
     }
   },
   props: ['nft', 'route', 'owner', 'seller', 'filter'],
+  mounted() {
+    if (this.nft.contract !== 'nomstronaut' && this.nft.image) {
+      const fileExtension = this.nft.image.split('.').pop()
+      const imageURL = CDN_ROOT + this.nft.contract + `/${this.nft.contract_id}.${fileExtension}`
+      if (imageURL) {
+        const request = new XMLHttpRequest()
+        const self = this
+        request.open("GET", imageURL, true)
+        request.send()
+        request.onload = function() {
+          if (request.status === 200) {
+            self.cdnImage = imageURL
+          }
+        }
+      }
+    }
+  },
   methods: {
+    realNftImage() {
+      return this.cdnImage || this.getNFTImage(this.nft)
+    },
     copyLink(e) {
       this.$copyText(`https://cyberbox.vercel.app/collections/${this.nft.contract}/${this.nft.contract_id}`)
       this.$store.commit('setMessage', 'Link copied!')
