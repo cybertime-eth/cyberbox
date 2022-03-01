@@ -65,22 +65,22 @@ export default {
   },
   props: ['nft', 'route', 'owner', 'seller', 'filter'],
   mounted() {
-    // if (this.nft.contract !== 'nomstronaut' && this.nft.image) {
-    //   const fileExtension = this.nft.image.split('.').pop()
-    //   const imageURL = CDN_ROOT + this.nft.contract + `/${this.nft.contract_id}.${fileExtension}`
-    //   const img = new Image()
-    //   img.src= imageURL
-    //   if (img.complete) {
-    //     this.cdnImage = imageURL        
-    //   } else {
-    //     img.onload = () => {
-    //       this.cdnImage = imageURL
-    //     }
-    //     img.onerror = (e) => {
-    //       console.log(e)
-    //     }
-    //   }
-    // }
+    if (this.nft.contract !== 'nomstronaut' && this.nft.image) {
+      const fileExtension = this.nft.image.split('.').pop()
+      const imageURL = CDN_ROOT + this.nft.contract + `/${this.nft.contract_id}.${fileExtension}`
+      const img = new Image()
+      img.src= imageURL
+      if (img.complete) {
+        this.cdnImage = imageURL        
+      } else {
+        img.onload = () => {
+          this.cdnImage = imageURL
+        }
+        img.onerror = (e) => {
+          console.log(e)
+        }
+      }
+    }
   },
   methods: {
     realNftImage() {
