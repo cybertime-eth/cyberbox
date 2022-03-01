@@ -333,7 +333,7 @@ export const actions = {
     }
     const query = gql`
       query Sample {
-        contractInfos(where: { owner: "${state.fullAddress.toLowerCase()}" ${countCondition} }) {
+        contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" ${countCondition} }) {
 			    id
           contract
         }
