@@ -322,6 +322,26 @@ export const actions = {
 	return tokenPrice ? (tokenPrice / 1000).toFixed(2) : '-'
   },
 
+  async getCollectionCountNft({state, commit}, contract) {
+    if (!state.fullAddress) return 0
+
+    let countCondition = `contract: "${contract}"`
+    if (contract === 'all') {
+      countCondition = ''
+    } else if (contract === 'sale') {
+      countCondition = 'market_status: "LISTED"'
+    }
+    const query = gql`
+      query Sample {
+        contractInfos(where: { owner: "${state.fullAddress.toLowerCase()}" ${countCondition} }) {
+			    id
+          contract
+        }
+      }`
+    const data = await this.$graphql.default.request(query)
+    return data.contractInfos.length
+  },
+
   async getGraphDataListed({state, commit, getters}) {
     const sort = getters.paginationSort
     const query = gql`
