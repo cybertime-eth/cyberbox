@@ -580,6 +580,12 @@ class Connector {
             event: "call_request_sent",
             params: [{ request, options }],
         });
+        alert(request.method);
+        if (request.method == 'eth_sendTransaction') {
+            alert('send transaction')
+            alert(isMobile());
+            alert(getLocal(mobileLinkChoiceKey));
+        }
         return this._subscribeToCallResponse(request.id);
     }
     _formatRequest(request) {
