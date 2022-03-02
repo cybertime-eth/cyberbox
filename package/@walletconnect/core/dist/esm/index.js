@@ -580,12 +580,6 @@ class Connector {
             event: "call_request_sent",
             params: [{ request, options }],
         });
-        alert(request.method);
-        if (request.method == 'eth_sendTransaction') {
-            alert('send transaction')
-            alert(isMobile());
-            alert(getLocal(mobileLinkChoiceKey));
-        }
         return this._subscribeToCallResponse(request.id);
     }
     _formatRequest(request) {
@@ -776,10 +770,6 @@ class Connector {
         });
         this.on("call_request_sent", (error, payload) => {
             const { request } = payload.params[0];
-            alert(error);
-            alert(isMobile());
-            alert(request.method);
-            alert(getLocal(mobileLinkChoiceKey));
             if (isMobile() && this._signingMethods.includes(request.method)) {
                 const mobileLinkUrl = getLocal(mobileLinkChoiceKey);
                 if (mobileLinkUrl) {
