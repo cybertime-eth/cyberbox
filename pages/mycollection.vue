@@ -11,7 +11,7 @@
     <div class="my-collection-filters" v-if="filteredNft">
       <div class="my-collection-filters-item" @click="filter('all')" :class="{'my-collection-filters-item-active': activeFilter === 'all'}">
         <p class="my-collection-filters-item-text">All</p>
-        <p class="my-collection-filters-item-content">{{ nftCount }}</p>
+        <p class="my-collection-filters-item-content">{{ listNft.length }}</p>
       </div>
       <div class="my-collection-filters-item" :class="{'my-collection-filters-item-active': activeFilter === 'sale'}" @click="filter('sale')" v-if="forSaleInfo > 0">
         <p class="my-collection-filters-item-text">For sale</p>
@@ -37,8 +37,6 @@ export default {
       showPurchased: false,
       loading: true,
       listNft: [],
-      totalNftCount: 0,
-      saleNftCount: 0,
       collectionFilters: [],
       filteredNft: false,
       activeFilter: 'all'
@@ -58,7 +56,6 @@ export default {
       movedBack = true
       localStorage.removeItem('move_back')
     }
-    
 
     await this.fetchMyCollection()
     this.loadNftCounts()
@@ -76,16 +73,11 @@ export default {
       const filteredCollection = this.$store.state.collectionList.find(item => item.route === this.activeFilter)
       return filteredCollection?.name || ''
     },
-    nftCount() {
-      return this.totalNftCount > this.listNft.length ? this.totalNftCount : this.listNft.length
-    },
     forSaleInfo() {
       if (this.listNft) {
         const list = this.listNft
         const countListing = list.filter(item => item.market_status === 'LISTED')
-        return this.saleNftCount > countListing.length ? this.saleNftCount : countListing.length
-      } else {
-        return 0
+        return countListing.length
       }
     },
     successTransferToken() {
@@ -157,6 +149,9 @@ export default {
           this.$store.commit('changeCountPage', count + 1)
           this.$store.commit('changeSortData', 'pagination')
           await this.addMyCollection()
+          if (this.activeFilter !== 'all') {
+            this.filter(this.activeFilter)
+          }
         }
       }
     },
@@ -168,7 +163,9 @@ export default {
       }
     },
     async filter(payload) {
-      if (payload === 'all') {
+      if (payload === 'sale') {
+        this.filteredNft = this.listNft.filter(item => item.market_status === 'LISTED')
+      } else if (payload === 'all') {
         this.$store.commit('changeSortData', 'myNft')
         this.listNft = await this.$store.dispatch('getGraphData')
         this.listNft.map(item => item.price = item.price / 1000)
