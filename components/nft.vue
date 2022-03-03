@@ -15,7 +15,10 @@
         <h3>Copy link</h3>
       </div>
     </div>
-    <img :src="realNftImage(nft)" alt="item" class="collection__item-image">
+    <img :src="realNftImage(nft)" alt="item" class="collection__item-image" v-if="nftImageLoaded">
+    <div class="collection__item-loading" v-else>
+      <img src="/loading-nft.gif" alt="load">
+    </div>
     <div class="collection__item-info">
       <h2 class="collection__item-info-name">
         {{ nft.name || nft.contract_name }}
@@ -45,6 +48,7 @@ export default {
     return {
       modalId: 0,
       showTransferModal: false,
+      nftImageLoaded: false,
       cdnImage: null
     }
   },
@@ -71,9 +75,15 @@ export default {
       this.cdnImage = imageURL
       const img = new Image()
       img.src= imageURL
-      if (!img.complete) {
+      if (img.complete) {
+        this.nftImageLoaded = true
+      } else {
+        img.onload = () => {
+          this.nftImageLoaded = true
+        }
         img.onerror = (e) => {
           this.cdnImage = null
+          this.nftImageLoaded = true
         }
       }
     }
@@ -200,6 +210,16 @@ export default {
       object-fit: cover;
       border-radius: .4rem .4rem 0 0;
     }
+    &-loading {
+      width: 20rem;
+      height: 20rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      img {
+        width: 100%;
+      }
+    }
     &-info {
       padding: 1.6rem .8rem 2.4rem;
       &-name {
@@ -264,6 +284,10 @@ export default {
       width: 14.4rem;
       height: auto;
       &-image {
+        width: 14.4rem;
+        height: 14.4rem;
+      }
+      &-loading {
         width: 14.4rem;
         height: 14.4rem;
       }
