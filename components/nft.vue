@@ -68,13 +68,14 @@ export default {
     if (this.nft.contract !== 'nomstronaut' && this.nft.image) {
       const fileExtension = this.nft.image.split('.').pop()
       const imageURL = CDN_ROOT + this.nft.contract + `/${this.nft.contract_id}.${fileExtension}`
+      this.cdnImage = imageURL
       const img = new Image()
       img.src= imageURL
       if (img.complete) {
-        this.cdnImage = imageURL        
+        this.cdnImage = imageURL
       } else {
         img.onload = () => {
-          this.cdnImage = imageURL
+          this.cdnImage = null
         }
         img.onerror = (e) => {
           console.log(e)
