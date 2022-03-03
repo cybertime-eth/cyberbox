@@ -87,7 +87,8 @@ export default {
       return this.cdnImage || this.getNFTImage(this.nft)
     },
     copyLink(e) {
-      this.$copyText(`https://cyberbox.vercel.app/collections/${this.nft.contract}/${this.nft.contract_id}`)
+      const collectionUrl = location.protocol + '//' + location.host
+      this.$copyText(`${collectionUrl}/collections/${this.nft.contract}/${this.nft.contract_id}`)
       this.$store.commit('setMessage', 'Link copied!')
       setTimeout(() => {
         this.$store.commit('setMessage', '')
