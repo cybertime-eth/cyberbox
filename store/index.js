@@ -1,6 +1,7 @@
 import Web3 from 'web3'
 import {ethers, Wallet, providers, BigNumber} from 'ethers'
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import WalletConnectProvider from "@walletconnect/web3-provider"
+import { mobileLinkChoiceKey, setLocal } from "@walletconnect/utils"
 import MarketMainABI from '../abis/marketMain.json'
 import daosABI from '../abis/daos.json'
 import punksABI from '../abis/punks.json'
@@ -451,7 +452,12 @@ export const actions = {
       params: [
         {
           peerId: wc.clientId,
-          peerMeta: wc.clientMeta,
+          peerMeta: {
+            description: "",
+            icons: [`${location.origin}/favicon.ico`],
+            name: "CyberBox - NFT Marketplace on Celo",
+            url: location.origin
+          },
           chainId: state.chainId,
         }
       ],
@@ -459,6 +465,7 @@ export const actions = {
     wc.handshakeId = request.id
     wc.handshakeTopic = uuid()
     wc._sendSessionRequest(request, "Session update rejected", { topic: wc.handshakeTopic })
+    setLocal(mobileLinkChoiceKey, { href: wc.uri })
     commit('setWalletUri', wc.uri)
     // create session end
 

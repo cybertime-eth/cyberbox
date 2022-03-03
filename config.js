@@ -6,7 +6,7 @@ const description = "This NFT is part of DAOS";
 const startEditionFrom = 1; // Can start edition at whatever you want // start at 1
 const endEditionAt = 8640; // endEditionAt and edtionSize MUST be the SAME // start at 10 for testing purposes
 const editionSize = 8640; // this will print 100 copies : (use if you already have a 10k 1 1st edition) // erase the 100
-const CDN_ROOT = 'http://3.135.61.24/'
+const CDN_ROOT = 'https://cdn.cyberbox.art/'
 const raceWeights = [
   {
     value: "DAOS", // Change to whatever you want
