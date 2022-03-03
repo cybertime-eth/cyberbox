@@ -43,7 +43,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-add-chin-chilla',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-march-second',
         options: {}
       },
       secondClient: {
