@@ -71,14 +71,9 @@ export default {
       this.cdnImage = imageURL
       const img = new Image()
       img.src= imageURL
-      if (img.complete) {
-        this.cdnImage = imageURL
-      } else {
-        img.onload = () => {
-          this.cdnImage = null
-        }
+      if (!img.complete) {
         img.onerror = (e) => {
-          console.log(e)
+          this.cdnImage = null
         }
       }
     }
