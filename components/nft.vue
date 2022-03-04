@@ -23,6 +23,7 @@
       <h2 class="collection__item-info-name">
         {{ nft.name || nft.contract_name }}
       </h2>
+      <p class="collection__item-info-rank">Rarity Rank {{ nft.rating_index }}</p>
       <p class="collection__item-info-id">Token ID {{ nftID(nft.contract_id) }}</p>
       <p class="collection__item-info-type" v-if="sellInfo">Last sell</p>
       <p class="collection__item-info-type" v-else>Price</p>
@@ -68,27 +69,42 @@ export default {
     }
   },
   props: ['nft', 'route', 'owner', 'seller', 'filter'],
-  mounted() {
-    if (this.nft.contract !== 'nomstronaut' && this.nft.image) {
-      const fileExtension = this.nft.image.split('.').pop()
-      const imageURL = CDN_ROOT + this.nft.contract + `/${this.nft.contract_id}.${fileExtension}`
-      this.cdnImage = imageURL
-      const img = new Image()
-      img.src= imageURL
-      if (img.complete) {
-        this.nftImageLoaded = true
-      } else {
-        img.onload = () => {
-          this.nftImageLoaded = true
-        }
-        img.onerror = (e) => {
-          this.cdnImage = null
-          this.nftImageLoaded = true
-        }
+  watch: {
+    nft() {
+      const cdnImageUrl = this.getCDNImageUrl()
+      if (this.cdnImage !== cdnImageUrl) {
+        this.loadCDNImage()
       }
     }
   },
+  mounted() {
+    this.loadCDNImage()
+  },
   methods: {
+    getCDNImageUrl() {
+      const fileExtension = this.nft.image.split('.').pop()
+      const imageURL = CDN_ROOT + this.nft.contract + `/${this.nft.contract_id}.${fileExtension}`
+      return imageURL
+    },
+    async loadCDNImage() {
+      if (this.nft.contract !== 'nomstronaut' && this.nft.image) {
+        const imageURL = this.getCDNImageUrl()
+        this.cdnImage = imageURL
+        const img = new Image()
+        img.src= imageURL
+        if (img.complete) {
+          this.nftImageLoaded = true
+        } else {
+          img.onload = () => {
+            this.nftImageLoaded = true
+          }
+          img.onerror = (e) => {
+            this.cdnImage = null
+            this.nftImageLoaded = true
+          }
+        }
+      }
+    },
     realNftImage() {
       return this.cdnImage || this.getNFTImage(this.nft)
     },
@@ -160,7 +176,7 @@ export default {
 .collection {
   &__item {
     width: 20rem;
-    height: 43.2rem;
+    height: 45rem;
     border-radius: .4rem;
     box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
     transition: .3s;
@@ -233,12 +249,14 @@ export default {
         color: $grayLight;
         font-size: 1.3rem;
       }
-      &-id {
-        color: $grayLight;
+      &-rank, &-id {
         padding-top: .5rem;
         font-size: 1.3rem;
+        color: $grayLight;
+      }
+      &-id {
         border-bottom: .1rem solid $modalColor;
-        padding-bottom: 2.8rem;
+        padding-bottom: 1.3rem;
       }
       &-price {
         display: flex;
