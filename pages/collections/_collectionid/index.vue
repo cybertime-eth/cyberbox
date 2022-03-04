@@ -58,7 +58,7 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'mint-lowest'}"
           @click="changeSort('mint-lowest')"
-          v-if="filter !== 'bought'"
+          v-if="filter === 'All'"
         >
           <span>Token ID<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Lowest</span>
         </button>
@@ -66,7 +66,7 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'mint-highest'}"
           @click="changeSort('mint-highest')"
-          v-if="filter !== 'bought'"
+          v-if="filter === 'All'"
         >
           <span>Token ID<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Highest</span>
         </button>
@@ -74,7 +74,7 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'sold-latest'}"
           @click="changeSort('sold-latest')"
-          v-else
+          v-if="filter === 'bought'"
         >
           <span>Sold<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Latest</span>
         </button>
