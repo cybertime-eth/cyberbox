@@ -70,7 +70,10 @@ export default {
   props: ['nft', 'route', 'owner', 'seller', 'filter'],
   mounted() {
     if (this.nft.contract !== 'nomstronaut' && this.nft.image) {
-      const fileExtension = this.nft.image.split('.').pop()
+      let fileExtension = this.nft.image.split('.').pop()
+      if (fileExtension.split('//').length > 1) {
+        fileExtension = 'png'
+      }
       const imageURL = CDN_ROOT + this.nft.contract + `/${this.nft.contract_id}.${fileExtension}`
       this.cdnImage = imageURL
       const img = new Image()
@@ -86,6 +89,8 @@ export default {
           this.nftImageLoaded = true
         }
       }
+    } else {
+      this.nftImageLoaded = true
     }
   },
   methods: {

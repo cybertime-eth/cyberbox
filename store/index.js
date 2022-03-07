@@ -225,6 +225,19 @@ export const state = () => ({
       discord: 'https://discord.com/invite/SuFUEn2Vzn',
       description: 'Womxn of Celo is the 1st generation of the (Womxn of) series for different blockchains. This Collection was created to empower women in the NFT space as well as women artists from all parts of the globe. To choose to write "womxn" so that we represent different cultures and gender expressions in the women in NFT community. The collection is based on the Celo blockchain and includes 5k unique gorgeous girls. Every girl has various rare attributes and features.'
     },
+    {
+      id: 16,
+      name: 'Celo Espresso',
+      route: 'cespresso',
+      image: '/collections/celoespresso.png',
+      banner: '/collections/celoespresso-banner.png',
+      logo: '/collections/celoespresso-logo.png',
+      website: 'https://celo-espresso.cafe/',
+      twitter: 'https://twitter.com/CeloEspresso',
+      discord: 'https://discord.gg/UKjyhb7xzQ',
+      medium: 'https://medium.com/@CeloEspresso',
+      description: 'GM fellow espresso baristas, the Espresso Hard Fork is live! Now all the beautiful cEspressi can be born and welcomed to the Celo Blockchain. Head over to the coffee machine to brew your own, unique cEspresso!'
+    },
     // {
     //   id: 14,
     //   name: 'PixelAva',
