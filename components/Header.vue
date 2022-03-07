@@ -111,7 +111,7 @@ export default {
       return errorText
     }
   },
-  beforeMount() {
+  created() {
     if (process.browser) {
       window.addEventListener('click', this.handleClickWindow)
     }

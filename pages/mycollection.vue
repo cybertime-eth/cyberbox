@@ -44,17 +44,13 @@ export default {
       saleNftCount: 0
     }
   },
-  beforeMount() {
-    if (process.browser) {
-      window.addEventListener('scroll', this.addCurrentPage)
-    }
-  },
   beforeDestroy() {
     window.removeEventListener('scroll', this.addCurrentPage)
   },
   async created() {
     let movedBack = false
     if (process.browser) {
+      window.addEventListener('scroll', this.addCurrentPage)
       movedBack = true
       localStorage.removeItem('move_back')
     }

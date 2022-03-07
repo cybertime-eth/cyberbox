@@ -257,15 +257,13 @@ export default {
       })
     },
   },
-  beforeMount() {
-    if (process.browser) {
-      window.addEventListener('scroll', this.addCurrentPage)
-    }
-  },
   beforeDestroy() {
     window.removeEventListener('scroll', this.addCurrentPage)
   },
   async created() {
+    if (process.browser) {
+      window.addEventListener('scroll', this.addCurrentPage)
+    }
     if (process.browser && localStorage.getItem('move_back')) {
       localStorage.removeItem('move_back')
       const collectionSetting = this.$store.state.collectionSetting
