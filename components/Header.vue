@@ -202,7 +202,11 @@ header {
     position: relative;
     z-index: 1;
     &-address {
+      width: 65%;
       padding-left: 2.2rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &-avatar {
@@ -294,6 +298,7 @@ header {
         display: none;
       }
       &-address {
+        width: auto;
         padding-left: 0;
         font-size: 1.3rem;
       }

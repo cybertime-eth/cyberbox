@@ -19,6 +19,7 @@
 
           <div class="nft__block-info" v-if="!seller">
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
+            <h1 class="nft__block-info-rank">Rarity rank {{ nft.rating_index }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <div v-if="!nftReloading">
               <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
@@ -51,6 +52,7 @@
 
           <div class="nft__block-info" v-else-if="listStatus === 'default' && seller">
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
+            <h1 class="nft__block-info-rank">Rarity rank {{ nft.rating_index }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <div v-if="!nftReloading">
               <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
@@ -143,6 +145,7 @@ import WrongNetwork from '@/components/modals/wrongNetwork'
 import Transfer from '@/components/modals/transfer'
 import BuyToken from '@/components/modals/buyToken';
 import SuccessfullBuy from '@/components/modals/successBuy';
+import API from '@/api';
 export default {
   data() {
     return {
@@ -266,10 +269,13 @@ export default {
         id: this.$route.params.nftid,
         collectionId: this.$route.params.collectionid
       })
+      const rarityInfos = await API.getNftRankings([nft.id])
       this.nft = {
         ...nft,
+        rating_index: rarityInfos[0].rating_index,
         price: nft.price / 1000
       }
+      
       this.loadButton = false
     },
     async loadBalance() {
@@ -434,6 +440,13 @@ export default {
         color: $span;
         padding-top: 1.5rem;
       }
+      &-rank {
+        padding-top: 1.1rem;
+        font-family: OpenSans-Regular;
+        font-weight: 400;
+        font-size: 1.07rem;
+        color: $textColor;
+      }
       &-minted {
         font-family: OpenSans-Regular;
         padding-top: 1rem;
@@ -452,7 +465,7 @@ export default {
         padding-top: 2.4rem;
       }
       &-description {
-        padding-top: 1rem;
+        padding-top: 1.85rem;
       }
       &-price {
         display: flex;

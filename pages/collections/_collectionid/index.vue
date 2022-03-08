@@ -58,15 +58,25 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'mint-lowest'}"
           @click="changeSort('mint-lowest')"
+          v-if="filter === 'All'"
         >
-          <span>Mint<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Lowest</span>
+          <span>Token ID<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Lowest</span>
         </button>
         <button
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'mint-highest'}"
           @click="changeSort('mint-highest')"
+          v-if="filter === 'All'"
         >
-          <span>Mint<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Highest</span>
+          <span>Token ID<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Highest</span>
+        </button>
+        <button
+          class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 'sold-latest'}"
+          @click="changeSort('sold-latest')"
+          v-if="filter === 'bought'"
+        >
+          <span>Sold<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Latest</span>
         </button>
         <button
           class="collection__sort-button"
@@ -83,6 +93,20 @@
           v-if="filter !== 'All'"
         >
           <span>Price<span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Highest</span>
+        </button>
+        <button
+          class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 'rarity-rare'}"
+          @click="changeSort('rarity-rare')"
+        >
+          <span>Rarity <span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Rare</span>
+        </button>
+        <button
+          class="collection__sort-button"
+          :class="{'collection__sort-button-active': sort === 'rarity-common'}"
+          @click="changeSort('rarity-common')"
+        >
+          <span>Rarity <span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Common</span>
         </button>
       </div>
 <!--      <attributesFilter />-->
@@ -181,9 +205,9 @@ export default {
         }
       }
     },
-    fetchNftList() {
+    async fetchNftList() {
       if (this.fetchEnabled) {
-        this.$store.dispatch(this.activeRequest)
+        await this.$store.dispatch(this.activeRequest)
       } else {
         this.$store.commit('setNewNftList', [])
       }
@@ -195,7 +219,8 @@ export default {
         ...setting
       })
     },
-    changeSort(id) {
+    async changeSort(id) {
+      this.loading = true
       this.sort = id
       let sortPrefix = ''
       if (this.myNft) {
@@ -204,8 +229,9 @@ export default {
         }
       }
       this.$store.commit('changeSortData', this.filter === 'bought' ? (sortPrefix + `${id}-sold`) : (sortPrefix + id))
-      this.fetchNftList()
+      await this.fetchNftList()
       this.changeCollectionSetting({ sort: id })
+      this.loading = false
     },
     changeMyNftFilter() {
       let sortMyNft = 'all'

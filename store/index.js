@@ -2,7 +2,9 @@ import Web3 from 'web3'
 import {ethers, Wallet, providers, BigNumber} from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider"
 import { mobileLinkChoiceKey, setLocal } from "@walletconnect/utils"
+import ENS from "@ensdomains/ensjs"
 import MarketMainABI from '../abis/marketMain.json'
+import API from '../api'
 import daosABI from '../abis/daos.json'
 import punksABI from '../abis/punks.json'
 import toadsABI from '../abis/toads.json'
@@ -12,7 +14,7 @@ import { uuid } from "@walletconnect/utils"
 import {gql} from "nuxt-graphql-request";
 const ContractKit = require('@celo/contractkit')
 import filter from './../config.js'
-import redstone from 'redstone-api';
+import redstone from 'redstone-api'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   user: {},
@@ -34,6 +36,7 @@ export const state = () => ({
   successTransferToken: false,
   message: '',
   sort: `orderBy: contract_id`,
+  raritySort: null,
   pagination: null,
   collectionSetting: null,
 
@@ -253,6 +256,7 @@ export const state = () => ({
     // },
   ],
 })
+
 export const getters = {
   walletConnectProvider() {
     return new WalletConnectProvider({
@@ -272,9 +276,47 @@ export const getters = {
   }
 }
 export const actions = {
-  async getGraphData({commit, state, getters}) {
-    const sort = getters.paginationSort
-    const condition = $nuxt.$route.params.collectionid ? `where: { contract: "${$nuxt.$route.params.collectionid}"}` : ''
+  async getRarityNfts({state}) {
+    const apiPrams = {
+      contract: $nuxt.$route.params.collectionid,
+      page: state.countPage,
+      direction: state.sort.includes('asc') ? 'asc' : 'desc'
+    }
+    const raritiyNfts = await API.getRarityNfts(apiPrams)
+    return raritiyNfts
+  },
+  async getRarirtyCollections({state}, rarityParams) {
+    let newContractInfos = [
+      ...rarityParams.contractInfos
+    ]
+    let rarityInfos = rarityParams.rarityNfts
+    if (!rarityInfos) {
+      rarityInfos = await API.getNftRankings(newContractInfos.map(item => !rarityParams.sold ? item.id : `${item.contract_id}_${item.contract}`))
+    }
+    newContractInfos.map(item => {
+      const rarityItem = rarityInfos.find(info => (!rarityParams.sold && info.contract_info_id === item.id) || (rarityParams.sold && info.contract_info_id === `${item.contract_id}_${item.contract}`))
+      if (rarityItem) {
+        item.rating_index = rarityItem.rating_index
+      }
+    })
+    if (state.raritySort) {
+      if (state.raritySort.includes('rarity-rare')) {
+        newContractInfos = newContractInfos.sort((a, b) => a.rating_index - b.rating_index)
+      } else {
+        newContractInfos = newContractInfos.sort((a, b) => b.rating_index - a.rating_index)
+      }
+    }
+    return newContractInfos
+  },
+  async getGraphData({commit, state, getters, dispatch}) {
+    let sort = getters.paginationSort
+    let condition = $nuxt.$route.params.collectionid ? `where: { contract: "${$nuxt.$route.params.collectionid}"}` : ''
+    let rarityNfts = null
+    if (state.raritySort && !state.sort.includes('owner') && $nuxt.$route.params.collectionid) {
+      rarityNfts = await dispatch('getRarityNfts')
+      condition = `where: { contract: "${$nuxt.$route.params.collectionid}" contract_id_in: [${rarityNfts.map(item => item.contract_id)}] }`
+      sort = ''
+    }
     const query = gql`
       query Sample {
         contractInfos(${sort} first: 48 ${condition}) {
@@ -318,8 +360,9 @@ export const actions = {
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    state.pagination ? commit('addNftToList', data.contractInfos) : commit('setNewNftList', data.contractInfos)
-    return data.contractInfos
+    let contractInfos = await dispatch('getRarirtyCollections', { contractInfos: data.contractInfos, rarityNfts })
+    state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
+    return contractInfos
   },
 
   async getFloorPrice({}, contract) {
@@ -356,7 +399,7 @@ export const actions = {
     return data.contractInfos.length
   },
 
-  async getGraphDataListed({state, commit, getters}) {
+  async getGraphDataListed({state, commit, getters, dispatch}) {
     const sort = getters.paginationSort
     const query = gql`
       query Sample {
@@ -371,10 +414,11 @@ export const actions = {
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    state.pagination ? commit('addNftToList', data.contractLists) : commit('setNewNftList', data.contractLists)
+    const contractLists = await dispatch('getRarirtyCollections', { contractInfos: data.contractLists })
+    state.pagination ? commit('addNftToList', contractLists) : commit('setNewNftList', contractLists)
   },
 
-  async getGraphDataSells({state, commit, getters}) {
+  async getGraphDataSells({state, commit, getters, dispatch}) {
     const sort = getters.paginationSort
     const query = gql`
       query Sample {
@@ -388,15 +432,15 @@ export const actions = {
           image
           contract_name
           seller
+          updatedAt
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    state.pagination ? commit('addNftToList', data.contractSells) : commit('setNewNftList', data.contractSells)
+    const contractSells = await dispatch('getRarirtyCollections', { contractInfos: data.contractSells, sold: true })
+    state.pagination ? commit('addNftToList', contractSells) : commit('setNewNftList', contractSells)
   },
 
   // AUTHORIZATION
-
-
 
   async updateUser({commit, state, getters}) {
     const ethereum = window.ethereum
@@ -886,9 +930,27 @@ export const actions = {
       console.log(error)
       commit('changeSuccessRemoveToken', true)
     }
+  },
+
+  async loadNomNameAddress({commit}) {
+    const address = localStorage.getItem('address')
+    try {
+      const provider = new providers.JsonRpcProvider("https://forno.celo.org")
+      const ens = new ENS({ provider, ensAddress: "0x3DE51c3960400A0F752d3492652Ae4A0b2A36FB3" })
+      const result = await ens.getName(address)
+      let ensName = result.name
+      if(ensName == null || address != await ens.name(`${ensName}.nom`).getAddress()) {
+        ensName = null
+      }
+      console.log('nom name:', ensName)
+      if (ensName) {
+        commit('setAddressByNom', ensName)
+      }
+    } catch(e) {
+      console.log(e)
+    }
   }
 }
-
 
 export const mutations = {
   setUser(state, user) {
@@ -905,6 +967,9 @@ export const mutations = {
       .concat(endID)
       .join("");
   },
+  setAddressByNom(state, nomAddress) {
+    state.address = `${nomAddress}.nom`
+  },
   setWalletConnected(state, connected) {
     state.walletConnected = connected
   },
@@ -919,12 +984,23 @@ export const mutations = {
 	state.pagination = null
   },
   addNftToList(state, list) {
+    let newNftList = [
+      ...state.nftList
+    ]
     for (let nft of list) {
-      state.nftList.push({
+      newNftList.push({
         ...nft,
-        price: nft.price / 1000
+        price: nft.price ? nft.price / 1000 : nft.price_total / 1000
       })
     }
+    if (state.raritySort) {
+      if (state.raritySort.includes('rarity-rare')) {
+        newNftList = newNftList.sort((a, b) => a.rating_index - b.rating_index)
+      } else {
+        newNftList = newNftList.sort((a, b) => b.rating_index - a.rating_index)
+      }
+    }
+    state.nftList = newNftList
   },
   setNewNft(state, nft) {
     state.nft = {
@@ -979,25 +1055,27 @@ export const mutations = {
       }
     }
     switch (type) {
-      case 'myNft': state.sort = myNftSort + ` orderBy: contract_id`;
-        break;
-      case 'myNftAll': state.sort = myNftSort + ` orderBy: contract_id`;
-        break;
-      case 'myNftSold': state.sort = myNftSort + ` orderBy: contract_id`;
+      case 'myNft':
+      case 'myNftAll':
+      case 'myNftSold':
+      case 'myNft-rarity-rare':
+      case 'myNft-rarity-common': state.sort = myNftSort + ` orderBy: contract_id`;
         break;
       case 'all': state.sort =  `orderBy: contract_id`;
         break;
       case 'myNft-price-lowest': state.sort = myNftSort + ` orderBy: price, orderDirection: asc`;
-        break;
       case 'myNft-price-lowest-sold': state.sort = myNftSort + ` orderBy: price_total, orderDirection: asc`;
         break;
       case 'myNft-price-highest': state.sort = myNftSort + ` orderBy: price, orderDirection: desc`;
-        break;
       case 'myNft-price-highest-sold': state.sort = myNftSort + ` orderBy: price_total, orderDirection: desc`;
         break;
-      case 'myNft-rarity-rare': state.sort =  myNftSort + ` orderBy: rarity_rank, orderDirection: asc`;
-        break;
-      case 'myNft-rarity-common': state.sort =  myNftSort + ` orderBy: rarity_rank, orderDirection: desc`;
+      // case 'myNft-rarity-rare': state.sort =  myNftSort + ` orderBy: rarity_rank, orderDirection: asc`;
+      //   break;
+      // case 'myNft-rarity-common': state.sort =  myNftSort + ` orderBy: rarity_rank, orderDirection: desc`;
+      //   break;
+      case 'myNft-rarity-rare-sold':
+      case 'myNft-rarity-common-sold':
+      case 'myNft-sold-latest-sold': state.sort =  myNftSort + ` orderBy: updatedAt orderDirection: desc`;
         break;
       case 'myNft-mint-lowest': state.sort = myNftSort + ` orderBy: contract_id`;
         break;
@@ -1015,24 +1093,34 @@ export const mutations = {
         break;
       case 'price-highest-sold': state.sort = `orderBy: price_total, orderDirection: desc`;
         break;
-      case 'rarity-rare': state.sort =  `orderBy: rarity_rank, orderDirection: asc`;
-        break;
-      case 'rarity-common': state.sort =  `orderBy: rarity_rank, orderDirection: desc`;
-        break;
-      case 'mint-lowest': state.sort = `orderBy: contract_id`;
-        break;
+      // case 'rarity-rare': state.sort =  `orderBy: rarity_rank, orderDirection: asc`;
+      //   break;
+      // case 'rarity-common': state.sort =  `orderBy: rarity_rank, orderDirection: desc`;
+      //   break;
+      case 'mint-lowest':
       case 'mint-lowest-sold': state.sort = `orderBy: contract_id`;
         break;
-      case 'mint-highest': state.sort = `orderBy: contract_id orderDirection: desc`;
-        break;
+      case 'mint-highest':
       case 'mint-highest-sold': state.sort = `orderBy: contract_id orderDirection: desc`;
         break;
-	  case 'pagination': state.pagination = `skip: ${48 * (state.countPage - 1)}`;
+      case 'rarity-rare':
+      case 'rarity-rare-sold': state.sort = `orderBy: updatedAt orderDirection: asc`;
         break;
-	}
+      case 'rarity-common':
+      case 'rarity-common-sold':
+      case 'sold-latest-sold': state.sort = `orderBy: updatedAt orderDirection: desc`;
+        break;
+      case 'pagination': state.pagination = `skip: ${48 * (state.countPage - 1)}`;
+        break;
+  }
 	if (type !== 'pagination') {
-	  state.countPage = 1
+    state.countPage = 1
 	  state.pagination = null
+    if (type.includes('rarity')) {
+      state.raritySort = type
+    } else {
+      state.raritySort = null
+    }
   }
   },
   changeMyCollectionSort(state, contract) {
