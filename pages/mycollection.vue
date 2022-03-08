@@ -145,14 +145,12 @@ export default {
       }
     },
     async addCurrentPage() {
-      if(process.browser) {
-        const count = this.$store.state.countPage
-        const element = document.body
-        if (element.scrollHeight <= window.pageYOffset + window.innerHeight && count * 48 === this.listNft.length) {
-          this.$store.commit('changeCountPage', count + 1)
-          this.$store.commit('changeSortData', 'pagination')
-          await this.addMyCollection()
-        }
+      const count = this.$store.state.countPage
+      const element = document.body
+      if (element.scrollHeight <= window.pageYOffset + window.innerHeight && count * 48 === this.listNft.length) {
+        this.$store.commit('changeCountPage', count + 1)
+        this.$store.commit('changeSortData', 'pagination')
+        await this.addMyCollection()
       }
     },
     contractDaosLength(contract) {
