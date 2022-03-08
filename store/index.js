@@ -263,11 +263,23 @@ export const getters = {
   }
 }
 export const actions = {
+  async getRarityNfts({state}) {
+    const apiPrams = {
+      contract: $nuxt.$route.params.collectionid,
+      page: state.countPage,
+      direction: state.sort.includes('asc') ? 'asc' : 'desc'
+    }
+    const raritiyNfts = await API.getRarityNfts(apiPrams)
+    return raritiyNfts
+  },
   async getRarirtyCollections({state}, rarityParams) {
     let newContractInfos = [
       ...rarityParams.contractInfos
     ]
-    const rarityInfos = await API.getNftRankings(newContractInfos.map(item => !rarityParams.sold ? item.id : `${item.contract_id}_${item.contract}`))
+    let rarityInfos = rarityParams.rarityNfts
+    if (!rarityInfos) {
+      rarityInfos = await API.getNftRankings(newContractInfos.map(item => !rarityParams.sold ? item.id : `${item.contract_id}_${item.contract}`))
+    }
     newContractInfos.map(item => {
       const rarityItem = rarityInfos.find(info => (!rarityParams.sold && info.contract_info_id === item.id) || (rarityParams.sold && info.contract_info_id === `${item.contract_id}_${item.contract}`))
       if (rarityItem) {
@@ -275,7 +287,7 @@ export const actions = {
       }
     })
     if (state.raritySort) {
-      if (state.raritySort === 'rarity-rare') {
+      if (state.raritySort.includes('rarity-rare')) {
         newContractInfos = newContractInfos.sort((a, b) => a.rating_index - b.rating_index)
       } else {
         newContractInfos = newContractInfos.sort((a, b) => b.rating_index - a.rating_index)
@@ -284,8 +296,14 @@ export const actions = {
     return newContractInfos
   },
   async getGraphData({commit, state, getters, dispatch}) {
-    const sort = getters.paginationSort
-    const condition = $nuxt.$route.params.collectionid ? `where: { contract: "${$nuxt.$route.params.collectionid}"}` : ''
+    let sort = getters.paginationSort
+    let condition = $nuxt.$route.params.collectionid ? `where: { contract: "${$nuxt.$route.params.collectionid}"}` : ''
+    let rarityNfts = null
+    if (state.raritySort && !state.sort.includes('owner') && $nuxt.$route.params.collectionid) {
+      rarityNfts = await dispatch('getRarityNfts')
+      condition = `where: { contract: "${$nuxt.$route.params.collectionid}" contract_id_in: [${rarityNfts.map(item => item.contract_id)}] }`
+      sort = ''
+    }
     const query = gql`
       query Sample {
         contractInfos(${sort} first: 48 ${condition}) {
@@ -329,7 +347,7 @@ export const actions = {
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    const contractInfos = await dispatch('getRarirtyCollections', { contractInfos: data.contractInfos })
+    let contractInfos = await dispatch('getRarirtyCollections', { contractInfos: data.contractInfos, rarityNfts })
     state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
     return contractInfos
   },
@@ -959,11 +977,11 @@ export const mutations = {
     for (let nft of list) {
       newNftList.push({
         ...nft,
-        price: nft.price / 1000
+        price: nft.price ? nft.price / 1000 : nft.price_total / 1000
       })
     }
     if (state.raritySort) {
-      if (state.raritySort === 'rarity-rare') {
+      if (state.raritySort.includes('rarity-rare')) {
         newNftList = newNftList.sort((a, b) => a.rating_index - b.rating_index)
       } else {
         newNftList = newNftList.sort((a, b) => b.rating_index - a.rating_index)
@@ -1072,7 +1090,10 @@ export const mutations = {
       case 'mint-highest':
       case 'mint-highest-sold': state.sort = `orderBy: contract_id orderDirection: desc`;
         break;
-      case 'rarity-rare-sold':
+      case 'rarity-rare':
+      case 'rarity-rare-sold': state.sort = `orderBy: updatedAt orderDirection: asc`;
+        break;
+      case 'rarity-common':
       case 'rarity-common-sold':
       case 'sold-latest-sold': state.sort = `orderBy: updatedAt orderDirection: desc`;
         break;
@@ -1083,11 +1104,7 @@ export const mutations = {
     state.countPage = 1
 	  state.pagination = null
     if (type.includes('rarity')) {
-      if (type.includes('rarity-common')) {
-        state.raritySort = 'rarity-common'
-      } else {
-        state.raritySort = 'rarity-rare'
-      }
+      state.raritySort = type
     } else {
       state.raritySort = null
     }
