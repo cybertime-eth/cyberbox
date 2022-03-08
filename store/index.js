@@ -2,6 +2,7 @@ import Web3 from 'web3'
 import {ethers, Wallet, providers, BigNumber} from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider"
 import { mobileLinkChoiceKey, setLocal } from "@walletconnect/utils"
+import ENS from "@ensdomains/ensjs"
 import MarketMainABI from '../abis/marketMain.json'
 import API from '../api'
 import daosABI from '../abis/daos.json'
@@ -898,6 +899,25 @@ export const actions = {
       console.log(error)
       commit('changeSuccessRemoveToken', true)
     }
+  },
+
+  async loadNomNameAddress({commit}) {
+    const address = localStorage.getItem('address')
+    try {
+      const provider = new providers.JsonRpcProvider("https://forno.celo.org")
+      const ens = new ENS({ provider, ensAddress: "0x3DE51c3960400A0F752d3492652Ae4A0b2A36FB3" })
+      const result = await ens.getName(address)
+      let ensName = result.name
+      if(ensName == null || address != await ens.name(`${ensName}.nom`).getAddress()) {
+        ensName = null
+      }
+      console.log('nom name:', ensName)
+      if (ensName) {
+        commit('setAddressByNom', ensName)
+      }
+    } catch(e) {
+      console.log(e)
+    }
   }
 }
 
@@ -915,6 +935,9 @@ export const mutations = {
       .concat(dotArr)
       .concat(endID)
       .join("");
+  },
+  setAddressByNom(state, nomAddress) {
+    state.address = `${nomAddress}.nom`
   },
   setWalletConnected(state, connected) {
     state.walletConnected = connected
