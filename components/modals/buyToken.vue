@@ -5,15 +5,21 @@
       <p class="modal__subtitle">You are about to purchase a <span class="modal__subtitle-bold">{{ nft.name }}</span> from <span class="modal__subtitle-bold">{{ collectionName }}</span></p>
       <div class="modal__information">
         <h3 class="modal__information-title">You pay</h3>
-        <h3 class="modal__information-price">{{ nft.price }} <span>CELO</span></h3>
-        <p class="modal__information-price-usd">{{ priceToken }}$</p>
+        <div class="modal__information-price-box">
+          <img src="/celo.svg" alt="celo" class="modal__information-celo">
+          <h3 class="modal__information-price">{{ nft.price }}</h3>
+        </div>
+        <p class="modal__information-price-usd">${{ priceToken }}</p>
       </div>
       <div class="modal__balance">
-        <p class="modal__balance-info">Balance <span>{{ balance }} CELO</span></p>
+        <p class="modal__balance-info">Balance <span>{{ balance }}<img src="/celo.svg" alt="celo" class="modal__balance-info-celo"></span></p>
         <!-- <p class="modal__balance-fee">Service fee <span>10%</span></p> -->
       </div>
-      <div class="modal__buttons" v-if="!pending">
-        <button class="modal__button" v-if="balance >= nft.price" @click="buyToken">Confirm</button>
+      <div class="modal__buttons">
+        <div class="modal__buttons-box" v-if="balance >= nft.price">
+          <button class="modal__button modal__button-submit" :class="{ disabled: pending || successApproveBuyToken }" @click="approveToken">Approve</button>
+          <button class="modal__button modal__button-submit" :class="{ disabled: !successApproveBuyToken }" @click="buyToken">Buy</button>
+        </div>
         <a
           href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438"
           target="_blank"
@@ -23,10 +29,12 @@
           Buy CELO
         </a>
       </div>
-      <button class="modal__button modal__button-confirm gradient-button" v-else>
-        Pending confirmation <img src="/loading-button.svg" alt="load">
-      </button>
       <h4 class="modal__footer"  v-if="balance < nft.price">Insufficiently funds</h4>
+      <div class="modal__step" v-else>
+        <span class="modal__step-status">1</span>
+        <span class="modal__step-line"></span>
+        <span class="modal__step-status">2</span>
+      </div>
       <button class="modal__close-button" @click="closeModal">
         <img src="/close-bold.svg" class="modal__close-button-icon">
       </button>
@@ -39,6 +47,9 @@ export default {
   computed: {
     collectionName() {
       return this.$route.params.collectionid
+    },
+    successApproveBuyToken() {
+      return this.$store.state.successApproveBuyToken
     }
   },
   data() {
@@ -46,11 +57,24 @@ export default {
       pending: false
     }
   },
+  mounted() {
+    this.$store.commit('changeSuccessApproveBuyToken', false)
+  },
   methods: {
+    async approveToken() {
+      this.pending = true
+      try {
+        await this.$store.dispatch('approveBuyToken', {
+          id: this.$route.params.nftid,
+          price: this.nft.price
+        })
+      } catch (error) {
+        this.closeModal()
+      }
+    },
     async buyToken() {
       try {
-        this.pending = true
-        await this.$store.dispatch('approveBuyToken', {
+        await this.$store.dispatch('buyNFT', {
           id: this.$route.params.nftid,
           price: this.nft.price
         })
@@ -85,12 +109,18 @@ export default {
   &__information {
     padding: 3.5rem 0;
     border-bottom: .1rem solid $modalColor;
-    &-price {
+    &-price-box {
+      display: flex;
+      align-items: center;
       padding-top: 2.5rem;
+    }
+    &-price {
+      margin-left: 6px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 1.8rem;
+      line-height: 1;
+      font-size: 1.38rem;
       span {
         font-size: 1.4rem;
       }
@@ -106,6 +136,9 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      &-celo {
+        margin-left: 8px;
+      }
     }
     &-fee {
       padding-top: 2.5rem;
@@ -118,6 +151,12 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    &-box {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
   }
   &__button {
     width: 100%;
@@ -131,6 +170,19 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    &-submit {
+      background: $pink;
+      color: $white;
+      &:last-child {
+        margin-left: 1.23rem;
+      }
+      &.disabled {
+        background: $white;
+        pointer-events: none;
+        border: 1px solid $border;
+        color: $border;
+      }
+    }
     &-confirm {
       border: 0;
       cursor: default;
@@ -145,6 +197,28 @@ export default {
     padding-top: 1.6rem;
     text-align: center;
     letter-spacing: 0.03em;
+  }
+  &__step {
+    display: flex;
+    align-items: center;
+    margin-top: 1.92rem;
+    padding: 0 8.23rem;
+    &-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border: 2px solid $border2;
+      border-radius: 50%;
+      font-size: 1rem;
+      color: $border2;
+    }
+    &-line {
+      flex: 1;
+      border: 1px solid $border2;
+      opacity: 0.65;
+    }
   }
   &__close-button {
     position: absolute;
