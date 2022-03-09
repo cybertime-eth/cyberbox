@@ -1,5 +1,5 @@
 <template>
-  <section class="home container-xl">
+  <section class="home container-xl" :class="{'wrong-network': wrongNetwork}">
     <h1 class="home__title">Discover, collect and trade NFTs</h1>
     <div class="home__items">
       <div class="home__item" @click="$router.push(`/collections/${collection.route}`)" v-for="collection of list">
@@ -17,6 +17,9 @@ export default {
   computed: {
     list() {
       return this.$store.state.collectionList
+    },
+    wrongNetwork() {
+      return this.$store.state.wrongNetwork
     }
   },
   created() {
@@ -82,6 +85,9 @@ export default {
 @media screen and (max-width: 460px) {
   .home {
     padding-top: 2.2rem;
+    &.wrong-network {
+      padding-top: 7.3rem;
+    }
     &__title {
       font-size: 1.8rem;
       letter-spacing: 0.03em;

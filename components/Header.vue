@@ -25,7 +25,7 @@
       </nav>
       <div class="header__error-network" v-if="showWrongNetwork">
         <img src="/pulse.svg" alt="pulse">
-        <p class="header__error-network-text">{{ networkErrorText }}</p>
+        <p class="header__error-network-text">You are on the wrong network</p>
       </div>
       <div v-else class="header__null"></div>
       <button class="header__box gradient-button" v-if="address" @click="$router.push('/mycollection')">
@@ -101,15 +101,6 @@ export default {
     myCollectionTitle() {
       return !this.isMobile() || window.innerWidth > 460 ? 'My Collection' : 'My NFT'
     },
-    networkErrorText() {
-      let errorText = 'You are on the wrong network'
-      if (process.browser) {
-        if (window.innerWidth < 460) {
-          errorText = 'Wrong Network'
-        }
-      }
-      return errorText
-    }
   },
   created() {
     if (process.browser) {
@@ -247,6 +238,7 @@ header {
     display: flex;
     justify-content: space-between;
     height: 6.5rem;
+    position: relative;
     &__null {
       display: none;
     }
@@ -276,8 +268,11 @@ header {
     &__error {
       &-network {
         width: auto;
+        position: absolute;
+        left: 50%;
+        top: 7.8rem;
         padding: 0.8rem 0.5rem;
-        margin-right: 0.8rem;
+        transform: translateX(-50%);
         img {
           width: 1.4rem;
         }
