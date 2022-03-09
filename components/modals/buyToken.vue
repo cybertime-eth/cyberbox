@@ -31,9 +31,12 @@
       </div>
       <h4 class="modal__footer"  v-if="balance < nft.price">Insufficiently funds</h4>
       <div class="modal__step" v-else>
-        <span class="modal__step-status">1</span>
-        <span class="modal__step-line"></span>
-        <span class="modal__step-status">2</span>
+        <span class="modal__step-status active" :class="{ approved: successApproveBuyToken }">
+          <span v-if="!successApproveBuyToken">1</span>
+          <img src="/check-circle.svg" alt="check" v-else>
+        </span>
+        <span class="modal__step-line" :class="{ active: successApproveBuyToken }"></span>
+        <span class="modal__step-status" :class="{ active: successApproveBuyToken }">2</span>
       </div>
       <button class="modal__close-button" @click="closeModal">
         <img src="/close-bold.svg" class="modal__close-button-icon">
@@ -57,6 +60,13 @@ export default {
       pending: false
     }
   },
+  watch: {
+    successApproveBuyToken() {
+      if (this.$store.state.successApproveBuyToken) {
+        this.pending = false
+      }
+    }
+  },
   mounted() {
     this.$store.commit('changeSuccessApproveBuyToken', false)
   },
@@ -73,6 +83,7 @@ export default {
       }
     },
     async buyToken() {
+      this.pending = true
       try {
         await this.$store.dispatch('buyNFT', {
           id: this.$route.params.nftid,
@@ -213,11 +224,26 @@ export default {
       border-radius: 50%;
       font-size: 1rem;
       color: $border2;
+      &.active {
+        border: 1px solid $pink;
+        color: $pink;
+        * {
+          color: $pink;
+        }
+      }
+      &.approved {
+        border: 0;
+      }
     }
     &-line {
       flex: 1;
-      border: 1px solid $border2;
+      height: 2px;
+      background: $border2;
       opacity: 0.65;
+      &.active {
+        background: linear-gradient(93.06deg,  #2CFF64 8.21%, #FC2EF5 100%);
+        opacity: 1;
+      }
     }
   }
   &__close-button {
