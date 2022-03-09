@@ -1,22 +1,19 @@
 import Web3 from 'web3'
 import {ethers, Wallet, providers, BigNumber} from 'ethers'
-import WalletConnectProvider from "@walletconnect/web3-provider"
+import WalletConnectProvider from "@walletconnect/web3-provider";
 import { mobileLinkChoiceKey, setLocal } from "@walletconnect/utils"
-import ENS from "@ensdomains/ensjs"
-import MarketMainABI from '../abis/marketMain.json'
-import API from '../api'
-import daosABI from '../abis/daos.json'
-import punksABI from '../abis/punks.json'
-import toadsABI from '../abis/toads.json'
-import cshapeABI from '../abis/cshape.json'
-import pxaABI from '../abis/pixcel.json'
 import { uuid } from "@walletconnect/utils"
+import MarketMainABI from './../abis/marketMain.json'
+import API from '../api'
+import DaosABI from './../abis/daos.json'
+// import MaosABI from './../abis/maos.json'
+// import CeloToken from './../abis/celoToken.json'
 import {gql} from "nuxt-graphql-request";
 const ContractKit = require('@celo/contractkit')
 import filter from './../config.js'
-import redstone from 'redstone-api'
+import redstone from 'redstone-api';
 export const state = () => ({
-  marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
+  marketMain: '0x1D342301B236B5f1A1aE7a55a8faaB68b28843Ce',
   user: {},
   chainId: null,
   address: null,
@@ -43,32 +40,6 @@ export const state = () => ({
   collectionList: [
     {
       id: 1,
-      name: 'Celostrials',
-      route: 'nfet',
-      image: '/collections/celostrials.jpg',
-      banner: '/collections/celostrials-banner.jpg',
-      logo: '/collections/celostrials-logo.png',
-      website: 'https://celostrials.com/#/',
-      twitter: 'https://mobile.twitter.com/celostrials',
-      discord: 'https://discord.gg/HvvtgPuWHe',
-      instagram: 'https://www.instagram.com/celostrials/',
-      description: 'Celostrials are an intergalactic collection of unique beings, found exclusively on the Celo Blockchain. Their features are algorithmically generated resulting in an interstellar collectible completely unique to you!'
-    },
-    {
-      id: 2,
-      name: 'ChinChilla Gang',
-      route: 'gang',
-      image: '/collections/gang.png',
-      banner: '/collections/gang-banner.png',
-      logo: '/collections/gang-logo.png',
-      wallet: '0xAfd1dEE2Ac3790aA28d679E82Aaad6Fb9aba24f1',
-      website: 'https://www.chinchillagang.com/',
-      twitter: 'https://twitter.com/Chinchilla_Gang',
-      telegram: 'https://t.co/E8XPvASIrz',
-      description: `The ChinChilla Gang collection is composed by 8888 ultra HD NFTs living on Celo blockchain. With this collection we want to create a durable brand and for this reason we didn't put "Celo" in our name like all other NFT projects on this blockchain.`
-    },
-    {
-      id: 3,
       name: 'Daopolis',
       route: 'daos',
       image: '/collections/daopolis.jpg',
@@ -81,58 +52,7 @@ export const state = () => ({
       description: "Automatically generated 9192 NFT's. Born in the CyberTime era, Daopolis citizens will be the foundation of a new gaming metaverse on Celo. Find your digital avatar, gain access to a private club and participate in unique NFT games!"
     },
     {
-      id: 4,
-      name: 'CeloPunks',
-      route: 'cpunk',
-      image: '/collections/Celopunks.jpg',
-      banner: '/collections/CeloPunks-banner.png',
-      logo: '/collections/CeloPunks-logo.png',
-      wallet: '0x29a6520A99656e5b17A34471D5d458eFD3696695',
-      website: 'https://celopunks.club/',
-      twitter: 'https://twitter.com/CeloPunks',
-      discord: 'https://discord.com/invite/Dzukufsrqe',
-      telegram: 'https://t.me/celopunksclub',
-      description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
-    },
-    {
-      id: 5,
-      name: 'CeloApes',
-      route: 'cak',
-      image: '/collections/cak.png',
-      banner: '/collections/cak-banner.png',
-      logo: '/collections/cak-logo.png',
-      website: 'https://www.celoapes.club',
-      twitter: 'https://twitter.com/Celo_Apes',
-      discord: 'https://discord.gg/bxEAVV8Fcj',
-      description: 'The Celo Apes Kingdom is an collection of 10000 APE NFT (10000 minted!) on Celo Blockchain. Own an Ape to become part of the most epic Ape Kingdom. 10% of all money goes towards eradicating poverty.'
-    },
-    {
-      id: 6,
-      name: 'Nomstronaut',
-      route: 'nomstronaut',
-      image: '/collections/nomstronaut.png',
-      banner: '/collections/nomstronaut-banner.png',
-      logo: '/collections/nomstronaut-logo.png',
-      website: 'https://www.nom.space/',
-      twitter: 'https://twitter.com/nomspace_nom',
-      discord: 'https://discord.gg/byMNXabAxZ',
-      description: "All .nom's are NFTs which means you can easily transfer and sell them."
-    },
-    {
-      id: 7,
-      name: 'MooPunks',
-      route: 'mpunk',
-      image: '/collections/mpunk.png',
-      banner: '/collections/mpunk-banner.png',
-      logo: '/collections/mpunk-logo.png',
-      website: 'https://app.moola.market/',
-      telegram: 'https://t.me/moolamarket',
-      twitter: 'https://twitter.com/Moola_Market',
-      discord: 'https://discord.com/invite/NsphyqbESK',
-      description: 'Moola is a non-custodial liquidity protocol built on the Celo blockchain that is democratizing access to yield and credit. Depositors earn yield which is paid for by borrowers who are able to take over-collateralized loans in perpetuity or under-collateralized flash loans.'
-    },
-    {
-      id: 8,
+      id: 2,
       name: 'CeloToadz',
       route: 'ctoadz',
       image: '/collections/celoToadz.png',
@@ -146,7 +66,7 @@ export const state = () => ({
       description: 'CeloToadz | First collection of 6969 randomly generated Toadz made up of more than 120 different traits on Celo Blockchain!'
     },
     {
-      id: 9,
+      id: 3,
       name: 'CeloShapes',
       route: 'cshape',
       image: '/collections/cshape.png',
@@ -158,110 +78,99 @@ export const state = () => ({
       description: 'CeloShapes is a generative art collection living on the Celo blockchain. Collection contains 4444 algorithmically generated colorful artwork.'
     },
     {
-      id: 10,
-      name: 'PunksChristmas',
-      route: 'christmaspunk',
-      image: '/collections/christmaspunk.png',
-      banner: '/collections/christmaspunk-banner.png',
-      logo: '/collections/christmaspunk-logo.png',
+      id: 4,
+      name: 'CeloPunks',
+      route: 'cpunk',
+      image: '/collections/Celopunks.jpg',
+      banner: '/collections/CeloPunks-banner.png',
+      logo: '/collections/CeloPunks-logo.png',
       website: 'https://celopunks.club/',
       twitter: 'https://twitter.com/CeloPunks',
       discord: 'https://discord.com/invite/Dzukufsrqe',
       telegram: 'https://t.me/celopunksclub',
       description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
     },
-    {
-      id: 11,
-      name: 'PunksNeon',
-      route: 'cpunkneon',
-      image: '/collections/cpunkneon.png',
-      banner: '/collections/cpunkneon-banner.png',
-      logo: '/collections/cpunkneon-logo.png',
-      website: 'https://celopunks.club/',
-      twitter: 'https://twitter.com/CeloPunks',
-      discord: 'https://discord.com/invite/Dzukufsrqe',
-      telegram: 'https://t.me/celopunksclub',
-      description: 'CeloPunksNeon are a special collection of CeloPunks with a unique Neon style designed for CeloPunks holders. Not affiliated with LarvaLabs.'
-    },
-    {
-      id: 12,
-      name: 'CeloPaints',
-      route: 'cpaint',
-      image: '/collections/cpaint.png',
-      banner: '/collections/cpaint-banner.png',
-      logo: '/collections/cpaint-logo.png',
-      website: 'https://celopaints.art',
-      twitter: 'https://twitter.com/CeloPaintsNFT',
-      discord: 'https://discord.com/invite/H7NnhjHwWy',
-      description: 'CeloPaints is a generative abstract art collection living on the Celo blockchain. Collection contains 444 algorithmically generated colorful abstract paintings.'
-    },
-    {
-      id: 13,
-      name: 'DimsOfCelo',
-      route: 'dimcelo',
-      image: '/collections/DimsOfCelo.png',
-      banner: '/collections/DimsOfCelo-banner.png',
-      logo: '/collections/DimsOfCelo-logo.png',
-      website: 'https://dimsofcelo.art',
-      twitter: 'https://twitter.com/dimsofcelonft',
-      discord: 'https://discord.com/invite/rhJjVUtKEs',
-      description: 'Dimensions of Celo a.k.a. DimsOfCelo NFTs are 10,000 tokens of appreciation on Celo Blockchain, trying to reach their way into generative art.'
-    },
-    {
-      id: 14,
-      name: 'CeloDAOPunks',
-      route: 'cdp',
-      image: '/collections/cdp.png',
-      banner: '/collections/cdp-banner.png',
-      logo: '/collections/cdp-logo.jpg',
-      description: '7777 Generated Celo DAO Punks On Celo blockchain'
-    },
-    {
-      id: 15,
-      name: 'Womxn of Celo',
-      route: 'wmxn',
-      image: '/collections/womxnofcelo.png',
-      banner: '/collections/womxnofcelo-banner.png',
-      logo: '/collections/womxnofcelo-logo.png',
-      website: 'https://www.womxnofcelo.com/',
-      twitter: 'https://twitter.com/WomxnOfCelo',
-      discord: 'https://discord.com/invite/SuFUEn2Vzn',
-      description: 'Womxn of Celo is the 1st generation of the (Womxn of) series for different blockchains. This Collection was created to empower women in the NFT space as well as women artists from all parts of the globe. To choose to write "womxn" so that we represent different cultures and gender expressions in the women in NFT community. The collection is based on the Celo blockchain and includes 5k unique gorgeous girls. Every girl has various rare attributes and features.'
-    },
-    {
-      id: 16,
-      name: 'Celo Espresso',
-      route: 'cespresso',
-      image: '/collections/celoespresso.png',
-      banner: '/collections/celoespresso-banner.png',
-      logo: '/collections/celoespresso-logo.png',
-      website: 'https://celo-espresso.cafe/',
-      twitter: 'https://twitter.com/CeloEspresso',
-      discord: 'https://discord.gg/UKjyhb7xzQ',
-      medium: 'https://medium.com/@CeloEspresso',
-      description: 'GM fellow espresso baristas, the Espresso Hard Fork is live! Now all the beautiful cEspressi can be born and welcomed to the Celo Blockchain. Head over to the coffee machine to brew your own, unique cEspresso!'
-    },
     // {
-    //   id: 14,
-    //   name: 'PixelAva',
-    //   route: 'pxa',
-    //   image: '/collections/PixelAva.png',
-    //   banner: '/collections/PixelAva-banner.png',
-    //   logo: '/collections/PixelAva-logo.png',
-    //   wallet: '0xeBD0A580fabb5a5DBE98030D074e532F025C1367',
-    //   website: 'https://pixelava.space/',
-    //   twitter: 'https://twitter.com/NPixelava',
-    //   discord: 'https://discord.gg/sjjjFX2X',
-    //   description: 'Pixaverse is a collection of GameFi worlds where PixelAva holders have extraordinary privileges.'
+    //   id: 5,
+    //   name: 'CeloApes',
+    //   route: 'cak',
+    //   image: '/collections/cak.png',
+    //   banner: '/collections/cak-banner.png',
+    //   logo: '/collections/cak-logo.png',
+    //   website: 'https://www.celoapes.club',
+    //   twitter: 'https://twitter.com/Celo_Apes',
+    //   discord: 'https://discord.gg/bxEAVV8Fcj',
+    //   description: 'The Celo Apes Kingdom is an collection of 10000 APE NFT (10000 minted!) on Celo Blockchain. Own an Ape to become part of the most epic Ape Kingdom. 10% of all money goes towards eradicating poverty.'
+    // },
+    // {
+    //   id: 6,
+    //   name: 'PunksChristmas',
+    //   route: 'christmaspunk',
+    //   image: '/collections/christmaspunk.png',
+    //   banner: '/collections/christmaspunk-banner.png',
+    //   logo: '/collections/christmaspunk-logo.png',
+    //   website: 'https://celopunks.club/',
+    //   twitter: 'https://twitter.com/CeloPunks',
+    //   discord: 'https://discord.com/invite/Dzukufsrqe',
+    //   telegram: 'https://t.me/celopunksclub',
+    //   description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
+    // },
+    // {
+    //   id: 7,
+    //   name: 'PunksNeon',
+    //   route: 'cpunkneon',
+    //   image: '/collections/cpunkneon.png',
+    //   banner: '/collections/cpunkneon-banner.png',
+    //   logo: '/collections/cpunkneon-logo.png',
+    //   website: 'https://celopunks.club/',
+    //   twitter: 'https://twitter.com/CeloPunks',
+    //   discord: 'https://discord.com/invite/Dzukufsrqe',
+    //   telegram: 'https://t.me/celopunksclub',
+    //   description: 'CeloPunksNeon are a special collection of CeloPunks with a unique Neon style designed for CeloPunks holders. Not affiliated with LarvaLabs.'
+    // },
+    // {
+    //   id: 8,
+    //   name: 'Nomstronaut',
+    //   route: 'nomstronaut',
+    //   image: '/collections/nomstronaut.png',
+    //   banner: '/collections/nomstronaut-banner.png',
+    //   logo: '/collections/nomstronaut-logo.png',
+    //   website: 'https://www.nom.space/',
+    //   twitter: 'https://twitter.com/nomspace_nom',
+    //   discord: 'https://discord.gg/byMNXabAxZ',
+    //   description: "All .nom's are NFTs which means you can easily transfer and sell them."
+    // },
+    // {
+    //   id: 9,
+    //   name: 'CeloPaints',
+    //   route: 'cpaint',
+    //   image: '/collections/cpaint.png',
+    //   banner: '/collections/cpaint-banner.png',
+    //   logo: '/collections/cpaint-logo.png',
+    //   website: 'https://celopaints.art',
+    //   twitter: 'https://twitter.com/CeloPaintsNFT',
+    //   discord: 'https://discord.com/invite/H7NnhjHwWy',
+    //   description: 'CeloPaints is a generative abstract art collection living on the Celo blockchain. Collection contains 444 algorithmically generated colorful abstract paintings.'
+    // },
+    // {
+    //   id: 10,
+    //   name: 'DimsOfCelo',
+    //   route: 'dimcelo',
+    //   image: '/collections/DimsOfCelo.png',
+    //   banner: '/collections/DimsOfCelo-banner.png',
+    //   logo: '/collections/DimsOfCelo-logo.png',
+    //   website: 'https://dimsofcelo.art',
+    //   twitter: 'https://twitter.com/dimsofcelonft',
+    //   discord: 'https://discord.com/invite/rhJjVUtKEs',
+    //   description: 'Dimensions of Celo a.k.a. DimsOfCelo NFTs are 10,000 tokens of appreciation on Celo Blockchain, trying to reach their way into generative art.'
     // },
   ],
 })
-
 export const getters = {
   walletConnectProvider() {
     return new WalletConnectProvider({
       rpc: {
-        42220: "https://forno.celo.org",
+        44787: "https://alfajores-forno.celo-testnet.org",
       },
       qrcodeModalOptions: {
         mobileLinks: !window.ethereum ? ['metamask', 'valora'] : []
@@ -377,26 +286,6 @@ export const actions = {
 	const data = await this.$graphql.default.request(query)
 	const tokenPrice = data.contractInfos.length > 0 ? data.contractInfos[0].price : 0
 	return tokenPrice ? (tokenPrice / 1000).toFixed(2) : '-'
-  },
-
-  async getCollectionCountNft({state, commit}, contract) {
-    if (!state.fullAddress) return 0
-
-    let countCondition = `contract: "${contract}"`
-    if (contract === 'all') {
-      countCondition = ''
-    } else if (contract === 'sale') {
-      countCondition = 'market_status: "LISTED"'
-    }
-    const query = gql`
-      query Sample {
-        contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" ${countCondition} }) {
-			    id
-          contract
-        }
-      }`
-    const data = await this.$graphql.default.request(query)
-    return data.contractInfos.length
   },
 
   async getGraphDataListed({state, commit, getters, dispatch}) {
@@ -716,21 +605,7 @@ export const actions = {
     const signer = provider.getSigner()
     const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     const resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
-    let AbiNft = null
-    switch (state.nft.contract) {
-      case 'daos': AbiNft = daosABI
-        break;
-      case 'cpunk': AbiNft = punksABI
-        break;
-      case 'ctoadz': AbiNft = toadsABI
-        break;
-      case 'cshape': AbiNft = cshapeABI
-        break;
-      case 'pxa': AbiNft = pxaABI
-        break;
-      default: AbiNft = daosABI
-        break;
-    }
+    const AbiNft = DaosABI
     try {
       const contract = new ethers.Contract(state.nft.contract_address, AbiNft, signer)
       const approvedForAll = await contract.isApprovedForAll(state.fullAddress, resultAddress)
@@ -782,6 +657,10 @@ export const actions = {
   // BUY NFT
 
   async approveBuyToken({state, dispatch, getters}, token) {
+    // let walletProvider = window.ethereum
+    // if (state.walletConnected) {
+    //   walletProvider = new Web3.providers.HttpProvider('https://alfajores-forno.celo-testnet.org')
+    // }
   const ethereumProvider = getters.provider
   const provider = new ethers.providers.Web3Provider(ethereumProvider)
   const web3 = new Web3(ethereumProvider)
@@ -860,7 +739,6 @@ export const actions = {
           ownerCount
           createrFee
           producerFee
-          marketFee
         }
       }`;
     let data = await this.$graphql.default.request(query)
@@ -930,27 +808,9 @@ export const actions = {
       console.log(error)
       commit('changeSuccessRemoveToken', true)
     }
-  },
-
-  async loadNomNameAddress({commit}) {
-    const address = localStorage.getItem('address')
-    try {
-      const provider = new providers.JsonRpcProvider("https://forno.celo.org")
-      const ens = new ENS({ provider, ensAddress: "0x3DE51c3960400A0F752d3492652Ae4A0b2A36FB3" })
-      const result = await ens.getName(address)
-      let ensName = result.name
-      if(ensName == null || address != await ens.name(`${ensName}.nom`).getAddress()) {
-        ensName = null
-      }
-      console.log('nom name:', ensName)
-      if (ensName) {
-        commit('setAddressByNom', ensName)
-      }
-    } catch(e) {
-      console.log(e)
-    }
   }
 }
+
 
 export const mutations = {
   setUser(state, user) {
@@ -966,9 +826,6 @@ export const mutations = {
       .concat(dotArr)
       .concat(endID)
       .join("");
-  },
-  setAddressByNom(state, nomAddress) {
-    state.address = `${nomAddress}.nom`
   },
   setWalletConnected(state, connected) {
     state.walletConnected = connected
@@ -1031,7 +888,7 @@ export const mutations = {
   },
   setChainId(state, chain) {
     state.chainId = chain
-    state.wrongNetwork = chain !== 42220
+    // state.wrongNetwork = chain !== 42220
   },
   setWalletUri(state, uri) {
     state.walletUri = uri

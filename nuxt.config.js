@@ -25,7 +25,6 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '@/plugins/aos.client.js',
-    '@/plugins/analytics.client.js',
     '@/plugins/outside.js',
     '@/plugins/components.js',
     '@/plugins/utils.js'
@@ -43,8 +42,8 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-cespresso',
-        options: {}
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/alpha-olympic-two',
+        options: {},
       },
       secondClient: {
         // ...client config
@@ -57,7 +56,7 @@ export default {
     modules: [
       // https://go.nuxtjs.dev/axios
       '@nuxtjs/axios',
-      '@nuxtjs/proxy',
+      '@nuxtjs/proxy'
     ],
 
     axios: {

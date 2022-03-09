@@ -67,17 +67,17 @@ export default {
       showWrongNetworkModal: false
     }
   },
-  watch: {
-    chainId() {
-      const id = this.$store.state.chainId
-      id === 42220 || id === null ? this.showWrongNetwork = false :  this.showWrongNetwork = true
-    },
-    address() {
-      if (this.address && this.chainId !== 42220) {
-        this.showWrongNetworkModal = true
-      }
-    }
-  },
+  // watch: {
+  //   chainId() {
+  //     const id = this.$store.state.chainId
+  //     id === 42220 || id === null ? this.showWrongNetwork = false :  this.showWrongNetwork = true
+  //   },
+  //   address() {
+  //     if (this.address && this.chainId !== 42220) {
+  //       this.showWrongNetworkModal = true
+  //     }
+  //   }
+  // },
   components: {
     connect,
     valoraConnect,
