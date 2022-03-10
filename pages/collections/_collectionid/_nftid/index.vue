@@ -20,7 +20,7 @@
           <div class="nft__block-info" v-if="!seller">
             <div class="nft__block-info-collection">
               <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
-              <h2 class="nft__block-info-collection-name">{{ collectionName(nft.contract) }}</h2>
+              <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2></a>
             </div>
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <h1 class="nft__block-info-rank">Rarity rank {{ nft.rating_index }}</h1>
@@ -57,7 +57,7 @@
           <div class="nft__block-info" v-else-if="listStatus === 'default' && seller">
             <div class="nft__block-info-collection">
               <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
-              <h2 class="nft__block-info-collection-name">{{ collectionName(nft.contract) }}</h2>
+              <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2>
             </div>
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <h1 class="nft__block-info-rank">Rarity rank {{ nft.rating_index }}</h1>
@@ -459,6 +459,7 @@ export default {
           margin-left: 0.62rem;
           font-weight: 600;
           font-size: 1.23rem;
+          cursor: pointer;
         }
       }
       &-company {
