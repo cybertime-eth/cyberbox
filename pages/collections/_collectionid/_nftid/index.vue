@@ -18,6 +18,10 @@
           <!-- INFO BUYER -->
 
           <div class="nft__block-info" v-if="!seller">
+            <div class="nft__block-info-collection">
+              <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
+              <h2 class="nft__block-info-collection-name">{{ collectionName(nft.contract) }}</h2>
+            </div>
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <h1 class="nft__block-info-rank">Rarity rank {{ nft.rating_index }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
@@ -51,6 +55,10 @@
           <!-- INFO SELLER -->
 
           <div class="nft__block-info" v-else-if="listStatus === 'default' && seller">
+            <div class="nft__block-info-collection">
+              <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
+              <h2 class="nft__block-info-collection-name">{{ collectionName(nft.contract) }}</h2>
+            </div>
             <h1 class="nft__block-info-name">{{ nft.name }}</h1>
             <h1 class="nft__block-info-rank">Rarity rank {{ nft.rating_index }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
@@ -264,6 +272,14 @@ export default {
     }
   },
   methods: {
+    collectionIcon(contract) {
+      return contract ? `/${contract}.png` : null
+    },
+    collectionName(contract) {
+      if (!contract) return ''
+      const collection = this.$store.state.collectionList.find(item => item.route === contract)
+      return collection?.name
+    },
     async loadNft() {
       const nft = await this.$store.dispatch('getNft', {
         id: this.$route.params.nftid,
@@ -431,6 +447,20 @@ export default {
       }
     }
     &-info {
+      &-collection {
+        display: flex;
+        align-items: center;
+        &-icon {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+        }
+        &-name {
+          margin-left: 0.62rem;
+          font-weight: 600;
+          font-size: 1.23rem;
+        }
+      }
       &-company {
         letter-spacing: 0.04em;
       }
@@ -697,6 +727,16 @@ export default {
         text-align: left;
         padding-top: 1.8rem;
         padding-bottom: 1.6rem;
+        &-collection {
+          &-icon {
+            width: 24px;
+            height: 24px;
+          }
+          &-name {
+            margin-left: 0.8rem;
+            font-size: 1.4rem;
+          }
+      }
         &-company {
           font-size: 1.4rem;
         }
