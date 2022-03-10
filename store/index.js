@@ -31,6 +31,7 @@ export const state = () => ({
   listToken: '',
   countPage: 1,
   filter: filter.races.DAOS.layers,
+  successApproveBuyToken: false,
   successBuyToken: false,
   successRemoveToken: false,
   successTransferToken: false,
@@ -781,7 +782,7 @@ export const actions = {
 
   // BUY NFT
 
-  async approveBuyToken({state, dispatch, getters}, token) {
+  async approveBuyToken({state, commit, getters}, token) {
   const ethereumProvider = getters.provider
   const provider = new ethers.providers.Web3Provider(ethereumProvider)
   const web3 = new Web3(ethereumProvider)
@@ -794,7 +795,7 @@ export const actions = {
 	  from: account,
   })
 	provider.once(result, async () => {
-	  dispatch('buyNFT', token)
+	  commit('changeSuccessApproveBuyToken', true)
 	});
   },
   async buyNFT({commit, state, getters}, token) {
@@ -1019,6 +1020,9 @@ export const mutations = {
   },
   changeCountPage(state, count) {
     state.countPage = count
+  },
+  changeSuccessApproveBuyToken(state, status) {
+    state.successApproveBuyToken = status
   },
   changeSuccessBuyToken(state, status) {
     state.successBuyToken = status
