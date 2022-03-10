@@ -458,7 +458,7 @@ export default {
         &-name {
           margin-left: 0.62rem;
           font-weight: 600;
-          font-size: 1.23rem;
+          font-size: 16px;
           cursor: pointer;
         }
       }
@@ -475,7 +475,7 @@ export default {
         padding-top: 1.1rem;
         font-family: OpenSans-Regular;
         font-weight: 400;
-        font-size: 1.07rem;
+        font-size: 14px;
         color: $textColor;
       }
       &-minted {
