@@ -7,7 +7,7 @@
     <div class="menu-mobile-list container-xl" @click="closeModal">
       <nuxt-link to="/" class="gradient-text menu-mobile-list-link">Marketplace</nuxt-link>
       <nuxt-link to="/rankings" class="menu-mobile-list-link">Rankings</nuxt-link>
-      <a class="menu-mobile-list-link" href="https://docs.cybertime.finance/" target="_blank">About</a>
+      <nuxt-link to="/loans" class="menu-mobile-list-link">NFT loans</nuxt-link>
       <!-- <a href="https://forms.gle/R7LmANz7iqsCA88X8" target="_blank" class="menu-mobile-list-link">Launchpad</a> -->
     </div>
   </div>

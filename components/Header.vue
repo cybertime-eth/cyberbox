@@ -16,7 +16,7 @@
             <nuxt-link class="header__link" active-class="gradient-text" to="/rankings"  exact>Rankings</nuxt-link>
           </li>
           <li class="header__list">
-            <a class="header__link" href="https://docs.cybertime.finance/" target="_blank">About</a>
+            <nuxt-link class="header__link" active-class="gradient-text" to="/loans"  exact>NFT loans</nuxt-link>
           </li>
           <!-- <li class="header__list">
             <a class="header__link" href="https://forms.gle/R7LmANz7iqsCA88X8" target="_blank">Launchpad</a>
