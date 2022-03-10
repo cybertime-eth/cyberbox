@@ -118,12 +118,14 @@ export default {
     padding-top: 2.4rem;
   }
   &__information {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 3.5rem 0;
     border-bottom: .1rem solid $modalColor;
     &-price-box {
       display: flex;
       align-items: center;
-      padding-top: 2.5rem;
     }
     &-price {
       margin-left: 6px;
