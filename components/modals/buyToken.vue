@@ -2,7 +2,7 @@
   <div class="modal">
     <div class="modal__buy">
       <h1 class="modal__title gradient-text">Payment Confirmation</h1>
-      <p class="modal__subtitle">You are about to purchase a <span class="modal__subtitle-bold">{{ nft.name }}</span> from <span class="modal__subtitle-bold">{{ collectionName }}</span></p>
+      <p class="modal__subtitle">You are about to purchase a <span class="modal__subtitle-bold">{{ nft.name }}</span></p>
       <div class="modal__information">
         <h3 class="modal__information-title">You pay</h3>
         <div class="modal__information-price-box">
