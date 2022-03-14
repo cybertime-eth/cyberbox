@@ -13,6 +13,9 @@ export default {
   computed: {
     message() {
       return this.$store.state.message
+    },
+    address() {
+      return this.$store.state.address
     }
   },
   metaInfo: {
@@ -34,6 +37,13 @@ export default {
       { hid: 'description', name: 'description', content: '' },
       { name: 'format-detection', content: 'telephone=no' }
     ]
+  },
+  watch: {
+    address() {
+      if (this.$store.state.address) {
+        this.$store.dispatch('loadNomNameAddress')
+      }
+    }
   },
  async mounted() {
     await this.$store.dispatch('updateUser')
