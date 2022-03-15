@@ -26,6 +26,8 @@ export const state = () => ({
   fullAddress: null,
   nftList: [],
   myNftList: [],
+  traitFilters: [],
+  traitsFiltered: false,
   nft: {},
   approveToken: '',
   listToken: '',
@@ -309,59 +311,87 @@ export const actions = {
     }
     return newContractInfos
   },
-  async getGraphData({commit, state, getters, dispatch}) {
+  async getGraphData({commit, state, getters, dispatch}, traitFilters) {
     let sort = getters.paginationSort
     let condition = $nuxt.$route.params.collectionid ? `where: { contract: "${$nuxt.$route.params.collectionid}"}` : ''
     let rarityNfts = null
-    if (state.raritySort && !state.sort.includes('owner') && $nuxt.$route.params.collectionid) {
-      rarityNfts = await dispatch('getRarityNfts')
-      condition = `where: { contract: "${$nuxt.$route.params.collectionid}" contract_id_in: [${rarityNfts.map(item => item.contract_id)}] }`
-      sort = ''
+    let queryTables = ''
+    const queryFormat = `
+      contractInfos(sort first: 48 condition) {
+        id
+        contract
+        contract_id
+        price
+        seller
+        owner
+        attributes
+        rarity_rank
+        contract_address
+        market_status
+        name
+        image
+        description
+        updatedAt
+        dna
+        trait
+        listData {
+          id
+          owner
+          price
+        }
+        bidData {
+          id
+          owner
+          bidder
+          price_total
+          price_value
+          price_fee
+        }
+        selled {
+          id
+          seller
+          buyer
+          price_total
+          price_value
+          price_fee
+        }
+      }
+    `
+    if (traitFilters && traitFilters.length > 0) {
+      traitFilters.forEach((item, index) => {
+        condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] }`
+        queryTables += `contractInfos${index}:` + queryFormat.replace('sort', sort).replace('condition', condition)
+      })
+    } else {
+      if (state.raritySort && !state.sort.includes('owner') && $nuxt.$route.params.collectionid) {
+        rarityNfts = await dispatch('getRarityNfts')
+        condition = `where: { contract: "${$nuxt.$route.params.collectionid}" contract_id_in: [${rarityNfts.map(item => item.contract_id)}] }`
+        sort = ''
+      }
+      queryTables = queryFormat.replace('sort', sort).replace('condition', condition)
     }
     const query = gql`
       query Sample {
-        contractInfos(${sort} first: 48 ${condition}) {
-          id
-          contract
-          contract_id
-          price
-          seller
-          owner
-          attributes
-          rarity_rank
-          contract_address
-          market_status
-          name
-          image
-          description
-          updatedAt
-          dna
-          trait
-          listData {
-            id
-            owner
-            price
-          }
-          bidData {
-            id
-            owner
-            bidder
-            price_total
-            price_value
-            price_fee
-          }
-          selled {
-            id
-            seller
-            buyer
-            price_total
-            price_value
-            price_fee
-          }
-        }
+        ${queryTables}
       }`;
     const data = await this.$graphql.default.request(query)
-    let contractInfos = await dispatch('getRarirtyCollections', { contractInfos: data.contractInfos, rarityNfts })
+    let contractInfos = data.contractInfos || []
+    if (traitFilters && traitFilters.length > 0) {
+      let contractIds = []
+      traitFilters.forEach((item, index) => {
+        const newContractInfos = data[`contractInfos${index}`].filter(dItem => !contractIds.includes(dItem.contract_id))
+        contractInfos = [
+          ...contractInfos,
+          ...newContractInfos
+        ]
+        contractIds = contractInfos.map(cItem => cItem.contract_id)
+      })
+      contractInfos = contractInfos.sort((a, b) => a.contract_id - b.contract_id)
+      commit('setTraitsFiltered', true)
+    } else {
+      commit('setTraitsFiltered', false)
+    }
+    contractInfos = await dispatch('getRarirtyCollections', { contractInfos: contractInfos, rarityNfts })
     state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
     return contractInfos
   },
@@ -950,6 +980,36 @@ export const actions = {
     } catch(e) {
       console.log(e)
     }
+  },
+
+  async loadTraitFilters({commit}) {
+    let sort = getters.paginationSort
+    let condition = $nuxt.$route.params.collectionid ? `where: { contract: "${$nuxt.$route.params.collectionid}"}` : ''
+    let rarityNfts = null
+    if (state.raritySort && !state.sort.includes('owner') && $nuxt.$route.params.collectionid) {
+      rarityNfts = await dispatch('getRarityNfts')
+      condition = `where: { contract: "${$nuxt.$route.params.collectionid}" contract_id_in: [${rarityNfts.map(item => item.contract_id)}] }`
+      sort = ''
+    }
+    const symbol = $nuxt.$route.params.collectionid
+    const query = gql`
+      query Sample {
+        traitTypes(where: { nftSymbol: "${symbol}" }) {
+          nftSymbol
+          traitType
+          traitIndex
+        }
+        traitValues(where: { nftSymbol: "${symbol}" }) {
+          nftSymbol
+          traitType
+          traitValue
+          useCount
+        }
+      }`;
+    const data = await this.$graphql.default.request(query)
+    const traitFilters = data.traitTypes
+    traitFilters.map(item => item.values = data.traitValues.filter(filter => filter.traitType === item.traitType))
+    commit('setTraitFilters', traitFilters)
   }
 }
 
@@ -1001,6 +1061,9 @@ export const mutations = {
         newNftList = newNftList.sort((a, b) => b.rating_index - a.rating_index)
       }
     }
+    if (state.traitsFiltered) {
+      newNftList = newNftList.sort((a, b) => a.contract_id - b.contract_id)
+    }
     state.nftList = newNftList
   },
   setNewNft(state, nft) {
@@ -1011,7 +1074,13 @@ export const mutations = {
   },
   setMyNftList(state, list) {
     state.myNftList = list
-	},
+  },
+  setTraitFilters(state, filters) {
+    state.traitFilters = filters || []
+  },
+  setTraitsFiltered(state, filtered) {
+    state.traitsFiltered = filtered
+  },
   changelistToken(state, status) {
     state.listToken = status
   },

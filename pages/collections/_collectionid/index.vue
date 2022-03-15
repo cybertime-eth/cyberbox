@@ -108,6 +108,13 @@
         >
           <span>Rarity <span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Common</span>
         </button>
+        <button
+          class="collection__sort-button"
+          @click="showTraitsFilter = true"
+          v-if="filter === 'All'"
+        >
+          <span class="collection__sort-button-title">Traits</span> <img src="/trait.svg" alt="trait" class="collection__sort-button-icon"> <span class="collection__sort-button-badge" v-if="filtersCount > 0">{{filtersCount}}</span>
+        </button>
       </div>
 <!--      <attributesFilter />-->
       <div class="collection__loading" v-if="loading">
@@ -127,22 +134,33 @@
       </div>
       <p class="collection__empty-items" v-else-if="!loading">There are no results matching your selected criteria</p>
     </div>
+    <TraitsFilterModal
+      :show="showTraitsFilter"
+      :mintCount="collectionInfo.mint_count"
+      :filtersCount="filtersCount"
+      @updateFilter="updateTraitFilter"
+      @close="showTraitsFilter = false"
+      v-if="showTraitsFilter"
+    />
   </section>
 </template>
 <script>
 import nft from '@/components/nft.vue'
 import attributesFilter from '@/components/modals/attributesFilter'
+import TraitsFilterModal from '@/components/modals/traitsFilterModal'
 import {BigNumber} from 'ethers'
 export default {
   data() {
     return {
       loading: false,
+      showTraitsFilter: false,
       filter: 'All',
       activeRequest: 'getGraphData',
       sort: '',
       myNft: false,
       collectionInfo: {},
-      floorPrice: '-'
+      floorPrice: '-',
+      filteredTraits: null
     }
   },
   metaInfo() {
@@ -168,7 +186,8 @@ export default {
   },
   components: {
     nft,
-    attributesFilter
+    attributesFilter,
+    TraitsFilterModal
   },
   methods: {
     getDescription() {
@@ -194,13 +213,20 @@ export default {
     nftOwned(nft) {
       return nft.owner && nft.owner.toLowerCase() === this.$store.state.fullAddress
     },
+    initNftListSetting() {
+      this.loading = true
+      this.$store.commit('setNewNftList', [])
+      this.$store.commit('updateCollectionSetting', null)
+      this.$store.commit('changeCountPage', 1)
+      this.$store.commit('changeSortData', 'all')
+    },
     addCurrentPage() {
       const count = this.$store.state.countPage
       const element = document.body
-      if (element.scrollHeight <= window.pageYOffset + window.innerHeight && count * 48 === this.nftList.length && this.nftList.length > 0) {
-          this.$store.commit('changeCountPage', count + 1)
+      if (element.scrollHeight <= window.pageYOffset + window.innerHeight && (!this.filteredTraits && count * 48 === this.nftList.length || this.filteredTraits) && this.nftList.length > 0) {
+        this.$store.commit('changeCountPage', count + 1)
         this.$store.commit('changeSortData', 'pagination')
-        this.$store.dispatch(this.activeRequest)
+        this.$store.dispatch(this.activeRequest, this.filteredTraits)
       }
     },
     async fetchNftList() {
@@ -280,6 +306,16 @@ export default {
         fetchRequest: activeRequest
       })
     },
+    async updateTraitFilter(filters, filteredCount) {
+      this.initNftListSetting()
+      await this.$store.dispatch(this.activeRequest, filters)
+      this.filteredTraits = filteredCount > 0 ? filters : null
+      this.collectionInfo = {
+        ...this.collectionInfo,
+        filter_count: filteredCount
+      }
+      this.loading = false
+    }
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.addCurrentPage)
@@ -298,23 +334,22 @@ export default {
         this.myNft = collectionSetting.myNft || this.myNft
       }
     } else {
-      this.loading = true
-      this.$store.commit('setNewNftList', [])
-      this.$store.commit('updateCollectionSetting', null)
-      this.$store.commit('changeCountPage', 1)
-      this.$store.commit('changeSortData', 'all')
+      this.initNftListSetting()
       await this.$store.dispatch(this.activeRequest)
     }
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
     this.loading = false
+    if (this.$store.state.traitFilters.length === 0) {
+      this.$store.dispatch('loadTraitFilters')
+    }
   },
   computed: {
     countItems() {
       if (!this.myNft) {
         switch (this.filter) {
-          case 'All': return this.collectionInfo.mint_count;
+          case 'All': return this.collectionInfo.filter_count || this.collectionInfo.mint_count;
           case 'listed': return this.collectionInfo.list_count;
           case 'bought': return this.collectionInfo.sell_count;
         }
@@ -333,6 +368,16 @@ export default {
     },
     fetchEnabled() {
       return this.address || (!this.address && !this.myNft)
+    },
+    filtersCount() {
+      let sectionCount = 0
+      this.$store.state.traitFilters.forEach(item => {
+        const filteredValues = item.values.filter(filterItem => filterItem.checked)
+        if (filteredValues.length > 0) {
+          sectionCount++
+        }
+      })
+      return sectionCount
     }
   },
 }
@@ -466,6 +511,25 @@ export default {
       }
       &-breakline {
         display: none;
+      }
+      &-title {
+        line-height: 1;
+      }
+      &-icon, &-badge {
+        margin-left: 4px;
+      }
+      &-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: $border;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        line-height: 1.1;
+        font-weight: 600;
+        font-size: 1.07rem;
+        color: $white;
       }
     }
   }
