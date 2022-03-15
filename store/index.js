@@ -27,7 +27,7 @@ export const state = () => ({
   nftList: [],
   myNftList: [],
   traitFilters: [],
-  traitsFiltered: false,
+  filteredTraits: null,
   nft: {},
   approveToken: '',
   listToken: '',
@@ -387,9 +387,9 @@ export const actions = {
         contractIds = contractInfos.map(cItem => cItem.contract_id)
       })
       contractInfos = contractInfos.sort((a, b) => a.contract_id - b.contract_id)
-      commit('setTraitsFiltered', true)
+      commit('setFilteredTraits', traitFilters)
     } else {
-      commit('setTraitsFiltered', false)
+      commit('setFilteredTraits', null)
     }
     contractInfos = await dispatch('getRarirtyCollections', { contractInfos: contractInfos, rarityNfts })
     state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
@@ -983,14 +983,6 @@ export const actions = {
   },
 
   async loadTraitFilters({commit}) {
-    let sort = getters.paginationSort
-    let condition = $nuxt.$route.params.collectionid ? `where: { contract: "${$nuxt.$route.params.collectionid}"}` : ''
-    let rarityNfts = null
-    if (state.raritySort && !state.sort.includes('owner') && $nuxt.$route.params.collectionid) {
-      rarityNfts = await dispatch('getRarityNfts')
-      condition = `where: { contract: "${$nuxt.$route.params.collectionid}" contract_id_in: [${rarityNfts.map(item => item.contract_id)}] }`
-      sort = ''
-    }
     const symbol = $nuxt.$route.params.collectionid
     const query = gql`
       query Sample {
@@ -1061,7 +1053,7 @@ export const mutations = {
         newNftList = newNftList.sort((a, b) => b.rating_index - a.rating_index)
       }
     }
-    if (state.traitsFiltered) {
+    if (state.filteredTraits) {
       newNftList = newNftList.sort((a, b) => a.contract_id - b.contract_id)
     }
     state.nftList = newNftList
@@ -1078,8 +1070,8 @@ export const mutations = {
   setTraitFilters(state, filters) {
     state.traitFilters = filters || []
   },
-  setTraitsFiltered(state, filtered) {
-    state.traitsFiltered = filtered
+  setFilteredTraits(state, traits) {
+    state.filteredTraits = traits
   },
   changelistToken(state, status) {
     state.listToken = status

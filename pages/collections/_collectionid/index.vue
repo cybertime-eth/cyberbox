@@ -159,8 +159,7 @@ export default {
       sort: '',
       myNft: false,
       collectionInfo: {},
-      floorPrice: '-',
-      filteredTraits: null
+      floorPrice: '-'
     }
   },
   metaInfo() {
@@ -221,12 +220,13 @@ export default {
       this.$store.commit('changeSortData', 'all')
     },
     addCurrentPage() {
+      const filteredTraits = this.$store.state.filteredTraits
       const count = this.$store.state.countPage
       const element = document.body
-      if (element.scrollHeight <= window.pageYOffset + window.innerHeight && (!this.filteredTraits && count * 48 === this.nftList.length || this.filteredTraits) && this.nftList.length > 0) {
+      if (element.scrollHeight <= window.pageYOffset + window.innerHeight && (!filteredTraits && count * 48 === this.nftList.length || filteredTraits) && this.nftList.length > 0) {
         this.$store.commit('changeCountPage', count + 1)
         this.$store.commit('changeSortData', 'pagination')
-        this.$store.dispatch(this.activeRequest, this.filteredTraits)
+        this.$store.dispatch(this.activeRequest, filteredTraits)
       }
     },
     async fetchNftList() {
@@ -309,7 +309,6 @@ export default {
     async updateTraitFilter(filters, filteredCount) {
       this.initNftListSetting()
       await this.$store.dispatch(this.activeRequest, filters)
-      this.filteredTraits = filteredCount > 0 ? filters : null
       this.collectionInfo = {
         ...this.collectionInfo,
         filter_count: filteredCount
@@ -321,6 +320,7 @@ export default {
     window.removeEventListener('scroll', this.addCurrentPage)
   },
   async created() {
+    this.$store.commit('setTraitFilters', [])
     if (process.browser) {
       window.addEventListener('scroll', this.addCurrentPage)
     }
@@ -341,9 +341,7 @@ export default {
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
     this.loading = false
-    if (this.$store.state.traitFilters.length === 0) {
-      this.$store.dispatch('loadTraitFilters')
-    }
+    this.$store.dispatch('loadTraitFilters')
   },
   computed: {
     countItems() {
@@ -514,6 +512,9 @@ export default {
       }
       &-title {
         line-height: 1;
+      }
+      &-icon {
+        margin-left: 4px !important;
       }
       &-icon, &-badge {
         margin-left: 4px;
