@@ -1,13 +1,18 @@
 import Vue from 'vue'
+import { CDN_ROOT } from "@/config"
 
 Vue.mixin({
   methods: {
 	getNFTImage(nft) {
-		const ipfsIconContracts = ['cshape', 'cak', 'cpaint', 'nfet', 'cdp', 'gang', 'cespresso']
-	  if (ipfsIconContracts.includes(nft.contract) && nft.image.split('ipfs://').length > 1) {
-		return 'https://ipfs.io/ipfs/' + nft.image.split('ipfs://')[1]
-	  }
-	  return nft.image
+		if (nft.contract !== 'nomdom') {
+			const ipfsIconContracts = ['cshape', 'cak', 'cpaint', 'nfet', 'cdp', 'gang', 'cespresso']
+			if (ipfsIconContracts.includes(nft.contract) && nft.image.split('ipfs://').length > 1) {
+				return 'https://ipfs.io/ipfs/' + nft.image.split('ipfs://')[1]
+			}
+			return nft.image
+		} else {
+			return CDN_ROOT + nft.contract + `/${nft.image}.png`
+		}
 	},
 	isMobile() {
 		if(process.browser) {

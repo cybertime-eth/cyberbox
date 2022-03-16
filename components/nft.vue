@@ -23,7 +23,7 @@
       <h2 class="collection__item-info-name">
         {{ nft.name || nft.contract_name }}
       </h2>
-      <p class="collection__item-info-rank">Rarity Rank {{ nft.rating_index }}</p>
+      <p class="collection__item-info-rank" v-if="nft.contract !== 'nomdom'">Rarity Rank {{ nft.rating_index }}</p>
       <p class="collection__item-info-id">Token ID {{ nftID(nft.contract_id) }}</p>
       <p class="collection__item-info-type" v-if="sellInfo">Last sell</p>
       <p class="collection__item-info-type" v-else>Price</p>
@@ -84,10 +84,14 @@ export default {
     getCDNImageUrl() {
       if (this.nft.contract !== 'nomstronaut') {
         let fileExtension = this.nft.image.split('.').pop()
-        if (fileExtension.split('//').length > 1) {
+        let contractId = this.nft.contract_id
+        if (fileExtension.split('//').length > 1 || this.nft.contract === 'nomdom') {
           fileExtension = 'png'
+          if (this.nft.contract === 'nomdom') {
+            contractId = this.nft.image
+          }
         }
-        const imageURL = CDN_ROOT + this.nft.contract + `/${this.nft.contract_id}.${fileExtension}`
+        const imageURL = CDN_ROOT + this.nft.contract + `/${contractId}.${fileExtension}`
         return imageURL
       } else {
         return null

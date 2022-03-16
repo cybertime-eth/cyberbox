@@ -98,6 +98,7 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'rarity-rare'}"
           @click="changeSort('rarity-rare')"
+          v-if="!isNomDomain"
         >
           <span>Rarity <span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Rare</span>
         </button>
@@ -105,12 +106,14 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'rarity-common'}"
           @click="changeSort('rarity-common')"
+          v-if="!isNomDomain"
         >
           <span>Rarity <span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Common</span>
         </button>
         <button
           class="collection__sort-button"
           @click="showTraitsFilter = true"
+          v-if="!isNomDomain"
         >
           <span class="collection__sort-button-title">Traits</span> <img src="/trait.svg" alt="trait" class="collection__sort-button-icon"> <span class="collection__sort-button-badge" v-if="filtersCount > 0">{{filtersCount}}</span>
         </button>
@@ -129,7 +132,7 @@
         </div>
       </div>
       <div class="collection__items" v-if="nftList.length && !loading">
-        <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :owner="nftOwned(nft)" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
+        <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :owner="nftOwned(nft)" :seller="false" :route="`/collections/${nft.contract}/${routeNftId(nft)}`"/>
       </div>
       <p class="collection__empty-items" v-else-if="!loading">There are no results matching your selected criteria</p>
     </div>
@@ -189,6 +192,9 @@ export default {
     TraitsFilterModal
   },
   methods: {
+    routeNftId(nft) {
+      return !nft.contract === 'nomdom' ? nft.contract_id : nft.image
+    },
     getDescription() {
       let description = ''
       switch (this.$route.params.collectionid) {
@@ -345,6 +351,9 @@ export default {
     this.$store.dispatch('loadTraitFilters')
   },
   computed: {
+    isNomDomain() {
+      return this.$route.params.collectionid === 'nomdom'
+    },
     countItems() {
       if (!this.myNft) {
         switch (this.filter) {

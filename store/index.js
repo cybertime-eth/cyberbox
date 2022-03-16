@@ -244,18 +244,18 @@ export const state = () => ({
       medium: 'https://medium.com/@CeloEspresso',
       description: 'GM fellow espresso baristas, the Espresso Hard Fork is live! Now all the beautiful cEspressi can be born and welcomed to the Celo Blockchain. Head over to the coffee machine to brew your own, unique cEspresso!'
     },
-    // {
-    //   id: 17,
-    //   name: 'NOM.space domains',
-    //   route: 'nomdom',
-    //   image: '/collections/nomdom.png',
-    //   banner: '/collections/nomdom-banner.png',
-    //   logo: '/collections/nomdom-logo.png',
-    //   website: 'https://www.nom.space/',
-    //   twitter: 'https://twitter.com/nomspace_nom',
-    //   discord: 'https://discord.gg/byMNXabAxZ',
-    //   description: 'Nomspace is a cross-chain name resolution service. Users can reserve a .nom from any supported chain'
-    // },
+    {
+      id: 17,
+      name: 'NOM.space domains',
+      route: 'nomdom',
+      image: '/collections/nomdom.png',
+      banner: '/collections/nomdom-banner.png',
+      logo: '/collections/nomdom-logo.png',
+      website: 'https://www.nom.space/',
+      twitter: 'https://twitter.com/nomspace_nom',
+      discord: 'https://discord.gg/byMNXabAxZ',
+      description: 'Nomspace is a cross-chain name resolution service. Users can reserve a .nom from any supported chain'
+    },
     // {
     //   id: 14,
     //   name: 'PixelAva',
@@ -403,7 +403,9 @@ export const actions = {
     } else {
       commit('setFilteredTraits', null)
     }
-    contractInfos = await dispatch('getRarirtyCollections', { contractInfos: contractInfos, rarityNfts })
+    if ($nuxt.$route.params.collectionid !== 'nomdom') {
+      contractInfos = await dispatch('getRarirtyCollections', { contractInfos: contractInfos, rarityNfts })
+    }
     state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
     return contractInfos
   },
@@ -486,7 +488,9 @@ export const actions = {
     } else {
       commit('setFilteredTraits', null)
     }
-    contractLists = await dispatch('getRarirtyCollections', { contractInfos: contractLists })
+    if ($nuxt.$route.params.collectionid !== 'nomdom') {
+      contractLists = await dispatch('getRarirtyCollections', { contractInfos: contractLists })
+    }
     state.pagination ? commit('addNftToList', contractLists) : commit('setNewNftList', contractLists)
   },
 
@@ -537,7 +541,9 @@ export const actions = {
     } else {
       commit('setFilteredTraits', null)
     }
-    contractSells = await dispatch('getRarirtyCollections', { contractInfos: contractSells, sold: true })
+    if ($nuxt.$route.params.collectionid !== 'nomdom') {
+      contractSells = await dispatch('getRarirtyCollections', { contractInfos: contractSells, sold: true })
+    }
     state.pagination ? commit('addNftToList', contractSells) : commit('setNewNftList', contractSells)
   },
 

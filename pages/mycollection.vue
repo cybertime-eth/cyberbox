@@ -24,7 +24,7 @@
     </div>
     <p class="my-collection-collection-filter" v-if="activeFilter !== 'all' && activeFilter !== 'sale'">{{ currCollectionFilter }}</p>
     <div class="my-collection__items">
-      <nft :nft="nft" :key="idx" :route="`/collections/${nft.contract}/${nft.contract_id}`" :seller="true" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
+      <nft :nft="nft" :key="idx" :route="`/collections/${nft.contract}/${routeNftId(nft)}`" :seller="true" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
     </div>
   </section>
 </template>
@@ -101,6 +101,9 @@ export default {
     }
   },
   methods: {
+    routeNftId(nft) {
+      return !nft.contract === 'nomdom' ? nft.contract_id : nft.image
+    },
     async addMyCollection() {
       const result = await this.$store.dispatch('getGraphData')
       for (let nft of result) {
