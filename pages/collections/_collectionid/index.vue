@@ -111,7 +111,6 @@
         <button
           class="collection__sort-button"
           @click="showTraitsFilter = true"
-          v-if="filter === 'All'"
         >
           <span class="collection__sort-button-title">Traits</span> <img src="/trait.svg" alt="trait" class="collection__sort-button-icon"> <span class="collection__sort-button-badge" v-if="filtersCount > 0">{{filtersCount}}</span>
         </button>
@@ -159,7 +158,8 @@ export default {
       sort: '',
       myNft: false,
       collectionInfo: {},
-      floorPrice: '-'
+      floorPrice: '-',
+      traitFilters: null
     }
   },
   metaInfo() {
@@ -215,7 +215,6 @@ export default {
     initNftListSetting() {
       this.loading = true
       this.$store.commit('setNewNftList', [])
-      this.$store.commit('updateCollectionSetting', null)
       this.$store.commit('changeCountPage', 1)
       this.$store.commit('changeSortData', 'all')
     },
@@ -298,7 +297,7 @@ export default {
       if (this.myNft) {
         this.changeMyNftFilter()
       } else {
-        this.$store.dispatch(activeRequest)
+        this.$store.dispatch(activeRequest, this.traitFilters)
       }
       this.$store.commit('changeCountPage', 1)
       this.changeCollectionSetting({
@@ -308,6 +307,7 @@ export default {
     },
     async updateTraitFilter(filters, filteredCount) {
       this.initNftListSetting()
+      this.traitFilters = filters
       await this.$store.dispatch(this.activeRequest, filters)
       this.collectionInfo = {
         ...this.collectionInfo,
@@ -335,6 +335,7 @@ export default {
       }
     } else {
       this.initNftListSetting()
+      this.$store.commit('updateCollectionSetting', null)
       await this.$store.dispatch(this.activeRequest)
     }
     const collectionResult = await this.$store.dispatch('getCollectionInfo')

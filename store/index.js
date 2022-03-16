@@ -442,44 +442,102 @@ export const actions = {
     return data.contractInfos.length
   },
 
-  async getGraphDataListed({state, commit, getters, dispatch}) {
+  async getGraphDataListed({state, commit, getters, dispatch}, traitFilters) {
     const sort = getters.paginationSort
+    let condition = `where: { contract: "${$nuxt.$route.params.collectionid}"}`
+    let queryTables = ''
+    const queryFormat = `
+      contractLists(${sort} first: 48 condition) {
+        id
+        contract
+        contract_id
+        price
+        image
+        contract_name
+        owner
+      }
+    `
+    if (traitFilters && traitFilters.length > 0) {
+      traitFilters.forEach((item, index) => {
+        condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] }`
+        queryTables += `contractLists${index}:` + queryFormat.replace('condition', condition)
+      })
+    } else {
+      queryTables = queryFormat.replace('condition', condition)
+    }
     const query = gql`
       query Sample {
-        contractLists(${sort} first: 48 where: { contract: "${$nuxt.$route.params.collectionid}"}) {
-          id
-          contract
-          contract_id
-          price
-          image
-          contract_name
-          owner
-        }
+        ${queryTables}
       }`;
     const data = await this.$graphql.default.request(query)
-    const contractLists = await dispatch('getRarirtyCollections', { contractInfos: data.contractLists })
+    let contractLists = data.contractLists || []
+    if (traitFilters && traitFilters.length > 0) {
+      let contractIds = []
+      traitFilters.forEach((item, index) => {
+        const newContractLists = data[`contractLists${index}`].filter(dItem => !contractIds.includes(dItem.contract_id))
+        contractLists = [
+          ...contractLists,
+          ...newContractLists
+        ]
+        contractIds = contractLists.map(cItem => cItem.contract_id)
+      })
+      contractLists = contractLists.sort((a, b) => a.contract_id - b.contract_id)
+      commit('setFilteredTraits', traitFilters)
+    } else {
+      commit('setFilteredTraits', null)
+    }
+    contractLists = await dispatch('getRarirtyCollections', { contractInfos: contractLists })
     state.pagination ? commit('addNftToList', contractLists) : commit('setNewNftList', contractLists)
   },
 
-  async getGraphDataSells({state, commit, getters, dispatch}) {
+  async getGraphDataSells({state, commit, getters, dispatch}, traitFilters) {
     const sort = getters.paginationSort
+    let condition = `where: { contract: "${$nuxt.$route.params.collectionid}"}`
+    let queryTables = ''
+    const queryFormat = `
+      contractSells(${sort} first: 48 condition) {
+        id
+        contract
+        contract_id
+        price_total
+        price_value
+        price_fee
+        image
+        contract_name
+        seller
+        updatedAt
+      }
+    `
+    if (traitFilters && traitFilters.length > 0) {
+      traitFilters.forEach((item, index) => {
+        condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] }`
+        queryTables += `contractSells${index}:` + queryFormat.replace('sort', sort).replace('condition', condition)
+      })
+    } else {
+      queryTables = queryFormat.replace('sort', sort).replace('condition', condition)
+    }
     const query = gql`
       query Sample {
-        contractSells(${sort} first: 48 where: { contract: "${$nuxt.$route.params.collectionid}"}) {
-          id
-          contract
-          contract_id
-          price_total
-          price_value
-          price_fee
-          image
-          contract_name
-          seller
-          updatedAt
-        }
+        ${queryTables}
       }`;
     const data = await this.$graphql.default.request(query)
-    const contractSells = await dispatch('getRarirtyCollections', { contractInfos: data.contractSells, sold: true })
+    let contractSells = data.contractSells || []
+    if (traitFilters && traitFilters.length > 0) {
+      let contractIds = []
+      traitFilters.forEach((item, index) => {
+        const newContractSells = data[`contractSells${index}`].filter(dItem => !contractIds.includes(dItem.contract_id))
+        contractSells = [
+          ...contractSells,
+          ...newContractSells
+        ]
+        contractIds = contractSells.map(cItem => cItem.contract_id)
+      })
+      contractSells = contractSells.sort((a, b) => a.contract_id - b.contract_id)
+      commit('setFilteredTraits', traitFilters)
+    } else {
+      commit('setFilteredTraits', null)
+    }
+    contractSells = await dispatch('getRarirtyCollections', { contractInfos: contractSells, sold: true })
     state.pagination ? commit('addNftToList', contractSells) : commit('setNewNftList', contractSells)
   },
 
