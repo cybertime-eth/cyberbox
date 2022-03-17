@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     routeNftId(nft) {
-      return !nft.contract === 'nomdom' ? nft.contract_id : nft.image
+      return nft.contract !== 'nomdom' ? nft.contract_id : nft.image
     },
     async addMyCollection() {
       const result = await this.$store.dispatch('getGraphData')

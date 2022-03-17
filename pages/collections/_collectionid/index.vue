@@ -115,7 +115,7 @@
           @click="showTraitsFilter = true"
           v-if="!isNomDomain"
         >
-          <span class="collection__sort-button-title">Traits</span> <img src="/trait.svg" alt="trait" class="collection__sort-button-icon"> <span class="collection__sort-button-badge" v-if="filtersCount > 0">{{filtersCount}}</span>
+          <span class="collection__sort-button-title traits">Traits</span> <img src="/trait.svg" alt="trait" class="collection__sort-button-icon"> <span class="collection__sort-button-badge" v-if="filtersCount > 0">{{filtersCount}}</span>
         </button>
       </div>
 <!--      <attributesFilter />-->
@@ -193,7 +193,7 @@ export default {
   },
   methods: {
     routeNftId(nft) {
-      return !nft.contract === 'nomdom' ? nft.contract_id : nft.image
+      return nft.contract !== 'nomdom' ? nft.contract_id : nft.image
     },
     getDescription() {
       let description = ''
@@ -698,6 +698,9 @@ export default {
         }
         &:last-child {
           margin: 0;
+        }
+        &-title.traits {
+          display: none;
         }
       }
     }

@@ -21,7 +21,7 @@
     </div>
     <div class="collection__item-info">
       <h2 class="collection__item-info-name">
-        {{ nft.name || nft.contract_name }}
+        {{ nft.name || nft.contract_name }}{{nftNameSuffix}}
       </h2>
       <p class="collection__item-info-rank" v-if="nft.contract !== 'nomdom'">Rarity Rank {{ nft.rating_index }}</p>
       <p class="collection__item-info-id">Token ID {{ nftID(nft.contract_id) }}</p>
@@ -66,6 +66,9 @@ export default {
       } else {
         return 'Sell'
       }
+    },
+    nftNameSuffix() {
+      return this.nft.contract === 'nomdom' ? '.nom' : ''
     }
   },
   props: ['nft', 'route', 'owner', 'seller', 'filter'],

@@ -5,7 +5,7 @@
         <a class="nft__crumbs" @click="handleClickBack">
           Back
           <img src="/array-right.svg" alt="array">
-          <span>{{ nft.name }}</span>
+          <span>{{ nftName }}</span>
         </a>
 
 
@@ -22,7 +22,7 @@
               <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
               <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2></a>
             </div>
-            <h1 class="nft__block-info-name">{{ nft.name }}</h1>
+            <h1 class="nft__block-info-name">{{ nftName }}</h1>
             <h1 class="nft__block-info-rank" v-if="nft.contract !== 'nomdom'">Rarity rank {{ nft.rating_index }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <div v-if="!nftReloading">
@@ -59,7 +59,7 @@
               <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
               <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2>
             </div>
-            <h1 class="nft__block-info-name">{{ nft.name }}</h1>
+            <h1 class="nft__block-info-name">{{ nftName }}</h1>
             <h1 class="nft__block-info-rank" v-if="nft.contract !== 'nomdom'">Rarity rank {{ nft.rating_index }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <div v-if="!nftReloading">
@@ -136,7 +136,7 @@
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
   <Transfer :nft="nft" @closeModal="closeTransfer" v-if="showTransferModal" />
   <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
-  <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nft.name"/>
+  <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nftName"/>
 <!--    <History />-->
   </section>
 </template>
@@ -242,6 +242,10 @@ export default {
   computed: {
     address() {
       return this.$store.state.address
+    },
+    nftName() {
+      if (!this.nft.name) return ''
+      return this.nft.contract !== 'nomdom' ? this.nft.name : `${this.nft.name}.nom`
     },
     successRemoveNft() {
       return this.$store.state.successRemoveToken

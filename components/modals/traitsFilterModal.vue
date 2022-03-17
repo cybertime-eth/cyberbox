@@ -277,6 +277,14 @@ export default {
       font-size: 1.16rem;
     }
   }
+  @media (max-width: 460px) {
+    &__traits {
+      width: 100%;
+      &-footer {
+        width: calc(100% - 40px);
+      }
+    }
+  }
 }
 </style>
 
