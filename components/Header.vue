@@ -7,6 +7,17 @@
       <div class="header__logo" @click="$router.push('/')">
         <img src="/logo.svg" alt="logo" class="header__logo-img">
       </div>
+      <div class="header__search search-box">
+        <input class="search-box-input" placeholder="Search collections, items" v-model="searchName" @input="searchCollection">
+        <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
+        <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
+        <div class="header__search-dropdown" v-if="filteredCollections.length > 0">
+          <div class="header__search-dropdown-item" :key="idx" v-for="(collection, idx) in filteredCollections" @click="showCollectionPage(collection)">
+            <img :src="collection.logo" class="header__search-dropdown-item-icon">
+            <span class="header__search-dropdown-item-name">{{ collection.name }}</span>
+          </div>
+        </div>
+      </div>
       <nav class="header__navigation">
         <ul class="header__ul">
           <li class="header__list">
@@ -64,7 +75,10 @@ export default {
       showProfileMenu: false,
       showProfileMenuMobile: false,
       showWrongNetwork: false,
-      showWrongNetworkModal: false
+      showWrongNetworkModal: false,
+      showSearchDropdown: false,
+      searchName: '',
+      filteredCollections: []
     }
   },
   // watch: {
@@ -120,6 +134,22 @@ export default {
       localStorage.setItem('move_back', true)
       this.$router.go(-1)
     },
+    searchCollection() {
+      const search = this.searchName
+      if (search.length >= 3) {
+        this.filteredCollections = this.$store.state.collectionList.filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
+      } else {
+        this.filteredCollections = []
+      }
+    },
+    showCollectionPage(collection) {
+      this.clearSearch()
+      this.$router.push(`/collections/${collection.route}`)
+    },
+    clearSearch() {
+      this.searchName = ''
+      this.filteredCollections = []
+    },
     openValoraModal() {
       this.showValoraModal = true
       this.showConnectModal = false
@@ -133,13 +163,43 @@ export default {
 }
 </script>
 <style lang="scss">
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.search-box {
+  position: relative;
+  &-input {
+    width: calc(100% - 32px);
+    height: 1.53rem;
+    padding: 12px 16px;
+    border: 1px solid $border2;
+    border-radius: 25px;
+    font-size: 1.07rem;
+    &:focus {
+      box-shadow: 0 0 5px $border2;
+    }
+  }
+  &-img {
+    position: absolute;
+    top: 50%;
+    right: 1.23rem;
+    width: 1.53rem;
+    transform: translateY(-50%);
+    &.icon-close {
+      width: 1.07rem;
+      cursor: pointer;
+    }
+  }
+}
 header {
   box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
 }
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 14rem 28rem 50.3rem 17.5rem 22rem;
+  grid-template-columns: 6.4rem 23.6rem 28rem 34.6rem 17.5rem 22rem;
   align-items: center;
   &__back {
     display: none;
@@ -147,13 +207,44 @@ header {
   &__logo {
     display: flex;
     align-items: center;
-    width: 14.9rem;
+    width: 5.1rem;
     justify-content: space-between;
     &-link {
       letter-spacing: 0.04em;
     }
     &-img {
       width: 6rem;
+    }
+  }
+  &__search {
+    width: 19.3rem;
+    &-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0%;
+      right: 0;
+      background: $white;
+      padding: 9px 0;
+      border-radius: 2px;
+      box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.25);
+      &-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 16px;
+        cursor: pointer;
+        &:hover {
+          background: rgba(0, 0, 0, 0.04);
+        }
+        &-icon {
+          width: 2.15rem;
+          height: 2.15rem;
+          border-radius: 50%;
+        }
+        &-name {
+          margin-left: 10px;
+          font-size: 1.23rem;
+        }
+      }
     }
   }
   &__ul {

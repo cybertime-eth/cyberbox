@@ -6,7 +6,12 @@
         <img :src="collection.logo" alt="avatar" class="collection__header-avatar">
         <h1 class="collection__header-title" >{{ collection.name }} <img src="/confirmed.svg" alt="confirm"></h1>
         <p class="collection__header-subtitle">Collectibles</p>
-        <div class="collection__header-socials">
+        <div class="collection__header-socials" :class="{'no-search': collection.route === 'nomdom'}">
+          <div class="collection__header-search search-box" v-if="collection.route !== 'nomdom'">
+            <input class="search-box-input" type="number" min="1" placeholder="Mint number" v-model="searchNumber" @input="searchNft">
+            <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchNumber">
+            <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
+          </div>
           <a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
           <a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
           <a :href="collection.twitter" target="_blank" v-if="collection.twitter"><img src="/socials/twitter.svg" alt="social"></a>
@@ -147,6 +152,7 @@
   </section>
 </template>
 <script>
+import _ from 'lodash'
 import nft from '@/components/nft.vue'
 import attributesFilter from '@/components/modals/attributesFilter'
 import TraitsFilterModal from '@/components/modals/traitsFilterModal'
@@ -162,7 +168,8 @@ export default {
       myNft: false,
       collectionInfo: {},
       floorPrice: '-',
-      traitFilters: null
+      traitFilters: null,
+      searchNumber: ''
     }
   },
   metaInfo() {
@@ -223,6 +230,23 @@ export default {
       this.$store.commit('setNewNftList', [])
       this.$store.commit('changeCountPage', 1)
       this.$store.commit('changeSortData', 'all')
+    },
+    async fetchMintNumberNftList() {
+      this.loading = true
+      this.$store.commit('changeMintNumFilter', this.searchNumber ? parseInt(this.searchNumber) : null)
+      await this.$store.dispatch(this.activeRequest, this.$store.state.filteredTraits)
+      this.loading = false
+    },
+    searchNft: _.debounce(function() {
+      if (this.searchNumber && parseInt(this.searchNumber) < 0) {
+        this.searchNumber = ''
+      } else {
+        this.fetchMintNumberNftList()
+      }
+    }, 500),
+    clearSearch() {
+      this.searchNumber = ''
+      this.fetchMintNumberNftList()
     },
     addCurrentPage() {
       const filteredTraits = this.$store.state.filteredTraits
@@ -339,8 +363,10 @@ export default {
         this.sort = collectionSetting.sort || this.sort
         this.myNft = collectionSetting.myNft || this.myNft
       }
+      this.searchNumber = this.$store.state.mintNumFilter
     } else {
       this.initNftListSetting()
+      this.$store.commit('changeMintNumFilter', null)
       this.$store.commit('updateCollectionSetting', null)
       await this.$store.dispatch(this.activeRequest)
     }
@@ -422,10 +448,13 @@ export default {
       position: absolute;
       right: 0;
       top: 10rem;
-      width: 17rem;
+      width: 31rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      &.no-search {
+        width: 17rem;
+      }
       :first-child {
         width: 2.1rem;
       }
@@ -437,6 +466,13 @@ export default {
             animation: shaking .5s;
           }
         }
+      }
+    }
+    &-search {
+      width: 15.3rem !important;
+      .search-box-input {
+        width: calc(100% - 32px) !important;
+        font-size: 1.23rem;
       }
     }
     &-info {
