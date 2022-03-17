@@ -43,7 +43,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-cespresso',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/nfts-with-attribute-three',
         options: {}
       },
       secondClient: {

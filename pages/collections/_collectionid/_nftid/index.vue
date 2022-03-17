@@ -5,7 +5,7 @@
         <a class="nft__crumbs" @click="handleClickBack">
           Back
           <img src="/array-right.svg" alt="array">
-          <span>{{ nft.name }}</span>
+          <span>{{ nftName }}</span>
         </a>
 
 
@@ -22,8 +22,8 @@
               <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
               <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2></a>
             </div>
-            <h1 class="nft__block-info-name">{{ nft.name }}</h1>
-            <h1 class="nft__block-info-rank">Rarity rank {{ nft.rating_index }}</h1>
+            <h1 class="nft__block-info-name">{{ nftName }}</h1>
+            <h1 class="nft__block-info-rank" v-if="nft.contract !== 'nomdom'">Rarity rank {{ nft.rating_index }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <div v-if="!nftReloading">
               <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
@@ -59,8 +59,8 @@
               <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
               <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2>
             </div>
-            <h1 class="nft__block-info-name">{{ nft.name }}</h1>
-            <h1 class="nft__block-info-rank">Rarity rank {{ nft.rating_index }}</h1>
+            <h1 class="nft__block-info-name">{{ nftName }}</h1>
+            <h1 class="nft__block-info-rank" v-if="nft.contract !== 'nomdom'">Rarity rank {{ nft.rating_index }}</h1>
             <p class="nft__block-info-description">{{ nft.description }}</p>
             <div v-if="!nftReloading">
               <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
@@ -136,7 +136,7 @@
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
   <Transfer :nft="nft" @closeModal="closeTransfer" v-if="showTransferModal" />
   <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
-  <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nft.name"/>
+  <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nftName"/>
 <!--    <History />-->
   </section>
 </template>
@@ -243,6 +243,10 @@ export default {
     address() {
       return this.$store.state.address
     },
+    nftName() {
+      if (!this.nft.name) return ''
+      return this.nft.contract !== 'nomdom' ? this.nft.name : `${this.nft.name}.nom`
+    },
     successRemoveNft() {
       return this.$store.state.successRemoveToken
     },
@@ -285,13 +289,15 @@ export default {
         id: this.$route.params.nftid,
         collectionId: this.$route.params.collectionid
       })
-      const rarityInfos = await API.getNftRankings([nft.id])
+      let rarityInfos = null
+      if (nft.contract !== 'nomdom' && nft.market_status !== this.oldNftStatus) {
+        const rarityInfos = await API.getNftRankings([nft.id])
+      }
       this.nft = {
         ...nft,
-        rating_index: rarityInfos[0].rating_index,
+        rating_index: rarityInfos ? rarityInfos[0].rating_index : null,
         price: nft.price / 1000
       }
-      
       this.loadButton = false
     },
     async loadBalance() {
@@ -362,13 +368,15 @@ export default {
     },
     async getAttributes() {
       const attributes = []
-      this.nft.trait.forEach(item => {
-        const attributeItem = JSON.parse(item);
-        attributes.push({
-          trait_type: Object.keys(attributeItem)[0],
-          value: Object.values(attributeItem)[0]
+      if (this.nft.trait) {
+        this.nft.trait.forEach(item => {
+          const attributeItem = JSON.parse(item);
+          attributes.push({
+            trait_type: Object.keys(attributeItem)[0],
+            value: Object.values(attributeItem)[0]
+          })
         })
-      })
+      }
       this.attributes = attributes
     },
     handleClickBuyNow() {

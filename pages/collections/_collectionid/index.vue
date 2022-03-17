@@ -98,6 +98,7 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'rarity-rare'}"
           @click="changeSort('rarity-rare')"
+          v-if="!isNomDomain"
         >
           <span>Rarity <span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Rare</span>
         </button>
@@ -105,8 +106,16 @@
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'rarity-common'}"
           @click="changeSort('rarity-common')"
+          v-if="!isNomDomain"
         >
           <span>Rarity <span class="collection__sort-button-delimiter"> - </span><br class="collection__sort-button-breakline"/>Common</span>
+        </button>
+        <button
+          class="collection__sort-button"
+          @click="showTraitsFilter = true"
+          v-if="!isNomDomain"
+        >
+          <span class="collection__sort-button-title traits">Traits</span> <img src="/trait.svg" alt="trait" class="collection__sort-button-icon"> <span class="collection__sort-button-badge" v-if="filtersCount > 0">{{filtersCount}}</span>
         </button>
       </div>
 <!--      <attributesFilter />-->
@@ -123,26 +132,37 @@
         </div>
       </div>
       <div class="collection__items" v-if="nftList.length && !loading">
-        <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :owner="nftOwned(nft)" :seller="false" :route="`/collections/${nft.contract}/${nft.contract_id}`"/>
+        <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :owner="nftOwned(nft)" :seller="false" :route="`/collections/${nft.contract}/${routeNftId(nft)}`"/>
       </div>
       <p class="collection__empty-items" v-else-if="!loading">There are no results matching your selected criteria</p>
     </div>
+    <TraitsFilterModal
+      :show="showTraitsFilter"
+      :mintCount="collectionInfo.mint_count"
+      :filtersCount="filtersCount"
+      @updateFilter="updateTraitFilter"
+      @close="showTraitsFilter = false"
+      v-if="showTraitsFilter"
+    />
   </section>
 </template>
 <script>
 import nft from '@/components/nft.vue'
 import attributesFilter from '@/components/modals/attributesFilter'
+import TraitsFilterModal from '@/components/modals/traitsFilterModal'
 import {BigNumber} from 'ethers'
 export default {
   data() {
     return {
       loading: false,
+      showTraitsFilter: false,
       filter: 'All',
       activeRequest: 'getGraphData',
       sort: '',
       myNft: false,
       collectionInfo: {},
-      floorPrice: '-'
+      floorPrice: '-',
+      traitFilters: null
     }
   },
   metaInfo() {
@@ -168,9 +188,13 @@ export default {
   },
   components: {
     nft,
-    attributesFilter
+    attributesFilter,
+    TraitsFilterModal
   },
   methods: {
+    routeNftId(nft) {
+      return nft.contract !== 'nomdom' ? nft.contract_id : nft.image
+    },
     getDescription() {
       let description = ''
       switch (this.$route.params.collectionid) {
@@ -194,13 +218,20 @@ export default {
     nftOwned(nft) {
       return nft.owner && nft.owner.toLowerCase() === this.$store.state.fullAddress
     },
+    initNftListSetting() {
+      this.loading = true
+      this.$store.commit('setNewNftList', [])
+      this.$store.commit('changeCountPage', 1)
+      this.$store.commit('changeSortData', 'all')
+    },
     addCurrentPage() {
+      const filteredTraits = this.$store.state.filteredTraits
       const count = this.$store.state.countPage
       const element = document.body
-      if (element.scrollHeight <= window.pageYOffset + window.innerHeight && count * 48 === this.nftList.length && this.nftList.length > 0) {
-          this.$store.commit('changeCountPage', count + 1)
+      if (element.scrollHeight <= window.pageYOffset + window.innerHeight && (!filteredTraits && count * 48 === this.nftList.length || filteredTraits) && this.nftList.length > 0) {
+        this.$store.commit('changeCountPage', count + 1)
         this.$store.commit('changeSortData', 'pagination')
-        this.$store.dispatch(this.activeRequest)
+        this.$store.dispatch(this.activeRequest, filteredTraits)
       }
     },
     async fetchNftList() {
@@ -272,7 +303,7 @@ export default {
       if (this.myNft) {
         this.changeMyNftFilter()
       } else {
-        this.$store.dispatch(activeRequest)
+        this.$store.dispatch(activeRequest, this.traitFilters)
       }
       this.$store.commit('changeCountPage', 1)
       this.changeCollectionSetting({
@@ -280,11 +311,22 @@ export default {
         fetchRequest: activeRequest
       })
     },
+    async updateTraitFilter(filters, filteredCount) {
+      this.initNftListSetting()
+      this.traitFilters = filters
+      await this.$store.dispatch(this.activeRequest, filters)
+      this.collectionInfo = {
+        ...this.collectionInfo,
+        filter_count: filteredCount
+      }
+      this.loading = false
+    }
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.addCurrentPage)
   },
   async created() {
+    this.$store.commit('setTraitFilters', [])
     if (process.browser) {
       window.addEventListener('scroll', this.addCurrentPage)
     }
@@ -298,23 +340,24 @@ export default {
         this.myNft = collectionSetting.myNft || this.myNft
       }
     } else {
-      this.loading = true
-      this.$store.commit('setNewNftList', [])
+      this.initNftListSetting()
       this.$store.commit('updateCollectionSetting', null)
-      this.$store.commit('changeCountPage', 1)
-      this.$store.commit('changeSortData', 'all')
       await this.$store.dispatch(this.activeRequest)
     }
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
     this.loading = false
+    this.$store.dispatch('loadTraitFilters')
   },
   computed: {
+    isNomDomain() {
+      return this.$route.params.collectionid === 'nomdom'
+    },
     countItems() {
       if (!this.myNft) {
         switch (this.filter) {
-          case 'All': return this.collectionInfo.mint_count;
+          case 'All': return this.collectionInfo.filter_count || this.collectionInfo.mint_count;
           case 'listed': return this.collectionInfo.list_count;
           case 'bought': return this.collectionInfo.sell_count;
         }
@@ -333,6 +376,16 @@ export default {
     },
     fetchEnabled() {
       return this.address || (!this.address && !this.myNft)
+    },
+    filtersCount() {
+      let sectionCount = 0
+      this.$store.state.traitFilters.forEach(item => {
+        const filteredValues = item.values.filter(filterItem => filterItem.checked)
+        if (filteredValues.length > 0) {
+          sectionCount++
+        }
+      })
+      return sectionCount
     }
   },
 }
@@ -466,6 +519,28 @@ export default {
       }
       &-breakline {
         display: none;
+      }
+      &-title {
+        line-height: 1;
+      }
+      &-icon {
+        margin-left: 4px !important;
+      }
+      &-icon, &-badge {
+        margin-left: 4px;
+      }
+      &-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: $border;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        line-height: 1.1;
+        font-weight: 600;
+        font-size: 1.07rem;
+        color: $white;
       }
     }
   }
@@ -623,6 +698,9 @@ export default {
         }
         &:last-child {
           margin: 0;
+        }
+        &-title.traits {
+          display: none;
         }
       }
     }
