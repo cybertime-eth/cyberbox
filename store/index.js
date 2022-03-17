@@ -46,6 +46,18 @@ export const state = () => ({
   collectionList: [
     {
       id: 1,
+      name: 'NOM domains',
+      route: 'nomdom',
+      image: '/collections/nomdom.png',
+      banner: '/collections/nomdom-banner.png',
+      logo: '/collections/nomdom-logo.png',
+      website: 'https://www.nom.space/',
+      twitter: 'https://twitter.com/nomspace_nom',
+      discord: 'https://discord.gg/byMNXabAxZ',
+      description: 'Nomspace is a cross-chain name resolution service. Users can reserve a .nom from any supported chain'
+    },
+    {
+      id: 2,
       name: 'Celostrials',
       route: 'nfet',
       image: '/collections/celostrials.jpg',
@@ -58,7 +70,7 @@ export const state = () => ({
       description: 'Celostrials are an intergalactic collection of unique beings, found exclusively on the Celo Blockchain. Their features are algorithmically generated resulting in an interstellar collectible completely unique to you!'
     },
     {
-      id: 2,
+      id: 3,
       name: 'ChinChilla Gang',
       route: 'gang',
       image: '/collections/gang.png',
@@ -71,7 +83,7 @@ export const state = () => ({
       description: `The ChinChilla Gang collection is composed by 8888 ultra HD NFTs living on Celo blockchain. With this collection we want to create a durable brand and for this reason we didn't put "Celo" in our name like all other NFT projects on this blockchain.`
     },
     {
-      id: 3,
+      id: 4,
       name: 'Daopolis',
       route: 'daos',
       image: '/collections/daopolis.jpg',
@@ -84,7 +96,7 @@ export const state = () => ({
       description: "Automatically generated 9192 NFT's. Born in the CyberTime era, Daopolis citizens will be the foundation of a new gaming metaverse on Celo. Find your digital avatar, gain access to a private club and participate in unique NFT games!"
     },
     {
-      id: 4,
+      id: 5,
       name: 'CeloPunks',
       route: 'cpunk',
       image: '/collections/Celopunks.jpg',
@@ -98,7 +110,7 @@ export const state = () => ({
       description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
     },
     {
-      id: 5,
+      id: 6,
       name: 'CeloApes',
       route: 'cak',
       image: '/collections/cak.png',
@@ -110,7 +122,7 @@ export const state = () => ({
       description: 'The Celo Apes Kingdom is an collection of 10000 APE NFT (10000 minted!) on Celo Blockchain. Own an Ape to become part of the most epic Ape Kingdom. 10% of all money goes towards eradicating poverty.'
     },
     {
-      id: 6,
+      id: 7,
       name: 'Nomstronaut',
       route: 'nomstronaut',
       image: '/collections/nomstronaut.png',
@@ -122,7 +134,7 @@ export const state = () => ({
       description: "All .nom's are NFTs which means you can easily transfer and sell them."
     },
     {
-      id: 7,
+      id: 8,
       name: 'MooPunks',
       route: 'mpunk',
       image: '/collections/mpunk.png',
@@ -135,7 +147,7 @@ export const state = () => ({
       description: 'Moola is a non-custodial liquidity protocol built on the Celo blockchain that is democratizing access to yield and credit. Depositors earn yield which is paid for by borrowers who are able to take over-collateralized loans in perpetuity or under-collateralized flash loans.'
     },
     {
-      id: 8,
+      id: 9,
       name: 'CeloToadz',
       route: 'ctoadz',
       image: '/collections/celoToadz.png',
@@ -149,7 +161,7 @@ export const state = () => ({
       description: 'CeloToadz | First collection of 6969 randomly generated Toadz made up of more than 120 different traits on Celo Blockchain!'
     },
     {
-      id: 9,
+      id: 10,
       name: 'CeloShapes',
       route: 'cshape',
       image: '/collections/cshape.png',
@@ -161,7 +173,7 @@ export const state = () => ({
       description: 'CeloShapes is a generative art collection living on the Celo blockchain. Collection contains 4444 algorithmically generated colorful artwork.'
     },
     {
-      id: 10,
+      id: 11,
       name: 'PunksChristmas',
       route: 'christmaspunk',
       image: '/collections/christmaspunk.png',
@@ -174,7 +186,7 @@ export const state = () => ({
       description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
     },
     {
-      id: 11,
+      id: 12,
       name: 'PunksNeon',
       route: 'cpunkneon',
       image: '/collections/cpunkneon.png',
@@ -187,7 +199,7 @@ export const state = () => ({
       description: 'CeloPunksNeon are a special collection of CeloPunks with a unique Neon style designed for CeloPunks holders. Not affiliated with LarvaLabs.'
     },
     {
-      id: 12,
+      id: 13,
       name: 'CeloPaints',
       route: 'cpaint',
       image: '/collections/cpaint.png',
@@ -199,7 +211,7 @@ export const state = () => ({
       description: 'CeloPaints is a generative abstract art collection living on the Celo blockchain. Collection contains 444 algorithmically generated colorful abstract paintings.'
     },
     {
-      id: 13,
+      id: 14,
       name: 'DimsOfCelo',
       route: 'dimcelo',
       image: '/collections/DimsOfCelo.png',
@@ -211,7 +223,7 @@ export const state = () => ({
       description: 'Dimensions of Celo a.k.a. DimsOfCelo NFTs are 10,000 tokens of appreciation on Celo Blockchain, trying to reach their way into generative art.'
     },
     {
-      id: 14,
+      id: 15,
       name: 'CeloDAOPunks',
       route: 'cdp',
       image: '/collections/cdp.png',
@@ -220,7 +232,7 @@ export const state = () => ({
       description: '7777 Generated Celo DAO Punks On Celo blockchain'
     },
     {
-      id: 15,
+      id: 16,
       name: 'Womxn of Celo',
       route: 'wmxn',
       image: '/collections/womxnofcelo.png',
@@ -232,7 +244,7 @@ export const state = () => ({
       description: 'Womxn of Celo is the 1st generation of the (Womxn of) series for different blockchains. This Collection was created to empower women in the NFT space as well as women artists from all parts of the globe. To choose to write "womxn" so that we represent different cultures and gender expressions in the women in NFT community. The collection is based on the Celo blockchain and includes 5k unique gorgeous girls. Every girl has various rare attributes and features.'
     },
     {
-      id: 16,
+      id: 17,
       name: 'Celo Espresso',
       route: 'cespresso',
       image: '/collections/celoespresso.png',
@@ -243,18 +255,6 @@ export const state = () => ({
       discord: 'https://discord.gg/UKjyhb7xzQ',
       medium: 'https://medium.com/@CeloEspresso',
       description: 'GM fellow espresso baristas, the Espresso Hard Fork is live! Now all the beautiful cEspressi can be born and welcomed to the Celo Blockchain. Head over to the coffee machine to brew your own, unique cEspresso!'
-    },
-    {
-      id: 17,
-      name: 'NOM domains',
-      route: 'nomdom',
-      image: '/collections/nomdom.png',
-      banner: '/collections/nomdom-banner.png',
-      logo: '/collections/nomdom-logo.png',
-      website: 'https://www.nom.space/',
-      twitter: 'https://twitter.com/nomspace_nom',
-      discord: 'https://discord.gg/byMNXabAxZ',
-      description: 'Nomspace is a cross-chain name resolution service. Users can reserve a .nom from any supported chain'
     },
     // {
     //   id: 14,
