@@ -246,7 +246,7 @@ export const state = () => ({
     },
     {
       id: 17,
-      name: 'NOM.space domains',
+      name: 'NOM domains',
       route: 'nomdom',
       image: '/collections/nomdom.png',
       banner: '/collections/nomdom-banner.png',
