@@ -231,10 +231,14 @@ export default {
       this.$store.commit('changeCountPage', 1)
       this.$store.commit('changeSortData', 'all')
     },
-    async fetchMintNumberNftList() {
+    async fetchNftsBySearch() {
       this.loading = true
       const searchValue = !this.isNomDomain && this.searchName ? parseInt(this.searchName) : this.searchName
-      this.$store.commit('changeMintNumFilter', !searchValue ? null : searchValue)
+      if (!this.isNomDomain) {
+        this.$store.commit('changeMintNumFilter', !searchValue ? null : searchValue)
+      } else {
+        this.$store.commit('changeNomNameFilter', !searchValue ? null : searchValue)
+      }
       await this.$store.dispatch(this.activeRequest, this.$store.state.filteredTraits)
       this.loading = false
     },
@@ -242,12 +246,12 @@ export default {
       if (this.searchName && parseInt(this.searchName) < 0) {
         this.searchName = ''
       } else {
-        this.fetchMintNumberNftList()
+        this.fetchNftsBySearch()
       }
     }, 500),
     clearSearch() {
       this.searchName = ''
-      this.fetchMintNumberNftList()
+      this.fetchNftsBySearch()
     },
     addCurrentPage() {
       const filteredTraits = this.$store.state.filteredTraits
@@ -325,16 +329,16 @@ export default {
         case 'bought': activeRequest = 'getGraphDataSells'
       }
       this.activeRequest = activeRequest
+      this.changeCollectionSetting({
+        filter: this.filter,
+        fetchRequest: activeRequest
+      })
       if (this.myNft) {
         this.changeMyNftFilter()
       } else {
         this.$store.dispatch(activeRequest, this.traitFilters)
       }
       this.$store.commit('changeCountPage', 1)
-      this.changeCollectionSetting({
-        filter: this.filter,
-        fetchRequest: activeRequest
-      })
     },
     async updateTraitFilter(filters, filteredCount) {
       this.initNftListSetting()

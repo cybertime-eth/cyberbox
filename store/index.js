@@ -34,6 +34,7 @@ export const state = () => ({
   countPage: 1,
   filter: filter.races.DAOS.layers,
   mintNumFilter: null,
+  nomNameFilter: null,
   successApproveBuyToken: false,
   successBuyToken: false,
   successRemoveToken: false,
@@ -290,19 +291,21 @@ export const getters = {
   paginationSort(state) {
 	return state.pagination ? `${state.pagination} ${state.sort}` : state.sort
   },
-  mintNumQueryCondition(state) {
-    if (state.mintNumFilter) {
-      let condition = ''
+  collectionFilterCondition(state) {
+    let condition = ''
+    if (state.nomNameFilter) {
       const collectionSetting = state.collectionSetting
       if (!collectionSetting || collectionSetting.fetchRequest === 'getGraphData') {
-        condition = `name_contains: "${state.mintNumFilter}"`
+        condition = `name_contains: "${state.nomNameFilter}"`
       } else {
-        condition = `contract_name_contains: "${state.mintNumFilter}"`
+        condition = `contract_name_contains: "${state.nomNameFilter}"`
       }
-      return condition
+    } else if (state.mintNumFilter) {
+      condition = `mint_key_contains: "${state.mintNumFilter}"`
     } else {
       return ''
     }
+    return condition
   }
 }
 export const actions = {
@@ -340,8 +343,8 @@ export const actions = {
   },
   async getGraphData({commit, state, getters, dispatch}, traitFilters) {
     let sort = getters.paginationSort
-    const mintNumQueryCondition = getters.mintNumQueryCondition
-    let condition = $nuxt.$route.params.collectionid ? `where: { contract: "${$nuxt.$route.params.collectionid}" ${mintNumQueryCondition}}` : ''
+    const collectionFilterCondition = getters.collectionFilterCondition
+    let condition = $nuxt.$route.params.collectionid ? `where: { contract: "${$nuxt.$route.params.collectionid}" ${collectionFilterCondition}}` : ''
     let rarityNfts = null
     let queryTables = ''
     const queryFormat = `
@@ -349,6 +352,7 @@ export const actions = {
         id
         contract
         contract_id
+        mint_key
         price
         seller
         owner
@@ -387,13 +391,13 @@ export const actions = {
     `
     if (traitFilters && traitFilters.length > 0) {
       traitFilters.forEach((item, index) => {
-        condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] ${mintNumQueryCondition} }`
+        condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] ${collectionFilterCondition} }`
         queryTables += `contractInfos${index}:` + queryFormat.replace('sort', sort).replace('condition', condition)
       })
     } else {
       if (state.raritySort && !state.sort.includes('owner') && $nuxt.$route.params.collectionid) {
         rarityNfts = await dispatch('getRarityNfts')
-        condition = `where: { contract: "${$nuxt.$route.params.collectionid}" contract_id_in: [${rarityNfts.map(item => item.contract_id)}] ${mintNumQueryCondition} }`
+        condition = `where: { contract: "${$nuxt.$route.params.collectionid}" contract_id_in: [${rarityNfts.map(item => item.contract_id)}] ${collectionFilterCondition} }`
         sort = ''
       }
       queryTables = queryFormat.replace('sort', sort).replace('condition', condition)
@@ -462,14 +466,15 @@ export const actions = {
 
   async getGraphDataListed({state, commit, getters, dispatch}, traitFilters) {
     const sort = getters.paginationSort
-    const mintNumQueryCondition = getters.mintNumQueryCondition
-    let condition = `where: { contract: "${$nuxt.$route.params.collectionid}" ${mintNumQueryCondition} }`
+    const collectionFilterCondition = getters.collectionFilterCondition
+    let condition = `where: { contract: "${$nuxt.$route.params.collectionid}" ${collectionFilterCondition} }`
     let queryTables = ''
     const queryFormat = `
       contractLists(${sort} first: 48 condition) {
         id
         contract
         contract_id
+        mint_key
         price
         image
         contract_name
@@ -478,7 +483,7 @@ export const actions = {
     `
     if (traitFilters && traitFilters.length > 0) {
       traitFilters.forEach((item, index) => {
-        condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] ${mintNumQueryCondition} }`
+        condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] ${collectionFilterCondition} }`
         queryTables += `contractLists${index}:` + queryFormat.replace('condition', condition)
       })
     } else {
@@ -513,14 +518,15 @@ export const actions = {
 
   async getGraphDataSells({state, commit, getters, dispatch}, traitFilters) {
     const sort = getters.paginationSort
-    const mintNumQueryCondition = getters.mintNumQueryCondition
-    let condition = `where: { contract: "${$nuxt.$route.params.collectionid}" ${mintNumQueryCondition}}`
+    const collectionFilterCondition = getters.collectionFilterCondition
+    let condition = `where: { contract: "${$nuxt.$route.params.collectionid}" ${collectionFilterCondition}}`
     let queryTables = ''
     const queryFormat = `
       contractSells(${sort} first: 48 condition) {
         id
         contract
         contract_id
+        mint_key
         price_total
         price_value
         price_fee
@@ -532,7 +538,7 @@ export const actions = {
     `
     if (traitFilters && traitFilters.length > 0) {
       traitFilters.forEach((item, index) => {
-        condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] ${mintNumQueryCondition} }`
+        condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] ${collectionFilterCondition} }`
         queryTables += `contractSells${index}:` + queryFormat.replace('sort', sort).replace('condition', condition)
       })
     } else {
@@ -1178,6 +1184,11 @@ export const mutations = {
   },
   changeMintNumFilter(state, mintNum) {
     state.mintNumFilter = mintNum
+    state.nomNameFilter = null
+  },
+  changeNomNameFilter(state, nomName) {
+    state.nomNameFilter = nomName
+    state.mintNumFilter = null
   },
   changeSuccessApproveBuyToken(state, status) {
     state.successApproveBuyToken = status
