@@ -6,10 +6,10 @@
         <img :src="collection.logo" alt="avatar" class="collection__header-avatar">
         <h1 class="collection__header-title" >{{ collection.name }} <img src="/confirmed.svg" alt="confirm"></h1>
         <p class="collection__header-subtitle">Collectibles</p>
-        <div class="collection__header-socials" :class="{'no-search': collection.route === 'nomdom'}">
-          <div class="collection__header-search search-box" v-if="collection.route !== 'nomdom'">
-            <input class="search-box-input" type="number" min="1" placeholder="Mint number" v-model="searchNumber" @input="searchNft">
-            <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchNumber">
+        <div class="collection__header-socials">
+          <div class="collection__header-search search-box">
+            <input class="search-box-input" :type="!isNomDomain ? 'number' : 'text'" min="1" :placeholder="fitlerPlaceholder" v-model="searchName" @input="searchNft">
+            <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
             <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
           </div>
           <a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
@@ -169,7 +169,7 @@ export default {
       collectionInfo: {},
       floorPrice: '-',
       traitFilters: null,
-      searchNumber: ''
+      searchName: ''
     }
   },
   metaInfo() {
@@ -233,19 +233,20 @@ export default {
     },
     async fetchMintNumberNftList() {
       this.loading = true
-      this.$store.commit('changeMintNumFilter', this.searchNumber ? parseInt(this.searchNumber) : null)
+      const searchValue = !this.isNomDomain && this.searchName ? parseInt(this.searchName) : this.searchName
+      this.$store.commit('changeMintNumFilter', !searchValue ? null : searchValue)
       await this.$store.dispatch(this.activeRequest, this.$store.state.filteredTraits)
       this.loading = false
     },
     searchNft: _.debounce(function() {
-      if (this.searchNumber && parseInt(this.searchNumber) < 0) {
-        this.searchNumber = ''
+      if (this.searchName && parseInt(this.searchName) < 0) {
+        this.searchName = ''
       } else {
         this.fetchMintNumberNftList()
       }
     }, 500),
     clearSearch() {
-      this.searchNumber = ''
+      this.searchName = ''
       this.fetchMintNumberNftList()
     },
     addCurrentPage() {
@@ -363,7 +364,7 @@ export default {
         this.sort = collectionSetting.sort || this.sort
         this.myNft = collectionSetting.myNft || this.myNft
       }
-      this.searchNumber = this.$store.state.mintNumFilter
+      this.searchName = this.$store.state.mintNumFilter
     } else {
       this.initNftListSetting()
       this.$store.commit('changeMintNumFilter', null)
@@ -379,6 +380,9 @@ export default {
   computed: {
     isNomDomain() {
       return this.$route.params.collectionid === 'nomdom'
+    },
+    fitlerPlaceholder() {
+      return !this.isNomDomain ? 'Mint number' : 'NOM name'
     },
     countItems() {
       if (!this.myNft) {
