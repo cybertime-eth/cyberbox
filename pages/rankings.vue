@@ -140,7 +140,7 @@ export default {
       const resultCount =  await this.$store.dispatch('getStatisticCountNft')
       let nftName = ''
       let itemNum = 0
-      const invisibleTokens = ['pxa', 'nom']
+      const invisibleTokens = ['pxa', 'nom', 'nomdom']
       for (let [index, item] of result.entries()) {
         if (!invisibleTokens.includes(item.nftSymbol)) {
           let volume = 0;
