@@ -7,17 +7,7 @@
       <div class="header__logo" @click="$router.push('/')">
         <img src="/logo.svg" alt="logo" class="header__logo-img">
       </div>
-      <div class="header__search search-box">
-        <input class="search-box-input" placeholder="Search collections, items" v-model="searchName" @input="searchCollection">
-        <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
-        <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
-        <div class="header__search-dropdown" v-if="filteredCollections.length > 0">
-          <div class="header__search-dropdown-item" :key="idx" v-for="(collection, idx) in filteredCollections" @click="showCollectionPage(collection)">
-            <img :src="collection.logo" class="header__search-dropdown-item-icon">
-            <span class="header__search-dropdown-item-name">{{ collection.name }}</span>
-          </div>
-        </div>
-      </div>
+      <searchInput class="header__search" />
       <nav class="header__navigation">
         <ul class="header__ul">
           <li class="header__list">
@@ -51,6 +41,7 @@
       </div>
       <button class="gradient-button header__connect" v-if="!address" @click="showConnectModal = true">Connect Wallet</button>
       <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
+      <img src="/search-mobile.svg" alt="search" class="header__mobile-search" @click="showSearchView = true">
       <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showProfileMenuMobile = true">
     </div>
     <connect v-if="showConnectModal && !address" @showValora="openValoraModal" @closeModal="closeModal"/>
@@ -58,6 +49,7 @@
     <wrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
     <profileModal v-show="showProfileMenu" @closeModal="closeModal"/>
     <profileModalMobile v-show="showProfileMenuMobile" @closeModal="closeModal"/>
+    <searchView v-show="showSearchView" @close="showSearchView = false"/>
   </header>
 </template>
 <script>
@@ -66,6 +58,8 @@ import valoraConnect from '@/components/modals/valoraConnect'
 import profileModal from '@/components/modals/profileModal'
 import profileModalMobile from '@/components/modals/profileModalMobile'
 import wrongNetwork from '@/components/modals/wrongNetwork'
+import searchInput from '@/components/search/searchInput'
+import searchView from '@/components/search/searchView'
 export default {
   data() {
     return {
@@ -76,9 +70,7 @@ export default {
       showProfileMenuMobile: false,
       showWrongNetwork: false,
       showWrongNetworkModal: false,
-      showSearchDropdown: false,
-      searchName: '',
-      filteredCollections: []
+      showSearchView: false
     }
   },
   // watch: {
@@ -97,7 +89,9 @@ export default {
     valoraConnect,
     wrongNetwork,
     profileModal,
-    profileModalMobile
+    profileModalMobile,
+    searchInput,
+    searchView
   },
   computed: {
     chainId() {
@@ -134,22 +128,6 @@ export default {
       localStorage.setItem('move_back', true)
       this.$router.go(-1)
     },
-    searchCollection() {
-      const search = this.searchName
-      if (search.length >= 3) {
-        this.filteredCollections = this.$store.state.collectionList.filter(item => item.name.toLowerCase().includes(search.toLowerCase()))
-      } else {
-        this.filteredCollections = []
-      }
-    },
-    showCollectionPage(collection) {
-      this.clearSearch()
-      this.$router.push(`/collections/${collection.route}`)
-    },
-    clearSearch() {
-      this.searchName = ''
-      this.filteredCollections = []
-    },
     openValoraModal() {
       this.showValoraModal = true
       this.showConnectModal = false
@@ -167,31 +145,6 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-.search-box {
-  position: relative;
-  &-input {
-    width: calc(100% - 32px);
-    height: 1.53rem;
-    padding: 12px 16px;
-    border: 1px solid $border2;
-    border-radius: 25px;
-    font-size: 1.07rem;
-    &:focus {
-      box-shadow: 0 0 5px $border2;
-    }
-  }
-  &-img {
-    position: absolute;
-    top: 50%;
-    right: 1.23rem;
-    width: 1.53rem;
-    transform: translateY(-50%);
-    &.icon-close {
-      width: 1.07rem;
-      cursor: pointer;
-    }
-  }
 }
 header {
   box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
@@ -218,34 +171,6 @@ header {
   }
   &__search {
     width: 19.3rem;
-    &-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0%;
-      right: 0;
-      background: $white;
-      padding: 9px 0;
-      border-radius: 2px;
-      box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.25);
-      &-item {
-        display: flex;
-        align-items: center;
-        padding: 8px 16px;
-        cursor: pointer;
-        &:hover {
-          background: rgba(0, 0, 0, 0.04);
-        }
-        &-icon {
-          width: 2.15rem;
-          height: 2.15rem;
-          border-radius: 50%;
-        }
-        &-name {
-          margin-left: 10px;
-          font-size: 1.23rem;
-        }
-      }
-    }
   }
   &__ul {
     display: flex;
@@ -316,6 +241,9 @@ header {
   }
   &__mobile {
     display: none;
+    &-search {
+      display: none;
+    }
     &-menu {
       display: none;
     }
@@ -331,6 +259,9 @@ header {
     height: 6.5rem;
     position: relative;
     &__null {
+      display: none;
+    }
+    &__search {
       display: none;
     }
     &__navigation {
@@ -391,6 +322,11 @@ header {
     }
     &__mobile {
       display: block;
+      &-search {
+        display: block;
+        width: 1.8rem;
+        margin-right: 2.2rem;
+      }
       &-menu {
         display: block;
         justify-self: flex-end;
