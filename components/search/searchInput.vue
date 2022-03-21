@@ -1,6 +1,6 @@
 <template>
     <div class="search-box">
-        <input class="search-box-input" placeholder="Search collections, items" v-model="searchName" @input="searchCollection">
+        <input class="search-box-input" placeholder="Search collections" v-model="searchName" @input="searchCollection">
         <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
         <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
         <div class="search-box-dropdown" v-if="filteredCollections.length > 0">
