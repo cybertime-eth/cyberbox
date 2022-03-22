@@ -761,9 +761,11 @@ export default {
       position: relative;
       padding-top: 7.3rem;
       .search-box {
+        width: 100% !important;
         position: absolute;
         top: 1.6rem;
         left: 0;
+        margin: 0;
       }
       &-items, &-nft-text {
         font-size: 1.4rem;
