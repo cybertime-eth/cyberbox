@@ -7,6 +7,7 @@
       <div class="header__logo" @click="$router.push('/')">
         <img src="/logo.svg" alt="logo" class="header__logo-img">
       </div>
+      <searchInput class="header__search" />
       <nav class="header__navigation">
         <ul class="header__ul">
           <li class="header__list">
@@ -40,6 +41,7 @@
       </div>
       <button class="gradient-button header__connect" v-if="!address" @click="showConnectModal = true">Connect Wallet</button>
       <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
+      <img src="/search-mobile.svg" alt="search" class="header__mobile-search" @click="showSearchView = true">
       <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showProfileMenuMobile = true">
     </div>
     <connect v-if="showConnectModal && !address" @showValora="openValoraModal" @closeModal="closeModal"/>
@@ -47,6 +49,7 @@
     <wrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
     <profileModal v-show="showProfileMenu" @closeModal="closeModal"/>
     <profileModalMobile v-show="showProfileMenuMobile" @closeModal="closeModal"/>
+    <searchView v-show="showSearchView" @close="showSearchView = false"/>
   </header>
 </template>
 <script>
@@ -55,6 +58,8 @@ import valoraConnect from '@/components/modals/valoraConnect'
 import profileModal from '@/components/modals/profileModal'
 import profileModalMobile from '@/components/modals/profileModalMobile'
 import wrongNetwork from '@/components/modals/wrongNetwork'
+import searchInput from '@/components/search/searchInput'
+import searchView from '@/components/search/searchView'
 export default {
   data() {
     return {
@@ -64,7 +69,8 @@ export default {
       showProfileMenu: false,
       showProfileMenuMobile: false,
       showWrongNetwork: false,
-      showWrongNetworkModal: false
+      showWrongNetworkModal: false,
+      showSearchView: false
     }
   },
   // watch: {
@@ -83,7 +89,9 @@ export default {
     valoraConnect,
     wrongNetwork,
     profileModal,
-    profileModalMobile
+    profileModalMobile,
+    searchInput,
+    searchView
   },
   computed: {
     chainId() {
@@ -133,13 +141,18 @@ export default {
 }
 </script>
 <style lang="scss">
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 header {
   box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
 }
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 14rem 28rem 50.3rem 17.5rem 22rem;
+  grid-template-columns: 6.4rem 23.6rem 28rem 34.6rem 17.5rem 22rem;
   align-items: center;
   &__back {
     display: none;
@@ -147,7 +160,7 @@ header {
   &__logo {
     display: flex;
     align-items: center;
-    width: 14.9rem;
+    width: 5.1rem;
     justify-content: space-between;
     &-link {
       letter-spacing: 0.04em;
@@ -155,6 +168,9 @@ header {
     &-img {
       width: 6rem;
     }
+  }
+  &__search {
+    width: 19.3rem;
   }
   &__ul {
     display: flex;
@@ -225,6 +241,9 @@ header {
   }
   &__mobile {
     display: none;
+    &-search {
+      display: none;
+    }
     &-menu {
       display: none;
     }
@@ -240,6 +259,9 @@ header {
     height: 6.5rem;
     position: relative;
     &__null {
+      display: none;
+    }
+    &__search {
       display: none;
     }
     &__navigation {
@@ -300,6 +322,11 @@ header {
     }
     &__mobile {
       display: block;
+      &-search {
+        display: block;
+        width: 1.8rem;
+        margin-right: 2.2rem;
+      }
       &-menu {
         display: block;
         justify-self: flex-end;

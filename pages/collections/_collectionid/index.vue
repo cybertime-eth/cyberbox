@@ -124,14 +124,24 @@
       </div>
       <div class="collection__info" v-else>
         <h3 class="collection__info-items">{{ countItems }} items</h3>
-        <div class="collection__info-nft" @click="changeMyNftStatus">
-          <h3 class="collection__info-nft-text">My NFTs</h3>
-          <div class="collection__info-nft-switcher" :class="{'collection__info-nft-switcher-active': myNft}">
-            <div class="collection__info-nft-switcher-element" :class="{'collection__info-nft-switcher-element-active': myNft}"></div>
+        <div class="collection__info-nft">
+          <div class="collection__info-nft-search search-box">
+            <input class="search-box-input" :type="!isNomDomain ? 'number' : 'text'" min="1" :placeholder="fitlerPlaceholder" v-model="searchName" @input="searchNft">
+            <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
+            <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
+          </div>
+          <div  class="collection__info-nft-filter" @click="changeMyNftStatus">
+            <h3 class="collection__info-nft-text">My NFTs</h3>
+            <div class="collection__info-nft-switcher" :class="{'collection__info-nft-switcher-active': myNft}">
+              <div class="collection__info-nft-switcher-element" :class="{'collection__info-nft-switcher-element-active': myNft}"></div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="collection__items" v-if="nftList.length && !loading">
+      <div class="collection__loading" v-if="nftLoading">
+        <img src="/loading-button.svg" alt="load">
+      </div>
+      <div class="collection__items" v-else-if="nftList.length && !loading">
         <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :owner="nftOwned(nft)" :seller="false" :route="`/collections/${nft.contract}/${routeNftId(nft)}`"/>
       </div>
       <p class="collection__empty-items" v-else-if="!loading">There are no results matching your selected criteria</p>
@@ -147,6 +157,7 @@
   </section>
 </template>
 <script>
+import _ from 'lodash'
 import nft from '@/components/nft.vue'
 import attributesFilter from '@/components/modals/attributesFilter'
 import TraitsFilterModal from '@/components/modals/traitsFilterModal'
@@ -155,6 +166,7 @@ export default {
   data() {
     return {
       loading: false,
+      nftLoading: false,
       showTraitsFilter: false,
       filter: 'All',
       activeRequest: 'getGraphData',
@@ -162,7 +174,8 @@ export default {
       myNft: false,
       collectionInfo: {},
       floorPrice: '-',
-      traitFilters: null
+      traitFilters: null,
+      searchName: ''
     }
   },
   metaInfo() {
@@ -219,10 +232,31 @@ export default {
       return nft.owner && nft.owner.toLowerCase() === this.$store.state.fullAddress
     },
     initNftListSetting() {
-      this.loading = true
       this.$store.commit('setNewNftList', [])
       this.$store.commit('changeCountPage', 1)
       this.$store.commit('changeSortData', 'all')
+    },
+    async fetchNftsBySearch() {
+      this.nftLoading = true
+      const searchValue = !this.isNomDomain && this.searchName ? parseInt(this.searchName) : this.searchName
+      if (!this.isNomDomain) {
+        this.$store.commit('changeMintNumFilter', !searchValue ? null : searchValue)
+      } else {
+        this.$store.commit('changeNomNameFilter', !searchValue ? null : searchValue)
+      }
+      await this.$store.dispatch(this.activeRequest, this.$store.state.filteredTraits)
+      this.nftLoading = false
+    },
+    searchNft: _.debounce(function() {
+      if (this.searchName && parseInt(this.searchName) < 0) {
+        this.searchName = ''
+      } else {
+        this.fetchNftsBySearch()
+      }
+    }, 500),
+    clearSearch() {
+      this.searchName = ''
+      this.fetchNftsBySearch()
     },
     addCurrentPage() {
       const filteredTraits = this.$store.state.filteredTraits
@@ -300,18 +334,19 @@ export default {
         case 'bought': activeRequest = 'getGraphDataSells'
       }
       this.activeRequest = activeRequest
+      this.changeCollectionSetting({
+        filter: this.filter,
+        fetchRequest: activeRequest
+      })
       if (this.myNft) {
         this.changeMyNftFilter()
       } else {
         this.$store.dispatch(activeRequest, this.traitFilters)
       }
       this.$store.commit('changeCountPage', 1)
-      this.changeCollectionSetting({
-        filter: this.filter,
-        fetchRequest: activeRequest
-      })
     },
     async updateTraitFilter(filters, filteredCount) {
+      this.loading = true
       this.initNftListSetting()
       this.traitFilters = filters
       await this.$store.dispatch(this.activeRequest, filters)
@@ -339,8 +374,11 @@ export default {
         this.sort = collectionSetting.sort || this.sort
         this.myNft = collectionSetting.myNft || this.myNft
       }
+      this.searchName = this.$store.state.mintNumFilter
     } else {
+      this.loading = true
       this.initNftListSetting()
+      this.$store.commit('changeMintNumFilter', null)
       this.$store.commit('updateCollectionSetting', null)
       await this.$store.dispatch(this.activeRequest)
     }
@@ -353,6 +391,9 @@ export default {
   computed: {
     isNomDomain() {
       return this.$route.params.collectionid === 'nomdom'
+    },
+    fitlerPlaceholder() {
+      return !this.isNomDomain ? 'Mint number' : 'NOM name'
     },
     countItems() {
       if (!this.myNft) {
@@ -562,6 +603,18 @@ export default {
     &-nft {
       display: flex;
       align-items: center;
+      &-search {
+        width: 15.3rem !important;
+        margin-right: 1.84rem;
+        .search-box-input {
+          width: calc(100% - 32px) !important;
+          font-size: 1.23rem;
+        }
+      }
+      &-filter {
+        display: flex;
+        align-items: center;
+      }
       &-text {
         margin-right: 1.6rem;
       }
@@ -705,6 +758,15 @@ export default {
       }
     }
     &__info {
+      position: relative;
+      padding-top: 7.3rem;
+      .search-box {
+        width: 100% !important;
+        position: absolute;
+        top: 1.6rem;
+        left: 0;
+        margin: 0;
+      }
       &-items, &-nft-text {
         font-size: 1.4rem;
       }
