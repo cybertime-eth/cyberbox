@@ -3,8 +3,9 @@
     <h1 class="rankings__title">NFT Ranking</h1>
     <h3 class="rankings__subtitle">With trading volume, floor price and etc., you can find the most trending NFTs here.</h3>
    <!-- <div class="rankings__navigation">
-     <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': !filterMonthly}" @click="updateFilter(false)">7 Days</button>
-     <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': filterMonthly}" @click="updateFilter(true)">30 Days</button>
+     <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': dateFilter === '7d'}" @click="updateFilter('7d')">7 Days</button>
+     <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': dateFilter === '24d'}" @click="updateFilter('24d')">24 Days</button>
+     <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': dateFilter === '30d'}" @click="updateFilter('30d')">30 Days</button>
    </div> -->
     <div class="rankings__table" :class="{empty: list.length === 0}">
       <div class="rankings__table-header">
@@ -44,22 +45,27 @@
           <div class="rankings__table-detail-group">
             <div class="rankings__table-content-item-volume">
               <p class="rankings__table-content-item-volume-title"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</p>
+              <p class="rankings__table-content-item-volume-price">{{ item.volumePrice }}</p>
             </div>
             <!-- <h3 class="rankings__table-content-item-items">{{ item.items }}</h3> -->
             <h3 class="rankings__table-content-item-day rankings__table-content-item-percent-info" :class="{ positive: item.percentPer24h > 0, negative: item.percentPer24h < 0 }">{{ contractPercentInfo(item.percentPer24h) }}</h3>
             <h3 class="rankings__table-content-item-week  rankings__table-content-item-percent-info"  :class="{ positive: item.percentPer7d > 0, negative: item.percentPer7d < 0 }">{{ contractPercentInfo(item.percentPer7d) }}</h3>
             <div class="rankings__table-content-item-floor">
-              <img class="rankings__table-content-item-floor-icon" src="/celo.svg" alt="celo" v-if="item.floorPriceCelo !== '-'">
-              <p class="rankings__table-content-item-floor-title">{{ item.floorPriceCelo }}</p>
+              <p class="rankings__table-content-item-floor-title"><img class="rankings__table-content-item-floor-icon" src="/celo.svg" alt="celo" v-if="item.floorPriceCelo !== '-'"> {{ item.floorPriceCelo }}</p>
+              <p class="rankings__table-content-item-floor-price">{{ item.floorPrice }}</p>
             </div>
             <!-- <h3 class="rankings__table-content-item-owners">-</h3> -->
             <h3 class="rankings__table-content-item-items">{{ item.items }}</h3>
           </div>
           <div class="rankings__table-content-item-price-box">
-            <h3 class="rankings__table-content-item-prices">{{ item.volumePrice }}</h3>
-            <p class="rankings__table-content-item-percent" :class="{ negative: item.percentPer24h < 0 }">{{ item.percentPer24h }}%</p>
+            <h3 class="rankings__table-content-item-prices"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</h3>
+            <p class="rankings__table-content-item-percent" :class="{ negative: item.percentPer24h < 0, zero: item.percentPer24h === 0 }">{{ item.percentPer24h }}%</p>
           </div>
           <div class="rankings__table-content-item-detail-box" v-if="item.expanded">
+            <div class="rankings__table-content-item-detail-box-info">
+              <p class="rankings__table-content-item-detail-box-info-title">7d %</p>
+              <h3 class="rankings__table-content-item-detail-box-info-content" :class="{ positive: item.percentPer7d > 0, negative: item.percentPer7d < 0, zero: item.percentPer7d === 0 }">{{ item.percentPer7d }}%</h3>
+            </div>
             <div class="rankings__table-content-item-detail-box-info">
               <p class="rankings__table-content-item-detail-box-info-title">Floor price</p>
               <h3 class="rankings__table-content-item-detail-box-info-content">{{ item.floorPrice }}</h3>
@@ -83,7 +89,7 @@ export default {
       loading: false,
       celoPrice: 1,
       list: [],
-      filterMonthly: true
+      dateFilter: null
     }
   },
   async created() {
@@ -142,7 +148,7 @@ export default {
       let itemNum = 0
       const invisibleTokens = ['pxa', 'nom']
       for (let [index, item] of result.entries()) {
-        if (!invisibleTokens.includes(item.nftSymbol)) {
+        if (!invisibleTokens.includes(item.nftSymbol) && item.sell_total_price > 0 && itemNum < 15) {
           let volume = 0;
           let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
           const mintCountDiff = Math.ceil(item.mint_count / 1000) - (item.mint_count / 1000)
@@ -181,8 +187,8 @@ export default {
       e.preventDefault()
       e.stopPropagation()
     },
-    updateFilter(filterMonthly) {
-      this.filterMonthly = filterMonthly
+    updateFilter(filter) {
+      this.dateFilter = filter
     }
   }
 }
@@ -191,6 +197,7 @@ export default {
 .rankings {
   padding-top: 2.6rem;
   &__title {
+    font-size: 2.46rem;
     text-align: center;
   }
   &__subtitle {
@@ -198,38 +205,42 @@ export default {
     padding-top: 1rem;
     text-align: center;
     font-family: OpenSans-SemiBold;
+    font-size: 1.23rem;
   }
   &__navigation {
-    display: none;
     align-items: center;
-    padding-top: 5rem;
+    padding-top: 3.84rem;
     &-button {
-      width: 9.15rem;
-      height: 4rem;
-      border-radius: .8rem;
-      box-shadow: 0 .2rem .8rem rgba(0, 0, 0, 0.05);
+      width: 7.23rem;
+      height: 2.46rem;
+      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+      border-radius: 20px;
       background: $white;
       margin-right: 2rem;
       font-family: OpenSans-Regular;
+      font-size: 1.07rem;
+      font-weight: 400;
+      color: $grayDark;
       &-active {
-        background: $modalColor;
+        background: $lightGreen;
         box-shadow: none;
-        font-family: OpenSans-SemiBold;
       }
     }
   }
   &__table {
     width: 100%;
-    padding-top: 2.4rem;
+    padding-top: 2.3rem;
     &-header {
       display: grid;
       background: $modalColor;
-      height: 4rem;
+      height: 3.07rem;
       // grid-template-columns: 8.5rem 22.5rem 15rem 17rem 16.5rem 17rem 17rem 16.5rem;
       grid-template-columns: 31rem 99rem;
       align-items: center;
       justify-items: flex-end;
       h3 {
+        font-size: 1.23rem;
+        font-weight: 600;
         letter-spacing: 0.04em;
       }
     }
@@ -244,25 +255,28 @@ export default {
       }
     }
     &-detail-group {
-      grid-template-columns: 15rem 17rem 16.5rem 17rem 33.5rem;
+      grid-template-columns: 15rem 17rem 16.5rem 23rem 27.5rem;
       justify-items: flex-end;
     }
     &-content {
       &-item {
         display: grid;
         grid-template-columns: 31rem 99rem;
-        height: 8rem;
+        height: 6.15rem;
         border-bottom: .1rem solid $modalColor;
         align-items: center;
         cursor: pointer;
+        h3 {
+          font-size: 1.23rem;
+        }
         &-collection {
           display: flex;
           align-items: center;
           &-image {
             position: relative;
             &-avatar {
-              width: 4.8rem;
-              height: 4.8rem;
+              width: 3.69rem;
+              height: 3.69rem;
               border-radius: 50%;
               object-fit: cover;
             }
@@ -309,10 +323,16 @@ export default {
             letter-spacing: 0.03em;
             display: flex;
             align-items: center;
+            font-size: 1.23rem;
             img {
               margin: 0 .5rem;
               width: 1.4rem;
             }
+          }
+          &-price {
+            font-size: 1.07rem;
+            font-weight: 400;
+            color: $textColor3;
           }
           &-subtitle {
             padding-top: .4rem;
@@ -332,6 +352,8 @@ export default {
           justify-self: flex-end;
         }
         &-percent-info {
+          font-weight: 400;
+          font-size: 1.23rem;
           &.positive {
             color: $green;
           }
@@ -340,8 +362,6 @@ export default {
           }
         }
         &-floor {
-          display: flex;
-          align-items: center;
           text-align: right;
           &-icon {
             margin-right: 8px;
@@ -351,10 +371,14 @@ export default {
             letter-spacing: 0.03em;
             display: flex;
             align-items: center;
+            font-size: 1.23rem;
             img {
               margin: 0 .5rem;
               width: 1.4rem;
             }
+          }
+          &-price {
+            font-size: 1.07rem;
           }
           &-subtitle {
             padding-top: .4rem;
@@ -372,6 +396,7 @@ export default {
         }
         &-items {
           justify-self: flex-end;
+          font-weight: 400;
         }
         &-price-box, &-detail-box {
           display: none;
@@ -383,10 +408,9 @@ export default {
     }
   }
   &-no-result {
-    display: none;
-    font-size: 16px;
     padding: 4.2rem 0;
     text-align: center;
+    font-size: 16px;
   }
 
   @media(max-width: 460px) {
@@ -466,12 +490,23 @@ export default {
           &-prices, &-percent {
             font-size: 14px;
           }
+          &-prices {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            img {
+              margin-right: 4px;
+            }
+          }
           &-percent {
             margin-top: 0.4rem;
-			color: $green;
-			&.negative {
-			  color: $red;
-			}
+            color: $green;
+            &.negative {
+              color: $red;
+            }
+            &.zero {
+              color: $textColor;
+            }
           }
           &-detail-box {
             width: 100%;
@@ -494,6 +529,15 @@ export default {
                 font-weight: 600;
                 font-size: 14px;
                 color: $textColor;
+                &.positive {
+                  color: $green;
+                }
+                &.negative {
+                  color: $red;
+                }
+                &.zero {
+                  color: $textColor;
+                }
               }
             }
           }
