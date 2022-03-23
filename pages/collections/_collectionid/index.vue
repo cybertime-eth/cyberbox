@@ -180,44 +180,105 @@ export default {
   },
   metaInfo() {
     return {
-      meta: [{
-        vmid: 'title',
-        hid: 'title',
-        name: 'title',
-        content: this.pageTitle
-      }, {
-        vmid: 'og:title',
-        hid: 'og:title',
-        property: 'og:title',
-        content: this.pageTitle
-      }, {
-        vmid: 'description',
-        hid: 'description',
-        name: 'description',
-        content: this.description
-      }, {
-        vmid: 'og:description',
-        hid: 'og:description',
-        property: 'og:description',
-        content: this.description
-      }
-      , {
-        vmid: 'image',
-        hid: 'image',
-        name: 'image',
-        content: this.metaIcon
-      }, {
-        vmid: 'og:image',
-        hid: 'og:image',
-				name: 'og:image',
-        content: this.metaIcon
-			}]
+      meta: [
+        { vmid: 'title', hid: 'title', name: 'title', content: this.pageTitle },
+        { vmid: 'og:title', hid: 'og:title', property: 'og:title', content: this.pageTitle },
+        { vmid: 'description', hid: 'description', name: 'description', content: this.description },
+        { vmid: 'og:description', hid: 'og:description', property: 'og:description', content: this.description },
+        { vmid: 'image', hid: 'image', name: 'image', content: this.metaIcon },
+        { vmid: 'og:image', hid: 'og:image', name: 'og:image', content: this.metaIcon }
+      ]
     }
   },
   components: {
     nft,
     attributesFilter,
     TraitsFilterModal
+  },
+  computed: {
+    pageTitle() {
+      // const collection = this.collection
+      // return `${this.collection.name} | CyberBox NFT Marketplace`
+      return `Celostrails | CyberBox NFT Marketplace`
+    },
+    description() {
+      // const collection = this.collection
+      // return collection.description
+      return 'Celostrials are an intergalactic collection of unique beings, found exclusively on the Celo Blockchain. Their features are algorithmically generated resulting in an interstellar collectible completely unique to you!'
+    },
+    metaIcon() {
+			// let imageSrc = ''
+      // switch (this.$route.params.collectionid) {
+      //   case 'cpunk': imageSrc = '/collections/Media_punks.png'
+      //     break
+      //   case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
+      //     break
+      //   default: imageSrc = this.collection.image
+      //     break
+      // }
+      // return imageSrc
+      return '/collections/Media_toadz.png'
+    },
+    isNomDomain() {
+      return this.$route.params.collectionid === 'nomdom'
+    },
+    fitlerPlaceholder() {
+      return !this.isNomDomain ? 'Mint number' : 'NOM name'
+    },
+    countItems() {
+      if (!this.myNft) {
+        switch (this.filter) {
+          case 'All': return this.collectionInfo.filter_count || this.collectionInfo.mint_count;
+          case 'listed': return this.collectionInfo.list_count;
+          case 'bought': return this.collectionInfo.sell_count;
+        }
+      } else {
+        return this.nftList.length
+      }
+    },
+    collection() {
+      return this.$store.state.collectionList.filter(item => item.route === this.$route.params.collectionid)[0]
+    },
+    nftList() {
+      return this.$store.state.nftList
+    },
+    address() {
+      return this.$store.state.address
+    },
+    fetchEnabled() {
+      return this.address || (!this.address && !this.myNft)
+    },
+    filtersCount() {
+      let sectionCount = 0
+      this.$store.state.traitFilters.forEach(item => {
+        const filteredValues = item.values.filter(filterItem => filterItem.checked)
+        if (filteredValues.length > 0) {
+          sectionCount++
+        }
+      })
+      return sectionCount
+    }
+  },
+  watch: {
+    nftList() {
+      if (this.$store.state.nftList.length === 0) {
+        if (window.innerWidth < 836) {
+          this.showFixedFooter(true)
+        }
+      } else {
+        this.showFixedFooter(false)
+      }
+    },
+    loading(newVal) {
+      if (window.innerWidth < 836 && this.loading) {
+        this.showFixedFooter(true)
+      }
+    },
+    nftLoading() {
+      if (window.innerWidth < 836 && this.nftLoading) {
+        this.showFixedFooter(true)
+      }
+    }
   },
   methods: {
     routeNftId(nft) {
@@ -391,93 +452,6 @@ export default {
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
     this.loading = false
   },
-  computed: {
-    pageTitle() {
-      const collection = this.collection
-      console.log('000000', collection.name)
-      // return `${this.collection.name} | CyberBox NFT Marketplace`
-      return `Celostrails | CyberBox NFT Marketplace`
-    },
-    description() {
-      const collection = this.collection
-      console.log('11111', collection.description)
-      return 'Celostrials are an intergalactic collection of unique beings, found exclusively on the Celo Blockchain. Their features are algorithmically generated resulting in an interstellar collectible completely unique to you!'
-    },
-    metaIcon() {
-			let imageSrc = ''
-      switch (this.$route.params.collectionid) {
-        case 'cpunk': imageSrc = '/collections/Media_punks.png'
-          break
-        case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
-          break
-        default: imageSrc = this.collection.image
-          break
-      }
-      console.log('222222', imageSrc)
-      // return imageSrc
-      return '/collections/Media_toadz.png'
-    },
-    isNomDomain() {
-      return this.$route.params.collectionid === 'nomdom'
-    },
-    fitlerPlaceholder() {
-      return !this.isNomDomain ? 'Mint number' : 'NOM name'
-    },
-    countItems() {
-      if (!this.myNft) {
-        switch (this.filter) {
-          case 'All': return this.collectionInfo.filter_count || this.collectionInfo.mint_count;
-          case 'listed': return this.collectionInfo.list_count;
-          case 'bought': return this.collectionInfo.sell_count;
-        }
-      } else {
-        return this.nftList.length
-      }
-    },
-    collection() {
-      return this.$store.state.collectionList.filter(item => item.route === this.$route.params.collectionid)[0]
-    },
-    nftList() {
-      return this.$store.state.nftList
-    },
-    address() {
-      return this.$store.state.address
-    },
-    fetchEnabled() {
-      return this.address || (!this.address && !this.myNft)
-    },
-    filtersCount() {
-      let sectionCount = 0
-      this.$store.state.traitFilters.forEach(item => {
-        const filteredValues = item.values.filter(filterItem => filterItem.checked)
-        if (filteredValues.length > 0) {
-          sectionCount++
-        }
-      })
-      return sectionCount
-    }
-  },
-  watch: {
-    nftList() {
-      if (this.$store.state.nftList.length === 0) {
-        if (window.innerWidth < 836) {
-          this.showFixedFooter(true)
-        }
-      } else {
-        this.showFixedFooter(false)
-      }
-    },
-    loading(newVal) {
-      if (window.innerWidth < 836 && this.loading) {
-        this.showFixedFooter(true)
-      }
-    },
-    nftLoading() {
-      if (window.innerWidth < 836 && this.nftLoading) {
-        this.showFixedFooter(true)
-      }
-    }
-  }
 }
 </script>
 <style lang="scss">
