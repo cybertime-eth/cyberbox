@@ -181,26 +181,32 @@ export default {
   metaInfo() {
     return {
       meta: [{
+        vmid: 'title',
         hid: 'title',
         name: 'title',
         content: this.pageTitle
       }, {
+        vmid: 'og:title',
         hid: 'og:title',
         property: 'og:title',
         content: this.pageTitle
       }, {
+        vmid: 'description',
         hid: 'description',
         name: 'description',
         content: this.description
       }, {
+        vmid: 'og:description',
         hid: 'og:description',
         property: 'og:description',
         content: this.description
       }, {
+        vmid: 'image',
         hid: 'image',
         name: 'image',
         content: this.metaIcon
       }, {
+        vmid: 'og:image',
         hid: 'og:image',
 				name: 'og:image',
         content: this.metaIcon

@@ -3,4 +3,4 @@ import VueClipboard from 'vue-clipboard2'
 import VueMeta from 'vue-meta'
 
 Vue.use(VueClipboard)
-Vue.use(VueMeta,  { refreshOnceOnNavigation: true })
+Vue.use(VueMeta,  { ssrAppId: 1 })
