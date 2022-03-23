@@ -178,25 +178,15 @@ export default {
       searchName: ''
     }
   },
-  // metaInfo() {
-  //   return {
-  //     meta: [
-  //       { vmid: 'title', hid: 'title', name: 'title', content: this.pageTitle },
-  //       { vmid: 'og:title', hid: 'og:title', property: 'og:title', content: this.pageTitle },
-  //       { vmid: 'description', hid: 'description', name: 'description', content: this.description },
-  //       { vmid: 'og:description', hid: 'og:description', property: 'og:description', content: this.description },
-  //       { vmid: 'image', hid: 'image', name: 'image', content: this.metaIcon },
-  //       { vmid: 'og:image', hid: 'og:image', name: 'og:image', content: this.metaIcon }
-  //     ]
-  //   }
-  // },
   metaInfo() {
     return {
       meta: [
         { vmid: 'title', hid: 'title', name: 'title', content: this.pageTitle },
         { vmid: 'og:title', hid: 'og:title', property: 'og:title', content: this.pageTitle },
         { vmid: 'description', hid: 'description', name: 'description', content: this.description },
-        { vmid: 'og:description', hid: 'og:description', property: 'og:description', content: this.description }
+        { vmid: 'og:description', hid: 'og:description', property: 'og:description', content: this.description },
+        { vmid: 'image', hid: 'image', name: 'image', content: this.metaIcon },
+        { vmid: 'og:image', hid: 'og:image', name: 'og:image', content: this.metaIcon }
       ]
     }
   },
@@ -207,27 +197,22 @@ export default {
   },
   computed: {
     pageTitle() {
-      // const collection = this.collection
-      // return `${this.collection.name} | CyberBox NFT Marketplace`
-      return `Celostrails | CyberBox NFT Marketplace`
+      return `${this.collection.name} | CyberBox NFT Marketplace`
     },
     description() {
-      // const collection = this.collection
-      // return collection.description
-      return 'Celostrials are an intergalactic collection of unique beings, found exclusively on the Celo Blockchain. Their features are algorithmically generated resulting in an interstellar collectible completely unique to you!'
+      return this.collection.description
     },
     metaIcon() {
-			// let imageSrc = ''
-      // switch (this.$route.params.collectionid) {
-      //   case 'cpunk': imageSrc = '/collections/Media_punks.png'
-      //     break
-      //   case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
-      //     break
-      //   default: imageSrc = this.collection.image
-      //     break
-      // }
-      // return imageSrc
-      return '/collections/Media_toadz.png'
+			let imageSrc = ''
+      switch (this.$route.params.collectionid) {
+        case 'cpunk': imageSrc = '/collections/Media_punks.png'
+          break
+        case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
+          break
+        default: imageSrc = this.collection.image
+          break
+      }
+      return imageSrc
     },
     isNomDomain() {
       return this.$route.params.collectionid === 'nomdom'
