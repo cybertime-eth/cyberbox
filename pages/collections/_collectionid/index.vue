@@ -181,21 +181,29 @@ export default {
   metaInfo() {
     return {
       meta: [{
+        hid: 'title',
+        name: 'title',
+        content: this.pageTitle
+      }, {
+        hid: 'og:title',
+        property: 'og:title',
+        content: this.pageTitle
+      }, {
         hid: 'description',
-        property: 'description',
-        content: this.getDescription()
+        name: 'description',
+        content: this.description
+      }, {
+        hid: 'og:description',
+        property: 'og:description',
+        content: this.description
       }, {
         hid: 'image',
         name: 'image',
-        content: this.getImageSrc()
-      }, {
-        hid: 'og:description',
-        name: 'og:description',
-        content: this.getDescription()
+        content: this.metaIcon
       }, {
         hid: 'og:image',
 				name: 'og:image',
-        content: this.getImageSrc()
+        content: this.metaIcon
 			}]
     }
   },
@@ -207,26 +215,6 @@ export default {
   methods: {
     routeNftId(nft) {
       return nft.contract !== 'nomdom' ? nft.contract_id : nft.image
-    },
-    getDescription() {
-      let description = ''
-      switch (this.$route.params.collectionid) {
-        case 'cpunk': description = 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
-          break
-        case 'ctoadz': description = 'CeloToadz | First collection of 6969 randomly generated Toadz made up of more than 120 different traits on Celo Blockchain!'
-          break
-      }
-      return description
-		},
-		getImageSrc() {
-			let imageSrc = ''
-      switch (this.$route.params.collectionid) {
-        case 'cpunk': imageSrc = '/collections/Media_punks.png'
-          break
-        case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
-          break
-      }
-      return imageSrc
     },
     nftOwned(nft) {
       return nft.owner && nft.owner.toLowerCase() === this.$store.state.fullAddress
@@ -397,6 +385,24 @@ export default {
     this.loading = false
   },
   computed: {
+    pageTitle() {
+      return `${this.collection.name} | CyberBox NFT Marketplace`
+    },
+    description() {
+      return this.collection.description
+    },
+    metaIcon() {
+			let imageSrc = ''
+      switch (this.$route.params.collectionid) {
+        case 'cpunk': imageSrc = '/collections/Media_punks.png'
+          break
+        case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
+          break
+        default: imageSrc = this.collection.image
+          break
+      }
+      return imageSrc
+    },
     isNomDomain() {
       return this.$route.params.collectionid === 'nomdom'
     },

@@ -8,7 +8,7 @@ export default {
     meta: [
       {charset: 'utf-8'},
       {name: 'viewport', content: 'width=device-width, initial-scale=1'},
-      {hid: 'description', name: 'description', content: ''},
+      {hid: 'description', name: 'description', content: 'Find and trade your favorites NFT collections on the Celo blockchain at CyberBox NFT Marketplace: Daopolis, CeloPunks, CeloToadz, Nomstronauts, CeloApes, CeloShapes, DimsofCelo'},
       {name: 'format-detection', content: 'telephone=no'}
     ],
     link: [

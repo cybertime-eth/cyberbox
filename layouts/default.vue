@@ -18,24 +18,14 @@ export default {
       return this.$store.state.address
     }
   },
-  metaInfo: {
-    meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
-    ]
-  },
   components: {
     Header,
     Footer,
   },
   metaInfo: {
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
+      { hid: 'title', name: 'title', content: 'CyberBox - NFT Marketplace on Celo' },
+      { hid: 'description', name: 'description', content: 'Find and trade your favorites NFT collections on the Celo blockchain at CyberBox NFT Marketplace: Daopolis, CeloPunks, CeloToadz, Nomstronauts, CeloApes, CeloShapes, DimsofCelo' },
     ]
   },
   watch: {

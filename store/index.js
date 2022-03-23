@@ -82,7 +82,7 @@ export const state = () => ({
       website: 'https://www.chinchillagang.com/',
       twitter: 'https://twitter.com/Chinchilla_Gang',
       telegram: 'https://t.co/E8XPvASIrz',
-      description: `The ChinChilla Gang collection is composed by 8888 ultra HD NFTs living on Celo blockchain. With this collection we want to create a durable brand and for this reason we didn't put "Celo" in our name like all other NFT projects on this blockchain.`
+      description: `The ChinChilla Gang collection is composed by 8888 ultra HD NFTs living on Celo blockchain.`
     },
     {
       id: 4,
@@ -121,7 +121,7 @@ export const state = () => ({
       website: 'https://www.celoapes.club',
       twitter: 'https://twitter.com/Celo_Apes',
       discord: 'https://discord.gg/bxEAVV8Fcj',
-      description: 'The Celo Apes Kingdom is an collection of 10000 APE NFT (10000 minted!) on Celo Blockchain. Own an Ape to become part of the most epic Ape Kingdom. 10% of all money goes towards eradicating poverty.'
+      description: 'The Celo Apes Kingdom is a collection of 10000 APE NFT on the Celo Blockchain. Own an Ape to become part of the most epic Ape Kingdom.'
     },
     {
       id: 7,
@@ -133,7 +133,7 @@ export const state = () => ({
       website: 'https://www.nom.space/',
       twitter: 'https://twitter.com/nomspace_nom',
       discord: 'https://discord.gg/byMNXabAxZ',
-      description: "All .nom's are NFTs which means you can easily transfer and sell them."
+      description: "NFT Collection of the nomspace team. Trade yours on CyberBox"
     },
     {
       id: 8,
@@ -160,7 +160,7 @@ export const state = () => ({
       twitter: 'https://twitter.com/c_ToadzOfficial',
       discord: 'https://discord.gg/dD3D223k8N',
       instagram: 'https://www.instagram.com/celotoadzofficial/',
-      description: 'CeloToadz | First collection of 6969 randomly generated Toadz made up of more than 120 different traits on Celo Blockchain!'
+      description: 'First collection of 6969 randomly generated Toadz made up of more than 120 different traits on Celo Blockchain!'
     },
     {
       id: 10,
@@ -185,7 +185,7 @@ export const state = () => ({
       twitter: 'https://twitter.com/CeloPunks',
       discord: 'https://discord.com/invite/Dzukufsrqe',
       telegram: 'https://t.me/celopunksclub',
-      description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
+      description: 'Christmas Collection of the CeloPunks! Trade yours on CyberBox'
     },
     {
       id: 12,
@@ -198,7 +198,7 @@ export const state = () => ({
       twitter: 'https://twitter.com/CeloPunks',
       discord: 'https://discord.com/invite/Dzukufsrqe',
       telegram: 'https://t.me/celopunksclub',
-      description: 'CeloPunksNeon are a special collection of CeloPunks with a unique Neon style designed for CeloPunks holders. Not affiliated with LarvaLabs.'
+      description: 'Neon Collection of the CeloPunks! Trade yours on CyberBox'
     },
     {
       id: 13,
@@ -231,7 +231,7 @@ export const state = () => ({
       image: '/collections/cdp.png',
       banner: '/collections/cdp-banner.png',
       logo: '/collections/cdp-logo.jpg',
-      description: '7777 Generated Celo DAO Punks On Celo blockchain'
+      description: 'NFT Collection of 7777 pieces generated on the Celo blockchain'
     },
     {
       id: 16,
@@ -243,7 +243,7 @@ export const state = () => ({
       website: 'https://www.womxnofcelo.com/',
       twitter: 'https://twitter.com/WomxnOfCelo',
       discord: 'https://discord.com/invite/SuFUEn2Vzn',
-      description: 'Womxn of Celo is the 1st generation of the (Womxn of) series for different blockchains. This Collection was created to empower women in the NFT space as well as women artists from all parts of the globe. To choose to write "womxn" so that we represent different cultures and gender expressions in the women in NFT community. The collection is based on the Celo blockchain and includes 5k unique gorgeous girls. Every girl has various rare attributes and features.'
+      description: 'This Collection was created to empower women in the NFT space as well as women artists from all parts of the globe. The collection is located on the Celo blockchain and includes 5k unique gorgeous girls. Every girl has various rare attributes and features'
     },
     {
       id: 17,
@@ -1075,7 +1075,6 @@ export const actions = {
       if(ensName == null || address != await ens.name(`${ensName}.nom`).getAddress()) {
         ensName = null
       }
-      console.log('nom name:', ensName)
       if (ensName) {
         commit('setAddressByNom', ensName)
       }
