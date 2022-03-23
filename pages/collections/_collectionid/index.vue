@@ -201,18 +201,17 @@ export default {
         property: 'og:description',
         content: this.description
       }
-      // , {
-      //   vmid: 'image',
-      //   hid: 'image',
-      //   name: 'image',
-      //   content: this.metaIcon
-      // }, {
-      //   vmid: 'og:image',
-      //   hid: 'og:image',
-			// 	name: 'og:image',
-      //   content: this.metaIcon
-      // }
-			]
+      , {
+        vmid: 'image',
+        hid: 'image',
+        name: 'image',
+        content: this.metaIcon
+      }, {
+        vmid: 'og:image',
+        hid: 'og:image',
+				name: 'og:image',
+        content: this.metaIcon
+			}]
     }
   },
   components: {
@@ -365,7 +364,6 @@ export default {
     window.removeEventListener('scroll', this.addCurrentPage)
   },
   async created() {
-    this.$meta().refresh()
     if (process.browser) {
       window.addEventListener('scroll', this.addCurrentPage)
     }
