@@ -393,10 +393,15 @@ export default {
   },
   computed: {
     pageTitle() {
-      return `${this.collection.name} | CyberBox NFT Marketplace`
+      const collection = this.collection
+      console.log('000000', collection.name)
+      // return `${this.collection.name} | CyberBox NFT Marketplace`
+      return `Celostrails | CyberBox NFT Marketplace`
     },
     description() {
-      return this.collection.description
+      const collection = this.collection
+      console.log('11111', collection.description)
+      return 'Celostrials are an intergalactic collection of unique beings, found exclusively on the Celo Blockchain. Their features are algorithmically generated resulting in an interstellar collectible completely unique to you!'
     },
     metaIcon() {
 			let imageSrc = ''
@@ -408,7 +413,9 @@ export default {
         default: imageSrc = this.collection.image
           break
       }
-      return imageSrc
+      console.log('222222', imageSrc)
+      // return imageSrc
+      return '/collections/Media_toadz.png'
     },
     isNomDomain() {
       return this.$route.params.collectionid === 'nomdom'

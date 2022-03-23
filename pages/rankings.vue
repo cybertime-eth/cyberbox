@@ -102,14 +102,6 @@ export default {
       ]
     }
   },
-  // metaInfo: {
-  //   meta: [
-  //     { vmid: 'title', hid: 'title', name: 'title', content: 'Rankings - NFT Marketplace on Celo' },
-  //     { vmid: 'og:title', hid: 'og:title', property: 'og:title', content: 'Rankings - NFT Marketplace on Celo' },
-  //     { vmid: 'description', hid: 'description', name: 'description', content: 'Find the trends of the NFT collections right here, trading volume, floor price and all the information' },
-  //     { vmid: 'og:description', hid: 'og:description', property: 'og:description', content: 'Find the trends of the NFT collections right here, trading volume, floor price and all the information' },
-  //   ]
-  // },
   computed: {
     pageTitle() {
       return 'Rankings - NFT Marketplace on Celo'
