@@ -1,5 +1,5 @@
 <template>
-	<section class="footer">
+	<section class="footer" :class="{ fixed: footerFixed }">
 		<div class="footer__container container-xl">
 			<a class="footer__logo" href="/">
 				<img src="/footer-logo.svg" alt="logo" >
@@ -34,11 +34,34 @@
 
 <script>
 export default {
+	data() {
+	  return {
+		footerFixed: true
+	  }
+	},
+	computed: {
+	  routeName() {
+		return this.$route.name
+	  }
+	},
+	watch: {
+	  routeName() {
+		this.updateLayout()
+	  }
+	},
+	created() {
+	  this.updateLayout()
+	},
 	methods: {
-		gotoTop() {
-			window.scrollTo(0, 0)
+	  updateLayout() {
+		if (this.routeName === 'index' || (this.routeName !== 'index' && process.browser && window.innerWidth <= 460)) {
+		  this.footerFixed = false
 		}
-	}
+	  },
+	  gotoTop() {
+		window.scrollTo(0, 0)
+	  }
+	},
 }
 </script>
 

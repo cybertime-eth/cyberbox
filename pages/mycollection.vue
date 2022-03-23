@@ -50,6 +50,11 @@ export default {
   async created() {
     let movedBack = false
     if (process.browser) {
+      if (window.innerWidth > 1144) {
+        this.showFixedFooter(false)
+      } else {
+        this.showFixedFooter(true)
+      }
       window.addEventListener('scroll', this.addCurrentPage)
       movedBack = true
       localStorage.removeItem('move_back')
@@ -98,11 +103,26 @@ export default {
         this.listNft = []
         this.fetchMyCollection()
       }
+    },
+    filteredNft() {
+      if ((process.browser && window.innerWidth > 1144 || window.innerWidth <= 460) || (this.filteredNft && this.filteredNft.length > 6)) {
+        this.showFixedFooter(false)
+      } else {
+        this.showFixedFooter(true)
+      }
     }
   },
   methods: {
     routeNftId(nft) {
       return nft.contract !== 'nomdom' ? nft.contract_id : nft.image
+    },
+    showFixedFooter(show) {
+      const footerEl = document.querySelector('.footer')
+      if (show) {
+        footerEl.classList.add('fixed')
+      } else {
+        footerEl.classList.remove('fixed')
+      }
     },
     async addMyCollection() {
       const result = await this.$store.dispatch('getGraphData')

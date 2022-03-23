@@ -137,8 +137,8 @@ export default {
 	  this.list[idx].percentPer7d = await this.$store.dispatch('getContractInfoWeekPercent', contract)
 	},
     async renderlist() {
-			const footerEl = document.querySelector('.footer')
-			footerEl.classList.add('fixed')
+      const footerEl = document.querySelector('.footer')
+      footerEl.classList.add('fixed')
       this.loading = true
       const tokenPrice = await this.$store.dispatch('getPriceToken')
       this.celoPrice = tokenPrice.value
@@ -177,8 +177,10 @@ export default {
           itemNum++
         }
       }
-			this.loading = false
-			footerEl.classList.remove('fixed')
+      this.loading = false
+      if (process.browser && (window.innerWidth > 1182 || window.innerWidth <= 460)) {
+        footerEl.classList.remove('fixed')
+      }
 	},
 	showNftDetail(nftIndex, e) {
       const newList = [...this.list]

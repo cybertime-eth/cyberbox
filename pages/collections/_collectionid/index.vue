@@ -231,6 +231,14 @@ export default {
     nftOwned(nft) {
       return nft.owner && nft.owner.toLowerCase() === this.$store.state.fullAddress
     },
+    showFixedFooter(show) {
+      const footerEl = document.querySelector('.footer')
+      if (show) {
+        footerEl.classList.add('fixed')
+      } else {
+        footerEl.classList.remove('fixed')
+      }
+    },
     initNftListSetting() {
       this.$store.commit('setNewNftList', [])
       this.$store.commit('changeCountPage', 1)
@@ -429,6 +437,27 @@ export default {
       return sectionCount
     }
   },
+  watch: {
+    nftList() {
+      if (this.$store.state.nftList.length === 0) {
+        if (window.innerWidth < 836) {
+          this.showFixedFooter(true)
+        }
+      } else {
+        this.showFixedFooter(false)
+      }
+    },
+    loading(newVal) {
+      if (window.innerWidth < 836 && this.loading) {
+        this.showFixedFooter(true)
+      }
+    },
+    nftLoading() {
+      if (window.innerWidth < 836 && this.nftLoading) {
+        this.showFixedFooter(true)
+      }
+    }
+  }
 }
 </script>
 <style lang="scss">

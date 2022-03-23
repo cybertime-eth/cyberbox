@@ -213,6 +213,13 @@ export default {
     SuccessfullBuy
   },
   async mounted() {
+    const footerEl = document.querySelector('.footer')
+    if (process.browser && (window.innerWidth > 910 || window.innerWidth <= 460)) {
+			footerEl.classList.remove('fixed')
+    } else {
+      footerEl.classList.add('fixed')
+    }
+
     const imageURL = this.getNFTImage(this.nft)
     if (imageURL && !this.nftImageLoaded) {
       const img = new Image(imageURL)
