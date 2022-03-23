@@ -1088,12 +1088,12 @@ export const actions = {
     const symbol = $nuxt.$route.params.collectionid
     const query = gql`
       query Sample {
-        traitTypes(where: { nftSymbol: "${symbol}" }) {
+        traitTypes(first: 1000 where: { nftSymbol: "${symbol}" }) {
           nftSymbol
           traitType
           traitIndex
         }
-        traitValues(where: { nftSymbol: "${symbol}" }) {
+        traitValues(first: 1000 where: { nftSymbol: "${symbol}" }) {
           nftSymbol
           traitType
           traitValue
