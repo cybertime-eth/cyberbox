@@ -185,8 +185,7 @@ export default {
         { vmid: 'og:title', hid: 'og:title', property: 'og:title', content: this.pageTitle },
         { vmid: 'description', hid: 'description', name: 'description', content: this.description },
         { vmid: 'og:description', hid: 'og:description', property: 'og:description', content: this.description },
-        { vmid: 'image', hid: 'image', name: 'image', content: this.metaIcon },
-        { vmid: 'og:image', hid: 'og:image', name: 'og:image', content: this.metaIcon }
+        { vmid: 'og:image', hid: 'og:image', property: 'og:image', content: this.metaIcon }
       ]
     }
   },
@@ -434,13 +433,12 @@ export default {
         if (name === 'description' || property === 'og:description') {
           nodeEl.setAttribute('content', this.description)
         }
-        if (name === 'image' || property === 'og:image') {
+        if (property === 'og:image') {
           nodeEl.setAttribute('content', this.metaIcon)
           imageMetaFound = true
         }
       })
       if (!imageMetaFound) {
-        document.head.insertAdjacentHTML('afterbegin', `<meta data-vue-meta="1" data-vmid="image" hid="image" name="image" content="${this.metaIcon}">`)
         document.head.insertAdjacentHTML('afterbegin', `<meta data-vue-meta="1" data-vmid="og:image" hid="og:image" property="og:image" content="${this.metaIcon}">`)
       }
     }
