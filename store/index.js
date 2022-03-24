@@ -575,18 +575,28 @@ export const actions = {
 
   // AUTHORIZATION
 
-  async updateUser({commit, state, getters}) {
+  async handleAccountChanged({commit, dispatch}, account) {
+    const oldAddress = localStorage.getItem('address')
+    commit('setAddress', account)
+    if (account !== oldAddress) {
+      await dispatch('loadNomNameAddress')
+    }
+  },
+
+  async updateUser({commit, dispatch}) {
     const ethereum = window.ethereum
-	  if (!ethereum) return
-	  const provider = new ethers.providers.Web3Provider(ethereum);
-  // localStorage.removeItem('address')
+    if (!ethereum) return
+	  const provider = new ethers.providers.Web3Provider(ethereum)
     if (localStorage.getItem('address') && !localStorage.getItem('walletconnect') && ethereum) {
       const signer = await provider.getSigner()
       const address = await signer.getAddress()
-	  const chain = await provider.getNetwork()
+	    const chain = await provider.getNetwork()
       try {
         ethereum.on("chainChanged", async (chainId) => {
           commit('setChainId', BigNumber.from(chainId).toNumber())
+        })
+        ethereum.on("accountsChanged", async (accounts) => {
+          dispatch('handleAccountChanged', accounts[0])
         })
       } catch (error) {
         console.log(error)
@@ -620,9 +630,9 @@ export const actions = {
       throw new Error(error);
     }
   },
-  addEventHandlerForWalletProvider({commit}, provider) {
+  addEventHandlerForWalletProvider({commit, dispatch}, provider) {
     provider.on("accountsChanged", async (accounts) => {
-      commit('setAddress', accounts[0])
+      await dispatch('handleAccountChanged', accounts[0])
       commit('setWalletConnected', true)
     });
 
@@ -1072,7 +1082,8 @@ export const actions = {
       const ens = new ENS({ provider, ensAddress: "0x3DE51c3960400A0F752d3492652Ae4A0b2A36FB3" })
       const result = await ens.getName(address)
       let ensName = result.name
-      if(ensName == null || address != await ens.name(`${ensName}.nom`).getAddress()) {
+      const ensAddress = await ens.name(`${ensName}.nom`).getAddress()
+      if(ensName == null || address.toLowerCase() !== ensAddress?.toLowerCase()) {
         ensName = null
       }
       if (ensName) {
