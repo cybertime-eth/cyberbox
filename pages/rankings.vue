@@ -59,12 +59,12 @@
           </div>
           <div class="rankings__table-content-item-price-box">
             <h3 class="rankings__table-content-item-prices"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</h3>
-            <p class="rankings__table-content-item-percent" :class="{ negative: item.percentPer24h < 0, zero: item.percentPer24h === 0 }">{{ item.percentPer24h }}%</p>
+            <p class="rankings__table-content-item-percent" :class="{ negative: item.percentPer24h < 0, zero: item.percentPer24h <= -100 || item.percentPer24h === 0 }">{{ contractPercentInfo(item.percentPer24h) }}</p>
           </div>
           <div class="rankings__table-content-item-detail-box" v-if="item.expanded">
             <div class="rankings__table-content-item-detail-box-info">
               <p class="rankings__table-content-item-detail-box-info-title">7d %</p>
-              <h3 class="rankings__table-content-item-detail-box-info-content" :class="{ positive: item.percentPer7d > 0, negative: item.percentPer7d < 0, zero: item.percentPer7d === 0 }">{{ item.percentPer7d }}%</h3>
+              <h3 class="rankings__table-content-item-detail-box-info-content" :class="{ positive: item.percentPer7d > 0, negative: item.percentPer7d < 0, zero: item.percentPer7d <= -100 || item.percentPer7d === 0 }">{{ contractPercentInfo(item.percentPer7d) }}</h3>
             </div>
             <div class="rankings__table-content-item-detail-box-info">
               <p class="rankings__table-content-item-detail-box-info-title">Floor price</p>
@@ -92,7 +92,7 @@ export default {
       dateFilter: null
     }
   },
-  metaInfo() {
+  head() {
     return {
       meta: [
         { vmid: 'title', hid: 'title', name: 'title', content: this.pageTitle },
@@ -132,8 +132,8 @@ export default {
       }
     },
     contractPercentInfo(percentVal) {
-      if (percentVal !== 0) {
-        return `${percentVal}%`
+      if (percentVal !== 0 && percentVal !== -100) {
+        return `${percentVal < 100 ? percentVal : 100}%`
       } else {
         return '-'
       }
@@ -154,51 +154,54 @@ export default {
 	  this.list[idx].percentPer24h = await this.$store.dispatch('getContractInfoTimePercent', contract)
 	  this.list[idx].percentPer7d = await this.$store.dispatch('getContractInfoWeekPercent', contract)
 	},
-    async renderlist() {
-      const footerEl = document.querySelector('.footer')
+  async renderlist() {
+    let footerEl = null
+    if (process.browser) {
+      footerEl = document.querySelector('.footer')
       footerEl.classList.add('fixed')
-      this.loading = true
-      const tokenPrice = await this.$store.dispatch('getPriceToken')
-      this.celoPrice = tokenPrice.value
-      const result = await this.$store.dispatch('getCollectionInfo', true)
-      const resultCount =  await this.$store.dispatch('getStatisticCountNft')
-      let nftName = ''
-      let itemNum = 0
-      const invisibleTokens = ['pxa', 'nom']
-      for (let [index, item] of result.entries()) {
-        if (!invisibleTokens.includes(item.nftSymbol) && item.sell_total_price > 0 && itemNum < 15) {
-          let volume = 0;
-          let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
-          const mintCountDiff = Math.ceil(item.mint_count / 1000) - (item.mint_count / 1000)
-          volume = volume + price
-          nftName = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
-          this.list.push({
-            id: (itemNum + 1),
-            collectionImage: `/${item.nftSymbol}.png`,
-            verification: false,
-            new: false,
-            name: nftName,
-            volumePrice: '-',
-            volumeCelo: item.sell_total_price / 1000,
-            statDay: volume / (item.sell_total_price / 1000) * 100,
-            statWeek: 7,
-            floorPrice: '-',
-            floorPriceCelo: '-',
-            owners: item.ownerCount,
-            items: item.mint_count,
-            shortenedItems: `${parseFloat((item.mint_count / 1000).toString()).toFixed(mintCountDiff === 0 ? 1 : 2)}K`,
-            percentPer24h: 0,
-            percentPer7d: 0,
-            route: item.title
-          })
-          this.loadNftDetail(item.nftSymbol, itemNum)
-          itemNum++
-        }
+    }
+    this.loading = true
+    const tokenPrice = await this.$store.dispatch('getPriceToken')
+    this.celoPrice = tokenPrice.value
+    const result = await this.$store.dispatch('getCollectionInfo', true)
+    const resultCount =  await this.$store.dispatch('getStatisticCountNft')
+    let nftName = ''
+    let itemNum = 0
+    const invisibleTokens = ['pxa', 'nom']
+    for (let [index, item] of result.entries()) {
+      if (!invisibleTokens.includes(item.nftSymbol) && item.sell_total_price > 0 && itemNum < 15) {
+        let volume = 0;
+        let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
+        const mintCountDiff = Math.ceil(item.mint_count / 1000) - (item.mint_count / 1000)
+        volume = volume + price
+        nftName = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
+        this.list.push({
+          id: (itemNum + 1),
+          collectionImage: `/${item.nftSymbol}.png`,
+          verification: false,
+          new: false,
+          name: nftName,
+          volumePrice: '-',
+          volumeCelo: item.sell_total_price / 1000,
+          statDay: volume / (item.sell_total_price / 1000) * 100,
+          statWeek: 7,
+          floorPrice: '-',
+          floorPriceCelo: '-',
+          owners: item.ownerCount,
+          items: item.mint_count,
+          shortenedItems: `${parseFloat((item.mint_count / 1000).toString()).toFixed(mintCountDiff === 0 ? 1 : 2)}K`,
+          percentPer24h: 0,
+          percentPer7d: 0,
+          route: item.title
+        })
+        this.loadNftDetail(item.nftSymbol, itemNum)
+        itemNum++
       }
-      this.loading = false
-      if (process.browser && (window.innerWidth > 1182 || window.innerWidth <= 460)) {
-        footerEl.classList.remove('fixed')
-      }
+    }
+    this.loading = false
+    if (process.browser && (window.innerWidth > 1182 || window.innerWidth <= 460)) {
+      footerEl.classList.remove('fixed')
+    }
 	},
 	showNftDetail(nftIndex, e) {
       const newList = [...this.list]

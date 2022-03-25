@@ -178,7 +178,7 @@ export default {
       searchName: ''
     }
   },
-  metaInfo() {
+  head() {
     return {
       meta: [
         { vmid: 'title', hid: 'title', name: 'title', content: this.pageTitle },
