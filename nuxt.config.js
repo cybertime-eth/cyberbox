@@ -12,6 +12,7 @@ export default {
       {vmid: 'og:title', hid: 'og:title', property: 'og:title', content: 'CyberBox - NFT Marketplace on Celo'},
       {vmid: 'description', hid: 'description', name: 'description', content: 'Find and trade your favorites NFT collections on the Celo blockchain at CyberBox NFT Marketplace: Daopolis, CeloPunks, CeloToadz, Nomstronauts, CeloApes, CeloShapes, DimsofCelo'},
       {vmid: 'og:description', hid: 'og:description', property: 'og:description', content: 'Find and trade your favorites NFT collections on the Celo blockchain at CyberBox NFT Marketplace: Daopolis, CeloPunks, CeloToadz, Nomstronauts, CeloApes, CeloShapes, DimsofCelo'},
+      {vmid: 'og:image', hid: 'og:image', property: 'og:image', content: '/cyberbox.png'},
       {name: 'format-detection', content: 'telephone=no'}
     ],
     link: [
