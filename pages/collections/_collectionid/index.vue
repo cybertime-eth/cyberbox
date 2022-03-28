@@ -5,7 +5,6 @@
       <div class="collection__header">
         <img :src="collection.logo" alt="avatar" class="collection__header-avatar">
         <h1 class="collection__header-title" >{{ collection.name }} <img src="/confirmed.svg" alt="confirm"></h1>
-        <p class="collection__header-subtitle">Collectibles</p>
         <div class="collection__header-socials">
           <a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
           <a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
@@ -181,11 +180,11 @@ export default {
   head() {
     return {
       meta: [
-        { vmid: 'title', hid: 'title', name: 'title', content: this.pageTitle },
-        { vmid: 'og:title', hid: 'og:title', property: 'og:title', content: this.pageTitle },
-        { vmid: 'description', hid: 'description', name: 'description', content: this.description },
-        { vmid: 'og:description', hid: 'og:description', property: 'og:description', content: this.description },
-        { vmid: 'og:image', hid: 'og:image', property: 'og:image', content: this.metaIcon }
+        { hid: 'title', name: 'title', content: this.pageTitle },
+        { hid: 'og:title', property: 'og:title', content: this.pageTitle },
+        { hid: 'description', name: 'description', content: this.description },
+        { hid: 'og:description', property: 'og:description', content: this.description },
+        { hid: 'og:image', property: 'og:image', content: this.metaIcon }
       ]
     }
   },
@@ -533,6 +532,7 @@ export default {
         margin-right: 1rem;
         &-title {
           font-family: OpenSans-SemiBold;
+          font-size: 1.23rem;
           display: flex;
           align-items: center;
           img {
@@ -542,16 +542,17 @@ export default {
         }
         &-subtitle {
           font-family: OpenSans-Regular;
+          font-size: 1.07rem;
           margin-top: .4rem;
         }
       }
     }
     &-content {
       color: $grayLight;
-      text-align: center;
       width: 65rem;
       padding-top: 1rem;
       letter-spacing: 0.03em;
+      font-size: 1.07rem;
     }
   }
   &__filter {
@@ -583,11 +584,15 @@ export default {
       height: 4rem;
       box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
       border-radius: .8rem;
+      margin-right: 1.53rem;
       background: none;
       font-family: OpenSans-Regular;
       display: flex;
       align-items: center;
       justify-content: center;
+      &:last-child {
+        margin-right: 0;
+      }
       img {
         margin-left: 1.2rem;
         width: 2rem;

@@ -280,6 +280,38 @@ export default {
     },
     soldByMe() {
       return this.nft.market_status === 'BOUGHT' && this.nft.seller === this.$store.state.fullAddress
+    },
+    collection() {
+      return this.$store.state.collectionList.find(item => item.route === this.$route.params.collectionid)
+    },
+    pageTitle() {
+      return `${this.collection.name} | CyberBox NFT Marketplace`
+    },
+    description() {
+      return this.collection.description
+    },
+    metaIcon() {
+			let imageSrc = ''
+      switch (this.$route.params.collectionid) {
+        case 'cpunk': imageSrc = '/collections/Media_punks.png'
+          break
+        case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
+          break
+        default: imageSrc = this.collection.image
+          break
+      }
+      return imageSrc
+    }
+  },
+  head() {
+    return {
+      meta: [
+        { hid: 'title', name: 'title', content: this.pageTitle },
+        { hid: 'og:title', property: 'og:title', content: this.pageTitle },
+        { hid: 'description', name: 'description', content: this.description },
+        { hid: 'og:description', property: 'og:description', content: this.description },
+        { hid: 'og:image', property: 'og:image', content: this.metaIcon }
+      ]
     }
   },
   methods: {
