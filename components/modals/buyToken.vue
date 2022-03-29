@@ -17,8 +17,14 @@
       </div>
       <div class="modal__buttons">
         <div class="modal__buttons-box" v-if="balance >= nft.price">
-          <button class="modal__button modal__button-submit" :class="{ disabled: pending || successApproveBuyToken }" @click="approveToken">Approve</button>
-          <button class="modal__button modal__button-submit" :class="{ disabled: !successApproveBuyToken }" @click="buyToken">Buy</button>
+          <button class="modal__button modal__button-submit" :class="{ disabled: pending || successApproveBuyToken, pending: !successApproveBuyToken && pending }" @click="approveToken">
+            Approve
+            <img class="modal__button-loading" src="/loading-button.svg" alt="loading" v-if="!successApproveBuyToken && pending">
+          </button>
+          <button class="modal__button modal__button-submit" :class="{ disabled: !successApproveBuyToken || pending, pending: successApproveBuyToken && pending }" @click="buyToken">
+            Buy
+            <img class="modal__button-loading" src="/loading-button.svg" alt="loading" v-if="successApproveBuyToken && pending">
+          </button>
         </div>
         <a
           href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438"
@@ -116,6 +122,10 @@ export default {
   }
   &__subtitle {
     padding-top: 2.4rem;
+    &-bold {
+      font-weight: 600;
+      font-size: 1.07rem;
+    }
   }
   &__information {
     display: flex;
@@ -154,6 +164,7 @@ export default {
       span {
         display: flex;
         align-items: center;
+        font-size: 1.38rem;
       }
       &-celo {
         margin-right: 8px;
@@ -179,16 +190,18 @@ export default {
   }
   &__button {
     width: 100%;
-    height: 5.4rem;
+    height: 4.15rem;
     margin-top: 3.4rem;
     border: .1rem solid $pink;
     color: $pink;
-    border-radius: 2.3rem;
+    border-radius: 25px;
     letter-spacing: 0.04em;
     background: $white;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.23rem;
     &-submit {
       background: $pink;
       color: $white;
@@ -201,6 +214,14 @@ export default {
         border: 1px solid $border;
         color: $border;
       }
+      &.pending {
+        border: 1px solid $pink;
+        color: $pink;
+      }
+    }
+    &-loading {
+      animation: loading 1s infinite;
+      margin-left: 10px;
     }
     &-confirm {
       border: 0;
@@ -275,9 +296,6 @@ export default {
     }
     &__subtitle {
       font-size: 1.4rem;
-      &-bold {
-        font-weight: 600;
-      }
     }
     &__information {
       padding-top: 3.2rem;

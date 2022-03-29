@@ -1,5 +1,5 @@
 <template>
-    <div class="search-box">
+    <div class="search-box" ref="searchBox">
         <input class="search-box-input" placeholder="Search collections" v-model="searchName" @input="searchCollection">
         <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
         <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
@@ -21,7 +21,18 @@ export default {
       filteredCollections: []
     }
   },
+  beforeMount() {
+    window.addEventListener('click', this.handleClickWindow);
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this.handleClickWindow);
+  },
   methods: {
+    handleClickWindow(e) {
+      if (!this.$refs.searchBox.contains(e.target)) {
+        this.filteredCollections = []
+      }
+    },
     searchCollection() {
       const search = this.searchName
       if (search.length >= 3) {
@@ -75,7 +86,7 @@ export default {
     right: 0;
     background: $white;
     padding: 9px 0;
-    border-radius: 2px;
+    border-radius: 4px;
     box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.25);
     &-item {
       display: flex;

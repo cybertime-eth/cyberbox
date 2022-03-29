@@ -5,7 +5,6 @@
       <div class="collection__header">
         <img :src="collection.logo" alt="avatar" class="collection__header-avatar">
         <h1 class="collection__header-title" >{{ collection.name }} <img src="/confirmed.svg" alt="confirm"></h1>
-        <p class="collection__header-subtitle">Collectibles</p>
         <div class="collection__header-socials">
           <a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
           <a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
@@ -178,25 +177,15 @@ export default {
       searchName: ''
     }
   },
-  metaInfo() {
+  head() {
     return {
-      meta: [{
-        hid: 'description',
-        property: 'description',
-        content: this.getDescription()
-      }, {
-        hid: 'image',
-        name: 'image',
-        content: this.getImageSrc()
-      }, {
-        hid: 'og:description',
-        name: 'og:description',
-        content: this.getDescription()
-      }, {
-        hid: 'og:image',
-				name: 'og:image',
-        content: this.getImageSrc()
-			}]
+      meta: [
+        { hid: 'title', name: 'title', content: this.pageTitle },
+        { hid: 'og:title', property: 'og:title', content: this.pageTitle },
+        { hid: 'description', name: 'description', content: this.description },
+        { hid: 'og:description', property: 'og:description', content: this.description },
+        { hid: 'og:image', property: 'og:image', content: this.metaIcon }
+      ]
     }
   },
   components: {
@@ -204,32 +193,100 @@ export default {
     attributesFilter,
     TraitsFilterModal
   },
-  methods: {
-    routeNftId(nft) {
-      return nft.contract !== 'nomdom' ? nft.contract_id : nft.image
+  computed: {
+    pageTitle() {
+      return `${this.collection.name} | CyberBox NFT Marketplace`
     },
-    getDescription() {
-      let description = ''
-      switch (this.$route.params.collectionid) {
-        case 'cpunk': description = 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
-          break
-        case 'ctoadz': description = 'CeloToadz | First collection of 6969 randomly generated Toadz made up of more than 120 different traits on Celo Blockchain!'
-          break
-      }
-      return description
-		},
-		getImageSrc() {
+    description() {
+      return this.collection.description
+    },
+    metaIcon() {
 			let imageSrc = ''
       switch (this.$route.params.collectionid) {
         case 'cpunk': imageSrc = '/collections/Media_punks.png'
           break
         case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
           break
+        default: imageSrc = this.collection.image
+          break
       }
       return imageSrc
     },
+    isNomDomain() {
+      return this.$route.params.collectionid === 'nomdom'
+    },
+    fitlerPlaceholder() {
+      return !this.isNomDomain ? 'Mint number' : 'NOM name'
+    },
+    countItems() {
+      if (!this.myNft) {
+        switch (this.filter) {
+          case 'All': return this.collectionInfo.filter_count || this.collectionInfo.mint_count;
+          case 'listed': return this.collectionInfo.list_count;
+          case 'bought': return this.collectionInfo.sell_count;
+        }
+      } else {
+        return this.nftList.length
+      }
+    },
+    collection() {
+      return this.$store.state.collectionList.filter(item => item.route === this.$route.params.collectionid)[0]
+    },
+    nftList() {
+      return this.$store.state.nftList
+    },
+    address() {
+      return this.$store.state.address
+    },
+    fetchEnabled() {
+      return this.address || (!this.address && !this.myNft)
+    },
+    filtersCount() {
+      let sectionCount = 0
+      this.$store.state.traitFilters.forEach(item => {
+        const filteredValues = item.values.filter(filterItem => filterItem.checked)
+        if (filteredValues.length > 0) {
+          sectionCount++
+        }
+      })
+      return sectionCount
+    }
+  },
+  watch: {
+    nftList() {
+      if (this.$store.state.nftList.length === 0) {
+        if (window.innerWidth < 836) {
+          this.showFixedFooter(true)
+        }
+      } else {
+        this.showFixedFooter(false)
+      }
+    },
+    loading(newVal) {
+      if (window.innerWidth < 836 && this.loading) {
+        this.showFixedFooter(true)
+      }
+    },
+    nftLoading() {
+      if (window.innerWidth < 836 && this.nftLoading) {
+        this.showFixedFooter(true)
+      }
+    }
+  },
+  methods: {
+    routeNftId(nft) {
+      return nft.contract !== 'nomdom' ? nft.contract_id : nft.image
+    },
     nftOwned(nft) {
       return nft.owner && nft.owner.toLowerCase() === this.$store.state.fullAddress
+    },
+    showFixedFooter(show) {
+      const footerEl = document.querySelector('.footer')
+      if (show) {
+        footerEl.classList.add('fixed')
+      } else {
+        footerEl.classList.remove('fixed')
+      }
     },
     initNftListSetting() {
       this.$store.commit('setNewNftList', [])
@@ -361,9 +418,28 @@ export default {
     window.removeEventListener('scroll', this.addCurrentPage)
   },
   async created() {
-    this.$store.commit('setTraitFilters', [])
     if (process.browser) {
       window.addEventListener('scroll', this.addCurrentPage)
+
+      const metaElements = document.querySelectorAll('meta')
+      let imageMetaFound = false
+      metaElements.forEach(nodeEl => {
+        const name = nodeEl.name
+        const property = nodeEl.getAttribute('property')
+        if (name === 'title' || property === 'og:title') {
+          nodeEl.setAttribute('content', this.pageTitle)
+        }
+        if (name === 'description' || property === 'og:description') {
+          nodeEl.setAttribute('content', this.description)
+        }
+        if (property === 'og:image') {
+          nodeEl.setAttribute('content', this.metaIcon)
+          imageMetaFound = true
+        }
+      })
+      if (!imageMetaFound) {
+        document.head.insertAdjacentHTML('afterbegin', `<meta data-vue-meta="1" data-vmid="og:image" hid="og:image" property="og:image" content="${this.metaIcon}">`)
+      }
     }
     if (process.browser && localStorage.getItem('move_back')) {
       localStorage.removeItem('move_back')
@@ -376,58 +452,18 @@ export default {
       }
       this.searchName = this.$store.state.mintNumFilter
     } else {
+      this.$store.commit('setTraitFilters', [])
       this.loading = true
       this.initNftListSetting()
       this.$store.commit('changeMintNumFilter', null)
       this.$store.commit('updateCollectionSetting', null)
       await this.$store.dispatch(this.activeRequest)
+      this.$store.dispatch('loadTraitFilters')
     }
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
     this.loading = false
-    this.$store.dispatch('loadTraitFilters')
-  },
-  computed: {
-    isNomDomain() {
-      return this.$route.params.collectionid === 'nomdom'
-    },
-    fitlerPlaceholder() {
-      return !this.isNomDomain ? 'Mint number' : 'NOM name'
-    },
-    countItems() {
-      if (!this.myNft) {
-        switch (this.filter) {
-          case 'All': return this.collectionInfo.filter_count || this.collectionInfo.mint_count;
-          case 'listed': return this.collectionInfo.list_count;
-          case 'bought': return this.collectionInfo.sell_count;
-        }
-      } else {
-        return this.nftList.length
-      }
-    },
-    collection() {
-      return this.$store.state.collectionList.filter(item => item.route === this.$route.params.collectionid)[0]
-    },
-    nftList() {
-      return this.$store.state.nftList
-    },
-    address() {
-      return this.$store.state.address
-    },
-    fetchEnabled() {
-      return this.address || (!this.address && !this.myNft)
-    },
-    filtersCount() {
-      let sectionCount = 0
-      this.$store.state.traitFilters.forEach(item => {
-        const filteredValues = item.values.filter(filterItem => filterItem.checked)
-        if (filteredValues.length > 0) {
-          sectionCount++
-        }
-      })
-      return sectionCount
-    }
   },
 }
 </script>
@@ -496,6 +532,7 @@ export default {
         margin-right: 1rem;
         &-title {
           font-family: OpenSans-SemiBold;
+          font-size: 1.23rem;
           display: flex;
           align-items: center;
           img {
@@ -505,16 +542,17 @@ export default {
         }
         &-subtitle {
           font-family: OpenSans-Regular;
+          font-size: 1.07rem;
           margin-top: .4rem;
         }
       }
     }
     &-content {
       color: $grayLight;
-      text-align: center;
       width: 65rem;
       padding-top: 1rem;
       letter-spacing: 0.03em;
+      font-size: 1.07rem;
     }
   }
   &__filter {
@@ -546,11 +584,15 @@ export default {
       height: 4rem;
       box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
       border-radius: .8rem;
+      margin-right: 1.53rem;
       background: none;
       font-family: OpenSans-Regular;
       display: flex;
       align-items: center;
       justify-content: center;
+      &:last-child {
+        margin-right: 0;
+      }
       img {
         margin-left: 1.2rem;
         width: 2rem;
