@@ -33,38 +33,40 @@ export default {
     position: relative;
     background: $white;
     border-radius: .8rem;
-    padding: 3.6rem 2.4rem 2.8rem;
-    width: 38rem;
+    padding: 2.76rem 1.84rem 2.15rem;
+    width: 29.2rem;
     z-index: 11;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
   &__image {
-    width: 28.1rem;
-    height: 28.1rem;
+    width: 21.61rem;
+    height: 21.61rem;
     object-fit: cover;
-    margin-top: 3.1rem;
+    margin-top: 2.38rem;
   }
   &__success {
-    padding-top: 1.7rem;
-    font-size: 1.8rem;
+    padding-top: 1.3rem;
+    font-size: 1.38rem;
     font-family: OpenSans-Regular;
+    color: $textColor3;
   }
   &__name {
-    padding-top: 1rem;
-    font-size: 1.8rem;
+    padding-top: 0.76rem;
+    font-size: 1.38rem;
     font-family: OpenSans-SemiBold;
   }
   &__link {
     display: flex;
     align-items: center;
-    padding-top: 2rem;
+    padding-top: 1.3rem;
+    font-size: 1.07rem;
     cursor: pointer;
     color: $grayLight;
     img {
-      width: 1.8rem;
-      margin-left: 1.2rem;
+      width: 1.38rem;
+      margin-left: 0.92rem;
     }
   }
   &__button {
@@ -73,7 +75,7 @@ export default {
     border: .1rem solid $pink;
     color: $pink;
     background: $white;
-    margin-top: 2.8rem;
+    margin-top: 2.15rem;
   }
   &__close-button {
     position: absolute;

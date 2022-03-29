@@ -85,6 +85,13 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.modal__image {
+  display: none;
+}
+</style>
+
 <style lang="scss">
 .modal {
   &__block {
@@ -98,9 +105,6 @@ export default {
     font-family: Cabin-Bold;
     text-align: left;
     font-size: 2.46rem;
-  }
-  &__image {
-    display: none;
   }
   &__transfer {
     padding-top: 1.85rem;

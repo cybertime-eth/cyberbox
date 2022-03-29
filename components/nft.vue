@@ -348,9 +348,15 @@ export default {
         transition: none;
       }
       &-modal {
-        width: 14rem;
+        width: auto;
+        z-index: 10;
         &-button {
-          width: 13rem;
+          width: auto;
+          min-width: 12rem;
+          padding-right: 1rem;
+          h3 {
+            white-space: nowrap;
+          }
         }
       }
     }

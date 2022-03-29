@@ -779,12 +779,14 @@ export default {
       padding-top: 2.2rem;
     }
     &__sort {
+      overflow-x: auto;
       &-button {
         flex: 1;
         width: auto;
         height: 5.2rem;
         margin-right: .5rem;
-        font-size: 1.3rem;
+        font-size: 1.2rem;
+        min-width: 74px;
         &-delimiter {
           display: none;
         }
