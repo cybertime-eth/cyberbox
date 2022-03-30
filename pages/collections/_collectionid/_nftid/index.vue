@@ -131,7 +131,7 @@
         </div>
       </div>
     </div>
-  <Attributes :item="attributes" :info="nft"/>
+  <Attributes :item="attributes" :info="nft" v-if="$route.params.collectionid !== 'nomdom'"/>
   <connect v-if="showConnectModal" @closeModal="closeModal"/>
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
   <Transfer :nft="nft" @closeModal="closeTransfer" v-if="showTransferModal" />

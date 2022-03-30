@@ -37,7 +37,8 @@ export default {
     },
     transferDescription() {
       if (!this.successTransferToken) {
-        return `Transfer NFT: ${this.nft.name}`
+        const nameSuffix = this.nft.contract !== 'nomdom' ? '' : '.nom'
+        return `Transfer NFT: ${this.nft.name}${nameSuffix}`
       } else {
         return 'Successfully sended!'
       }
