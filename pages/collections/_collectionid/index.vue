@@ -532,7 +532,7 @@ export default {
         margin-right: 1rem;
         &-title {
           font-family: OpenSans-SemiBold;
-          font-size: 1.23rem;
+          font-size: 1.6rem;
           display: flex;
           align-items: center;
           img {
@@ -542,7 +542,7 @@ export default {
         }
         &-subtitle {
           font-family: OpenSans-Regular;
-          font-size: 1.07rem;
+          font-size: 1.4rem;
           margin-top: .4rem;
         }
       }
@@ -552,7 +552,7 @@ export default {
       width: 65rem;
       padding-top: 1rem;
       letter-spacing: 0.03em;
-      font-size: 1.07rem;
+      font-size: 1.4rem;
     }
   }
   &__filter {
@@ -584,7 +584,7 @@ export default {
       height: 4rem;
       box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
       border-radius: .8rem;
-      margin-right: 1.53rem;
+      margin-right: 2.0rem;
       background: none;
       font-family: OpenSans-Regular;
       display: flex;
@@ -622,7 +622,7 @@ export default {
         border-radius: 50%;
         line-height: 1.1;
         font-weight: 600;
-        font-size: 1.07rem;
+        font-size: 1.4rem;
         color: $white;
       }
     }
@@ -650,7 +650,7 @@ export default {
         margin-right: 1.84rem;
         .search-box-input {
           width: calc(100% - 32px) !important;
-          font-size: 1.23rem;
+          font-size: 1.4rem;
         }
       }
       &-filter {
@@ -786,7 +786,7 @@ export default {
         height: 5.2rem;
         margin-right: .5rem;
         font-size: 1.2rem;
-        min-width: 74px;
+        min-width: 7.4rem;
         &-delimiter {
           display: none;
         }

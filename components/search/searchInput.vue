@@ -63,7 +63,7 @@ export default {
     padding: 12px 16px;
     border: 1px solid $border2;
     border-radius: 25px;
-    font-size: 1.07rem;
+    font-size: 1.4rem;
     &:focus {
       box-shadow: 0 0 5px $border2;
     }
@@ -71,11 +71,11 @@ export default {
   &-img {
     position: absolute;
     top: 50%;
-    right: 1.23rem;
+    right: 1.6rem;
     width: 1.53rem;
     transform: translateY(-50%);
     &.icon-close {
-      width: 1.07rem;
+      width: 1.4rem;
       cursor: pointer;
     }
   }
@@ -103,7 +103,7 @@ export default {
       }
       &-name {
         margin-left: 10px;
-        font-size: 1.23rem;
+        font-size: 1.6rem;
       }
     }
   }

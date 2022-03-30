@@ -578,7 +578,7 @@ export default {
       }
       &-owner {
         padding-top: 2.2rem;
-        font-size: 1.23rem;
+        font-size: 1.6rem;
         color: $span;
       }
       &-buy {

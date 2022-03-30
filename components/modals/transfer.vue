@@ -114,25 +114,25 @@ export default {
     }
     &-description {
       font-weight: 600;
-      font-size: 1.38rem;
+      font-size: 1.8rem;
       &.success {
         color: $green;
       }
     }
     &-form {
-      padding-top: 1.23rem;
+      padding-top: 1.6rem;
       padding-bottom: 5.23rem;
-      font-size: 1.38rem;
+      font-size: 1.8rem;
       &-name {
-        padding-bottom: 1.23rem;
-        font-size: 1.23rem;
+        padding-bottom: 1.6rem;
+        font-size: 1.6rem;
       }
       &-input {
         width: calc(100% - 1.85rem);
         height: 1.54rem;
         padding: 0.92rem 0.78rem;
         border: 1px solid $border;
-        font-size: 1.38rem;
+        font-size: 1.8rem;
         &:focus {
           border-color: $green;
         }
@@ -150,11 +150,11 @@ export default {
         width: 11.1rem;
         padding: 1rem;
         background: $white;
-        margin-right: 1.23rem;
+        margin-right: 1.6rem;
         border: 1px solid $pink;
         border-radius: 25px;
         text-align: center;
-        font-size: 1.23rem;
+        font-size: 1.6rem;
         color: $pink;
         &-confirm {
           width: auto;

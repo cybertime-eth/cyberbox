@@ -193,8 +193,8 @@ header {
     cursor: pointer;
     &.gradient-button {
       &::after {
-        left: -0.21rem;
-        right: -0.25rem;
+        left: -0.26rem;
+        right: -0.26rem;
       }
     }
   }
@@ -237,8 +237,8 @@ header {
     }
 
     &-avatar {
-      width: 3.69rem;
-      height: 3.69rem;
+      width: 4.6rem;
+      height: 4.6rem;
       border-radius: 50% !important;
       display: flex;
       align-items: center;
