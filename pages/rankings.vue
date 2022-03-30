@@ -344,6 +344,7 @@ export default {
             letter-spacing: 0.03em;
             display: flex;
             align-items: center;
+            justify-content: flex-end;
             font-size: 1.6rem;
             img {
               margin: 0 .5rem;
@@ -392,6 +393,7 @@ export default {
             letter-spacing: 0.03em;
             display: flex;
             align-items: center;
+            justify-content: flex-end;
             font-size: 1.6rem;
             img {
               margin: 0 .5rem;
