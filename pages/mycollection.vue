@@ -262,8 +262,9 @@ export default {
     display: flex;
     align-items: center;
     align-self: flex-start;
-    flex-wrap: wrap;
     padding-top: 5.5rem;
+    width: 100%;
+    overflow-x: auto;
     &-item {
       box-shadow: 0 .2rem .8rem rgba(0, 0, 0, 0.05);
       border-radius: 2rem;
@@ -276,6 +277,7 @@ export default {
       transition: .3s;
       background: $white;
       position: relative;
+      white-space: nowrap;
       &-nft {
         &:hover > .my-collection-filters-item-hover {
           display: block;
@@ -313,7 +315,7 @@ export default {
     padding-top: 2.92rem;
     text-align: left;
     font-weight: 600;
-    font-size: 1.23rem;
+    font-size: 1.6rem;
   }
   &__loading {
     display: flex;

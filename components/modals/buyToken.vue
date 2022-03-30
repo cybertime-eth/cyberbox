@@ -2,7 +2,7 @@
   <div class="modal">
     <div class="modal__buy">
       <h1 class="modal__title gradient-text">Payment Confirmation</h1>
-      <p class="modal__subtitle">You are about to purchase a <span class="modal__subtitle-bold">{{ nft.name }}</span></p>
+      <p class="modal__subtitle">You are about to purchase a <span class="modal__subtitle-bold">{{ nft.name }}{{ nftNameSuffix }}</span></p>
       <div class="modal__information">
         <h3 class="modal__information-title">You pay</h3>
         <div class="modal__information-price-box">
@@ -54,6 +54,9 @@
 export default {
   props: ['nft', 'priceToken', 'balance'],
   computed: {
+    nftNameSuffix() {
+      return this.nft.contract !== 'nomdom' ? '' : '.nom'
+    },
     collectionName() {
       return this.$route.params.collectionid
     },
@@ -124,7 +127,7 @@ export default {
     padding-top: 2.4rem;
     &-bold {
       font-weight: 600;
-      font-size: 1.07rem;
+      font-size: 1.4rem;
     }
   }
   &__information {
@@ -137,19 +140,22 @@ export default {
       display: flex;
       align-items: center;
     }
+    &-celo {
+      width: 1.8rem;
+    }
     &-price {
       margin-left: 6px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       line-height: 1;
-      font-size: 1.38rem;
+      font-size: 1.8rem;
       span {
         font-size: 1.4rem;
       }
       &-usd {
         margin-left: 6px;
-        font-size: 1.38rem;
+        font-size: 1.8rem;
         line-height: 1;
         color: $grayLight;
       }
@@ -164,9 +170,10 @@ export default {
       span {
         display: flex;
         align-items: center;
-        font-size: 1.38rem;
+        font-size: 1.4rem;
       }
       &-celo {
+        width: 1.6rem;
         margin-right: 8px;
       }
     }
@@ -190,23 +197,23 @@ export default {
   }
   &__button {
     width: 100%;
-    height: 4.15rem;
+    height: 5.4rem;
     margin-top: 3.4rem;
     border: .1rem solid $pink;
     color: $pink;
-    border-radius: 25px;
+    border-radius: 2.5rem;
     letter-spacing: 0.04em;
     background: $white;
     padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.23rem;
+    font-size: 1.6rem;
     &-submit {
       background: $pink;
       color: $white;
       &:last-child {
-        margin-left: 1.23rem;
+        margin-left: 1.6rem;
       }
       &.disabled {
         background: $white;

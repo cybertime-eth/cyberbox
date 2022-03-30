@@ -1,6 +1,6 @@
 <template>
   <ul class="profile__menu" @mouseleave="closeModal">
-    <li class="profile__menu-list">
+    <!-- <li class="profile__menu-list">
       <nuxt-link to="/mycollection" class="profile__menu-link">
         <div class="profile__menu-link-info">
           <img src="/my-collection.png" alt="coolicon" class="profile__menu-link-info-icon">
@@ -8,7 +8,7 @@
         </div>
         <img src="/array-right.svg" alt="array">
       </nuxt-link>
-    </li>
+    </li> -->
     <li class="profile__menu-list">
       <a
         href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438"

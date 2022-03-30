@@ -18,14 +18,14 @@
           <!-- INFO BUYER -->
 
           <div class="nft__block-info" v-if="!seller">
-            <div class="nft__block-info-collection">
-              <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
-              <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2></a>
-            </div>
-            <h1 class="nft__block-info-name">{{ nftName }}</h1>
-            <h1 class="nft__block-info-rank" v-if="nft.contract !== 'nomdom'">Rarity rank {{ nft.rating_index }}</h1>
-            <p class="nft__block-info-description">{{ nft.description }}</p>
             <div v-if="!nftReloading">
+              <div class="nft__block-info-collection">
+                <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
+                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2>
+              </div>
+              <h1 class="nft__block-info-name">{{ nftName }}</h1>
+              <h1 class="nft__block-info-rank" v-if="nft.contract !== 'nomdom'">Rarity rank {{ nft.rating_index }}</h1>
+              <p class="nft__block-info-description">{{ nft.description }}</p>
               <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
               <div class="nft__block-info-price" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/celo.svg" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= {{ priceToken }}$</span></div>
   <!--            <p class="nft__block-info-date" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/time.svg" alt="time"> Sale ends in-->
@@ -55,14 +55,14 @@
           <!-- INFO SELLER -->
 
           <div class="nft__block-info" v-else-if="listStatus === 'default' && seller">
-            <div class="nft__block-info-collection">
-              <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
-              <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2>
-            </div>
-            <h1 class="nft__block-info-name">{{ nftName }}</h1>
-            <h1 class="nft__block-info-rank" v-if="nft.contract !== 'nomdom'">Rarity rank {{ nft.rating_index }}</h1>
-            <p class="nft__block-info-description">{{ nft.description }}</p>
             <div v-if="!nftReloading">
+              <div class="nft__block-info-collection">
+                <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
+                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2>
+              </div>
+              <h1 class="nft__block-info-name">{{ nftName }}</h1>
+              <h1 class="nft__block-info-rank" v-if="nft.contract !== 'nomdom'">Rarity rank {{ nft.rating_index }}</h1>
+              <p class="nft__block-info-description">{{ nft.description }}</p>
               <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
               <div class="nft__block-info-price" v-if="isSellNFT && nft.market_status === 'LISTED'">
                 <img src="/celo.svg" alt="celo">
@@ -131,7 +131,7 @@
         </div>
       </div>
     </div>
-  <Attributes :item="attributes" :info="nft"/>
+  <Attributes :item="attributes" :info="nft" v-if="$route.params.collectionid !== 'nomdom'"/>
   <connect v-if="showConnectModal" @closeModal="closeModal"/>
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
   <Transfer :nft="nft" @closeModal="closeTransfer" v-if="showTransferModal" />
@@ -578,7 +578,7 @@ export default {
       }
       &-owner {
         padding-top: 2.2rem;
-        font-size: 1.23rem;
+        font-size: 1.6rem;
         color: $span;
       }
       &-buy {

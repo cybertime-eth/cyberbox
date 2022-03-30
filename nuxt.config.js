@@ -8,6 +8,7 @@ export default {
     meta: [
       {charset: 'utf-8'},
       {name: 'viewport', content: 'width=device-width, initial-scale=1'},
+      {name: 'robots', content: 'max-image-preview:large'},
       {vmid: 'title', hid: 'title', name: 'title', content: 'CyberBox - NFT Marketplace on Celo'},
       {vmid: 'og:title', hid: 'og:title', property: 'og:title', content: 'CyberBox - NFT Marketplace on Celo'},
       {vmid: 'description', hid: 'description', name: 'description', content: 'Find and trade your favorites NFT collections on the Celo blockchain at CyberBox NFT Marketplace: Daopolis, CeloPunks, CeloToadz, Nomstronauts, CeloApes, CeloShapes, DimsofCelo'},
@@ -47,7 +48,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/add-mintkey-two',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-cybertime-nom-two',
         options: {}
       },
       secondClient: {

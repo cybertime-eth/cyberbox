@@ -50,6 +50,7 @@ export default {
     padding-top: 1.7rem;
     font-size: 1.8rem;
     font-family: OpenSans-Regular;
+    color: $textColor3;
   }
   &__name {
     padding-top: 1rem;
@@ -59,7 +60,8 @@ export default {
   &__link {
     display: flex;
     align-items: center;
-    padding-top: 2rem;
+    padding-top: 1.7rem;
+    font-size: 1.4rem;
     cursor: pointer;
     color: $grayLight;
     img {
@@ -74,6 +76,7 @@ export default {
     color: $pink;
     background: $white;
     margin-top: 2.8rem;
+    font-size: 1.6rem;
   }
   &__close-button {
     position: absolute;

@@ -24,11 +24,6 @@
           </li> -->
         </ul>
       </nav>
-      <div class="header__error-network" v-if="showWrongNetwork">
-        <img src="/pulse.svg" alt="pulse">
-        <p class="header__error-network-text">You are on the wrong network</p>
-      </div>
-      <div v-else class="header__null"></div>
       <button class="header__box gradient-button" v-if="address" @click="$router.push('/mycollection')">
        {{ myCollectionTitle }}
       </button>
@@ -42,7 +37,11 @@
       <button class="gradient-button header__connect" v-if="!address" @click="showConnectModal = true">Connect Wallet</button>
       <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
       <img src="/search-mobile.svg" alt="search" class="header__mobile-search" @click="showSearchView = true">
-      <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showProfileMenuMobile = true">
+      <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showMobileMenu">
+      <div class="header__error-network" v-if="showWrongNetwork">
+        <img src="/pulse.svg" alt="pulse">
+        <p class="header__error-network-text">You are on the wrong network</p>
+      </div>
     </div>
     <connect v-if="showConnectModal && !address" @showValora="openValoraModal" @closeModal="closeModal"/>
     <valoraConnect v-if="showValoraModal"  @closeModal="showValoraModal = false" />
@@ -128,6 +127,12 @@ export default {
       localStorage.setItem('move_back', true)
       this.$router.go(-1)
     },
+    showMobileMenu() {
+      this.showProfileMenuMobile = true;
+      const footerEl = document.querySelector('.footer')
+      footerEl.classList.add('fixed')
+      footerEl.classList.add('sidemenu')
+    },
     openValoraModal() {
       this.showValoraModal = true
       this.showConnectModal = false
@@ -136,6 +141,11 @@ export default {
       this.showConnectModal = payload
       this.showProfileMenu = payload
       this.showProfileMenuMobile = payload
+      if (this.isMobile()) {
+        const footerEl = document.querySelector('.footer')
+        footerEl.classList.remove('fixed')
+        footerEl.classList.remove('sidemenu')
+      }
     }
   }
 }
@@ -147,13 +157,14 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 header {
-  box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
+  box-shadow: 0px 4px 12px rgb(0 0 0 / 5%);
 }
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 6.4rem 23.6rem 28rem 34.6rem 17.5rem 22rem;
+  grid-template-columns: 6.4rem 23.6rem 28rem 52.1rem 22rem;
   align-items: center;
+  position: relative;
   &__back {
     display: none;
   }
@@ -180,15 +191,25 @@ header {
     width: 15.8rem;
     height: 4.8rem;
     cursor: pointer;
+    &.gradient-button {
+      &::after {
+        left: -0.26rem;
+        right: -0.26rem;
+      }
+    }
   }
   &__error {
     &-network {
+      position: absolute;
+      right: 0;
+      top: 100%;
       padding: 1.2rem .8rem;
       background: $pink;
       display: flex;
       align-items: center;
       border-radius: .8rem;
       width: 24rem;
+      margin-top: 32px;
       justify-self: flex-end;
       &-text {
         color: $white;
@@ -206,7 +227,6 @@ header {
     justify-content: space-between;
     justify-self: end;
     cursor: pointer;
-    position: relative;
     z-index: 1;
     &-address {
       width: 65%;
@@ -217,9 +237,9 @@ header {
     }
 
     &-avatar {
-      width: 4.2rem;
-      height: 4.5rem;
-      border-radius: 2.5rem;
+      width: 4.6rem;
+      height: 4.6rem;
+      border-radius: 50% !important;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -292,7 +312,9 @@ header {
         width: auto;
         position: absolute;
         left: 50%;
+        right: auto;
         top: 7.8rem;
+        margin-top: 0;
         padding: 0.8rem 0.5rem;
         transform: translateX(-50%);
         img {

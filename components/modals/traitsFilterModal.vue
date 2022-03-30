@@ -191,7 +191,7 @@ export default {
       &-category {
         &-name {
           padding: 24px;
-          font-size: 1.38rem;
+          font-size: 1.8rem;
         }
       }
       &-item {
@@ -223,7 +223,7 @@ export default {
           &-name {
             margin-left: 1.2rem;
             font-weight: 600;
-            font-size: 1.23rem;
+            font-size: 1.6rem;
           }
         }
         &-used {
@@ -262,9 +262,9 @@ export default {
     }
   }
   &__button {
-    padding: 10px 24px;
-    border-radius: 25px;
-    font-size: 1.23rem;
+    padding: 1rem 2.4rem;
+    border-radius: 2.5rem;
+    font-size: 1.6rem;
     &.disabled {
       pointer-events: none;
     }

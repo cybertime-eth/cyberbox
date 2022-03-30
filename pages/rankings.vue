@@ -220,7 +220,7 @@ export default {
 .rankings {
   padding-top: 2.6rem;
   &__title {
-    font-size: 2.46rem;
+    font-size: 3.2rem;
     text-align: center;
   }
   &__subtitle {
@@ -228,20 +228,20 @@ export default {
     padding-top: 1rem;
     text-align: center;
     font-family: OpenSans-SemiBold;
-    font-size: 1.23rem;
+    font-size: 1.6rem;
   }
   &__navigation {
     align-items: center;
-    padding-top: 3.84rem;
+    padding-top: 5rem;
     &-button {
-      width: 7.23rem;
-      height: 2.46rem;
+      width: 6.4rem;
+      height: 3.2rem;
       box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
       border-radius: 20px;
       background: $white;
       margin-right: 2rem;
       font-family: OpenSans-Regular;
-      font-size: 1.07rem;
+      font-size: 1.4rem;
       font-weight: 400;
       color: $grayDark;
       &-active {
@@ -252,17 +252,17 @@ export default {
   }
   &__table {
     width: 100%;
-    padding-top: 2.3rem;
+    padding-top: 2.4rem;
     &-header {
       display: grid;
       background: $modalColor;
-      height: 3.07rem;
+      height: 4rem;
       // grid-template-columns: 8.5rem 22.5rem 15rem 17rem 16.5rem 17rem 17rem 16.5rem;
       grid-template-columns: 31rem 99rem;
       align-items: center;
       justify-items: flex-end;
       h3 {
-        font-size: 1.23rem;
+        font-size: 1.6rem;
         font-weight: 600;
         letter-spacing: 0.04em;
       }
@@ -285,21 +285,18 @@ export default {
       &-item {
         display: grid;
         grid-template-columns: 31rem 99rem;
-        height: 6.15rem;
+        height: 8rem;
         border-bottom: .1rem solid $modalColor;
         align-items: center;
         cursor: pointer;
-        h3 {
-          font-size: 1.23rem;
-        }
         &-collection {
           display: flex;
           align-items: center;
           &-image {
             position: relative;
             &-avatar {
-              width: 3.69rem;
-              height: 3.69rem;
+              width: 4.8rem;
+              height: 4.8rem;
               border-radius: 50%;
               object-fit: cover;
             }
@@ -336,6 +333,7 @@ export default {
           }
           &-name {
             font-family: OpenSans-SemiBold;
+            font-size: 1.6rem;
             letter-spacing: 0.04em;
           }
         }
@@ -346,14 +344,14 @@ export default {
             letter-spacing: 0.03em;
             display: flex;
             align-items: center;
-            font-size: 1.23rem;
+            font-size: 1.6rem;
             img {
               margin: 0 .5rem;
               width: 1.4rem;
             }
           }
           &-price {
-            font-size: 1.07rem;
+            font-size: 1.4rem;
             font-weight: 400;
             color: $textColor3;
           }
@@ -376,7 +374,7 @@ export default {
         }
         &-percent-info {
           font-weight: 400;
-          font-size: 1.23rem;
+          font-size: 1.6rem;
           &.positive {
             color: $green;
           }
@@ -394,14 +392,14 @@ export default {
             letter-spacing: 0.03em;
             display: flex;
             align-items: center;
-            font-size: 1.23rem;
+            font-size: 1.6rem;
             img {
               margin: 0 .5rem;
               width: 1.4rem;
             }
           }
           &-price {
-            font-size: 1.07rem;
+            font-size: 1.4rem;
           }
           &-subtitle {
             padding-top: .4rem;
@@ -441,7 +439,7 @@ export default {
       font-size: 18px;
     }
     &__subtitle {
-      font-size: 14px;
+      font-size: 1.4rem;
     }
     &__navigation {
       display: flex;
@@ -449,7 +447,7 @@ export default {
       padding-top: 3rem;
       padding-bottom: 1.6rem;
       &-button {
-        font-size: 14px;
+        font-size: 1.4rem;
       }
     }
     &__table {
@@ -485,7 +483,7 @@ export default {
           }
           &-number {
             margin-right: 2.7rem;
-            font-size: 14px;
+            font-size: 1.4rem;
           }
           &-collection {
             &-image {
@@ -495,7 +493,7 @@ export default {
               }
             }
             &-name {
-              font-size: 14px;
+              font-size: 1.4rem;
             }
           }
           &-more {
@@ -506,12 +504,12 @@ export default {
               margin-right: .4rem;
             }
             &-name {
-              font-size: 13px;
+              font-size: 1.3rem;
               color: $textColor3;
             }
           }
           &-prices, &-percent {
-            font-size: 14px;
+            font-size: 1.4rem;
           }
           &-prices {
             display: flex;
@@ -544,13 +542,13 @@ export default {
               flex-direction: column;
               align-items: center;
               &-title {
-                font-size: 13px;
+                font-size: 1.3rem;
                 color: $textColor3;
               }
               &-content {
                 margin-top: .4rem;
                 font-weight: 600;
-                font-size: 14px;
+                font-size: 1.4rem;
                 color: $textColor;
                 &.positive {
                   color: $green;

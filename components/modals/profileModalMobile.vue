@@ -2,7 +2,7 @@
   <div class="menu-mobile">
     <div class="menu-mobile-header container-xl">
       <img src="/logo.svg" alt="logo" class="menu-mobile-header-logo">
-      <img src="/close.svg" alt="close" class="menu-mobile-header-close" @click="closeModal">
+      <img :src="closeIcon" alt="close" class="menu-mobile-header-close" @click="closeModal">
     </div>
     <div class="menu-mobile-list container-xl" @click="closeModal">
       <nuxt-link to="/" class="gradient-text menu-mobile-list-link">Marketplace</nuxt-link>
@@ -14,6 +14,15 @@
 </template>
 <script>
 export default {
+  computed: {
+    closeIcon() {
+      if (!this.isMobile()) {
+        return '/close.svg'
+      } else {
+        return '/close-header.svg'
+      }
+    }
+  },
   methods: {
     closeModal() {
       this.$emit('closeModal', false)
@@ -54,6 +63,11 @@ export default {
       width: 100%;
       padding-bottom: 2.5rem;
     }
+  }
+  @media (max-width: 460px) {
+    &-header-close {
+      width: 1.8rem;
+    }    
   }
 }
 </style>

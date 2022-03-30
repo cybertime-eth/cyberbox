@@ -110,6 +110,11 @@ export default {
 	@media(max-width: 460px) {
 		background: $white;
 		padding: 2rem 1rem;
+		display: none;
+		&.sidemenu {
+		  display: block;
+		  z-index: 100;
+		}
 		.container-xl {
 			width: 100%;
 		}
