@@ -49,18 +49,18 @@ export const state = () => ({
   collectionSetting: null,
 
   collectionList: [
-    // {
-    //   id: 1,
-    //   name: 'NOM domains',
-    //   route: 'nomdom',
-    //   image: '/collections/nomdom.png',
-    //   banner: '/collections/nomdom-banner.png',
-    //   logo: '/collections/nomdom-logo.png',
-    //   website: 'https://www.nom.space/',
-    //   twitter: 'https://twitter.com/nomspace_nom',
-    //   discord: 'https://discord.gg/byMNXabAxZ',
-    //   description: 'Nomspace is a cross-chain name resolution service. Users can reserve a .nom from any supported chain'
-    // },
+    {
+      id: 1,
+      name: 'NOM domains',
+      route: 'nomdom',
+      image: '/collections/nomdom.png',
+      banner: '/collections/nomdom-banner.png',
+      logo: '/collections/nomdom-logo.png',
+      website: 'https://www.nom.space/',
+      twitter: 'https://twitter.com/nomspace_nom',
+      discord: 'https://discord.gg/byMNXabAxZ',
+      description: 'Nomspace is a cross-chain name resolution service. Users can reserve a .nom from any supported chain'
+    },
     {
       id: 2,
       name: 'Celostrials',
