@@ -963,12 +963,18 @@ export const actions = {
 	const kit = ContractKit.newKitFromWeb3(web3)
   const goldToken = await kit._web3Contracts.getGoldToken();
   const parsePrice = ethers.utils.parseEther(String(token.price))
-	const result = await goldToken.methods.approve(account, parsePrice).send({
-	  from: account,
-  })
-	provider.once(result, async () => {
-	  commit('changeSuccessApproveBuyToken', true)
-	});
+  const approved = await goldToken.methods.approve(account, parsePrice).call()
+  console.log('00000', approved)
+  if (!approved) {
+    const result = await goldToken.methods.approve(account, parsePrice).send({
+      from: account,
+    })
+    provider.once(result, async () => {
+      commit('changeSuccessApproveBuyToken', true)
+    });
+  } else {
+    commit('changeSuccessApproveBuyToken', true)
+  }
   },
   async buyNFT({commit, state, getters}, token) {
     const ethereumProvider = getters.provider
