@@ -964,7 +964,6 @@ export const actions = {
   const goldToken = await kit._web3Contracts.getGoldToken();
   const parsePrice = ethers.utils.parseEther(String(token.price))
   const approved = await goldToken.methods.approve(account, parsePrice).call()
-  console.log('00000', approved)
   if (!approved) {
     const result = await goldToken.methods.approve(account, parsePrice).send({
       from: account,
