@@ -438,7 +438,8 @@ export default {
 
   @media(max-width: 460px) {
     &__title {
-      font-size: 18px;
+      font-weight: 600;
+      font-size: 1.8rem;
     }
     &__subtitle {
       font-size: 1.4rem;
