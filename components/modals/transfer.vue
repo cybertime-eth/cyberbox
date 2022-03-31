@@ -2,15 +2,14 @@
   <div class="modal">
     <div class="modal__block transfer">
         <div class="modal__transfer-header">
-          <a class="modal__transfer-header-link" href="/">
-            <img src="/logo.svg">
-          </a>
-          <button class="modal__transfer-header-button" @click="closeModal">Cancel</button>
+          <button class="modal__transfer-header-button" @click="closeModal"><img src="/close.svg" alt="close"></button>
         </div>
-        <img class="modal__image" :src="nft.image">
         <h2 class="modal__title">Transfer Ownership</h2>
         <div class="modal__transfer">
-          <p class="modal__transfer-description" :class="{ success: successTransferToken }">{{ transferDescription }}</p>
+          <div class="modal__transfer-info">
+            <img class="modal__image" :src="nft.image">
+            <p class="modal__transfer-description" :class="{ success: successTransferToken }">{{ transferDescription }}</p>
+          </div>
           <div class="modal__transfer-form">
             <p class="modal__transfer-form-name">{{ transferFormName }}</p>
             <input class="modal__transfer-form-input" :readonly="successTransferToken" placeholder="0x" v-model="receiver">
@@ -88,8 +87,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.modal {
+  background: $white;
+}
 .modal__image {
   display: none;
+}
+@media (max-width: 460px) {
+  .modal__title {
+    display: none;
+  }
 }
 </style>
 
@@ -226,23 +233,31 @@ export default {
       }
     }
     &__transfer {
-      padding-top: 2.4rem;
-      &-header {
+      padding-top: 0;
+      &-info {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding-bottom: 4rem;
-        &-link {
-          height: 4rem;
-          margin-left: -1rem;
-          img {
-            width: 4rem;
-          }
+        flex-wrap: wrap;
+        .modal__image {
+          display: block;
+          width: 5rem;
+          padding: 0;
+          margin-right: 1rem;
         }
+      }
+      &-header {
+        display: block;
+        width: calc(100% + 1.6rem);
+        height: 5rem;
+        margin: 0 -0.8rem 3rem;
+        padding: 0;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+        position: relative;
         &-button {
           background: transparent;
-          font-weight: 600;
-          font-size: 1.4rem;
+          position: absolute;
+          top: 50%;
+          right: 0.8rem;
+          transform: translateY(-50%);
         }
       }
       &-description {
