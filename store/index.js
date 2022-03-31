@@ -582,7 +582,7 @@ export const actions = {
     const oldAddress = localStorage.getItem('address')
     commit('setAddress', account)
     if (account !== oldAddress) {
-      await dispatch('loadNomNameAddress')
+      location.reload()
     }
   },
 

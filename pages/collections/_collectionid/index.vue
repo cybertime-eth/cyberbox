@@ -727,7 +727,7 @@ export default {
       }
       &-info {
         width: 100%;
-        padding-top: 5.6rem;
+        padding-top: 7.2rem;
         flex-wrap: wrap;
         &-block {
           width: 14rem;

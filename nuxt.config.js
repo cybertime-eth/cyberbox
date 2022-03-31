@@ -48,7 +48,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-cybertime-nom-two',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-cybertime-nom-five',
         options: {}
       },
       secondClient: {
