@@ -6,9 +6,11 @@
       <div class="modal__information">
         <h3 class="modal__information-title">You pay</h3>
         <div class="modal__information-price-box">
-          <img src="/celo.svg" alt="celo" class="modal__information-celo">
-          <h3 class="modal__information-price">{{ nft.price }}</h3>
-          <p class="modal__information-price-usd">(${{ priceToken }})</p>
+          <div class="modal__information-price-box-celo">
+            <img src="/celo.svg" alt="celo" class="modal__information-celo">
+            <h3 class="modal__information-price">{{ nft.price }}</h3>
+          </div>
+          <p class="modal__information-price-usd">${{ priceToken }}</p>
         </div>
       </div>
       <div class="modal__balance">
@@ -132,13 +134,13 @@ export default {
   }
   &__information {
     display: flex;
-    align-items: center;
     justify-content: space-between;
     padding: 3.5rem 0;
     border-bottom: .1rem solid $modalColor;
-    &-price-box {
+    &-price-box-celo {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
     }
     &-celo {
       width: 1.8rem;
@@ -154,8 +156,8 @@ export default {
         font-size: 1.4rem;
       }
       &-usd {
-        margin-left: 6px;
-        font-size: 1.8rem;
+        margin-top: 8px;
+        font-size: 1.4rem;
         line-height: 1;
         color: $grayLight;
       }

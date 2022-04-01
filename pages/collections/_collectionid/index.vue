@@ -780,11 +780,16 @@ export default {
     }
     &__sort {
       overflow-x: auto;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
       &-button {
         flex: 1;
         width: auto;
         height: 5.2rem;
-        margin-right: .5rem;
+        margin-right: .8rem;
         font-size: 1.2rem;
         min-width: 7.4rem;
         &-delimiter {

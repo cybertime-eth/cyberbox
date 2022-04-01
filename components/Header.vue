@@ -277,6 +277,7 @@ header {
     display: flex;
     justify-content: space-between;
     height: 6.5rem;
+    margin: 0 .8rem !important;
     position: relative;
     &__null {
       display: none;

@@ -342,6 +342,9 @@ export default {
     }
     &-filters {
       padding-top: 2.4rem;
+      &-item {
+        margin-right: .8rem;
+      }
     }
     &-collection-filter {
       padding-top: 2.4rem;
