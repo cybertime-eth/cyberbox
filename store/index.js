@@ -18,7 +18,7 @@ import filter from './../config.js'
 import redstone from 'redstone-api'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
-  marketNom: '0xf6853a7C380D4599eAd17d89ddB2cF780A153FB0',
+  marketNom: '0x6af27A731D45c9CD6a087562e25e9EE119F400aD',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   user: {},
   chainId: null,
@@ -990,13 +990,20 @@ export const actions = {
     }
     const parsePrice = ethers.utils.parseEther(String(token.price))
     console.log(token.price, parsePrice)
-    const paramSender = state.nft.contract !== 'nomdom' ? state.nft.contract_address : account
-    const paramToken = state.nft.contract !== 'nomdom' ? token.id : state.nft.name
-    const result = await contract.methods.buyToken(paramSender, paramToken, web3.utils.toWei(String(token.price))).send({
-      from: account,
-      value: parsePrice,
-      gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
-    })
+    let result = {}
+    if (state.nft.contract !== 'nomdom') {
+      result = await contract.methods.buyToken(state.nft.contract_addres, token.id, web3.utils.toWei(String(token.price))).send({
+        from: account,
+        value: parsePrice,
+        gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
+      })
+    } else {
+      result = await contract.methods.buyToken(state.nft.name, web3.utils.toWei(String(token.price))).send({
+        from: account,
+        value: parsePrice,
+        gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
+      })
+    }
     provider.once(result, async () => {
       commit('changeSuccessBuyToken', true)
     });

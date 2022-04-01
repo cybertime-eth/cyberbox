@@ -4,7 +4,7 @@
       <button class="header__back" v-if="nftId" @click="handleClickBack">
         <img src="/arrow-left.svg" alt="back" class="header__back-img">
       </button>
-      <div class="header__logo" @click="$router.push('/')">
+      <div class="header__logo" :class="{ 'has-nft': nftId }" @click="$router.push('/')">
         <img src="/logo.svg" alt="logo" class="header__logo-img">
       </div>
       <searchInput class="header__search" />
@@ -296,6 +296,9 @@ header {
     &__logo {
       img {
         width: 4rem;
+      }
+      &.has-nft {
+        display: none;
       }
     }
     &__box {

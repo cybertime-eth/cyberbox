@@ -7,7 +7,7 @@
         <h2 class="modal__title">Transfer Ownership</h2>
         <div class="modal__transfer">
           <div class="modal__transfer-info">
-            <img class="modal__image" :src="nft.image">
+            <img class="modal__image" :src="getNFTImage(nft)">
             <p class="modal__transfer-description" :class="{ success: successTransferToken }">{{ transferDescription }}</p>
           </div>
           <div class="modal__transfer-form">
@@ -87,13 +87,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.modal {
-  background: $white;
-}
 .modal__image {
   display: none;
 }
 @media (max-width: 460px) {
+  .modal {
+    background: $white;
+  }
   .modal__title {
     display: none;
   }
