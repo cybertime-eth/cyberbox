@@ -261,6 +261,19 @@ export const state = () => ({
       medium: 'https://medium.com/@CeloEspresso',
       description: 'GM fellow espresso baristas, the Espresso Hard Fork is live! Now all the beautiful cEspressi can be born and welcomed to the Celo Blockchain. Head over to the coffee machine to brew your own, unique cEspresso!'
     },
+    {
+      id: 18,
+      name: 'NaviKatz',
+      route: 'nkw',
+      image: '/collections/nkw.jpg',
+      banner: '/collections/nkw-banner.jpg',
+      logo: '/collections/nkw-logo.png',
+      website: 'https://navikatz.com/',
+      twitter: 'https://twitter.com/NaviKatz',
+      discord: 'http://discord.link/navikatz',
+      telegram: 'http://t.me/navikatz',
+      description: 'NaviKatz is a terrific multichain Token, NFT-Marketplace, and GameFi project built on the Celo, Cronos and Fantom blockchain.'
+    },
     // {
     //   id: 14,
     //   name: 'PixelAva',
