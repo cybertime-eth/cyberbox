@@ -256,15 +256,21 @@ export default {
     grid-template-columns: 20rem 20rem 20rem 20rem 20rem 20rem;
     grid-column-gap: 2.4rem;
     grid-row-gap: 2.4rem;
-    padding-top: 3.2rem;
+    padding-top: 2.2rem;
   }
   &-filters {
     display: flex;
     align-items: center;
     align-self: flex-start;
     padding-top: 5.5rem;
+    padding-bottom: 1rem;
     width: 100%;
     overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
     &-item {
       box-shadow: 0 .2rem .8rem rgba(0, 0, 0, 0.05);
       border-radius: 2rem;
@@ -333,7 +339,7 @@ export default {
     padding-top: 1.6rem;
     &__items {
       grid-template-columns: 14.4rem 14.4rem;
-      padding-top: 2.4rem;
+      padding-top: 1.4rem;
     }
     &__title {
       font-family: inherit;

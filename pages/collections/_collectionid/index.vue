@@ -779,6 +779,7 @@ export default {
       padding-top: 2.2rem;
     }
     &__sort {
+      padding-bottom: 1rem;
       overflow-x: auto;
       -ms-overflow-style: none;
       scrollbar-width: none;
@@ -808,7 +809,7 @@ export default {
     }
     &__info {
       position: relative;
-      padding-top: 7.3rem;
+      padding-top: 6.3rem;
       .search-box {
         width: 100% !important;
         position: absolute;
