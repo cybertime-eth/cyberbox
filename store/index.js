@@ -18,7 +18,7 @@ import filter from './../config.js'
 import redstone from 'redstone-api'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
-  marketNom: '0x6af27A731D45c9CD6a087562e25e9EE119F400aD',
+  marketNom: '0xf6853a7C380D4599eAd17d89ddB2cF780A153FB0', 
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   user: {},
   chainId: null,
