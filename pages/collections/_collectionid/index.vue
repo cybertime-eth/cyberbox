@@ -414,33 +414,13 @@ export default {
       this.loading = false
     }
   },
+  beforeMount() {
+    window.addEventListener('scroll', this.addCurrentPage)
+  },
   beforeDestroy() {
     window.removeEventListener('scroll', this.addCurrentPage)
   },
   async created() {
-    if (process.browser) {
-      window.addEventListener('scroll', this.addCurrentPage)
-
-      const metaElements = document.querySelectorAll('meta')
-      let imageMetaFound = false
-      metaElements.forEach(nodeEl => {
-        const name = nodeEl.name
-        const property = nodeEl.getAttribute('property')
-        if (name === 'title' || property === 'og:title') {
-          nodeEl.setAttribute('content', this.pageTitle)
-        }
-        if (name === 'description' || property === 'og:description') {
-          nodeEl.setAttribute('content', this.description)
-        }
-        if (property === 'og:image') {
-          nodeEl.setAttribute('content', this.metaIcon)
-          imageMetaFound = true
-        }
-      })
-      if (!imageMetaFound) {
-        document.head.insertAdjacentHTML('afterbegin', `<meta data-vue-meta="1" data-vmid="og:image" hid="og:image" property="og:image" content="${this.metaIcon}">`)
-      }
-    }
     if (process.browser && localStorage.getItem('move_back')) {
       localStorage.removeItem('move_back')
       const collectionSetting = this.$store.state.collectionSetting
