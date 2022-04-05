@@ -38,7 +38,7 @@ export default {
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
-
+ 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: ['@nuxtjs/style-resources', 'nuxt-graphql-request'],
 
@@ -48,7 +48,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-cybertime-nom-six',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-cybertime-nom-five',
         options: {}
       },
       secondClient: {
