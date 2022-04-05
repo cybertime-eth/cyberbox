@@ -682,12 +682,12 @@ export const actions = {
     wc.handshakeId = request.id
     wc.handshakeTopic = uuid()
     wc._sendSessionRequest(request, "Session update rejected", { topic: wc.handshakeTopic })
+    let wcUri = wc.uri
     if (isValora) {
-      setLocal(mobileLinkChoiceKey, { href: `celo://wallet/wc?uri=${wc.uri}` }) 
-      commit('setWalletUri', `celo://wallet/wc?uri=${wc.uri}`)
-    } else {
-      commit('setWalletUri', wc.uri)
+      wcUri = `celo://wallet/wc?uri=${wc.uri}`
     }
+    setLocal(mobileLinkChoiceKey, { href: wcUri }) 
+    commit('setWalletUri', wcUri)
     // create session end
 
     provider.start()
