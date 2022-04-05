@@ -684,9 +684,11 @@ export const actions = {
     wc._sendSessionRequest(request, "Session update rejected", { topic: wc.handshakeTopic })
     let wcUri = wc.uri
     if (isValora) {
+      setLocal(mobileLinkChoiceKey, { href: wcUri }) 
       wcUri = `celo://wallet/wc?uri=${wc.uri}`
+    } else {
+      setLocal(mobileLinkChoiceKey, { href: `https://metamask.app.link/wc?uri=${encodeURIComponent(wc.uri)}` }) 
     }
-    setLocal(mobileLinkChoiceKey, { href: wcUri }) 
     commit('setWalletUri', wcUri)
     // create session end
 
