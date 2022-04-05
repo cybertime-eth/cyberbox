@@ -38,7 +38,7 @@ export default {
   },
   mounted() {
     if (!this.walletUri) {
-      this.$store.dispatch('createWalletConnect')
+      this.$store.dispatch('createWalletConnect', true)
     } else {
       this.openValoraAppFromMobile()
     }

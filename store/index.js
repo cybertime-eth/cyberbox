@@ -656,7 +656,7 @@ export const actions = {
       commit('setChainId', BigNumber.from(chainId).toNumber())
     })
   },
-  async createWalletConnect({state, getters, commit, dispatch}) {
+  async createWalletConnect({state, getters, commit, dispatch}, isValora) {
     const provider = getters.walletConnectProvider
     const wc = provider.wc
     dispatch('addEventHandlerForWalletProvider', provider)
@@ -681,8 +681,12 @@ export const actions = {
     wc.handshakeId = request.id
     wc.handshakeTopic = uuid()
     wc._sendSessionRequest(request, "Session update rejected", { topic: wc.handshakeTopic })
-    setLocal(mobileLinkChoiceKey, { href: `celo://wallet/wc?uri=${wc.uri}` })
-    commit('setWalletUri', wc.uri)
+    if (isValora) {
+      setLocal(mobileLinkChoiceKey, { href: `celo://wallet/wc?uri=${wc.uri}` }) 
+      commit('setWalletUri', `celo://wallet/wc?uri=${wc.uri}`)
+    } else {
+      commit('setWalletUri', wc.uri)
+    }
     // create session end
 
     provider.start()
