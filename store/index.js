@@ -1009,10 +1009,10 @@ export const actions = {
       contract = new kit.web3.eth.Contract(nomABI, state.marketNom)
     }
     const parsePrice = ethers.utils.parseEther(String(token.price))
-    console.log(token.price, parsePrice)
+    console.log(token.price)
     let result = {}
     if (state.nft.contract !== 'nomdom') {
-      result = await contract.methods.buyToken(state.nft.contract_addres, token.id, web3.utils.toWei(String(token.price))).send({
+      result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
         from: account,
         value: parsePrice,
         gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
