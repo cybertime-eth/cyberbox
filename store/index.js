@@ -1,7 +1,7 @@
 import Web3 from 'web3'
 import {ethers, Wallet, providers, BigNumber} from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider"
-import { mobileLinkChoiceKey, setLocal } from "@walletconnect/utils"
+import { mobileLinkChoiceKey, setLocal, removeLocal } from "@walletconnect/utils"
 import ENS from "@ensdomains/ensjs"
 import MarketMainABI from '../abis/marketMain.json'
 import API from '../api'
@@ -660,6 +660,7 @@ export const actions = {
     const provider = getters.walletConnectProvider
     const wc = provider.wc
     dispatch('addEventHandlerForWalletProvider', provider)
+    removeLocal(mobileLinkChoiceKey)
 
     // create session
     wc._key = await wc._generateKey()
