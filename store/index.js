@@ -685,7 +685,7 @@ export const actions = {
     if (isValora) {
       setLocal(mobileLinkChoiceKey, { href: `celo://wallet/wc?uri=${wc.uri}` }) 
     } else {
-      setLocal(mobileLinkChoiceKey, { href: `metamask://wallet/wc?uri=${encodeURIComponent(wc.uri)}` }) 
+      setLocal(mobileLinkChoiceKey, { href: `metamask://wallet/wc?uri=${wc.uri}` })
     }
     commit('setWalletUri', wc.uri)
     // create session end
