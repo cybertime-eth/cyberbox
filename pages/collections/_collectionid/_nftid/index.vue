@@ -164,6 +164,7 @@ export default {
       showBuyTokenModal: false,
       nftReloading: false,
       oldNftStatus: null,
+      oldNftPrice: null,
       nftImageLoaded: true,
       nft: {
         price: 0
@@ -245,6 +246,9 @@ export default {
         this.secondsDifference = 0;
       }
     }, 1000)
+    if (this.isSellNFT && this.nft.market_status === 'LISTED') {
+      this.$store.dispatch('checkBuyTokenApproved', this.nft.price)
+    }
   },
   computed: {
     address() {
@@ -329,7 +333,7 @@ export default {
         collectionId: this.$route.params.collectionid
       })
       let rarityInfos = null
-      if (nft.contract !== 'nomdom' && nft.market_status !== this.oldNftStatus) {
+      if (nft.contract !== 'nomdom' && (nft.market_status !== this.oldNftStatus || nft.price !== this.oldNftPrice)) {
         rarityInfos = await API.getNftRankings([nft.id])
       }
       this.nft = {
@@ -349,15 +353,17 @@ export default {
     startReloading() {
       this.nftReloading = true
       this.oldNftStatus = this.nft.market_status
+      this.oldNftPrice = this.nft.price
       this.reloadNft()
     },
     async reloadNft() {
       await this.loadNft()
-      if (this.nft.market_status === this.oldNftStatus) {
+      if (this.nft.market_status === this.oldNftStatus && this.nft.price === this.oldNftPrice) {
         setTimeout(() => this.reloadNft(), 1000)
       } else {
         this.nftReloading = false
         this.oldNftStatus = null
+        this.oldNftPrice = null
         await this.loadBalance()
       }
     },

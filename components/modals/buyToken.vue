@@ -19,7 +19,7 @@
       </div>
       <div class="modal__buttons">
         <div class="modal__buttons-box" v-if="balance >= nft.price">
-          <button class="modal__button modal__button-submit" :class="{ disabled: pending || successApproveBuyToken, pending: !successApproveBuyToken && pending }" @click="approveToken">
+          <button class="modal__button modal__button-submit" :class="{ disabled: pending || successApproveBuyToken, pending: !successApproveBuyToken && pending }" @click="approveToken" v-if="!buyTokenApproved">
             Approve
             <img class="modal__button-loading" src="/loading-button.svg" alt="loading" v-if="!successApproveBuyToken && pending">
           </button>
@@ -38,7 +38,7 @@
         </a>
       </div>
       <h4 class="modal__footer"  v-if="balance < nft.price">Insufficiently funds</h4>
-      <div class="modal__step" v-else>
+      <div class="modal__step" v-else-if="!buyTokenApproved">
         <span class="modal__step-status active" :class="{ approved: successApproveBuyToken }">
           <span v-if="!successApproveBuyToken">1</span>
           <img src="/check-circle.svg" alt="check" v-else>
@@ -62,9 +62,12 @@ export default {
     collectionName() {
       return this.$route.params.collectionid
     },
+    buyTokenApproved() {
+      return this.$store.state.buyTokenApproved
+    },
     successApproveBuyToken() {
-      return this.$store.state.successApproveBuyToken
-    }
+      return this.$store.state.successApproveBuyToken || this.buyTokenApproved
+    },
   },
   data() {
     return {
@@ -160,6 +163,7 @@ export default {
         font-size: 1.4rem;
         line-height: 1;
         color: $grayLight;
+        text-align: right;
       }
     }
   }
@@ -216,6 +220,9 @@ export default {
       color: $white;
       &:last-child {
         margin-left: 1.6rem;
+      }
+      &:first-child {
+        margin-left: 0;
       }
       &.disabled {
         background: $white;

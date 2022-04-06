@@ -39,6 +39,7 @@ export const state = () => ({
   mintNumFilter: null,
   nomNameFilter: null,
   successApproveBuyToken: false,
+  buyTokenApproved: false,
   successBuyToken: false,
   successRemoveToken: false,
   successTransferToken: false,
@@ -972,6 +973,19 @@ export const actions = {
 
   // BUY NFT
 
+  async checkBuyTokenApproved({getters, commit}, price) {
+    if (!price) return
+    const ethereumProvider = getters.provider
+    const web3 = new Web3(ethereumProvider)
+    const accounts = await web3.eth.getAccounts()
+    const account = accounts[0]
+    const kit = ContractKit.newKitFromWeb3(web3)
+    const goldToken = await kit._web3Contracts.getGoldToken();
+    const tokenPrice = web3.utils.toBN(web3.utils.toWei(String(price)))
+    const allowanceAmount = web3.utils.toBN(await goldToken.methods.allowance(account, account).call())
+    commit('changeBuyTokenApproved', allowanceAmount.gte(tokenPrice))
+  },
+
   async approveBuyToken({state, commit, getters}, token) {
   const ethereumProvider = getters.provider
   const provider = new ethers.providers.Web3Provider(ethereumProvider)
@@ -980,7 +994,9 @@ export const actions = {
 	const account = accounts[0]
 	const kit = ContractKit.newKitFromWeb3(web3)
   const goldToken = await kit._web3Contracts.getGoldToken();
-  const parsePrice = ethers.utils.parseEther(String(token.price))
+  const minimumAmount = 100000
+  const allowanceAmount = token.price > minimumAmount ? token.price : minimumAmount
+  const parsePrice = ethers.utils.parseEther(String(allowanceAmount))
   const result = await goldToken.methods.approve(account, parsePrice).send({
     from: account,
   })
@@ -1289,6 +1305,9 @@ export const mutations = {
   changeNomNameFilter(state, nomName) {
     state.nomNameFilter = nomName
     state.mintNumFilter = null
+  },
+  changeBuyTokenApproved(state, approved) {
+    state.buyTokenApproved = approved
   },
   changeSuccessApproveBuyToken(state, status) {
     state.successApproveBuyToken = status
