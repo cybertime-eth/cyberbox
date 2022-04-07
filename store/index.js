@@ -275,6 +275,18 @@ export const state = () => ({
       telegram: 'http://t.me/navikatz',
       description: 'NaviKatz is a terrific multichain Token, NFT-Marketplace, and GameFi project built on the Celo, Cronos and Fantom blockchain.'
     },
+    {
+      id: 19,
+      name: 'CeloMonkey Business',
+      route: 'cmbs',
+      image: '/collections/cmbs.png',
+      banner: '/collections/cmbs-banner.png',
+      logo: '/collections/cmbs-logo.png',
+      website: 'https://celomonkeybusiness.xyz/',
+      twitter: 'https://twitter.com/CeloMBS',
+      discord: 'https://discord.com/invite/ktSQm5ukbq',
+      description: 'Celo Monkey Business CeloOrg 888 inspired generative NFTs'
+    },
     // {
     //   id: 14,
     //   name: 'PixelAva',
@@ -1003,11 +1015,6 @@ export const actions = {
   provider.once(result, async () => {
     commit('changeSuccessApproveBuyToken', true)
   })
-  // const approved = await goldToken.methods.approve(account, parsePrice).call()
-  // if (!approved) {
-  // } else {
-  //   commit('changeSuccessApproveBuyToken', true)
-  // }
   },
   async buyNFT({commit, state, getters}, token) {
     const ethereumProvider = getters.provider

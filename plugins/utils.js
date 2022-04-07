@@ -5,7 +5,7 @@ Vue.mixin({
   methods: {
 	getNFTImage(nft) {
 		if (nft.contract !== 'nomdom') {
-			const ipfsIconContracts = ['cshape', 'cak', 'cpaint', 'nfet', 'cdp', 'gang', 'cespresso']
+			const ipfsIconContracts = ['cshape', 'cak', 'cpaint', 'nfet', 'cdp', 'gang', 'cespresso', 'cmbs']
 			if (ipfsIconContracts.includes(nft.contract) && nft.image.split('ipfs://').length > 1) {
 				return 'https://ipfs.io/ipfs/' + nft.image.split('ipfs://')[1]
 			}
