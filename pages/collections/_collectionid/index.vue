@@ -4,7 +4,7 @@
     <div class="collection__content container-xl">
       <div class="collection__header">
         <img :src="collection.logo" alt="avatar" class="collection__header-avatar">
-        <h1 class="collection__header-title" >{{ collection.name }} <img src="/confirmed.svg" alt="confirm"></h1>
+        <h1 class="collection__header-title" ><span>{{ collection.name }}</span> <img src="/confirmed.svg" alt="confirm"></h1>
         <div class="collection__header-socials">
           <a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
           <a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
@@ -470,9 +470,18 @@ export default {
       border: .2rem solid $white;
     }
     &-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
       padding-top: 2rem;
+      span {
+        margin-right: 1rem;
+        white-space: nowrap;
+      }
       img {
         width: 2rem;
+        transform: translateY(.3rem);
       }
     }
     &-socials {
@@ -528,6 +537,8 @@ export default {
       }
     }
     &-content {
+      display: flex;
+      justify-content: center;
       color: $grayLight;
       width: 65rem;
       padding-top: 1rem;
