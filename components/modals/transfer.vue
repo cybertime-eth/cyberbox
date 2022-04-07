@@ -104,12 +104,15 @@ export default {
 <style lang="scss" scoped>
 .modal {
   &__block {
-    background:  $white;
+    background: $white;
+  }
+  &__title {
+    text-align: left;
+    font-size: 3.2rem;
   }
   @media(max-width: 460px) {
     &__title {
-      text-align: left;
-      font-size: 3.2rem;
+      font-size: 1.8rem;
     }
   }
 }
