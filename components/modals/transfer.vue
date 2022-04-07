@@ -102,13 +102,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.modal__block {
-  background:  $white;
-}
-@media(max-width: 460px) {
-  .modal__title {
-    width: 100%;
-    font-size: 1.8rem;
+.modal {
+  &__block {
+    background:  $white;
+  }
+  @media(max-width: 460px) {
+    &__title {
+      text-align: left;
+      font-size: 3.2rem;
+    }
   }
 }
 </style>
@@ -155,10 +157,6 @@ export default {
         }
       }
     }
-  }
-  &__title {
-    text-align: left;
-    font-size: 3.2rem;
   }
   &__transfer {
     padding-top: 1.8rem;

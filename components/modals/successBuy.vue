@@ -87,5 +87,14 @@ export default {
       width: 20px;
     }
   }
+  @media (max-width: 460px) {
+    &__title {
+      font-size: 3.2rem;
+      line-height: 3.8rem;
+    }
+    &__image {
+      margin-top: 1.6rem;
+    }
+  }
 }
 </style>

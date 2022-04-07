@@ -481,7 +481,7 @@ export default {
       }
       img {
         width: 2rem;
-        transform: translateY(.3rem);
+        transform: translateY(.2rem);
       }
     }
     &-socials {

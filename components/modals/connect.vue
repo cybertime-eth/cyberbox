@@ -1,7 +1,7 @@
 <template>
   <div class="modal">
     <div class="modal__block">
-      <h2 class="modal__title">Connect your wallet</h2>
+      <h2 class="modal__title">{{ modalTitle }}</h2>
       <div class="modal__connect">
         <button class="modal__connect-button" @click="connectValora">
           Valora
@@ -24,6 +24,9 @@
 
 export default {
   computed: {
+    modalTitle() {
+      return !this.isMobile() ? 'Connect your wallet' : 'Connect wallet';
+    },
     walletUri() {
       return this.$store.state.walletUri
     }
@@ -71,6 +74,10 @@ export default {
     color: $titleColor;
   }
   @media screen and (max-width: 460px) {
+    &__block {
+      width: 100%;
+      padding: 5.7rem .8rem 3.2rem;
+    }
     &__title {
       width: 100%;
       text-align: center;
@@ -108,30 +115,22 @@ export default {
       margin: 0 .8rem;
     }
     &__connect {
-      &-metamask-image {
-        margin-top: 4rem;
-      }
+      padding-top: 2.4rem;
       &-button {
         width: 100%;
       }
     }
     &__block {
-      width: 80%;
-      padding-top: 8rem !important;
-      padding-bottom: 4rem !important;
       &-container {
         text-align: center;
       }
     }
     &__title {
-      width: 80%;
+      width: 100%;
       margin: 0 auto;
       line-height: 2.2rem;
       text-align: center;
-      font-size: 1.6rem;
-      &-domain {
-        color: $green;
-      }
+      font-size: 1.8rem;
     }
   }
 }

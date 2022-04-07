@@ -66,7 +66,10 @@ export default {
   @media (max-width: 460px) {
     &__block {
       padding-top: 0.8rem !important;
-    }  
+    }
+    &__title {
+      font-size: 2.4rem;
+    }
   }
 }
 </style>
@@ -97,9 +100,6 @@ export default {
     padding-top: 20px;
   }
 	@media(max-width: 460px) {
-    &__title {
-      font-size: 2.4rem;
-    }
     &__sub-title {
       font-size: 1.6rem;
     }

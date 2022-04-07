@@ -48,24 +48,17 @@ export default {
     window.removeEventListener('scroll', this.addCurrentPage)
   },
   async created() {
-    let movedBack = false
     if (process.browser) {
-      if (window.innerWidth > 1144) {
-        this.showFixedFooter(false)
-      } else {
-        this.showFixedFooter(true)
-      }
+      this.showFixedFooter(true)
       window.addEventListener('scroll', this.addCurrentPage)
-      movedBack = true
-      localStorage.removeItem('move_back')
     }
 
-    await this.fetchMyCollection()
-    this.loadNftCounts()
-
-    const collectionSetting = this.$store.state.collectionSetting
-    if (movedBack && collectionSetting?.myFilter) {
-      this.filter(collectionSetting.myFilter)
+    if (this.address) {
+      this.reloadMyCollection()
+    } else {
+      this.listNft = []
+      this.filteredNft = false
+      this.loading = false
     }
   },
   computed: {
@@ -94,9 +87,7 @@ export default {
   },
   watch: {
     address() {
-      if (this.totalNftCount === 0) {
-        this.loadNftCounts()
-      }
+      this.reloadMyCollection()
     },
     successTransfer() {
       if (this.$store.state.successTransferToken) {
@@ -105,7 +96,7 @@ export default {
       }
     },
     filteredNft() {
-      if ((process.browser && window.innerWidth > 1144 || window.innerWidth <= 460) || (this.filteredNft && this.filteredNft.length > 6)) {
+      if (((process.browser && window.innerWidth > 1144 || window.innerWidth <= 460) || (this.filteredNft && this.filteredNft.length > 6)) && this.filteredNft?.length > 0) {
         this.showFixedFooter(false)
       } else {
         this.showFixedFooter(true)
@@ -113,6 +104,23 @@ export default {
     }
   },
   methods: {
+    async reloadMyCollection() {
+      if (!localStorage.getItem('move_back')) {
+        await this.fetchMyCollection()
+        this.loadNftCounts()
+      } else {
+        localStorage.removeItem('move_back')
+        this.loading = true
+        this.loadNftCounts()
+
+        const collectionSetting = this.$store.state.collectionSetting
+        if (collectionSetting?.myFilter) {
+          await this.filter(collectionSetting.myFilter)
+        }
+
+        this.loading = false
+      }
+    },
     routeNftId(nft) {
       return nft.contract !== 'nomdom' ? nft.contract_id : nft.image
     },
