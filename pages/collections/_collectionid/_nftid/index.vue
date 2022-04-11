@@ -338,7 +338,7 @@ export default {
       }
       this.nft = {
         ...nft,
-        rating_index: rarityInfos ? rarityInfos[0].rating_index : null,
+        rating_index: rarityInfos && rarityInfos.length > 0 ? rarityInfos[0].rating_index : null,
         price: nft.price / 1000
       }
       this.loadButton = false
