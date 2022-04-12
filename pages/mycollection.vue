@@ -116,6 +116,8 @@ export default {
         const collectionSetting = this.$store.state.collectionSetting
         if (collectionSetting?.myFilter) {
           await this.filter(collectionSetting.myFilter)
+        } else {
+          await this.fetchMyCollection()
         }
 
         this.loading = false

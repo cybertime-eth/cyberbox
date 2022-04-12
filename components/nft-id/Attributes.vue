@@ -2,7 +2,7 @@
   <div class="attributes">
     <div class="attributes__tab">
       <span class="attributes__tab-item" :class="{active: activeTab === 1}" @click="activeTab = 1" v-if="info.contract !== 'nomdom'">Attributes</span>
-      <span class="attributes__tab-item" :class="{active: activeTab === 2}" @click="activeTab = 2">Info</span>
+      <span class="attributes__tab-item" :class="{active: activeTab === 2 || info.contract === 'nomdom'}" @click="activeTab = 2">Info</span>
     </div>
     <div class="attributes__block" v-if="activeTab === 1 && info.contract !== 'nomdom'">
       <div class="attributes__block-content" >
@@ -62,13 +62,6 @@ export default {
       }
     }
   },
-  watch: {
-    info() {
-      if (this.info.contract === 'nomdom') {
-        this.activeTab = 2
-      }
-    }
-  },
   methods: {
     copyOwnerAddress(e) {
       this.$copyText(this.info.owner)
@@ -108,6 +101,7 @@ export default {
       font-weight: 600;
       font-size: 1.6rem;
       color: $border;
+      cursor: pointer;
       &.active {
         border-bottom: 1px solid $pink;
         color: $textColor;
