@@ -170,6 +170,7 @@ export default {
   &__title {
     text-align: left;
     font-size: 3.2rem;
+    color: $titleColor;
   }
   @media(max-width: 460px) {
     &__title {
