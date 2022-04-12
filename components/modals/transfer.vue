@@ -26,7 +26,7 @@
             <p class="modal__transfer-link">Viev on explorer.celo.org <img src="/share.svg" alt="share"></p>
           </div>
           <div class="modal__transfer-buttons">
-            <button class="modal__transfer-buttons-button modal__transfer-buttons-button-done" @click="closeModal" v-if="successTransferToken">Done</button>
+            <button class="modal__transfer-buttons-button modal__transfer-buttons-button-done" @click="closeSuccessModal" v-if="successTransferToken">Done</button>
             <button class="modal__transfer-buttons-button modal__transfer-buttons-button-confirm gradient-button" v-else-if="pending">
               Pending confirmation <img src="/loading-button.svg" alt="load">
             </button>
@@ -84,6 +84,10 @@ export default {
   methods: {
     closeModal() {
       this.$emit('closeModal', false)
+      this.$store.commit('changeSuccessTransferToken', false)
+    },
+    closeSuccessModal() {
+      this.$emit('done')
       this.$store.commit('changeSuccessTransferToken', false)
     },
     transferToken() {

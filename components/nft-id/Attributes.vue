@@ -1,33 +1,23 @@
 <template>
   <div class="attributes">
-    <div class="attributes__block">
-      <div class="attributes__block-header">
-        <h3 class="attributes__block-header-title">Attributes <span>{{ item ? item.length : '' }}</span></h3>
-        <img
-          class="attributes__block-header-image"
-          src="/attr-array.svg" alt="array"
-          :class="showLeftAttributes ? 'array-down' : 'array-up'"
-          @click="showLeftAttributes = !showLeftAttributes"
-        >
-      </div>
-      <div class="attributes__block-content" v-if="showLeftAttributes">
-        <div class="attributes__block-content-item" v-for="attribute of item">
+    <div class="attributes__tab">
+      <span class="attributes__tab-item" :class="{active: activeTab === 1}" @click="activeTab = 1" v-if="info.contract !== 'nomdom'">Attributes</span>
+      <span class="attributes__tab-item" :class="{active: activeTab === 2}" @click="activeTab = 2">Info</span>
+    </div>
+    <div class="attributes__block" v-if="activeTab === 1 && info.contract !== 'nomdom'">
+      <div class="attributes__block-content" >
+        <div class="attributes__block-content-item" v-if="item.length > 0 && info.rating_index">
+          <h3 class="attributes__block-content-item-title">Rarity rank</h3>
+          <h3 class="attributes__block-content-item-subtitle">{{ info.rating_index }}</h3>
+        </div>
+        <div class="attributes__block-content-item" :key="idx" v-for="(attribute, idx) of item">
           <h3 class="attributes__block-content-item-title">{{ attribute.trait_type }}</h3>
           <h3 class="attributes__block-content-item-subtitle">{{ attribute.value }}</h3>
         </div>
       </div>
     </div>
-    <div class="attributes__block">
-      <div class="attributes__block-header">
-        <h3 class="attributes__block-header-title">Information</h3>
-        <img
-          class="attributes__block-header-image"
-          src="/attr-array.svg" alt="array"
-          :class="showRightAttributes ? 'array-down' : 'array-up'"
-          @click="showRightAttributes = !showRightAttributes"
-        >
-      </div>
-      <div class="attributes__block-content" v-if="showRightAttributes">
+    <div class="attributes__block" v-else>
+      <div class="attributes__block-content">
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Owned by</h3>
           <div class="attributes__block-content-item-address" @click="copyOwnerAddress">
@@ -42,11 +32,11 @@
         <div class="attributes__block-content-item">
           <h3 class="attributes__block-content-item-title">Contract Address</h3>
           <a
-            :href="`https://explorer.celo.org/address/${info.contract_address}`"
+            :href="`https://explorer.celo.org/address/${contractAddress}`"
             target="_blank"
             class="attributes__block-content-item-subtitle"
           >
-            {{ cutAddress(info.contract_address) }}
+            {{ cutAddress(contractAddress) }}
             <img src="/send.svg" alt="send">
           </a>
         </div>
@@ -59,9 +49,24 @@ export default {
   props: ['item', 'info'],
   data() {
     return {
-      showLeftAttributes: true,
-      showRightAttributes: true,
       id: 0,
+      activeTab: 1
+    }
+  },
+  computed: {
+    contractAddress() {
+      if (this.info.contract !== 'nomdom') {
+        return this.info.contract_address
+      } else {
+        return this.$store.state.nomContractAddress
+      }
+    }
+  },
+  watch: {
+    info() {
+      if (this.info.contract === 'nomdom') {
+        this.activeTab = 2
+      }
     }
   },
   methods: {
@@ -90,15 +95,32 @@ export default {
 </script>
 <style lang="scss">
 .attributes {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 2.4rem;
+  padding: 3rem 0.8rem 0;
+  margin-top: 1.6rem;
+  box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
+  &__tab {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid $modalColor;
+    &-item {
+      display: block;
+      padding-bottom: 1.2rem;
+      font-weight: 600;
+      font-size: 1.6rem;
+      color: $border;
+      &.active {
+        border-bottom: 1px solid $pink;
+        color: $textColor;
+        transform: translateY(1px);
+      }
+      &:last-child {
+        padding-left: 2.4rem;
+        padding-right: 2.4rem;
+      }
+    }
+  }
   &__block {
-    padding: 1.7rem 1.6rem .5rem;
-    box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
-    border-radius: .4rem;
-    height: 100%;
-    width: 53.6rem;
+    width: 100%;
     &:first-child {
       margin-right: 24px;
     }
@@ -124,7 +146,6 @@ export default {
       }
     }
     &-content {
-      transition: 1s;
       &-item {
         display: flex;
         align-items: center;
@@ -150,7 +171,6 @@ export default {
             width: 2rem;
           }
         }
-
         &:nth-child(1) {
           padding-top: 2.5rem;
         }

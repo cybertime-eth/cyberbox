@@ -254,43 +254,6 @@ export default {
     text-align: center;
     letter-spacing: 0.03em;
   }
-  &__step {
-    display: flex;
-    align-items: center;
-    margin-top: 1.92rem;
-    padding: 0 8.23rem;
-    &-status {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      border: 2px solid $border2;
-      border-radius: 50%;
-      font-size: 1rem;
-      color: $border2;
-      &.active {
-        border: 1px solid $pink;
-        color: $pink;
-        * {
-          color: $pink;
-        }
-      }
-      &.approved {
-        border: 0;
-      }
-    }
-    &-line {
-      flex: 1;
-      height: 2px;
-      background: $border2;
-      opacity: 0.65;
-      &.active {
-        background: linear-gradient(93.06deg,  #2CFF64 8.21%, #FC2EF5 100%);
-        opacity: 1;
-      }
-    }
-  }
   &__close-button {
     position: absolute;
     top: 15px;

@@ -24,16 +24,12 @@
                 <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2>
               </div>
               <h1 class="nft__block-info-name">{{ nftName }}</h1>
-              <h1 class="nft__block-info-rank" v-if="nft.contract !== 'nomdom'">Rarity rank {{ nft.rating_index }}</h1>
-              <p class="nft__block-info-description">{{ nft.description }}</p>
-              <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
-              <div class="nft__block-info-price" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/celo.svg" alt="celo"><h1>{{ nft.price }} CELO</h1><span>= {{ priceToken }}$</span></div>
   <!--            <p class="nft__block-info-date" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/time.svg" alt="time"> Sale ends in-->
   <!--              {{ daysDifference }} days-->
   <!--              {{ hoursDifference }} hours-->
   <!--              {{ minutesDifference }} minutes-->
   <!--            </p>-->
-              <div class="nft__block-info-status" v-if="!soldByMe">
+              <!-- <div class="nft__block-info-status" v-if="!soldByMe">
                 <p class="nft__block-info-status-title">Market status</p>
                 <h3 class="nft__block-info-status-content">{{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}</h3>
               </div>
@@ -44,8 +40,19 @@
                   <h1>{{ nft.price }} CELO</h1>
                   <span>= {{ priceToken }}$</span>
                 </div>
+              </div> -->
+              <div class="nft__block-info-box nft__block-info-box-buy" v-if="isSellNFT && nft.market_status === 'LISTED'">
+                <div class="nft__block-info-price">
+                  <div class="nft__block-info-price-celo">
+                    <img src="/celo.svg" alt="celo">
+                    <h1>{{ nft.price }}</h1>
+                  </div>
+                  <p class="nft__block-info-price-text">Price (${{ priceToken }})</p>
+                </div>
+                <button class="nft__block-info-buy" @click="handleClickBuyNow">Buy now</button>
               </div>
-              <button class="nft__block-info-buy" @click="handleClickBuyNow" v-if="isSellNFT && nft.market_status === 'LISTED'">Buy now</button>
+              <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
+              <Attributes :item="attributes" :info="nft"/>
             </div>
             <div class="nft__block-info-loading" v-else>
               <img src="/loading-nft.gif" alt="load">
@@ -54,87 +61,68 @@
 
           <!-- INFO SELLER -->
 
-          <div class="nft__block-info" v-else-if="listStatus === 'default' && seller">
+          <div class="nft__block-info" v-else-if="seller">
             <div v-if="!nftReloading">
               <div class="nft__block-info-collection">
                 <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
                 <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2>
               </div>
               <h1 class="nft__block-info-name">{{ nftName }}</h1>
-              <h1 class="nft__block-info-rank" v-if="nft.contract !== 'nomdom'">Rarity rank {{ nft.rating_index }}</h1>
-              <p class="nft__block-info-description">{{ nft.description }}</p>
-              <p class="nft__block-info-price-text" v-if="isSellNFT && nft.market_status === 'LISTED'">Price</p>
-              <div class="nft__block-info-price" v-if="isSellNFT && nft.market_status === 'LISTED'">
-                <img src="/celo.svg" alt="celo">
-                <h1>{{ nft.price }} CELO</h1>
-                <span>= {{ priceToken }}$</span>
-              </div>
   <!--            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in-->
   <!--              {{ daysDifference }} days-->
   <!--              {{ hoursDifference }} hours-->
   <!--              {{ minutesDifference }} minutes-->
   <!--            </p>-->
-              <div class="nft__block-info-status">
+              <!-- <div class="nft__block-info-status">
                 <p class="nft__block-info-status-title">Market status</p>
                 <h3 class="nft__block-info-status-content">
                   {{ nft.market_status === "BOUGHT" || nft.market_status === 'MINT' ? 'Not for sale' : 'For Sale'}}
                 </h3>
-              </div>
-              <button class="nft__block-info-transfer" @click="showTransferModal = true" v-if="seller"><img src="/transfer.svg" alt="transfer">Transfer</button>
+              </div> -->
+              <button class="nft__block-info-transfer" @click="showTransferModal = true" v-if="nft.market_status !== 'LISTED'"><img src="/transfer.svg" alt="transfer">Transfer</button>
               <button class="nft__block-info-sell gradient-button" @click="handleClickSell"  v-if="nft.market_status !== 'LISTED'">Sell</button>
-              <div class="nft__content-buttons nft__content-buttons-mini delist-buttons" v-else>
-                <button
-                  class="
-                  nft__content-buttons-button
-                  nft__content-buttons-button-confirm
-                  nft__content-buttons-button-cancel"
-                  @click="removeFromMarket"
-                >
-                  Remove from market
-                  <img src="/loading-button.svg" alt="load" v-if="loadButton">
-                </button>
-                <button
-                  class="nft__content-buttons-button nft__content-buttons-button-confirm gradient-button"
-                  @click="handleClickChangePrice"
-                >
-                  Change price
-                </button>
+              <div class="nft__block-info-box" v-else>
+                <div class="nft__block-info-price">
+                  <div class="nft__block-info-price-celo">
+                    <img src="/celo.svg" alt="celo">
+                    <h1>{{ nft.price }}</h1>
+                  </div>
+                  <p class="nft__block-info-price-text">Price (${{ priceToken }})</p>
+                </div>
+                <div class="nft__content-buttons nft__content-buttons-mini delist-buttons">
+                  <button
+                    class="nft__content-buttons-button nft__content-buttons-button-confirm"
+                    :class="{delete: loadButton}"
+                    @click="handleClickChangePrice"
+                  >
+                    {{ confirmButtonText }}
+                    <img src="/loading-button-black.svg" alt="load" v-if="loadButton">
+                  </button>
+                  <button
+                    class="
+                    nft__content-buttons-button
+                    nft__content-buttons-button-cancel"
+                    @click="removeFromMarket"
+                  >
+                    <img src="/icon-delete.svg" alt="delete">
+                    Remove from market
+                  </button>
+                </div>
               </div>
+              <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
+              <Attributes :item="attributes" :info="nft"/>
             </div>
             <div class="nft__block-info-loading" v-else>
               <img src="/loading-nft.gif" alt="load">
             </div>
           </div>
-
-          <!-- LIST INFO ACTIVE -->
-
-
-          <div class="nft__block-info" v-else-if="listStatus === 'active'">
-            <h1 class="nft__block-info-name">List into market</h1>
-            <!-- <Navigation :step="step" /> -->
-            <!-- <SellPrice :changeInfo="isApprovedNft" @changeStep="changeStep" @setInfo="setInfoNft" v-if="step === 1"/> -->
-            <!-- <Sign @changeStep="changeStep" @setInfo="setInfoNft" :price="nftPrice" v-if="step === 2"/> -->
-            <Listing :nft="nft" @changeStep="changeStep" @setPrice="setNftPrice" v-if="step === 1" />
-            <Successful @changeList="changeList" :price="nftPrice" v-if="step === 2"/>
-          </div>
-
-          <!-- LIST INFO CHANGE -->
-
-          <div class="nft__block-info" v-else-if="listStatus === 'change'">
-            <h1 class="nft__block-info-name">Change price</h1>
-            <!-- <Navigation :step="step" :changeInfo="true" /> -->
-            <!-- <SellPrice @changeStep="changeStep" :changeInfo="true" v-if="step === 1"/> -->
-            <!-- <Sign @changeStep="changeStep" :changeInfo="true" :price="nftInfo.price"  v-if="step === 3"/> -->
-            <Listing :nft="nft" @changeStep="changeStep" :changeInfo="true" @setPrice="setNftPrice" v-if="step === 1" />
-            <Successful @changeList="changeList" :price="nftPrice" v-if="step === 2"/>
-          </div>
         </div>
       </div>
     </div>
-  <Attributes :item="attributes" :info="nft" v-if="$route.params.collectionid !== 'nomdom'"/>
   <connect v-if="showConnectModal" @closeModal="closeModal"/>
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
-  <Transfer :nft="nft" @closeModal="closeTransfer" v-if="showTransferModal" />
+  <Transfer :nft="nft" @done="closeAndReload" @closeModal="showTransferModal=false"  v-if="showTransferModal" />
+  <SellToken :nft="nft" :celoPrice="celoPrice" :approved="nftApproved" @done="closeAndReload" @closeModal="closeSellModal" v-if="showSellTokenModal" />
   <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
   <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nftName"/>
 <!--    <History />-->
@@ -151,6 +139,7 @@ import Successful from '@/components/sale-nft/Successful';
 import connect from '@/components/modals/connect'
 import WrongNetwork from '@/components/modals/wrongNetwork'
 import Transfer from '@/components/modals/transfer'
+import SellToken from '@/components/modals/sellToken'
 import BuyToken from '@/components/modals/buyToken';
 import SuccessfullBuy from '@/components/modals/successBuy';
 import API from '@/api';
@@ -161,6 +150,7 @@ export default {
       showConnectModal: false,
       showWrongNetworkModal: false,
       showTransferModal: false,
+      showSellTokenModal: false,
       showBuyTokenModal: false,
       nftReloading: false,
       oldNftStatus: null,
@@ -169,6 +159,7 @@ export default {
       nft: {
         price: 0
       },
+      nftApproved: false,
       priceToken: 0,
       listStatus: 'default',
       step: 1,
@@ -179,12 +170,16 @@ export default {
       minutesDifference: 0,
       secondsDifference: 0,
       balance: 0,
+      celoPrice: 0,
     }
   },
   watch: {
     successRemoveNft(newVal) {
       if (this.$store.state.successRemoveToken) {
-        this.changeList('default')
+        this.loadButton = false
+        if (this.$store.state.successRemoveToken === true) {
+          this.startReloading()
+        }
       }
     },
     address() {
@@ -210,6 +205,7 @@ export default {
     connect,
     WrongNetwork,
     Transfer,
+    SellToken,
     BuyToken,
     SuccessfullBuy
   },
@@ -246,8 +242,10 @@ export default {
         this.secondsDifference = 0;
       }
     }, 1000)
-    if (this.isSellNFT && this.nft.market_status === 'LISTED') {
+    if (this.isSellNFT && this.nft.market_status === 'LISTED' && !this.seller) {
       this.$store.dispatch('checkBuyTokenApproved', this.nft.price)
+    } else if (this.seller) {
+      this.nftApproved = await this.$store.dispatch('approveToken', false)
     }
   },
   computed: {
@@ -257,6 +255,9 @@ export default {
     nftName() {
       if (!this.nft.name) return ''
       return this.nft.contract !== 'nomdom' ? this.nft.name : `${this.nft.name}.nom`
+    },
+    confirmButtonText() {
+      return !this.loadButton ? 'Change price' : 'Remove';
     },
     successRemoveNft() {
       return this.$store.state.successRemoveToken
@@ -348,6 +349,7 @@ export default {
         this.balance = await this.$store.dispatch('getBalance')
       }
       const price = await this.$store.dispatch('getPriceToken')
+      this.celoPrice = price.value
       this.priceToken = (price.value * this.nft.price).toFixed(1)
     },
     startReloading() {
@@ -367,9 +369,16 @@ export default {
         await this.loadBalance()
       }
     },
-    closeTransfer(payload) {
+    closeAndReload(payload) {
       this.showTransferModal = payload
-      this.loadNft()
+      this.showSellTokenModal = payload
+      this.startReloading()
+    },
+    async closeSellModal(approved) {
+      this.showSellTokenModal = false
+      if (!this.nftApproved && approved) {
+        this.nftApproved = true
+      }
     },
     closeModal(payload) {
       this.showConnectModal = payload
@@ -437,14 +446,15 @@ export default {
     },
     handleClickSell() {
       if (!this.$store.state.wrongNetwork) {
-        this.listStatus = 'active'
+        this.showSellTokenModal = true
       } else {
         this.showWrongNetworkModal = true
       }
     },
     handleClickChangePrice() {
+      if (this.loadButton) return
       if (!this.$store.state.wrongNetwork) {
-        this.listStatus = 'change'
+        this.showSellTokenModal = true
       } else {
         this.showWrongNetworkModal = true
       }
@@ -524,13 +534,6 @@ export default {
         color: $span;
         padding-top: 1.5rem;
       }
-      &-rank {
-        padding-top: 1.1rem;
-        font-family: OpenSans-Regular;
-        font-weight: 400;
-        font-size: 14px;
-        color: $textColor;
-      }
       &-minted {
         font-family: OpenSans-Regular;
         padding-top: 1rem;
@@ -549,21 +552,24 @@ export default {
         padding-top: 2.4rem;
       }
       &-description {
-        padding-top: 1.85rem;
+        padding-top: 2.4rem;
       }
       &-price {
-        display: flex;
-        align-items: center;
-        img {
-          width: 2.46rem;
-          margin-right: 1rem;
-        }
-        h1 {
-          font-size: 2.46rem;
+        &-celo {
+          display: flex;
+          align-items: center;
+          img {
+            width: 2.4rem;
+            margin-right: 1rem;
+          }
+          h1 {
+            font-size: 3.2rem;
+          }
         }
         &-text {
-          padding-top: 3rem;
-          padding-bottom: .5rem;
+          padding-top: 1rem;
+          font-size: 1.4rem;
+          color: $grayLight;
         }
         span {
           margin-left: 1.4rem;
@@ -588,17 +594,20 @@ export default {
         color: $span;
       }
       &-buy {
-        margin-top: 10rem;
         background: $pink;
-        width: 22.4rem;
+        width: 14.8rem;
         height: 5.4rem;
         color: $white;
       }
       &-sell {
-        margin-top: 10rem;
-        width: 22.4rem;
+        margin-top: 3.2rem;
+        width: 16.4rem;
         height: 5.4rem;
         color: $pink;
+        border-radius: 2.5rem;
+        &::after {
+          border-radius: 2.5rem;
+        }
       }
       &-transfer {
         margin-top: 3.2rem;
@@ -616,6 +625,20 @@ export default {
         width: 100%;
         img {
           width: 100%;
+        }
+      }
+      &-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 2.4rem;
+        margin-bottom: 4.4rem;
+        padding: 1.4rem 0.8rem;
+        box-shadow: 0px 4px 12px rgb(0 0 0 / 5%);
+        border-radius: .8rem;
+        position: relative;
+        &-buy {
+          margin-bottom: 0;
         }
       }
     }
@@ -721,22 +744,41 @@ export default {
       display: flex;
       align-items: center;
       &-mini {
-        padding-top: 3.7rem;
+        padding: 0
       }
       &-button {
         width: 16.4rem;
         height: 5.4rem;
-        margin-right: 1.6rem;
         &-cancel {
+          display: flex;
+          align-items: center;
+          width: auto;
+          height: auto;
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          margin-top: 2.4rem;
           background: none;
-          border: .1rem solid $border;
+          border: 0;
+          font-size: 1.4rem;
+          color: $pink;
+          transform: translateX(-50%);
+          img {
+            margin-right: .7rem;
+          }
         }
         &-confirm {
-          width: 26.2rem;
+          width: 16.4rem;
           height: 5.4rem;
           display: flex;
           align-items: center;
           justify-content: center;
+          background: $white;
+          border: 1px solid $black;
+          color: $black;
+          &.delete {
+            width: 14.6rem;
+          }
           img {
             margin-left: 1rem;
             animation: loading 1s infinite;
@@ -807,21 +849,17 @@ export default {
           padding-top: 1.5rem;
         }
         &-price {
-          padding-top: 1rem;
-          img {
-            width: 2rem;
-            margin-right: 1.5rem;
-          }
-          h1 {
-            font-size: 1.8rem;
+          &-celo {
+            img {
+              width: 2rem;
+            }
+            h1 {
+              font-size: 2.2rem;
+            }
           }
         }
         &-date {
           display: none;
-        }
-        &-buy {
-          margin-top: 1.6rem;
-          width: 100%;
         }
         &-sell {
           width: 100%;
@@ -849,17 +887,17 @@ export default {
       }
       &-buttons {
         &-mini {
-          padding-top: 3.2rem;
           &.delist-buttons {
             flex-direction: column-reverse;
           }
         }
         &-button {
-          width: 100%;
+          width: 14.8rem;
           height: 4.8rem;
           margin: 0;
-          &-confirm {
-            margin-top: 1.6rem;
+          &-cancel {
+            width: fit-content;
+            width: -moz-fit-content;
           }
           &-done {
             margin-top: 0.8rem;

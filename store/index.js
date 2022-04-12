@@ -875,20 +875,7 @@ export const actions = {
 
   // SELL NFT
 
-  async approveListing({state, commit, dispatch}, { listingMethod, price }) {
-    commit('changeApproveToken', 'approve')
-
-    if (listingMethod === 'listingNFT') {
-      dispatch(listingMethod, {
-        ...state.nft,
-        price
-      })
-    } else {
-      dispatch(listingMethod, price)
-    }
-  },
-
-  async approveToken({commit, state, dispatch, getters}, { listingMethod, price }) {
+  async approveToken({commit, state, getters}, submitApprove = true) {
     const provider = new ethers.providers.Web3Provider(getters.provider)
     const signer = provider.getSigner()
     let resultAddress = state.marketNom
@@ -915,19 +902,23 @@ export const actions = {
       const contractAddress = state.nft.contract !== 'nomdom' ? state.nft.contract_address : state.nomContractAddress
       const contract = new ethers.Contract(contractAddress, AbiNft, signer)
       const approvedForAll = await contract.isApprovedForAll(state.fullAddress, resultAddress)
-      if (!approvedForAll) {
-        await contract.setApprovalForAll(resultAddress, true, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
-        contract.on("ApprovalForAll", () => {
-          dispatch('approveListing', { listingMethod, price })
-        });
+      if (!submitApprove) {
+        return approvedForAll
       } else {
-        dispatch('approveListing', { listingMethod, price })
+        if (!approvedForAll) {
+          await contract.setApprovalForAll(resultAddress, true, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
+          contract.on("ApprovalForAll", () => {
+            commit('changeApproveToken', 'approve')
+          });
+        } else {
+          commit('changeApproveToken', 'approve')
+        }
       }
     } catch (error) {
       commit('changeApproveToken', 'error')
     }
   },
-  async listingNFT({commit, state, getters}, nft) {
+  async listingNFT({commit, state, getters}, price) {
     const provider = new ethers.providers.Web3Provider(getters.provider)
     const signer = provider.getSigner()
     let contract = null;
@@ -938,11 +929,11 @@ export const actions = {
     }
     try {
       if (state.nft.contract !== 'nomdom') {
-        await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(nft.price)), {
+        await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(price)), {
           gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
         })
       } else {
-        await contract.listToken(state.nft.name, web3.utils.toWei(String(nft.price)), {
+        await contract.listToken(state.nft.name, web3.utils.toWei(String(price)), {
           gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
         })
       }
@@ -950,7 +941,7 @@ export const actions = {
         commit('changelistToken', true)
       });
     } catch (error) {
-      // commit('changelistToken', false)
+      commit('changelistToken', false)
       console.log(error)
     }
   },
