@@ -86,7 +86,6 @@ export default {
   }
   &__title {
     text-align: center;
-    color: #fff;
   }
   &__sub-title {
     padding: 8px 0;
