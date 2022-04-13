@@ -1109,20 +1109,22 @@ export const actions = {
     const timeBeforeTwoDays = Math.floor((currTime - (48 * 3600 * 1000)) / 1000)
     const time24hNftsQuery = gql`
       query Sample {
-        contractInfos(where: { market_status: "MINT" contract: "${contract}" updatedAt_gte: ${timeBeforeOneDay} }) {
-          id
+        contractSells(where: { contract: "${contract}" updatedAt_gte: ${timeBeforeOneDay} }) {
+          price_value
         }
       }`;
     const time48hNftsQuery = gql`
       query Sample {
-        contractInfos(where: { market_status: "MINT" contract: "${contract}" updatedAt_gte: ${timeBeforeTwoDays} updatedAt_lt: ${timeBeforeOneDay} }) {
-          id
+        contractSells(where: { contract: "${contract}" updatedAt_gte: ${timeBeforeTwoDays} updatedAt_lt: ${timeBeforeOneDay} }) {
+          price_value
         }
       }`;
     const data1 = await this.$graphql.default.request(time24hNftsQuery)
     const data2 = await this.$graphql.default.request(time48hNftsQuery)
-    const ts1 = data1.contractInfos.length;
-    const ts2 = data2.contractInfos.length;
+    let ts1 = 0
+    let ts2 = 0
+    data1.contractSells.forEach(item => ts1 += item.price_value)
+    data2.contractSells.forEach(item => ts2 += item.price_value)
     const tsOffset = ts1 - ts2;
     return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
   },
@@ -1132,20 +1134,22 @@ export const actions = {
     const timeBefore14Days = Math.floor((currTime - (14 * 24 * 3600 * 1000)) / 1000)
     const time7dNftsQuery = gql`
       query Sample {
-        contractInfos(where: { market_status: "MINT" contract: "${contract}" updatedAt_gte: ${timeBefore7Days} }) {
-          id
+        contractSells(where: { contract: "${contract}" updatedAt_gte: ${timeBefore7Days} }) {
+          price_value
         }
       }`;
     const time14dNftsQuery = gql`
       query Sample {
-        contractInfos(where: { market_status: "MINT" contract: "${contract}" updatedAt_gte: ${timeBefore14Days} updatedAt_lt: ${timeBefore7Days} }) {
-          id
+        contractSells(where: { contract: "${contract}" updatedAt_gte: ${timeBefore14Days} updatedAt_lt: ${timeBefore7Days} }) {
+          price_value
         }
       }`;
     const data1 = await this.$graphql.default.request(time7dNftsQuery)
     const data2 = await this.$graphql.default.request(time14dNftsQuery)
-    const ts1 = data1.contractInfos.length;
-    const ts2 = data2.contractInfos.length;
+    let ts1 = 0
+    let ts2 = 0
+    data1.contractSells.forEach(item => ts1 += item.price_value)
+    data2.contractSells.forEach(item => ts2 += item.price_value)
     const tsOffset = ts1 - ts2;
     return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
   },
