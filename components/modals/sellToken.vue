@@ -21,7 +21,7 @@
               </div>
               <p class="modal__sell-form-unit">${{ dollarPrice }}</p>
               <p class="modal__sell-form-description">Item will be on sale until you cancelled.</p>
-              <p class="modal__sell-form-feeinfo">Ones sold, the following fees will be deducted:<br/>{{ nftServiceFee }}% setvice fee | {{ nftRoyalty }}% creator royalty</p>
+              <p class="modal__sell-form-feeinfo">Ones sold, the following fees will be deducted:<br/>{{ nftServiceFee }}% service fee | {{ nftRoyalty }}% creator royalty</p>
             </div>
             <p class="modal__sell-content">List your NFT to sell for {{ nftPrice || 0 }} CELO</p>
           </div>
