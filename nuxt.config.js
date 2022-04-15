@@ -48,7 +48,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cybertime-check-listing-two',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-cyber-punkconnect',
         options: {}
       },
       secondClient: {
