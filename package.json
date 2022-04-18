@@ -27,7 +27,14 @@
     "qrcode.vue": "^1.7.0",
     "redstone-api": "^0.4.7",
     "vue-clipboard2": "^0.3.3",
-    "web3": "^1.6.0"
+    "web3": "^1.6.0",
+    "cryptiles": ">=4.1.2",
+    "lodash": ">=4.17.21",
+    "minimist": ">=1.2.6",
+    "follow-redirects": ">=1.14.8",
+    "glob-parent": ">=5.1.2",
+    "simple-get": ">=2.8.2",
+    "moment": ">=2.29.2"
   },
   "devDependencies": {
     "graphql": "^16.0.1",
