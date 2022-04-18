@@ -814,6 +814,9 @@ export default {
       &-image {
         width: 30.4rem;
         height: 30.4rem;
+        min-width: 30.4rem;
+        max-height: 30.4rem;
+        object-fit: cover;
         &-loading {
           width: 30.4rem;
           height: 30.4rem;
