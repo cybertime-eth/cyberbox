@@ -1,10 +1,10 @@
 <template>
   <div class="attributes">
     <div class="attributes__tab">
-      <span class="attributes__tab-item" :class="{active: activeTab === 1}" @click="activeTab = 1" v-if="info.contract !== 'nomdom'">Attributes</span>
-      <span class="attributes__tab-item" :class="{active: activeTab === 2 || info.contract === 'nomdom'}" @click="activeTab = 2">Info</span>
+      <span class="attributes__tab-item" :class="{active: activeTab === 1}" @click="activeTab = 1" v-if="attributesVisible">Attributes</span>
+      <span class="attributes__tab-item" :class="{active: activeTab === 2 || !attributesVisible}" @click="activeTab = 2">Info</span>
     </div>
-    <div class="attributes__block" v-if="activeTab === 1 && info.contract !== 'nomdom'">
+    <div class="attributes__block" v-if="activeTab === 1 && attributesVisible">
       <div class="attributes__block-content" >
         <div class="attributes__block-content-item" v-if="item.length > 0 && info.rating_index">
           <h3 class="attributes__block-content-item-title">Rarity rank</h3>
@@ -60,6 +60,9 @@ export default {
       } else {
         return this.$store.state.nomContractAddress
       }
+    },
+    attributesVisible() {
+      return this.info.contract !== 'nomdom' && this.info.contract !== 'knoxnft'
     }
   },
   methods: {
@@ -182,9 +185,13 @@ export default {
 }
 @media screen and (max-width: 460px) {
   .attributes {
+    padding-left: 0;
+    padding-right: 0;
+    box-shadow: none;
     flex-direction: column;
     &__block {
       width: 26.4rem;
+      margin: 0;
       &:first-child {
         margin: 0;
       }

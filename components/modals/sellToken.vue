@@ -133,7 +133,7 @@ export default {
       this.$store.commit('changelistToken', '')
     },
     closeSuccessModal() {
-      this.$emit('done')
+      this.$emit('done', this.nftPrice ? parseFloat(this.nftPrice) : 0)
       this.$store.commit('changelistToken', '')
     },
     submitApproveToken() {

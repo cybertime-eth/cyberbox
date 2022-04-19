@@ -27,11 +27,11 @@
       <p class="collection__item-info-id">Token ID {{ nftID(nft.contract_id) }}</p>
       <p class="collection__item-info-type" v-if="sellInfo">Last sell</p>
       <p class="collection__item-info-type" v-else>Price</p>
-      <div class="collection__item-info-price" v-if="nft.price > 0 && nft.market_status === 'LISTED' || (filter === 'listed' || filter === 'bought')">
+      <div class="collection__item-info-price" v-if="!multiNft && nft.price > 0 && nft.market_status === 'LISTED' || (filter === 'listed' || filter === 'bought')">
         <img src="/celo.svg" alt="celo">
         <h3 class="collection__item-info-price-text">{{ nftPrice(nft.price) }}</h3>
       </div>
-      <h3 class="collection__item-info-price-null" v-else>Not for sale</h3>
+      <h3 class="collection__item-info-price-null" v-else>{{ saleStatusInfo }}</h3>
       <button class="collection__item-info-details" @click="routeNft(true)">Details</button>
     </div>
     <transfer :nft="nft" @closeModal="showTransferModal = false" v-if="showTransferModal" />
@@ -58,7 +58,7 @@ export default {
       return this.filter === 'bought' || this.nft.seller === this.$store.state.fullAddress
     },
     moreButtonVisible() {
-      return this.seller || (!this.seller && this.owner)
+      return (this.seller || (!this.seller && this.owner)) && !this.multiNft
     },
     visitMenuName() {
       if (this.nft.market_status === 'LISTED') {
@@ -69,9 +69,20 @@ export default {
     },
     nftNameSuffix() {
       return this.nft.contract === 'nomdom' ? '.nom' : ''
+    },
+    saleStatusInfo() {
+      if (!this.multiNft) {
+        return 'Not for sale'
+      } else {
+        if (this.multiNft.owned_list_count) {
+          return `For sale ${this.multiNft.owned_list_count}/${this.multiNft.owned_count}`
+        } else {
+          return `Not for sale ${this.multiNft.owned_count - this.multiNft.owned_list_count}/${this.multiNft.owned_count}`
+        }
+      }
     }
   },
-  props: ['nft', 'route', 'owner', 'seller', 'filter'],
+  props: ['nft', 'route', 'owner', 'seller', 'filter', 'multiNft'],
   watch: {
     nft() {
       const cdnImageUrl = this.getCDNImageUrl()

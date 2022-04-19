@@ -287,6 +287,18 @@ export const state = () => ({
       discord: 'https://discord.com/invite/ktSQm5ukbq',
       description: 'Celo Monkey Business CeloOrg 888 inspired generative NFTs'
     },
+    {
+      id: 20,
+      name: 'KnoxerDAO',
+      route: 'knoxnft',
+      image: '/collections/knoxnft.jpg',
+      banner: '/collections/knoxnft-logo.png',
+      logo: '/collections/knoxnft-logo.png',
+      website: 'https://www.knoxdao.xyz/?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
+      twitter: 'https://twitter.com/KnoxEdgeDAO?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
+      discord: 'https://discord.gg/Ec5ZwdzZ?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
+      description: 'Knoxers are Celorians with wisdom beyond those of the same kind :and the ability to see the future:. According to ancient Celorian myths some Knoxers even possess diamond hands and laser eyes'
+    },
     // {
     //   id: 14,
     //   name: 'PixelAva',
@@ -473,7 +485,7 @@ export const actions = {
 	return tokenPrice ? (tokenPrice / 1000).toFixed(2) : '-'
   },
 
-  async getCollectionCountNft({state, commit}, contract) {
+  async getCollectionCountNft({state}, contract) {
     if (!state.fullAddress) return 0
 
     let countCondition = `contract: "${contract}"`
@@ -491,6 +503,69 @@ export const actions = {
       }`
     const data = await this.$graphql.default.request(query)
     return data.contractInfos.length
+  },
+
+  async getOwnedCollectionInfo({state}, contract) {
+    if (!state.fullAddress) return {}
+    const query = gql`
+      query Sample {
+        all: contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" contract: "${contract}" }) {
+			    id
+          contract
+        },
+        sale: contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" market_status: "LISTED" contract: "${contract}" }) {
+			    id
+          contract
+        }
+      }`
+    const data = await this.$graphql.default.request(query)
+    const collectionInfo = {
+      owned_count: data.all.length,
+      owned_list_count: data.sale.length
+    }
+    return collectionInfo
+  },
+
+  async getMultiNftCollection({state}) {
+    if (!state.fullAddress) return {}
+    const query = gql`
+      query Sample {
+        sale: contractInfos(first: 1000 where: { owner_not: "${state.fullAddress.toLowerCase()}"  contract: "${state.nft.contract}" market_status: "LISTED" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
+			    id
+          contract
+          contract_id
+          mint_key
+          price
+          seller
+          owner
+          contract_address
+          market_status
+          name
+          image
+          description
+          updatedAt
+        },
+        listed: contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" contract: "${state.nft.contract}" market_status: "LISTED" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
+			    id
+          contract
+          contract_id
+          mint_key
+          price
+          seller
+          owner
+          contract_address
+          market_status
+          name
+          image
+          description
+          updatedAt
+        }
+      }`
+    const data = await this.$graphql.default.request(query)
+    return [
+      ...data.listed,
+      ...data.sale
+    ]
   },
 
   async getGraphDataListed({state, commit, getters, dispatch}, traitFilters) {
@@ -1156,20 +1231,21 @@ export const actions = {
 
   // REMOVE NFT FROM LIST
 
-  async removeNft({commit, state, getters}, id) {
+  async removeNft({commit, state, getters}, nft) {
+    const payloadNft = nft || state.nft
     const provider = new ethers.providers.Web3Provider(getters.provider)
     const signer = provider.getSigner()
     let contract = null
-    if (state.nft.contract !== 'nomdom') {
+    if (payloadNft.contract !== 'nomdom') {
       contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
     } else {
       contract = new ethers.Contract(state.marketNom, nomABI, signer)
     }
     try {
-      if (state.nft.contract !== 'nomdom') {
-        await contract.delistToken(state.nft.contract_address ,id, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
+      if (payloadNft.contract !== 'nomdom') {
+        await contract.delistToken(payloadNft.contract_address , payloadNft.contract_id, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
       } else {
-        await contract.delistToken(state.nft.name , { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
+        await contract.delistToken(payloadNft.name , { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
       }
       provider.once(contract, async () => {
         commit('changeSuccessRemoveToken', true)
@@ -1177,7 +1253,7 @@ export const actions = {
       })
     } catch (error) {
       console.log(error)
-      commit('changeSuccessRemoveToken', true)
+      commit('changeSuccessRemoveToken', 'error')
     }
   },
 

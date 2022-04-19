@@ -24,7 +24,7 @@
     </div>
     <p class="my-collection-collection-filter" v-if="activeFilter !== 'all' && activeFilter !== 'sale'">{{ currCollectionFilter }}</p>
     <div class="my-collection__items">
-      <nft :nft="nft" :key="idx" :route="`/collections/${nft.contract}/${routeNftId(nft)}`" :seller="true" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
+      <nft :nft="nft" :key="idx" :route="`/collections/${nft.contract}/${routeNftId(nft)}`" :seller="true" :multiNft="multiNftInfo[nft.contract]" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
     </div>
   </section>
 </template>
@@ -41,7 +41,8 @@ export default {
       filteredNft: false,
       activeFilter: 'all',
       totalNftCount: 0,
-      saleNftCount: 0
+      saleNftCount: 0,
+      multiNftInfo: {}
     }
   },
   beforeDestroy() {
@@ -155,6 +156,14 @@ export default {
         this.loading = false
       }
     },
+    async loadOwnedMultiNftInfo(contract) {
+      const newMultiNftInfo = {
+        ...this.multiNftInfo
+      }
+      const collectionInfo = await this.$store.dispatch('getOwnedCollectionInfo', contract)
+      newMultiNftInfo[contract] = collectionInfo
+      this.multiNftInfo = newMultiNftInfo
+    },
     async loadNftCounts() {
       this.totalNftCount = await this.$store.dispatch('getCollectionCountNft', 'all')
       this.saleNftCount = await this.$store.dispatch('getCollectionCountNft', 'sale')
@@ -172,6 +181,9 @@ export default {
               image: `/${collection.route}.png`,
               count: nftCount
             })
+            if (collection.route === 'knoxnft' && !this.multiNftInfo[collection.route]) {
+              this.loadOwnedMultiNftInfo(collection.route)
+            }
           }
           this.collectionFilters = newCollectionFilters
         }
