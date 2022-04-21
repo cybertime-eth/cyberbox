@@ -48,11 +48,12 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-cyber-punkconnect',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-resync-women',
         options: {}
       },
-      secondClient: {
-        // ...client config
+      ubeswap: {
+        endpoint: 'https://api.thegraph.com/subgraphs/name/ubeswap/ubeswap',
+        options: {}
       },
       // ...your other clients
     },
