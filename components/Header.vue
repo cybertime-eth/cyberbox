@@ -11,7 +11,7 @@
       <nav class="header__navigation">
         <ul class="header__ul">
           <li class="header__list">
-            <nuxt-link class="header__link" to="/" append active-class="gradient-text" exact>Marketplace</nuxt-link>
+            <nuxt-link class="header__link" to="/explorer" append active-class="gradient-text" exact>Explorer</nuxt-link>
           </li>
           <li class="header__list">
             <nuxt-link class="header__link" active-class="gradient-text" to="/rankings"  exact>Rankings</nuxt-link>

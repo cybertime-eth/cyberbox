@@ -12,7 +12,7 @@
           <a :href="collection.website" target="_blank" v-if="collection.website"><img src="/socials/web.svg" alt="social"></a>
         </div>
         <div class="collection__header-info">
-          <div class="collection__header-info-block">
+          <div class="collection__header-info-block" ref="itemsInfo">
             <h3 class="collection__header-info-block-title">{{ collectionInfo.mint_count ? collectionInfo.mint_count : 0 }}</h3>
             <h3 class="collection__header-info-block-subtitle">Items</h3>
           </div>
@@ -23,6 +23,10 @@
          <div class="collection__header-info-block">
            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ floorPrice }}</h3>
            <h3 class="collection__header-info-block-subtitle">Floor price</h3>
+         </div>
+         <div class="collection__header-info-block" ref="refiInfo">
+           <h3 class="collection__header-info-block-title">{{ refiCO2Price }}</h3>
+           <h3 class="collection__header-info-block-subtitle">ReFi, kg <img src="/plant.svg" alt="plant"></h3>
          </div>
         </div>
         <h3 class="collection__header-content">
@@ -173,8 +177,9 @@ export default {
       myNft: false,
       collectionInfo: {},
       floorPrice: '-',
+      refiCO2Price: '-',
       traitFilters: null,
-      searchName: ''
+      searchName: '',
     }
   },
   head() {
@@ -443,8 +448,16 @@ export default {
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
+    if (this.$store.state.cMCO2Price > 0 && this.collectionInfo.producerFee > 0 && this.collectionInfo.sell_refi_price > 0) {
+      this.refiCO2Price = Math.round((this.$store.state.cMCO2Price / 1000) * this.collectionInfo.producerFee * this.collectionInfo.sell_refi_price).toLocaleString('EN-US') + ' CO2'
+    }
     this.loading = false
   },
+  mounted() {
+    if (this.isMobile()) {
+      this.$refs.itemsInfo.parentNode.insertBefore(this.$refs.refiInfo, this.$refs.itemsInfo.nextSibling)
+    }
+  }
 }
 </script>
 <style lang="scss">
@@ -533,6 +546,9 @@ export default {
           font-family: OpenSans-Regular;
           font-size: 1.4rem;
           margin-top: .4rem;
+          img {
+            width: 1.2rem;
+          }
         }
       }
     }
@@ -743,11 +759,6 @@ export default {
             flex: 1;
             width: auto;
           }
-        }
-        :first-child {
-          width: 100%;
-          margin-right: 0;
-          text-align: center;
         }
       }
       &-content {

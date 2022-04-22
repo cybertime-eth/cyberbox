@@ -54,7 +54,8 @@ export default {
 	},
 	methods: {
 	  updateLayout() {
-		if (this.routeName === 'index' || (this.routeName !== 'index' && process.browser && window.innerWidth <= 460)) {
+			const nonFixedRoutes = ['index', 'refi']
+		if (nonFixedRoutes.includes(this.routeName) || (this.routeName !== 'index' && process.browser && window.innerWidth <= 460)) {
 		  this.footerFixed = false
 		}
 	  },
