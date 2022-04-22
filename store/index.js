@@ -288,18 +288,18 @@ export const state = () => ({
       discord: 'https://discord.com/invite/ktSQm5ukbq',
       description: 'Celo Monkey Business CeloOrg 888 inspired generative NFTs'
     },
-    {
-      id: 20,
-      name: 'KnoxerDAO',
-      route: 'knoxnft',
-      image: '/collections/knoxnft.jpg',
-      banner: '/collections/knoxnft-logo.png',
-      logo: '/collections/knoxnft-logo.png',
-      website: 'https://www.knoxdao.xyz/?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
-      twitter: 'https://twitter.com/KnoxEdgeDAO?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
-      discord: 'https://discord.gg/Ec5ZwdzZ?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
-      description: 'Knoxers are Celorians with wisdom beyond those of the same kind :and the ability to see the future:. According to ancient Celorian myths some Knoxers even possess diamond hands and laser eyes'
-    },
+    // {
+    //   id: 20,
+    //   name: 'KnoxerDAO',
+    //   route: 'knoxnft',
+    //   image: '/collections/knoxnft.jpg',
+    //   banner: '/collections/knoxnft-logo.png',
+    //   logo: '/collections/knoxnft-logo.png',
+    //   website: 'https://www.knoxdao.xyz/?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
+    //   twitter: 'https://twitter.com/KnoxEdgeDAO?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
+    //   discord: 'https://discord.gg/Ec5ZwdzZ?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
+    //   description: 'Knoxers are Celorians with wisdom beyond those of the same kind :and the ability to see the future:. According to ancient Celorian myths some Knoxers even possess diamond hands and laser eyes'
+    // },
     // {
     //   id: 14,
     //   name: 'PixelAva',
@@ -590,6 +590,9 @@ export const actions = {
     const data = await this.$graphql.default.request(query)
     const contractInfos = await dispatch('getRarirtyCollections', { contractInfos: data.contractInfos })
     return contractInfos
+  },
+  async getCollectionRefiPrice({}) {
+    
   },
 
   async getGraphDataListed({state, commit, getters, dispatch}, traitFilters) {
@@ -906,7 +909,7 @@ export const actions = {
   async getNft({commit, state}, token) {
     const query = gql`
       query Sample {
-        contractInfo(id: "${token.id}_${token.collectionId}") {
+        contractInfo: contractInfo(id: "${token.id}_${token.collectionId}") {
           id
           contract
           contract_id
@@ -945,10 +948,17 @@ export const actions = {
             price_fee
           }
         }
+        contracts: contracts(first: 1 where: { nftSymbol: "${token.collectionId}" }) {
+          producerFee
+        }
       }`;
-    let data = await this.$graphql.default.request(query)
-    commit('setNewNft', data.contractInfo)
-    return data.contractInfo
+    const data = await this.$graphql.default.request(query)
+    const nftInfo = {
+      ...data.contractInfo,
+      producerFee: data.contracts[0].producerFee
+    }
+    commit('setNewNft', nftInfo)
+    return nftInfo
   },
 
   async getCountAttributes({commit, state}) {
@@ -1200,6 +1210,7 @@ export const actions = {
           sell_max_price
           sell_min_price
           sell_total_price
+          sell_refi_price
           list_count
           dna_count
           nftName

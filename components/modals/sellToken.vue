@@ -20,6 +20,9 @@
                 <input class="modal__sell-form-input" ref="sellInput" type="number" min="0" :readonly="pending || successSellToken" placeholder="0" v-model="nftPrice">
               </div>
               <p class="modal__sell-form-unit">${{ dollarPrice }}</p>
+              <p class="modal__sell-form-refioffset">
+                <img src="/plant.svg" alt="plant" class="modal__sell-form-refioffset-img"> Successful NFT sale offset<span class="modal__sell-form-refioffset-amount">{{ refiOffset }}kg CO2</span>
+              </p>
               <p class="modal__sell-form-description">Item will be on sale until you cancelled.</p>
               <p class="modal__sell-form-feeinfo">Ones sold, the following fees will be deducted:<br/>{{ nftServiceFee }}% service fee | {{ nftRoyalty }}% creator royalty</p>
             </div>
@@ -90,6 +93,9 @@ export default {
     },
     dollarPrice() {
       return this.nftPrice ? (this.nftPrice * this.celoPrice).toFixed(1) : 0
+    },
+    refiOffset() {
+      return this.nft.refiOffset > 0 ? parseFloat(this.nft.refiOffset).toFixed(2) : 0
     }
   },
   data() {
@@ -301,6 +307,27 @@ export default {
         padding-top: .8rem;
         font-size: 1.4rem;
         color: $grayLight;
+      }
+      &-refioffset {
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        width: -moz-fit-content;
+        margin-top: 1.8rem;
+        padding: 0.8rem;
+        border: 1px solid $modalColor;
+        font-size: 1.2rem;
+        color: $black;
+        img {
+          width: 1.4rem;
+          margin-right: 0.9rem;
+        }
+        &-amount {
+          margin-left: 1rem;
+          font-weight: 600;
+          font-size: 1.3rem;
+          color: #63A60D;
+        }
       }
       &-description {
         padding-top: 1.8rem;

@@ -1,7 +1,7 @@
 <template>
 	<section class="footer" :class="{ fixed: footerFixed }">
 		<div class="footer__container container-xl">
-			<a class="footer__logo" href="/refi">
+			<a class="footer__logo" href="/">
 				<img src="/footer-logo.svg" alt="logo" >
 			</a>
 			<div class="footer__links">

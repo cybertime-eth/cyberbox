@@ -448,8 +448,8 @@ export default {
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
-    if (this.$store.state.cMCO2Price > 0 && this.collectionInfo.producerFee > 0 && this.collectionInfo.sell_total_price > 0) {
-      this.refiCO2Price = Math.round((this.$store.state.cMCO2Price / 1000) * this.collectionInfo.producerFee * this.collectionInfo.sell_total_price).toLocaleString('EN-US') + ' CO2'
+    if (this.$store.state.cMCO2Price > 0 && this.collectionInfo.producerFee > 0 && this.collectionInfo.sell_refi_price > 0) {
+      this.refiCO2Price = Math.round((this.$store.state.cMCO2Price / 1000) * this.collectionInfo.producerFee * this.collectionInfo.sell_refi_price).toLocaleString('EN-US') + ' CO2'
     }
     this.loading = false
   },

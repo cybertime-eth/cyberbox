@@ -9,11 +9,11 @@
         <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': dateFilter === '30d'}" @click="updateFilter('30d')">30 Days</button> -->
       </div>
       <div class="rankings__navigation-tab">
-        <div class="rankings__navigation-tab-item" :class="{active: rankingTab === 1}" @click="updateRankingsTab(1)">
-          <img class="rankings__navigation-tab-item-img" src="/plant.svg" alt="plant"> Refi
-        </div>
-        <div class="rankings__navigation-tab-item" :class="{active: rankingTab === 2}"  @click="updateRankingsTab(2)">
+        <div class="rankings__navigation-tab-item" :class="{active: isVolumeSection}"  @click="updateRankingsTab(1)">
           <img class="rankings__navigation-tab-item-img" src="/chart.svg" alt="chart"> Volume
+        </div>
+        <div class="rankings__navigation-tab-item" :class="{active: rankingTab === 2}" @click="updateRankingsTab(2)">
+          <img class="rankings__navigation-tab-item-img" src="/plant.svg" alt="plant"> Refi
         </div>
       </div>
    </div>
@@ -24,10 +24,10 @@
           <h3>Collection</h3>
         </div>
         <div class="rankings__table-detail-group">
-          <h3>{{ rankingTab === 1 ? 'Regeneration, kg' : 'Volume' }}</h3>
+          <h3>{{ !isVolumeSection ? 'Regeneration, kg' : 'Volume' }}</h3>
           <h3>24h %</h3>
           <h3>7d %</h3>
-          <h3>{{ rankingTab === 1 ? 'Min. contribution, kg' : 'Floor Price' }}</h3>
+          <h3>{{ !isVolumeSection ? 'Min. contribution, kg' : 'Floor Price' }}</h3>
           <!-- <h3>Owners</h3> -->
           <h3>Items</h3>
         </div>
@@ -55,25 +55,25 @@
           </div>
           <div class="rankings__table-detail-group">
             <div class="rankings__table-content-item-volume">
-              <p class="rankings__table-content-item-volume-title" v-if="rankingTab === 2"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</p>
+              <p class="rankings__table-content-item-volume-title" v-if="isVolumeSection"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</p>
               <p class="rankings__table-content-item-volume-title" v-else>{{ item.co2Celo }} CO2</p>
-              <p class="rankings__table-content-item-volume-price" v-if="rankingTab === 2">{{ item.volumePrice }}</p>
+              <p class="rankings__table-content-item-volume-price" v-if="isVolumeSection">{{ item.volumePrice }}</p>
             </div>
             <!-- <h3 class="rankings__table-content-item-items">{{ item.items }}</h3> -->
             <h3 class="rankings__table-content-item-day rankings__table-content-item-percent-info" :class="{ positive: item.percentPer24h > 0, negative: item.percentPer24h < 0 }">{{ contractPercentInfo(item.percentPer24h) }}</h3>
             <h3 class="rankings__table-content-item-week  rankings__table-content-item-percent-info"  :class="{ positive: item.percentPer7d > 0, negative: item.percentPer7d < 0 }">{{ contractPercentInfo(item.percentPer7d) }}</h3>
             <div class="rankings__table-content-item-floor">
-              <p class="rankings__table-content-item-floor-title" v-if="rankingTab === 2"><img class="rankings__table-content-item-floor-icon" src="/celo.svg" alt="celo" v-if="item.floorPriceCelo !== '-'"> {{ item.floorPriceCelo }}</p>
+              <p class="rankings__table-content-item-floor-title" v-if="isVolumeSection"><img class="rankings__table-content-item-floor-icon" src="/celo.svg" alt="celo" v-if="item.floorPriceCelo !== '-'"> {{ item.floorPriceCelo }}</p>
               <p class="rankings__table-content-item-floor-title" v-else>{{ item.floorCO2Celo }} CO2</p>
-              <p class="rankings__table-content-item-floor-price" v-if="rankingTab === 2">{{ item.floorPrice }}</p>
+              <p class="rankings__table-content-item-floor-price" v-if="isVolumeSection">{{ item.floorPrice }}</p>
             </div>
             <!-- <h3 class="rankings__table-content-item-owners">-</h3> -->
             <h3 class="rankings__table-content-item-items">{{ item.items }}</h3>
           </div>
           <div class="rankings__table-content-item-price-box">
-            <h3 class="rankings__table-content-item-prices" v-if="rankingTab === 2"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</h3>
+            <h3 class="rankings__table-content-item-prices" v-if="isVolumeSection"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</h3>
             <h3 class="rankings__table-content-item-prices" v-else>{{ item.co2Celo }} CO2</h3>
-            <p class="rankings__table-content-item-percent" :class="{ negative: item.percentPer24h < 0, zero: item.percentPer24h <= -100 || item.percentPer24h === 0 }">{{ rankingTab === 2 ? contractPercentInfo(item.percentPer24h) : 'kg' }}</p>
+            <p class="rankings__table-content-item-percent" :class="{ negative: item.percentPer24h < 0, zero: item.percentPer24h <= -100 || item.percentPer24h === 0 }">{{ isVolumeSection ? contractPercentInfo(item.percentPer24h) : 'kg' }}</p>
           </div>
           <div class="rankings__table-content-item-detail-box" v-if="item.expanded">
             <div class="rankings__table-content-item-detail-box-info">
@@ -81,8 +81,8 @@
               <h3 class="rankings__table-content-item-detail-box-info-content" :class="{ positive: item.percentPer7d > 0, negative: item.percentPer7d < 0, zero: item.percentPer7d <= -100 || item.percentPer7d === 0 }">{{ contractPercentInfo(item.percentPer7d) }}</h3>
             </div>
             <div class="rankings__table-content-item-detail-box-info">
-              <p class="rankings__table-content-item-detail-box-info-title">{{ rankingTab === 2 ? 'Floor price' : 'Min. contribution, kg' }}</p>
-              <h3 class="rankings__table-content-item-detail-box-info-content">{{ rankingTab === 2 ? item.floorPrice : item.floorCO2Celo }}</h3>
+              <p class="rankings__table-content-item-detail-box-info-title">{{ isVolumeSection ? 'Floor price' : 'Min. contribution, kg' }}</p>
+              <h3 class="rankings__table-content-item-detail-box-info-content">{{ isVolumeSection ? item.floorPrice : item.floorCO2Celo }}</h3>
             </div>
             <div class="rankings__table-content-item-detail-box-info">
               <p class="rankings__table-content-item-detail-box-info-title">Items</p>
@@ -103,7 +103,7 @@ export default {
       loading: false,
       celoPrice: 1,
       cmco2Price: 0,
-      rankingTab: 2, // 1: Refi, 2: Volume
+      rankingTab: 1, // 1: Volume, 2: Refi
       list: [],
       filteredList: [],
       dateFilter: null
@@ -125,6 +125,9 @@ export default {
     },
     description() {
       return 'Find the trends of the NFT collections right here, trading volume, floor price and all the information'
+    },
+    isVolumeSection() {
+      return this.rankingTab === 1
     }
   },
   async created() {
@@ -173,7 +176,7 @@ export default {
 	  this.list[idx].volumePrice = this.formatPriceToString(this.list[idx].volumeCelo)
 	  this.list[idx].percentPer24h = await this.$store.dispatch('getContractInfoTimePercent', nft.nftSymbol)
     this.list[idx].percentPer7d = await this.$store.dispatch('getContractInfoWeekPercent', nft.nftSymbol)
-    if (this.rankingTab === 2) {
+    if (this.isVolumeSection) {
       this.updateRankingsList()
     }
 	},
@@ -203,7 +206,7 @@ export default {
         volume = volume + price
         nftName = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
         const mintCountDiff = Math.ceil(item.mint_count / 1000) - (item.mint_count / 1000)
-        const co2Celo = (item.sell_total_price / 1000) * item.producerFee * cmco2Price
+        const co2Celo = (item.sell_refi_price / 1000) * item.producerFee * cmco2Price
         const co2CeloDiff = Math.ceil(co2Celo) - co2Celo
         this.list.push({
           id: (itemNum + 1),
@@ -238,11 +241,17 @@ export default {
   },
   updateRankingsList() {
     let rankingsList = JSON.parse(JSON.stringify(this.list))
-    if (this.rankingTab === 1) {
+    if (this.rankingTab === 2) {
       rankingsList = rankingsList.filter(item => parseFloat(item.co2Celo) > 0).sort((a, b) => b.co2Celo - a.co2Celo)
     }
     rankingsList.map((item, index) => item.index = index + 1)
     this.filteredList = rankingsList
+    const footerEl = document.querySelector('.footer')
+    if (rankingsList.length < 5 && process.browser && (window.innerWidth > 1182 || window.innerWidth <= 460)) {
+      footerEl.classList.add('fixed')
+    } else {
+      footerEl.classList.remove('fixed')
+    }
   },
   updateRankingsTab(tab) {
     if (this.rankingTab !== tab) {

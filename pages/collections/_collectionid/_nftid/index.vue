@@ -215,6 +215,9 @@ export default {
           this.loadMultiNftCollection()
         }
       }
+    },
+    refiPrice() {
+      this.updateRefiOffset()
     }
   },
   components: {
@@ -356,6 +359,9 @@ export default {
           break
       }
       return imageSrc
+    },
+    refiPrice() {
+      return this.$store.state.cMCO2Price
     }
   },
   head() {
@@ -392,6 +398,7 @@ export default {
         rating_index: rarityInfos && rarityInfos.length > 0 ? rarityInfos[0].rating_index : null,
         price: nft.price / 1000
       }
+      this.updateRefiOffset()
       this.loadButton = false
     },
     async loadMultiNftCollection() {
@@ -440,6 +447,14 @@ export default {
         this.collectionInfo = {}
         await this.loadBalance()
         this.loadNftStatus()
+      }
+    },
+    updateRefiOffset() {
+      if (this.$store.state.cMCO2Price) {
+        this.nft = {
+          ...this.nft,
+          refiOffset: this.nft.producerFee * this.$store.state.cMCO2Price
+        }  
       }
     },
     closeAndReload(payload) {

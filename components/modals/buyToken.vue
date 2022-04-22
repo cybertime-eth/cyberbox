@@ -19,7 +19,7 @@
       </div>
       <div class="modal__refi">
         <p class="modal__refi-info">
-          <img src="/plant.svg" alt="plant" class="modal__refi-info-img"> Successful NFT sale offset<span class="modal__refi-info-amount">{{ balance }}kg CO2</span>
+          <img src="/plant.svg" alt="plant" class="modal__refi-info-img"> Successful NFT sale offset<span class="modal__refi-info-amount">{{ refiOffset }}kg CO2</span>
         </p>
       </div>
       <div class="modal__buttons">
@@ -59,7 +59,7 @@
 </template>
 <script>
 export default {
-  props: ['nft', 'priceToken', 'balance', 'refiOffset'],
+  props: ['nft', 'priceToken', 'balance'],
   computed: {
     nftNameSuffix() {
       return this.nft.contract !== 'nomdom' ? '' : '.nom'
@@ -73,6 +73,9 @@ export default {
     successApproveBuyToken() {
       return this.$store.state.successApproveBuyToken || this.buyTokenApproved
     },
+    refiOffset() {
+      return this.nft.refiOffset > 0 ? parseFloat(this.nft.refiOffset).toFixed(2) : 0
+    }
   },
   data() {
     return {
@@ -202,7 +205,7 @@ export default {
       align-items: center;
       justify-content: center;
       padding: 0.8rem 0;
-      border: 1px solid #F3F4F6;
+      border: 1px solid $modalColor;
       text-align: center;
       font-size: 1.2rem;
       color: $black;
