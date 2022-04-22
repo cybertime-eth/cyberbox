@@ -115,7 +115,9 @@ export default {
   },
   async created() {
     // Latest 12 Listings
-    this.latestListings = await this.$store.dispatch('getLatestListings')
+    const latestListings = await this.$store.dispatch('getLatestListings')
+    latestListings.map(item => item.price = item.price / 1000)
+    this.latestListings = latestListings
 
     // Hot Collections
     let cmco2Price = this.$store.state.cMCO2Price

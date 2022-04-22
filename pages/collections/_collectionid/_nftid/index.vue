@@ -457,9 +457,9 @@ export default {
         }  
       }
     },
-    closeAndReload(payload) {
-      this.showTransferModal = payload
-      this.showSellTokenModal = payload
+    closeAndReload() {
+      this.showTransferModal = false
+      this.showSellTokenModal = false
       this.startReloading()
     },
     async closeSellModal(approved) {
