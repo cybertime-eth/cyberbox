@@ -1,7 +1,7 @@
 <template>
 	<section class="footer" :class="{ fixed: footerFixed }">
 		<div class="footer__container container-xl">
-			<a class="footer__logo" href="/">
+			<a class="footer__logo" href="/refi">
 				<img src="/footer-logo.svg" alt="logo" >
 			</a>
 			<div class="footer__links">
@@ -54,7 +54,8 @@ export default {
 	},
 	methods: {
 	  updateLayout() {
-		if (this.routeName === 'index' || (this.routeName !== 'index' && process.browser && window.innerWidth <= 460)) {
+			const nonFixedRoutes = ['index', 'refi']
+		if (nonFixedRoutes.includes(this.routeName) || (this.routeName !== 'index' && process.browser && window.innerWidth <= 460)) {
 		  this.footerFixed = false
 		}
 	  },

@@ -32,6 +32,9 @@ export default {
  async mounted() {
     await this.$store.dispatch('updateUser')
     await this.$store.dispatch('walletConnect', false)
+    if (!this.$store.state.cMCO2Price) {
+      await this.$store.dispatch('getCMCO2TokenPrice')
+    }
   }
 }
 </script>

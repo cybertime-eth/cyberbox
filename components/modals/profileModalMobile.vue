@@ -5,7 +5,7 @@
       <img :src="closeIcon" alt="close" class="menu-mobile-header-close" @click="closeModal">
     </div>
     <div class="menu-mobile-list container-xl" @click="closeModal">
-      <nuxt-link to="/" class="gradient-text menu-mobile-list-link">Marketplace</nuxt-link>
+      <nuxt-link to="/" class="gradient-text menu-mobile-list-link">Explorer</nuxt-link>
       <nuxt-link to="/rankings" class="menu-mobile-list-link">Rankings</nuxt-link>
       <nuxt-link to="/loans" class="menu-mobile-list-link">NFT loans</nuxt-link>
       <!-- <a href="https://forms.gle/R7LmANz7iqsCA88X8" target="_blank" class="menu-mobile-list-link">Launchpad</a> -->

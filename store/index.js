@@ -35,6 +35,7 @@ export const state = () => ({
   approveToken: '',
   listToken: '',
   countPage: 1,
+  cMCO2Price: 0, // CELO price for cMCO2
   filter: filter.races.DAOS.layers,
   mintNumFilter: null,
   nomNameFilter: null,
@@ -567,6 +568,29 @@ export const actions = {
       ...data.sale
     ]
   },
+  async getLatestListings({dispatch}) {
+    const query = gql`
+      query Sample {
+        contractInfos(first: 12 where: { market_status: "LISTED" } orderBy: updatedAt, orderDirection: desc) {
+			    id
+          contract
+          contract_id
+          mint_key
+          price
+          seller
+          owner
+          contract_address
+          market_status
+          name
+          image
+          description
+          updatedAt
+        },
+      }`
+    const data = await this.$graphql.default.request(query)
+    const contractInfos = await dispatch('getRarirtyCollections', { contractInfos: data.contractInfos })
+    return contractInfos
+  },
 
   async getGraphDataListed({state, commit, getters, dispatch}, traitFilters) {
     const sort = getters.paginationSort
@@ -863,6 +887,18 @@ export const actions = {
   },
   async getPriceToken() {
 	return await redstone.getPrice('CELO')
+  },
+  async getCMCO2TokenPrice({commit}) {
+    const query = gql`
+      query Sample {
+        pairs(first: 1 where: { token0: "0x32a9fe697a32135bfd313a6ac28792dae4d9979d" token1: "0x471ece3750da237f93b8e339c536989b8978a438" }) {
+          token0Price
+        }
+      }`
+    let data = await this.$graphql.ubeswap.request(query)
+    const tokenCeloPrice = parseFloat(data.pairs[0].token0Price)
+    commit('setCMCO2TokenPrice', tokenCeloPrice)
+    return tokenCeloPrice
   },
 
   // GET NFT
@@ -1319,6 +1355,9 @@ export const mutations = {
   },
   setWalletConnected(state, connected) {
     state.walletConnected = connected
+  },
+  setCMCO2TokenPrice(state, celoPrice) {
+    state.cMCO2Price = celoPrice;
   },
   setNewNftList(state, list) {
     state.nftList = []

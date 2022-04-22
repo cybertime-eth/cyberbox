@@ -4,14 +4,14 @@
       <button class="header__back" v-if="nftId" @click="handleClickBack">
         <img src="/arrow-left.svg" alt="back" class="header__back-img">
       </button>
-      <div class="header__logo" :class="{ 'has-nft': nftId }" @click="$router.push('/')">
+      <div class="header__logo" :class="{ 'has-nft': nftId }" @click="$router.push('/refi')">
         <img src="/logo.svg" alt="logo" class="header__logo-img">
       </div>
       <searchInput class="header__search" />
       <nav class="header__navigation">
         <ul class="header__ul">
           <li class="header__list">
-            <nuxt-link class="header__link" to="/" append active-class="gradient-text" exact>Marketplace</nuxt-link>
+            <nuxt-link class="header__link" to="/" append active-class="gradient-text" exact>Explorer</nuxt-link>
           </li>
           <li class="header__list">
             <nuxt-link class="header__link" active-class="gradient-text" to="/rankings"  exact>Rankings</nuxt-link>

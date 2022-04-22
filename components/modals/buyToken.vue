@@ -17,6 +17,11 @@
         <p class="modal__balance-info">Balance <span><img src="/celo.svg" alt="celo" class="modal__balance-info-celo">{{ balance }}</span></p>
         <!-- <p class="modal__balance-fee">Service fee <span>10%</span></p> -->
       </div>
+      <div class="modal__refi">
+        <p class="modal__refi-info">
+          <img src="/plant.svg" alt="plant" class="modal__refi-info-img"> Successful NFT sale offset<span class="modal__refi-info-amount">{{ balance }}kg CO2</span>
+        </p>
+      </div>
       <div class="modal__buttons">
         <div class="modal__buttons-box" v-if="balance >= nft.price">
           <button class="modal__button modal__button-submit" :class="{ disabled: pending || successApproveBuyToken, pending: !successApproveBuyToken && pending }" @click="approveToken" v-if="!buyTokenApproved">
@@ -54,7 +59,7 @@
 </template>
 <script>
 export default {
-  props: ['nft', 'priceToken', 'balance'],
+  props: ['nft', 'priceToken', 'balance', 'refiOffset'],
   computed: {
     nftNameSuffix() {
       return this.nft.contract !== 'nomdom' ? '' : '.nom'
@@ -188,6 +193,29 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+  }
+  &__refi {
+    margin-top: 3.4rem;
+    &-info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8rem 0;
+      border: 1px solid #F3F4F6;
+      text-align: center;
+      font-size: 1.2rem;
+      color: $black;
+      img {
+        width: 1.4rem;
+        margin-right: 0.9rem;
+      }
+      &-amount {
+        margin-left: 0.8rem;
+        font-weight: 600;
+        font-size: 1.3rem;
+        color: #63A60D;
+      }
     }
   }
   &__buttons {

@@ -2,30 +2,40 @@
   <div class="rankings container-xl">
     <h1 class="rankings__title">NFT Ranking</h1>
     <h3 class="rankings__subtitle">With trading volume, floor price and etc., you can find the most trending NFTs here.</h3>
-   <!-- <div class="rankings__navigation">
-     <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': dateFilter === '7d'}" @click="updateFilter('7d')">7 Days</button>
-     <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': dateFilter === '24d'}" @click="updateFilter('24d')">24 Days</button>
-     <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': dateFilter === '30d'}" @click="updateFilter('30d')">30 Days</button>
-   </div> -->
-    <div class="rankings__table" :class="{empty: list.length === 0}">
+   <div class="rankings__navigation">
+     <div class="rankings__navigation-date">
+        <!-- <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': dateFilter === '7d'}" @click="updateFilter('7d')">7 Days</button>
+        <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': dateFilter === '24d'}" @click="updateFilter('24d')">24 Days</button>
+        <button class="rankings__navigation-button" :class="{'rankings__navigation-button-active': dateFilter === '30d'}" @click="updateFilter('30d')">30 Days</button> -->
+      </div>
+      <div class="rankings__navigation-tab">
+        <div class="rankings__navigation-tab-item" :class="{active: rankingTab === 1}" @click="updateRankingsTab(1)">
+          <img class="rankings__navigation-tab-item-img" src="/plant.svg" alt="plant"> Refi
+        </div>
+        <div class="rankings__navigation-tab-item" :class="{active: rankingTab === 2}"  @click="updateRankingsTab(2)">
+          <img class="rankings__navigation-tab-item-img" src="/chart.svg" alt="chart"> Volume
+        </div>
+      </div>
+   </div>
+    <div class="rankings__table" :class="{empty: filteredList.length === 0}">
       <div class="rankings__table-header">
         <div class="rankings__table-collection-group">
           <h3>#</h3>
           <h3>Collection</h3>
         </div>
         <div class="rankings__table-detail-group">
-          <h3>Volume</h3>
+          <h3>{{ rankingTab === 1 ? 'Regeneration, kg' : 'Volume' }}</h3>
           <h3>24h %</h3>
           <h3>7d %</h3>
-          <h3>Floor Price</h3>
+          <h3>{{ rankingTab === 1 ? 'Min. contribution, kg' : 'Floor Price' }}</h3>
           <!-- <h3>Owners</h3> -->
           <h3>Items</h3>
         </div>
       </div>
       <div class="rankings__table-content">
-        <div class="rankings__table-content-item" :key="idx" v-for="(item, idx) in list" @click="$router.push(`/collections/${item.route}`)">
+        <div class="rankings__table-content-item" :key="idx" v-for="(item, idx) in filteredList" @click="$router.push(`/collections/${item.route}`)">
           <div class="rankings__table-collection-group">
-            <h3 class="rankings__table-content-item-number">{{ item.id }}</h3>
+            <h3 class="rankings__table-content-item-number">{{ item.index }}</h3>
             <div class="rankings__table-content-item-collection">
               <div class="rankings__table-content-item-collection-image">
                 <img :src="item.collectionImage" alt="item" class="rankings__table-content-item-collection-image-avatar">
@@ -38,28 +48,32 @@
                 <button class="rankings__table-content-item-more" @click="showNftDetail(idx, $event)">
                   <img :src="nftMoreIcon(idx)" class="rankings__table-content-item-more-image">
                   <span class="rankings__table-content-item-more-name">{{ nftMoreButtonName(idx) }}</span>
+                  <span class="rankings__table-content-item-more-percent" :class="{ positive: item.percentPer24h > 0, negative: item.percentPer24h < 0 }">{{ contractPercentInfo(item.percentPer24h) }}</span>
                 </button>
               </div>
             </div>
           </div>
           <div class="rankings__table-detail-group">
             <div class="rankings__table-content-item-volume">
-              <p class="rankings__table-content-item-volume-title"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</p>
-              <p class="rankings__table-content-item-volume-price">{{ item.volumePrice }}</p>
+              <p class="rankings__table-content-item-volume-title" v-if="rankingTab === 2"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</p>
+              <p class="rankings__table-content-item-volume-title" v-else>{{ item.co2Celo }} CO2</p>
+              <p class="rankings__table-content-item-volume-price" v-if="rankingTab === 2">{{ item.volumePrice }}</p>
             </div>
             <!-- <h3 class="rankings__table-content-item-items">{{ item.items }}</h3> -->
             <h3 class="rankings__table-content-item-day rankings__table-content-item-percent-info" :class="{ positive: item.percentPer24h > 0, negative: item.percentPer24h < 0 }">{{ contractPercentInfo(item.percentPer24h) }}</h3>
             <h3 class="rankings__table-content-item-week  rankings__table-content-item-percent-info"  :class="{ positive: item.percentPer7d > 0, negative: item.percentPer7d < 0 }">{{ contractPercentInfo(item.percentPer7d) }}</h3>
             <div class="rankings__table-content-item-floor">
-              <p class="rankings__table-content-item-floor-title"><img class="rankings__table-content-item-floor-icon" src="/celo.svg" alt="celo" v-if="item.floorPriceCelo !== '-'"> {{ item.floorPriceCelo }}</p>
-              <p class="rankings__table-content-item-floor-price">{{ item.floorPrice }}</p>
+              <p class="rankings__table-content-item-floor-title" v-if="rankingTab === 2"><img class="rankings__table-content-item-floor-icon" src="/celo.svg" alt="celo" v-if="item.floorPriceCelo !== '-'"> {{ item.floorPriceCelo }}</p>
+              <p class="rankings__table-content-item-floor-title" v-else>{{ item.floorCO2Celo }} CO2</p>
+              <p class="rankings__table-content-item-floor-price" v-if="rankingTab === 2">{{ item.floorPrice }}</p>
             </div>
             <!-- <h3 class="rankings__table-content-item-owners">-</h3> -->
             <h3 class="rankings__table-content-item-items">{{ item.items }}</h3>
           </div>
           <div class="rankings__table-content-item-price-box">
-            <h3 class="rankings__table-content-item-prices"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</h3>
-            <p class="rankings__table-content-item-percent" :class="{ negative: item.percentPer24h < 0, zero: item.percentPer24h <= -100 || item.percentPer24h === 0 }">{{ contractPercentInfo(item.percentPer24h) }}</p>
+            <h3 class="rankings__table-content-item-prices" v-if="rankingTab === 2"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</h3>
+            <h3 class="rankings__table-content-item-prices" v-else>{{ item.co2Celo }} CO2</h3>
+            <p class="rankings__table-content-item-percent" :class="{ negative: item.percentPer24h < 0, zero: item.percentPer24h <= -100 || item.percentPer24h === 0 }">{{ rankingTab === 2 ? contractPercentInfo(item.percentPer24h) : 'kg' }}</p>
           </div>
           <div class="rankings__table-content-item-detail-box" v-if="item.expanded">
             <div class="rankings__table-content-item-detail-box-info">
@@ -67,8 +81,8 @@
               <h3 class="rankings__table-content-item-detail-box-info-content" :class="{ positive: item.percentPer7d > 0, negative: item.percentPer7d < 0, zero: item.percentPer7d <= -100 || item.percentPer7d === 0 }">{{ contractPercentInfo(item.percentPer7d) }}</h3>
             </div>
             <div class="rankings__table-content-item-detail-box-info">
-              <p class="rankings__table-content-item-detail-box-info-title">Floor price</p>
-              <h3 class="rankings__table-content-item-detail-box-info-content">{{ item.floorPrice }}</h3>
+              <p class="rankings__table-content-item-detail-box-info-title">{{ rankingTab === 2 ? 'Floor price' : 'Min. contribution, kg' }}</p>
+              <h3 class="rankings__table-content-item-detail-box-info-content">{{ rankingTab === 2 ? item.floorPrice : item.floorCO2Celo }}</h3>
             </div>
             <div class="rankings__table-content-item-detail-box-info">
               <p class="rankings__table-content-item-detail-box-info-title">Items</p>
@@ -78,7 +92,7 @@
         </div>
       </div>
     </div>
-    <p class="rankings-no-result" v-show="!loading && list.length === 0">No results found</p>
+    <p class="rankings-no-result" v-show="!loading && filteredList.length === 0">No results found</p>
   </div>
 </template>
 <script>
@@ -88,7 +102,10 @@ export default {
     return {
       loading: false,
       celoPrice: 1,
+      cmco2Price: 0,
+      rankingTab: 2, // 1: Refi, 2: Volume
       list: [],
+      filteredList: [],
       dateFilter: null
     }
   },
@@ -118,14 +135,14 @@ export default {
   },
   methods: {
     nftMoreIcon(nftIndex) {
-      if (!this.list[nftIndex].expanded) {
+      if (!this.filteredList[nftIndex].expanded) {
         return '/rankings/plus.svg';
       } else {
         return '/minus.svg';
       }
     },
     nftMoreButtonName(nftIndex) {
-      if (!this.list[nftIndex].expanded) {
+      if (!this.filteredList[nftIndex].expanded) {
         return 'More';
       } else {
         return 'Less';
@@ -146,13 +163,19 @@ export default {
 		  return '-'
 		}
 	},
-	async loadNftDetail(contract, idx) {
-	  const floorPrice = await this.$store.dispatch('getFloorPrice', contract)
+	async loadNftDetail(nft, idx) {
+	  const floorPrice = await this.$store.dispatch('getFloorPrice', nft.nftSymbol)
 	  this.list[idx].floorPriceCelo = floorPrice
-	  this.list[idx].floorPrice = this.formatPriceToString(floorPrice)
+    this.list[idx].floorPrice = this.formatPriceToString(floorPrice)
+    const floorCO2Celo = floorPrice * nft.producerFee * this.cmco2Price
+    const co2celoDiff = Math.ceil(floorCO2Celo) - floorCO2Celo
+    this.list[idx].floorCO2Celo = floorCO2Celo.toFixed(co2celoDiff === 0 ? 0 : 2)
 	  this.list[idx].volumePrice = this.formatPriceToString(this.list[idx].volumeCelo)
-	  this.list[idx].percentPer24h = await this.$store.dispatch('getContractInfoTimePercent', contract)
-	  this.list[idx].percentPer7d = await this.$store.dispatch('getContractInfoWeekPercent', contract)
+	  this.list[idx].percentPer24h = await this.$store.dispatch('getContractInfoTimePercent', nft.nftSymbol)
+    this.list[idx].percentPer7d = await this.$store.dispatch('getContractInfoWeekPercent', nft.nftSymbol)
+    if (this.rankingTab === 2) {
+      this.updateRankingsList()
+    }
 	},
   async renderlist() {
     let footerEl = null
@@ -167,14 +190,21 @@ export default {
     const resultCount =  await this.$store.dispatch('getStatisticCountNft')
     let nftName = ''
     let itemNum = 0
+    let cmco2Price = this.$store.state.cMCO2Price
+    if (!cmco2Price) {
+      cmco2Price = await this.$store.dispatch('getCMCO2TokenPrice')
+    }
+    this.cmco2Price = cmco2Price
     const invisibleTokens = ['knoxnft', 'cconnectpunks']
     for (let [index, item] of result.entries()) {
       if (!invisibleTokens.includes(item.nftSymbol)) {
         let volume = 0;
         let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
-        const mintCountDiff = Math.ceil(item.mint_count / 1000) - (item.mint_count / 1000)
         volume = volume + price
         nftName = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
+        const mintCountDiff = Math.ceil(item.mint_count / 1000) - (item.mint_count / 1000)
+        const co2Celo = (item.sell_total_price / 1000) * item.producerFee * cmco2Price
+        const co2CeloDiff = Math.ceil(co2Celo) - co2Celo
         this.list.push({
           id: (itemNum + 1),
           collectionImage: `/${item.nftSymbol}.png`,
@@ -183,6 +213,7 @@ export default {
           name: nftName,
           volumePrice: '-',
           volumeCelo: item.sell_total_price / 1000,
+          co2Celo: co2Celo !== 0 ? co2Celo.toFixed(co2CeloDiff === 0 ? 0 : 2) : 0,
           statDay: volume / (item.sell_total_price / 1000) * 100,
           statWeek: 7,
           floorPrice: '-',
@@ -194,19 +225,35 @@ export default {
           percentPer7d: 0,
           route: item.title
         })
-        this.loadNftDetail(item.nftSymbol, itemNum)
+        this.loadNftDetail(item, itemNum)
+        this.filteredList = JSON.parse(JSON.stringify(this.list))
         itemNum++
       }
     }
+    this.updateRankingsList()
     this.loading = false
     if (process.browser && (window.innerWidth > 1182 || window.innerWidth <= 460)) {
       footerEl.classList.remove('fixed')
     }
-	},
+  },
+  updateRankingsList() {
+    let rankingsList = JSON.parse(JSON.stringify(this.list))
+    if (this.rankingTab === 1) {
+      rankingsList = rankingsList.filter(item => parseFloat(item.co2Celo) > 0).sort((a, b) => b.co2Celo - a.co2Celo)
+    }
+    rankingsList.map((item, index) => item.index = index + 1)
+    this.filteredList = rankingsList
+  },
+  updateRankingsTab(tab) {
+    if (this.rankingTab !== tab) {
+      this.rankingTab = tab
+      this.updateRankingsList()
+    }
+  },
 	showNftDetail(nftIndex, e) {
-      const newList = [...this.list]
+      const newList = [...this.filteredList]
       newList[nftIndex].expanded = !newList[nftIndex].expanded
-      this.list = newList
+      this.filteredList = newList
       e.preventDefault()
       e.stopPropagation()
     },
@@ -231,7 +278,9 @@ export default {
     font-size: 1.6rem;
   }
   &__navigation {
+    display: flex;
     align-items: center;
+    justify-content: space-between;
     padding-top: 5rem;
     &-button {
       width: 6.4rem;
@@ -247,6 +296,29 @@ export default {
       &-active {
         background: $lightGreen;
         box-shadow: none;
+      }
+    }
+    &-tab {
+      display: flex;
+      align-items: center;
+      &-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 9.2rem;
+        height: 2.8rem;
+        background: $white;
+        border: 1px solid $modalColor;
+        font-size: 1.4rem;
+        cursor: pointer;
+        &.active {
+          background: $lightGreen;
+          border-color: transparent;
+        }
+        img {
+          width: 1.5rem;
+          margin-right: 0.55rem;
+        }
       }
     }
   }
@@ -507,12 +579,27 @@ export default {
               margin-right: .4rem;
             }
             &-name {
+              margin-right: 3.2rem;
               font-size: 1.3rem;
               color: $textColor3;
             }
+            &-percent {
+              font-weight: 600;
+              font-size: 1.4rem;
+              color: $textColor;
+              &.positive {
+                color: $green;
+              }
+              &.negative {
+                color: $red;
+              }
+            }
           }
-          &-prices, &-percent {
+          &-prices {
             font-size: 1.4rem;
+          }
+          &-percent {
+            font-size: 1.2rem;
           }
           &-prices {
             display: flex;
@@ -529,7 +616,7 @@ export default {
               color: $red;
             }
             &.zero {
-              color: $textColor;
+              color: $border;
             }
           }
           &-detail-box {
@@ -545,6 +632,7 @@ export default {
               flex-direction: column;
               align-items: center;
               &-title {
+                white-space: nowrap;
                 font-size: 1.3rem;
                 color: $textColor3;
               }
@@ -558,9 +646,6 @@ export default {
                 }
                 &.negative {
                   color: $red;
-                }
-                &.zero {
-                  color: $textColor;
                 }
               }
             }
