@@ -54,7 +54,7 @@
                 <button class="nft__block-info-buy" @click="handleClickBuyNow">Buy now</button>
               </div>
               <p class="nft__block-info-refi" v-if="nft.market_status === 'LISTED' && nft.price">
-                <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }}ton CO2</span>
+                <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }} ton CO2</span>
               </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
               <Attributes :item="attributes" :info="nft"/>
@@ -117,7 +117,7 @@
                 </div>
               </div>
               <p class="nft__block-info-refi listed" v-if="nft.market_status === 'LISTED' && nft.price">
-                <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }}ton CO2</span>
+                <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }} ton CO2</span>
               </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
               <Attributes :item="attributes" :info="nft"/>
@@ -350,7 +350,7 @@ export default {
       return `${this.collection.name} | CyberBox NFT Marketplace`
     },
     refiOffset() {
-      return this.nft.refiOffset > 0 ? parseFloat(this.nft.refiOffset).toFixed(2) : 0
+      return this.nft.refiOffset > 0 ? parseFloat(this.nft.refiOffset).toFixed(3) : 0
     },
     description() {
       return this.collection.description
@@ -460,7 +460,7 @@ export default {
       if (this.$store.state.cMCO2Price) {
         this.nft = {
           ...this.nft,
-          refiOffset: (this.nft.market_status === 'LISTED' ? this.nft.price : 1) * this.nft.producerFee * this.$store.state.cMCO2Price
+          refiOffset: (this.nft.market_status === 'LISTED' ? this.nft.price : 1) * (this.nft.producerFee / 1000) * this.$store.state.cMCO2Price
         }  
       }
     },

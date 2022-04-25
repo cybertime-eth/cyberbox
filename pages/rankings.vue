@@ -56,7 +56,7 @@
           <div class="rankings__table-detail-group">
             <div class="rankings__table-content-item-volume">
               <p class="rankings__table-content-item-volume-title" v-if="isVolumeSection"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</p>
-              <p class="rankings__table-content-item-volume-title" v-else>{{ item.co2Celo }} CO2</p>
+              <p class="rankings__table-content-item-volume-title" v-else>{{ item.co2Celo }} {{ !isMobile() ? 'Ton CO2' : '' }}</p>
               <p class="rankings__table-content-item-volume-price" v-if="isVolumeSection">{{ item.volumePrice }}</p>
             </div>
             <!-- <h3 class="rankings__table-content-item-items">{{ item.items }}</h3> -->
@@ -64,7 +64,7 @@
             <h3 class="rankings__table-content-item-week  rankings__table-content-item-percent-info"  :class="{ positive: item.percentPer7d > 0, negative: item.percentPer7d < 0 }">{{ contractPercentInfo(item.percentPer7d) }}</h3>
             <div class="rankings__table-content-item-floor">
               <p class="rankings__table-content-item-floor-title" v-if="isVolumeSection"><img class="rankings__table-content-item-floor-icon" src="/celo.svg" alt="celo" v-if="item.floorPriceCelo !== '-'"> {{ item.floorPriceCelo }}</p>
-              <p class="rankings__table-content-item-floor-title" v-else>{{ item.floorCO2Celo }} CO2</p>
+              <p class="rankings__table-content-item-floor-title" v-else>{{ item.floorCO2Celo }} {{ !isMobile() ? 'Ton CO2' : '' }}</p>
               <p class="rankings__table-content-item-floor-price" v-if="isVolumeSection">{{ item.floorPrice }}</p>
             </div>
             <!-- <h3 class="rankings__table-content-item-owners">-</h3> -->
@@ -72,8 +72,8 @@
           </div>
           <div class="rankings__table-content-item-price-box">
             <h3 class="rankings__table-content-item-prices" v-if="isVolumeSection"><img src="/celo.svg" alt="celo">{{ item.volumeCelo }}</h3>
-            <h3 class="rankings__table-content-item-prices" v-else>{{ item.co2Celo }} CO2</h3>
-            <p class="rankings__table-content-item-percent" :class="{ negative: item.percentPer24h < 0, zero: item.percentPer24h <= -100 || item.percentPer24h === 0 }">{{ isVolumeSection ? contractPercentInfo(item.percentPer24h) : 'kg' }}</p>
+            <h3 class="rankings__table-content-item-prices" v-else>{{ item.co2Celo }} {{ !isMobile() ? 'Ton CO2' : '' }}</h3>
+            <p class="rankings__table-content-item-percent" :class="{ negative: item.percentPer24h < 0, zero: item.percentPer24h <= -100 || item.percentPer24h === 0 }">{{ isVolumeSection ? contractPercentInfo(item.percentPer24h) : 'Ton CO2' }}</p>
           </div>
           <div class="rankings__table-content-item-detail-box" v-if="item.expanded">
             <div class="rankings__table-content-item-detail-box-info">
@@ -170,9 +170,9 @@ export default {
 	  const floorPrice = await this.$store.dispatch('getFloorPrice', nft.nftSymbol)
 	  this.list[idx].floorPriceCelo = floorPrice
     this.list[idx].floorPrice = this.formatPriceToString(floorPrice)
-    const floorCO2Celo = floorPrice * nft.producerFee * this.cmco2Price
+    const floorCO2Celo = floorPrice * nft.producerFee / 1000 * this.cmco2Price
     const co2celoDiff = Math.ceil(floorCO2Celo) - floorCO2Celo
-    this.list[idx].floorCO2Celo = floorCO2Celo.toFixed(co2celoDiff === 0 ? 0 : 2)
+    this.list[idx].floorCO2Celo = floorCO2Celo.toFixed(co2celoDiff === 0 ? 0 : 3)
 	  this.list[idx].volumePrice = this.formatPriceToString(this.list[idx].volumeCelo)
 	  this.list[idx].percentPer24h = await this.$store.dispatch('getContractInfoTimePercent', nft.nftSymbol)
     this.list[idx].percentPer7d = await this.$store.dispatch('getContractInfoWeekPercent', nft.nftSymbol)
@@ -206,7 +206,7 @@ export default {
         volume = volume + price
         nftName = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
         const mintCountDiff = Math.ceil(item.mint_count / 1000) - (item.mint_count / 1000)
-        const co2Celo = (item.sell_refi_price / 1000) * item.producerFee * cmco2Price
+        const co2Celo = (item.sell_refi_price / 1000) * (item.producerFee / 1000) * cmco2Price
         const co2CeloDiff = Math.ceil(co2Celo) - co2Celo
         this.list.push({
           id: (itemNum + 1),

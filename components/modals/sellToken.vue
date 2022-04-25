@@ -21,7 +21,7 @@
               </div>
               <p class="modal__sell-form-unit">${{ dollarPrice }}</p>
               <p class="modal__sell-form-refioffset">
-                <img src="/plant.svg" alt="plant" class="modal__sell-form-refioffset-img"> Successful NFT sale offset<span class="modal__sell-form-refioffset-amount">{{ refiOffset }}ton CO2</span>
+                <img src="/plant.svg" alt="plant" class="modal__sell-form-refioffset-img"> Successful NFT sale offset<span class="modal__sell-form-refioffset-amount">{{ refiOffset }} ton CO2</span>
               </p>
               <p class="modal__sell-form-description">Item will be on sale until you cancelled.</p>
               <p class="modal__sell-form-feeinfo">Once sold, the following fees will be deducted:<br/>{{ nftServiceFee }}% service fee | {{ nftRoyalty }}% creator royalty | {{nftProducerFee}}% ReFi fee</p>
@@ -96,7 +96,7 @@ export default {
     },
     refiOffset() {
       const offsetValue = this.nftPrice * this.nft.refiOffset
-      return offsetValue > 0 ? parseFloat(offsetValue).toFixed(2) : 0
+      return offsetValue > 0 ? parseFloat(offsetValue).toFixed(3) : 0
     }
   },
   data() {

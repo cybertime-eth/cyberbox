@@ -135,9 +135,10 @@ export default {
     const invisibleTokens = ['knoxnft', 'cconnectpunks']
     let totalCO2Amount = 0
     this.collectionList = collections.filter(item => !invisibleTokens.includes(item.nftSymbol)).map(item => {
+      const co2celoPrice = item.sell_refi_price / 1000 * item.producerFee / 1000 * cmco2Price
       item.volumeCelo = Math.round(item.sell_total_price / 1000)
-      item.co2Celo = Math.round((item.sell_refi_price / 1000) * item.producerFee * cmco2Price)
-      totalCO2Amount += item.co2Celo
+      item.co2Celo = co2celoPrice > 1 ? Math.round(co2celoPrice) : co2celoPrice.toFixed(2)
+      totalCO2Amount += co2celoPrice
       item.name = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
       item.image = `/${item.nftSymbol}.png`
       return item
