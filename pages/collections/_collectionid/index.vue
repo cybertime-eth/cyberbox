@@ -26,7 +26,7 @@
          </div>
          <div class="collection__header-info-block" ref="refiInfo">
            <h3 class="collection__header-info-block-title">{{ refiCO2Price }}</h3>
-           <h3 class="collection__header-info-block-subtitle">ReFi, kg <img src="/plant.svg" alt="plant"></h3>
+           <h3 class="collection__header-info-block-subtitle">Ton CO2 <img src="/plant.svg" alt="plant"></h3>
          </div>
         </div>
         <h3 class="collection__header-content">

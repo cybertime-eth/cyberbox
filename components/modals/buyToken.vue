@@ -19,7 +19,7 @@
       </div>
       <div class="modal__refi">
         <p class="modal__refi-info">
-          <img src="/plant.svg" alt="plant" class="modal__refi-info-img"> Successful NFT sale offset<span class="modal__refi-info-amount">{{ refiOffset }}kg CO2</span>
+          <img src="/plant.svg" alt="plant" class="modal__refi-info-img"> Successful NFT sale offset<span class="modal__refi-info-amount">{{ refiOffset }}ton CO2</span>
         </p>
       </div>
       <div class="modal__buttons">

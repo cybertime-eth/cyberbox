@@ -21,10 +21,10 @@
               </div>
               <p class="modal__sell-form-unit">${{ dollarPrice }}</p>
               <p class="modal__sell-form-refioffset">
-                <img src="/plant.svg" alt="plant" class="modal__sell-form-refioffset-img"> Successful NFT sale offset<span class="modal__sell-form-refioffset-amount">{{ refiOffset }}kg CO2</span>
+                <img src="/plant.svg" alt="plant" class="modal__sell-form-refioffset-img"> Successful NFT sale offset<span class="modal__sell-form-refioffset-amount">{{ refiOffset }}ton CO2</span>
               </p>
               <p class="modal__sell-form-description">Item will be on sale until you cancelled.</p>
-              <p class="modal__sell-form-feeinfo">Ones sold, the following fees will be deducted:<br/>{{ nftServiceFee }}% service fee | {{ nftRoyalty }}% creator royalty</p>
+              <p class="modal__sell-form-feeinfo">Once sold, the following fees will be deducted:<br/>{{ nftServiceFee }}% service fee | {{ nftRoyalty }}% creator royalty | {{nftProducerFee}}% ReFi fee</p>
             </div>
             <p class="modal__sell-content">List your NFT to sell for {{ nftPrice || 0 }} CELO</p>
           </div>
@@ -95,7 +95,8 @@ export default {
       return this.nftPrice ? (this.nftPrice * this.celoPrice).toFixed(1) : 0
     },
     refiOffset() {
-      return this.nft.refiOffset > 0 ? parseFloat(this.nft.refiOffset).toFixed(2) : 0
+      const offsetValue = this.nftPrice * this.nft.refiOffset
+      return offsetValue > 0 ? parseFloat(offsetValue).toFixed(2) : 0
     }
   },
   data() {
@@ -104,7 +105,8 @@ export default {
       pending: false,
       showSuccessModal: false,
       nftServiceFee: 0,
-      nftRoyalty: 0
+      nftRoyalty: 0,
+      nftProducerFee: 0
     }
   },
   watch: {
@@ -129,6 +131,7 @@ export default {
     const collectionInfo = await this.$store.dispatch('getCollectionInfo')
     this.nftServiceFee = collectionInfo.marketFee / 10
     this.nftRoyalty = (collectionInfo.createrFee + collectionInfo.producerFee) / 10
+    this.nftProducerFee = collectionInfo.producerFee / 10
     if (this.nft.market_status === 'LISTED') {
       this.nftPrice = this.nft.price
     }

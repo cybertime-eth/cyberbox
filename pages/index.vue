@@ -14,10 +14,10 @@
           <img class="refi__block-info-support-investors" :src="investorsIcon" alt="investors">
         </div>
         <div class="refi__block-info-live" v-if="totalCO2Amount > 0">
-          <h3 class="refi__block-info-live-title">LIVE Regeneration <span/></h3>
+          <h3 class="refi__block-info-live-title">LIVE <span/> Carbon Offsetting</h3>
           <div class="refi__block-info-live-co2 gradient-box">
             <h3 class="refi__block-info-live-co2-count">{{ totalCO2Amount }}</h3>
-            <p class="refi__block-info-live-co2-description">CO2 Offsetting, kg <img src="/plant.svg" alt="plant"></p>
+            <p class="refi__block-info-live-co2-description">Ton CO2 <img src="/plant.svg" alt="plant"></p>
           </div>
         </div>
       </div>
@@ -46,10 +46,11 @@
           <h3 class="refi__block-collections-header-title">Hot collections <img src="/star-filled.svg" alt="star"></h3>
           <div class="refi__block-collections-header-tab">
             <div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 1}"  @click="updateCollectionTab(1)"><img class="refi__block-collections-header-tab-item-img" src="/chart.svg" alt="chart"> Volume</div>
-            <div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 2}" @click="updateCollectionTab(2)"><img class="refi__block-collections-header-tab-item-img" src="/plant.svg" alt="plant"> Refi</div>
+            <div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 2}" @click="updateCollectionTab(2)"><img class="refi__block-collections-header-tab-item-img" src="/plant.svg" alt="plant"> Carbon</div>
           </div>
         </div>
-        <div class="refi__block-collections-items">
+        <p class="refi__block-collections-description" v-if="collectionTab === 2">Amount of CO2 offseting through NFT trading</p>
+        <div class="refi__block-collections-items" :class="{ carbon: collectionTab === 2 }">
           <div class="refi__block-collections-items-group" :key="idx" v-for="(group, idx) in hotCollections">
             <div class="refi__block-collections-items-group-item" :key="collection.id" v-for="collection of group" @click="$router.push(`/collections/${collection.nftSymbol}`)">
               <div class="refi__block-collections-items-group-item-info">
@@ -60,7 +61,10 @@
                 </div>
                 <p class="refi__block-collections-items-group-item-info-name">{{ collection.name }}</p>
               </div>
-              <p class="refi__block-collections-items-group-item-amount" v-if="collectionTab === 2">{{collection.co2Celo}} CO2</p>
+              <div class="refi__block-collections-items-group-item-carbon" v-if="collectionTab === 2">
+                <p class="refi__block-collections-items-group-item-carbon-value">{{collection.co2Celo}}</p>
+                <p class="refi__block-collections-items-group-item-carbon-unit">Ton CO2</p>
+              </div>
               <p class="refi__block-collections-items-group-item-amount" v-else><img src="/celo.svg" alt="celo"> {{collection.volumeCelo}}</p>
             </div>
           </div>
@@ -68,28 +72,28 @@
       </div>
       <div class="refi__block-footer">
         <button class="refi__block-footer-button refi__block-info-button gradient-button ranking" @click="$router.push('/rankings')">Go to Rankings</button>
-        <h2 class="refi__block-footer-title" v-html="footerTitle"></h2>
+        <h2 class="refi__block-footer-title">ReFi NFT Marketplace</h2>
         <div class="refi__block-footer-info">
           <div class="refi__block-footer-info-box">
             <div class="refi__block-footer-info-box-header">
               <img class="refi__block-footer-info-box-header-icon" src="/refi-rankings.svg" alt="rankings">
-              <h3 class="refi__block-footer-info-box-header-title">ReFi Rankings</h3>
+              <h3 class="refi__block-footer-info-box-header-title">Carbon Offset Integration</h3>
             </div>
-            <p class="refi__block-footer-info-box-description">All NFT collections participate in the ReFi ranking. This is an opportunity to see their contributions to the regeneration of nature.</p>
+            <p class="refi__block-footer-info-box-description">When trading NFTs on our marketplace, carbon offset users do not have to do anything!</p>
           </div>
           <div class="refi__block-footer-info-box">
             <div class="refi__block-footer-info-box-header">
               <img class="refi__block-footer-info-box-header-icon" src="/refi-integration.svg" alt="integration">
-              <h3 class="refi__block-footer-info-box-header-title">ReFi Integration</h3>
+              <h3 class="refi__block-footer-info-box-header-title">NFT Carbon Certificates</h3>
             </div>
-            <p class="refi__block-footer-info-box-description">The carbon neutralization system is implemented in the marketplace, so there is no need to take additional steps. Any purchase/sale of NFTs on our platform contributes to the regeneration of nature.</p>
+            <p class="refi__block-footer-info-box-description">Buy a unique NFT certificate every month at the expense of carbon offset.</p>
           </div>
           <div class="refi__block-footer-info-box">
             <div class="refi__block-footer-info-box-header">
               <img class="refi__block-footer-info-box-header-icon" src="/refi-setting.svg" alt="settings">
-              <h3 class="refi__block-footer-info-box-header-title">ReFi Creators Settings</h3>
+              <h3 class="refi__block-footer-info-box-header-title">Unique opportunities for NFT creators</h3>
             </div>
-            <p class="refi__block-footer-info-box-description">Creators of NFT collections can set a percentage of (their royalties or each successful transaction of their NFT) that will be used to bought cMCO2 tokens.</p>
+            <p class="refi__block-footer-info-box-description">Flexible royalty system, ability to set % for Carbon offset, all the benefits of Celo chain, access to 200k of users via Valora app.</p>
           </div>
         </div>
         <button class="refi__block-footer-button refi__block-info-button explorer" @click="$router.push('/explorer')">Explorer NFT</button>
@@ -116,7 +120,10 @@ export default {
   async created() {
     // Latest 12 Listings
     const latestListings = await this.$store.dispatch('getLatestListings')
-    latestListings.map(item => item.price = item.price / 1000)
+    latestListings.map(item => {
+      item.price = item.price / 1000
+      item.market_status = 'LISTED'
+    })
     this.latestListings = latestListings
 
     // Hot Collections
@@ -249,12 +256,12 @@ export default {
   &__title {
     text-align: center;
     font-family: Cabin-Bold;
-    font-size: 6.4rem;
+    font-size: 4.8rem;
   }
   &__subtitle {
     padding-top: 4rem;
     text-align: center;
-    font-size: 2.2rem;
+    font-size: 2rem;
   }
   &__block {
     padding-top: 4.4rem;
@@ -345,6 +352,7 @@ export default {
     }
     &-listings {
       &-title {
+        font-family: OpenSans-SemiBold;
         font-size: 2.2rem;
         img {
           width: 2rem;
@@ -384,6 +392,7 @@ export default {
         align-items: center;
         &-title {
           margin-right: 5.8rem;
+          font-family: OpenSans-SemiBold;
           font-size: 2.2rem;
           img {
             width: 2rem;
@@ -414,11 +423,21 @@ export default {
           }
         }
       }
+      &-description {
+        padding-top: 4rem;
+        text-align: center;
+        font-family: OpenSans-SemiBold;
+        font-weight: 600;
+        font-size: 1.6rem;
+      }
       &-items {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
         grid-column-gap: 2.4rem;
         padding-top: 4rem;
+        &.carbon {
+          padding-top: 2rem;
+        }
         &-group {
           &-item {
             display: flex;
@@ -466,7 +485,21 @@ export default {
               font-weight: 600;
               font-size: 1.6rem;
               img {
-                margin-right: 1.2rem;
+                margin-right: 0.4rem;
+              }
+            }
+            &-carbon {
+              text-align: right;
+              &-value {
+                font-family: OpenSans-SemiBold;
+                font-weight: 600;
+                font-size: 1.6rem;
+              }
+              &-unit {
+                margin-top: 0.4rem;
+                font-weight: 400;
+                font-size: 1.4rem;
+                color: $textColor3;
               }
             }
           }
@@ -484,7 +517,7 @@ export default {
         font-family: Cabin-Medium;
         font-weight: 500;
         text-align: center;
-        font-size: 4.8rem;
+        font-size: 3.2rem;
       }
       &-button {
         width: 42.4rem;
@@ -493,7 +526,6 @@ export default {
         }
       }
       &-info {
-        padding-top: 3.2rem;
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
         grid-column-gap: 2.4rem;
@@ -506,16 +538,18 @@ export default {
             display: flex;
             align-items: center;
             &-icon {
+              width: 5.2rem;
               margin-right: 2.4rem;
             }
             &-title {
-              font-family: Cabin-Medium;
-              font-weight: 500;
-              font-size: 3.2rem;
+              font-family: OpenSans-SemiBold;
+              font-weight: 600;
+              font-size: 2rem;
             }
           }
           &-description {
             padding-top: 2.2rem;
+            font-weight: 400;
             font-size: 1.6rem;
           }
         }
@@ -525,21 +559,29 @@ export default {
   @media(max-width: 460px) {
     padding: 2.4rem 0.8rem 13.4rem;
     &__title {
+      font-family: Cabin-Medium;
       font-weight: 600;
-      font-size: 2.2rem;
+      font-size: 2.8rem;
     }
     &__subtitle {
       padding: 1rem 2.4rem 0;
-      font-size: 1.6rem;
+      font-size: 1.4rem;
     }
     &__block {
       padding-top: 2.4rem;
       &-info {
+        &-buttons {
+          display: block;
+          text-align: center;
+        }
         &-button {
-          width: 14.9rem;
+          width: 14.8rem;
           height: 4.8rem;
           &.explorer {
             margin-right: 0.8rem;
+          }
+          &.ranking {
+            margin-top: 0.8rem;
           }
         }
         &-picture {
@@ -558,6 +600,7 @@ export default {
           }
         }
         &-live {
+          padding-bottom: 4.5rem;
           &-title {
             font-size: 1.6rem;
             span {
@@ -583,7 +626,7 @@ export default {
       }
       &-listings {
         &-title {
-          font-size: 1.8rem;
+          font-size: 1.6rem;
           img {
             transform: translateY(0.1rem);
           }
@@ -608,7 +651,6 @@ export default {
       }
       &-collections {
         padding-top: 3.7rem;
-        padding-bottom: 2.6rem;
         &-header {
           display: block;
           &-title {
@@ -628,6 +670,11 @@ export default {
             }
           }
         }
+        &-description {
+          padding-top: 2.6rem;
+          font-family: OpenSans-Regular;
+          font-size: 1.4rem;
+        }
         &-items {
           grid-template-columns: 1fr 1fr 1fr 1fr;
           padding-top: 2.6rem;
@@ -636,6 +683,9 @@ export default {
           scrollbar-width: none;
           &::-webkit-scrollbar {
             display: none;
+          }
+          &.carbon {
+            padding-top: 1.6rem;
           }
           &-group {
             width: 24.4rem;
@@ -663,6 +713,19 @@ export default {
               }
               &-amount {
                 font-size: 1.4rem;
+                img {
+                  margin-right: 0.35rem;
+                }
+              }
+              &-carbon {
+                &-value {
+                  font-family: OpenSans-SemiBold;
+                  font-size: 1.4rem;
+                }
+                &-unit {
+                  margin-top: 0;
+                  font-size: 1.2rem;
+                }
               }
             }
           }
@@ -671,25 +734,37 @@ export default {
       &-footer {
         padding-top: 2.6rem;
         &-button {
-          width: 100%;
           &.explorer {
+            width: 14.8rem;
             margin-top: 2.6rem;
+          }
+          &.ranking {
+            width: 17.3rem;
+            margin: 0;
           }
         }
         &-title {
-          padding-top: 6.6rem;
+          padding-top: 5.6rem;
+          padding-bottom: 2.6rem;
           font-size: 2.2rem;
         }
         &-info {
           display: block;
-          padding-top: 2.6rem;
           &-box {
             padding: 1.6rem 1.6rem 2.2rem;
             margin-bottom: 2rem;
-            &-header-title {
-              font-size: 2.2rem;
+            &-header {
+              display: block;
+              &-icon {
+                width: 4.8rem;
+                margin-bottom: 1.6rem;
+              }
+              &-title {
+                font-size: 1.6rem;
+              }
             }
             &-description {
+              padding-top: 0.8rem;
               font-size: 1.4rem;
             }
             &:last-child {

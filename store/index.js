@@ -571,28 +571,21 @@ export const actions = {
   async getLatestListings({dispatch}) {
     const query = gql`
       query Sample {
-        contractInfos(first: 12 where: { market_status: "LISTED" } orderBy: updatedAt, orderDirection: desc) {
+        contractLists(first: 12 orderBy: updatedAt, orderDirection: desc) {
 			    id
           contract
           contract_id
           mint_key
+          contract_name
           price
-          seller
-          owner
-          contract_address
-          market_status
-          name
           image
-          description
+          owner
           updatedAt
         },
       }`
     const data = await this.$graphql.default.request(query)
-    const contractInfos = await dispatch('getRarirtyCollections', { contractInfos: data.contractInfos })
+    const contractInfos = await dispatch('getRarirtyCollections', { contractInfos: data.contractLists })
     return contractInfos
-  },
-  async getCollectionRefiPrice({}) {
-    
   },
 
   async getGraphDataListed({state, commit, getters, dispatch}, traitFilters) {
