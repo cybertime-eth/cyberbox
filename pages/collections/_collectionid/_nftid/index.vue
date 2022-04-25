@@ -53,8 +53,8 @@
                 </div>
                 <button class="nft__block-info-buy" @click="handleClickBuyNow">Buy now</button>
               </div>
-              <p class="nft__block-info-refi">
-                <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }}kg CO2</span>
+              <p class="nft__block-info-refi" v-if="nft.market_status === 'LISTED' && nft.price">
+                <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }}ton CO2</span>
               </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
               <Attributes :item="attributes" :info="nft"/>
@@ -116,8 +116,8 @@
                   </button>
                 </div>
               </div>
-              <p class="nft__block-info-refi">
-                <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }}kg CO2</span>
+              <p class="nft__block-info-refi listed" v-if="nft.market_status === 'LISTED' && nft.price">
+                <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }}ton CO2</span>
               </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
               <Attributes :item="attributes" :info="nft"/>
@@ -150,7 +150,6 @@
 import Attributes from '@/components/nft-id/Attributes';
 import SaleList from '@/components/nft-id/SaleList';
 import History from '@/components/nft-id/History-table';
-import SellPrice from '@/components/sale-nft/SellPrice';
 import Approve from '@/components/sale-nft/Approve';
 import Sign from '@/components/sale-nft/Sign';
 import Successful from '@/components/sale-nft/Successful';
@@ -230,7 +229,6 @@ export default {
     Attributes,
     SaleList,
     History,
-    SellPrice,
     Approve,
     Sign,
     Successful,
@@ -462,7 +460,7 @@ export default {
       if (this.$store.state.cMCO2Price) {
         this.nft = {
           ...this.nft,
-          refiOffset: this.nft.producerFee * this.$store.state.cMCO2Price
+          refiOffset: (this.nft.market_status === 'LISTED' ? this.nft.price : 1) * this.nft.producerFee * this.$store.state.cMCO2Price
         }  
       }
     },
@@ -658,6 +656,9 @@ export default {
         border: 1px solid $modalColor;
         font-size: 1.2rem;
         color: $black;
+        &.listed {
+          margin-top: 5.8rem;
+        }
         img {
           width: 1.4rem;
           margin-right: 0.9rem;

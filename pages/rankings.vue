@@ -13,7 +13,7 @@
           <img class="rankings__navigation-tab-item-img" src="/chart.svg" alt="chart"> Volume
         </div>
         <div class="rankings__navigation-tab-item" :class="{active: rankingTab === 2}" @click="updateRankingsTab(2)">
-          <img class="rankings__navigation-tab-item-img" src="/plant.svg" alt="plant"> Refi
+          <img class="rankings__navigation-tab-item-img" src="/plant.svg" alt="plant"> Carbon
         </div>
       </div>
    </div>
@@ -24,10 +24,10 @@
           <h3>Collection</h3>
         </div>
         <div class="rankings__table-detail-group">
-          <h3>{{ !isVolumeSection ? 'Regeneration, kg' : 'Volume' }}</h3>
+          <h3>{{ !isVolumeSection ? 'Carbon Offset' : 'Volume' }}</h3>
           <h3>24h %</h3>
           <h3>7d %</h3>
-          <h3>{{ !isVolumeSection ? 'Min. contribution, kg' : 'Floor Price' }}</h3>
+          <h3>{{ !isVolumeSection ? 'Floor Carbon Offset' : 'Floor Price' }}</h3>
           <!-- <h3>Owners</h3> -->
           <h3>Items</h3>
         </div>
@@ -81,7 +81,7 @@
               <h3 class="rankings__table-content-item-detail-box-info-content" :class="{ positive: item.percentPer7d > 0, negative: item.percentPer7d < 0, zero: item.percentPer7d <= -100 || item.percentPer7d === 0 }">{{ contractPercentInfo(item.percentPer7d) }}</h3>
             </div>
             <div class="rankings__table-content-item-detail-box-info">
-              <p class="rankings__table-content-item-detail-box-info-title">{{ isVolumeSection ? 'Floor price' : 'Min. contribution, kg' }}</p>
+              <p class="rankings__table-content-item-detail-box-info-title">{{ isVolumeSection ? 'Floor price' : 'Floor Carbon Offset' }}</p>
               <h3 class="rankings__table-content-item-detail-box-info-content">{{ isVolumeSection ? item.floorPrice : item.floorCO2Celo }}</h3>
             </div>
             <div class="rankings__table-content-item-detail-box-info">
