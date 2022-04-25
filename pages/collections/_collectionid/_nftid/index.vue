@@ -53,6 +53,9 @@
                 </div>
                 <button class="nft__block-info-buy" @click="handleClickBuyNow">Buy now</button>
               </div>
+              <p class="nft__block-info-refi">
+                <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }}kg CO2</span>
+              </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
               <Attributes :item="attributes" :info="nft"/>
             </div>
@@ -113,6 +116,9 @@
                   </button>
                 </div>
               </div>
+              <p class="nft__block-info-refi">
+                <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }}kg CO2</span>
+              </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
               <Attributes :item="attributes" :info="nft"/>
             </div>
@@ -344,6 +350,9 @@ export default {
     },
     pageTitle() {
       return `${this.collection.name} | CyberBox NFT Marketplace`
+    },
+    refiOffset() {
+      return this.nft.refiOffset > 0 ? parseFloat(this.nft.refiOffset).toFixed(2) : 0
     },
     description() {
       return this.collection.description
@@ -638,6 +647,27 @@ export default {
       }
       &-owner {
         padding-top: 2.4rem;
+      }
+      &-refi {
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        width: -moz-fit-content;
+        margin-top: 1.8rem;
+        padding: 0.8rem;
+        border: 1px solid $modalColor;
+        font-size: 1.2rem;
+        color: $black;
+        img {
+          width: 1.4rem;
+          margin-right: 0.9rem;
+        }
+        &-amount {
+          margin-left: 1rem;
+          font-weight: 600;
+          font-size: 1.3rem;
+          color: #63A60D;
+        }
       }
       &-description {
         padding-top: 2.4rem;
