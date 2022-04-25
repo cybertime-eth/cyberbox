@@ -214,7 +214,7 @@ export default {
         margin-right: 0.9rem;
       }
       &-amount {
-        margin-left: 0.8rem;
+        margin-left: 1rem;
         font-weight: 600;
         font-size: 1.3rem;
         color: #63A60D;

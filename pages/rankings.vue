@@ -247,7 +247,7 @@ export default {
     rankingsList.map((item, index) => item.index = index + 1)
     this.filteredList = rankingsList
     const footerEl = document.querySelector('.footer')
-    if (rankingsList.length < 5 && process.browser && (window.innerWidth > 1182 || window.innerWidth <= 460)) {
+    if (rankingsList.length < 4 && process.browser && (window.innerWidth > 1182 || window.innerWidth <= 460)) {
       footerEl.classList.add('fixed')
     } else {
       footerEl.classList.remove('fixed')
