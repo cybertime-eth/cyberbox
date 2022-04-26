@@ -315,7 +315,7 @@ export default {
         }
       }
       &-live {
-        padding-bottom: 10.7rem;
+        padding-bottom: 4.5rem;
         &-title {
           text-align: center;
           font-family: Cabin-Medium;
@@ -347,7 +347,7 @@ export default {
           &-description {
             font-family: Cabin-Medium;
             font-weight: 400;
-            padding-top: 2rem;
+            padding-top: 0.8rem;
             font-size: 2.4rem;
             color: $grayLight;
           }
@@ -616,6 +616,7 @@ export default {
           &-co2 {
             width: 17.6rem;
             height: 11.2rem;
+            margin-top: 2.1rem;
             &-count {
               font-size: 3.2rem;
             }
@@ -642,8 +643,19 @@ export default {
             grid-template-columns: 1fr 1fr;
             grid-column-gap: 1.6rem;
             height: 37rem;
-            .collection-item {
+            .collection__item {
               height: 36.7rem;
+              &-info {
+                &-name {
+                  font-size: 1.4rem;
+                }
+                &-rank, &-id {
+                  font-size: 1.2rem;
+                }
+                &-details {
+                  font-size: 1.4rem;
+                }
+              }
             }
           }
           .btn-navigate {
