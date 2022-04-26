@@ -347,7 +347,7 @@ export default {
       return this.$store.state.collectionList.find(item => item.route === this.$route.params.collectionid)
     },
     pageTitle() {
-      return `${this.collection.name} | CyberBox NFT Marketplace`
+      return `${this.collection.name} | Cyberbox ReFi NFT Marketplace`
     },
     refiOffset() {
       return this.nft.refiOffset > 0 ? parseFloat(this.nft.refiOffset).toFixed(3) : 0

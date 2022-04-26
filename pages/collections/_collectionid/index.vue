@@ -200,7 +200,7 @@ export default {
   },
   computed: {
     pageTitle() {
-      return `${this.collection.name} | CyberBox NFT Marketplace`
+      return `${this.collection.name} | Cyberbox ReFi NFT Marketplace`
     },
     description() {
       return this.collection.description

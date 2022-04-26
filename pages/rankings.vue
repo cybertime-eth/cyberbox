@@ -121,7 +121,7 @@ export default {
   },
   computed: {
     pageTitle() {
-      return 'Rankings - NFT Marketplace on Celo'
+      return 'Rankings - Cyberbox ReFi NFT Marketplace'
     },
     description() {
       return 'Find the trends of the NFT collections right here, trading volume, floor price and all the information'
