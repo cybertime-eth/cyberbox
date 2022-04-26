@@ -12,7 +12,7 @@ export default {
       {vmid: 'title', hid: 'title', name: 'title', content: 'Cyberbox - ReFi NFT Marketplace'},
       {vmid: 'og:title', hid: 'og:title', property: 'og:title', content: 'Cyberbox - ReFi NFT Marketplace'},
       {vmid: 'description', hid: 'description', name: 'description', content: 'Regenerate nature by trading NFTs. Buy or gift NFT carbon offset certificates. Track your carbon status in realtime'},
-      {vmid: 'og:description', hid: 'og:description', property: 'og:description', content: 'Find and trade your favorites NFT collections on the Celo blockchain at CyberBox NFT Marketplace: Daopolis, CeloPunks, CeloToadz, Nomstronauts, CeloApes, CeloShapes, DimsofCelo'},
+      {vmid: 'og:description', hid: 'og:description', property: 'og:description', content: 'Regenerate nature by trading NFTs. Buy or gift NFT carbon offset certificates. Track your carbon status in realtime'},
       {vmid: 'og:image', hid: 'og:image', property: 'og:image', content: '/cyberbox.png'},
       {name: 'format-detection', content: 'telephone=no'}
     ],
