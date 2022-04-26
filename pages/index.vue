@@ -8,7 +8,7 @@
           <button class="refi__block-info-button explorer" @click="$router.push('/explorer')">Explorer NFT</button>
           <button class="refi__block-info-button gradient-button ranking" @click="$router.push('/rankings')">Rankings</button>
         </div>
-        <img class="refi__block-info-picture" src="/earth.svg" alt="earth">
+        <img class="refi__block-info-picture" src="/earth.png" alt="earth">
         <div class="refi__block-info-support">
           <h3 class="refi__block-info-support-title">Supported & Powered by</h3>
           <img class="refi__block-info-support-investors" :src="investorsIcon" alt="investors">
@@ -295,6 +295,7 @@ export default {
         }
       }
       &-picture {
+        width: 29.8rem;
         margin-top: 7rem;
       }
       &-support {
@@ -576,10 +577,11 @@ export default {
           text-align: center;
         }
         &-button {
+          display: block;
           width: 14.8rem;
           height: 4.8rem;
           &.explorer {
-            margin-right: 0.8rem;
+            margin-right: 0;
           }
           &.ranking {
             margin-top: 0.8rem;
