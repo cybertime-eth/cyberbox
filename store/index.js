@@ -780,7 +780,7 @@ export const actions = {
           peerMeta: {
             description: "",
             icons: [`${location.origin}/favicon.ico`],
-            name: "CyberBox - NFT Marketplace on Celo",
+            name: "Cyberbox - ReFi NFT Marketplace",
             url: location.origin
           },
           chainId: state.chainId,
