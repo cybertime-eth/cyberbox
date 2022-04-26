@@ -11,7 +11,9 @@
         <img class="refi__block-info-picture" src="/earth.png" alt="earth">
         <div class="refi__block-info-support">
           <h3 class="refi__block-info-support-title">Supported & Powered by</h3>
-          <img class="refi__block-info-support-investors" :src="investorsIcon" alt="investors">
+          <client-only>
+            <img class="refi__block-info-support-investors" :src="investorsIcon" alt="investors">
+          </client-only>
         </div>
         <div class="refi__block-info-live" v-if="totalCO2Amount > 0">
           <h3 class="refi__block-info-live-title">LIVE <span/> Carbon Offsetting</h3>
@@ -157,7 +159,7 @@ export default {
       }
     },
     investorsIcon() {
-      return this.isMobile() || (process.browser && window.innerWidth <= 460) ? '/investors-mobile.png' : '/investors.svg'
+      return this.isMobile() || (process.browser && window.innerWidth <= 460) ? '/investors-mobile.png' : '/investors.png'
     },
     listingPageCount() {
       if (!this.isMobile()) {
