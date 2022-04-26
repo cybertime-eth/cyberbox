@@ -644,7 +644,10 @@ export default {
             grid-column-gap: 1.6rem;
             height: 37rem;
             .collection__item {
-              height: 36.7rem;
+              height: 36rem;
+              &-image {
+                max-width: 14.4rem;
+              }
               &-info {
                 &-name {
                   font-size: 1.4rem;

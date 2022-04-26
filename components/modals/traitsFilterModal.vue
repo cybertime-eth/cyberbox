@@ -3,8 +3,11 @@
        <div class="modal__traits" ref="traits">
          <div class="modal__traits-body" ref="traits">
             <div class="modal__traits-header">
-              <img src="/logo.svg" alt="logo" >
-              <button class="modal__button gradient-button" @click="closeModal">Close</button>
+              <client-only>
+                <img :src="logoIcon" alt="logo">
+                <button class="modal__button gradient-button" @click="closeModal" v-if="!isMobile()">Close</button>
+                <button class="modal__button modal__button-close" @click="closeModal" v-else><img src="/close.svg"></button>
+              </client-only>
             </div>
             <div class="modal__traits-filter">
               <div class="modal__traits-filter-category" :key="idx" v-for="(category, idx) in traitCategories" v-if="category.values.length > 0">
@@ -45,6 +48,9 @@ export default {
     }
   },
   computed: {
+    logoIcon() {
+      return !this.isMobile() ? '/logo.svg' : '/mobile-logo2.svg'
+    },
     traitFilters() {
       return this.$store.state.traitFilters
     },
@@ -268,6 +274,10 @@ export default {
     &.disabled {
       pointer-events: none;
     }
+    &-close {
+      background: transparent;
+      padding: 0;
+    }
     &-more {
       width: 100%;
       background: $modalColor;
@@ -280,8 +290,56 @@ export default {
   @media (max-width: 460px) {
     &__traits {
       width: 100%;
+      margin: 0 !important;
+      &-header {
+        padding: 0.8rem 1.2rem 0.8rem 1rem;
+      }
+      &-filter {
+        padding-right: 0;
+        &-category {
+          &-name {
+            padding: 1.6rem 0.8rem;
+            font-family: OpenSans-SemiBold;
+            font-weight: 600;
+            font-size: 1.6rem;
+          }
+        }
+        &-item {
+          padding: 2rem 0.8rem;
+          &-checkbox {
+            &-check {
+              width: 2.4rem;
+              height: 2.4rem;;
+            }
+            &-name {
+              margin-left: 1.6rem;
+              font-family: OpenSans-SemiBold;
+              font-size: 1.4rem;
+            }
+          }
+          &-used {
+            &-count {
+              font-family: OpenSans-SemiBold;
+              font-size: 1.4rem;
+            }
+            &-percent {
+              font-size: 1.2rem;
+            }
+          }
+        }
+      }
+      .modal__button-more {
+        padding: 1rem;
+        font-size: 1.4rem;
+      }
       &-footer {
-        width: calc(100% - 40px);
+        width: calc(100% - 1.6rem);
+        padding: 1.6rem 0.8rem;
+        .modal__button {
+          font-family: OpenSans-SemiBold;
+          font-weight: 600;
+          font-size: 1.4rem;
+        }
       }
     }
   }

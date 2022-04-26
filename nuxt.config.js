@@ -1,7 +1,7 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'CyberBox - NFT Marketplace on Celo',
+    title: 'Cyberbox - ReFi NFT Marketplace',
     htmlAttrs: {
       lang: 'en'
     },
@@ -11,7 +11,7 @@ export default {
       {name: 'robots', content: 'max-image-preview:large'},
       {vmid: 'title', hid: 'title', name: 'title', content: 'CyberBox - NFT Marketplace on Celo'},
       {vmid: 'og:title', hid: 'og:title', property: 'og:title', content: 'CyberBox - NFT Marketplace on Celo'},
-      {vmid: 'description', hid: 'description', name: 'description', content: 'Find and trade your favorites NFT collections on the Celo blockchain at CyberBox NFT Marketplace: Daopolis, CeloPunks, CeloToadz, Nomstronauts, CeloApes, CeloShapes, DimsofCelo'},
+      {vmid: 'description', hid: 'description', name: 'description', content: 'Regenerate nature by trading NFTs. Buy or gift NFT carbon offset certificates. Track your carbon status in realtime'},
       {vmid: 'og:description', hid: 'og:description', property: 'og:description', content: 'Find and trade your favorites NFT collections on the Celo blockchain at CyberBox NFT Marketplace: Daopolis, CeloPunks, CeloToadz, Nomstronauts, CeloApes, CeloShapes, DimsofCelo'},
       {vmid: 'og:image', hid: 'og:image', property: 'og:image', content: '/cyberbox.png'},
       {name: 'format-detection', content: 'telephone=no'}

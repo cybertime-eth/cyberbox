@@ -794,8 +794,7 @@ export default {
         width: auto;
         height: 5.2rem;
         margin-right: .8rem;
-        font-size: 1.2rem;
-        min-width: 7.4rem;
+        font-size: 1rem;
         &-delimiter {
           display: none;
         }
