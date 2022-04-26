@@ -130,7 +130,7 @@ export default {
     this.$store.commit('changelistToken', '')
     const collectionInfo = await this.$store.dispatch('getCollectionInfo')
     this.nftServiceFee = collectionInfo.marketFee / 10
-    this.nftRoyalty = (collectionInfo.createrFee + collectionInfo.producerFee) / 10
+    this.nftRoyalty = collectionInfo.createrFee / 10
     this.nftProducerFee = collectionInfo.producerFee / 10
     if (this.nft.market_status === 'LISTED') {
       this.nftPrice = this.nft.price
