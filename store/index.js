@@ -49,6 +49,7 @@ export const state = () => ({
   raritySort: null,
   pagination: null,
   collectionSetting: null,
+  multiNftSymbols: ['knoxnft'],
 
   collectionList: [
     {
@@ -288,18 +289,18 @@ export const state = () => ({
       discord: 'https://discord.com/invite/ktSQm5ukbq',
       description: 'Celo Monkey Business CeloOrg 888 inspired generative NFTs'
     },
-    // {
-    //   id: 20,
-    //   name: 'KnoxerDAO',
-    //   route: 'knoxnft',
-    //   image: '/collections/knoxnft.jpg',
-    //   banner: '/collections/knoxnft-logo.png',
-    //   logo: '/collections/knoxnft-logo.png',
-    //   website: 'https://www.knoxdao.xyz/?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
-    //   twitter: 'https://twitter.com/KnoxEdgeDAO?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
-    //   discord: 'https://discord.gg/Ec5ZwdzZ?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
-    //   description: 'Knoxers are Celorians with wisdom beyond those of the same kind :and the ability to see the future:. According to ancient Celorian myths some Knoxers even possess diamond hands and laser eyes'
-    // },
+    {
+      id: 20,
+      name: 'KnoxerDAO',
+      route: 'knoxnft',
+      image: '/collections/knoxnft.jpg',
+      banner: '/collections/knoxnft-logo.png',
+      logo: '/collections/knoxnft-logo.png',
+      website: 'https://www.knoxdao.xyz/?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
+      twitter: 'https://twitter.com/KnoxEdgeDAO?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
+      discord: 'https://discord.gg/Ec5ZwdzZ?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
+      description: 'Knoxers are Celorians with wisdom beyond those of the same kind :and the ability to see the future:. According to ancient Celorian myths some Knoxers even possess diamond hands and laser eyes'
+    },
     // {
     //   id: 14,
     //   name: 'PixelAva',
@@ -383,7 +384,39 @@ export const actions = {
     }
     return newContractInfos
   },
+  async getMultiNftGraphData({commit}, filter) {
+    let condition = ''
+    if (filter === 'listed') {
+      condition = 'list_count_gt: 0'
+    } else if (filter === 'sold') {
+      condition = 'sell_count_gt: 0'
+    }
+    const query = gql`
+      query Sample {
+        multiNFTs(firt: 48 where: { nftSymbol: "${$nuxt.$route.params.collectionid}" ${condition} }) {
+          id
+          nftSymbol
+          keySting
+          image
+          mint_count
+          list_count
+          sell_count
+          sell_max_price
+          sell_min_price
+          sell_total_price
+          list_min_price
+          list_max_price
+        }
+      }`
+    const data = await this.$graphql.default.request(query)
+    const contrastInfos = data.multiNFTs
+    commit('setNewNftList', contrastInfos)
+    return contrastInfos
+  },
   async getGraphData({commit, state, getters, dispatch}, traitFilters) {
+    if (state.multiNftSymbols.includes($nuxt.$route.params.collectionid)) {
+      return await dispatch('getMultiNftGraphData')
+    }
     let sort = getters.paginationSort
     const collectionFilterCondition = getters.collectionFilterCondition
     let condition = $nuxt.$route.params.collectionid ? `where: { contract: "${$nuxt.$route.params.collectionid}" ${collectionFilterCondition}}` : ''
@@ -506,15 +539,15 @@ export const actions = {
     return data.contractInfos.length
   },
 
-  async getOwnedCollectionInfo({state}, contract) {
+  async getOwnedCollectionInfo({state}, multiNft) {
     if (!state.fullAddress) return {}
     const query = gql`
       query Sample {
-        all: contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" contract: "${contract}" }) {
+        all: contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" contract: "${multiNft.contract}" image: "${multiNft.image}" }) {
 			    id
           contract
         },
-        sale: contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" market_status: "LISTED" contract: "${contract}" }) {
+        sale: contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" market_status: "LISTED" contract: "${multiNft.contract}" image: "${multiNft.image}" }) {
 			    id
           contract
         }
@@ -589,6 +622,9 @@ export const actions = {
   },
 
   async getGraphDataListed({state, commit, getters, dispatch}, traitFilters) {
+    if (state.multiNftSymbols.includes($nuxt.$route.params.collectionid)) {
+      return await dispatch('getMultiNftGraphData', 'listed')
+    }
     const sort = getters.paginationSort
     const collectionFilterCondition = getters.collectionFilterCondition
     const fetchCount = state.raritySort ? 1000 : 48
@@ -642,6 +678,9 @@ export const actions = {
   },
 
   async getGraphDataSells({state, commit, getters, dispatch}, traitFilters) {
+    if (state.multiNftSymbols.includes($nuxt.$route.params.collectionid)) {
+      return await dispatch('getMultiNftGraphData', 'sold')
+    }
     const sort = getters.paginationSort
     const collectionFilterCondition = getters.collectionFilterCondition
     const fetchCount = state.raritySort ? 1000 : 48
@@ -900,54 +939,99 @@ export const actions = {
   // GET NFT
 
   async getNft({commit, state}, token) {
+    let nftQuery = ''
+    const isMultiNft = state.multiNftSymbols.includes(token.collectionId)
+    const infoAttributes = `
+      id
+      contract
+      contract_id
+      price
+      seller
+      owner
+      attributes
+      rarity_rank
+      contract_address
+      market_status
+      name
+      image
+      description
+      updatedAt
+      dna
+      trait
+      listData {
+        id
+        owner
+        price
+      }
+      bidData {
+        id
+        owner
+        bidder
+        price_total
+        price_value
+        price_fee
+      }
+      selled {
+        id
+        seller
+        buyer
+        price_total
+        price_value
+        price_fee
+      }
+    `
+    if (!isMultiNft) {
+      nftQuery = `
+        contractInfo: contractInfo(id: "${token.id}_${token.collectionId}") {
+          ${infoAttributes}
+        }
+      `
+    } else {
+      const address = state.fullAddress || localStorage.getItem('address')
+      nftQuery = `
+        contractInfos: contractInfos(first: 1 where: { contract: "${token.collectionId}" image_contains: "${token.id}" } orderBy: price orderDirection: asc ) {
+          ${infoAttributes}
+        }
+        ownedContractInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract: "${token.collectionId}" image_contains: "${token.id}" } orderBy: price orderDirection: asc ) {
+          ${infoAttributes}
+        }
+        listedContractInfos: contractInfos(first: 1 where: { contract: "${token.collectionId}" image_contains: "${token.id}" market_status: "LISTED" } orderBy: price orderDirection: asc ) {
+          ${infoAttributes}
+        }
+        multiNFTs: multiNFTs(first: 1 where: { nftSymbol: "${token.collectionId}" image_contains: "${token.id}" } ) {
+          id
+          nftSymbol
+          keySting
+          image
+          mint_count
+          list_count
+          sell_count
+          sell_max_price
+          sell_min_price
+          sell_total_price
+          list_min_price
+          list_max_price
+        }
+      `
+    }
     const query = gql`
       query Sample {
-        contractInfo: contractInfo(id: "${token.id}_${token.collectionId}") {
-          id
-          contract
-          contract_id
-          price
-          seller
-          owner
-          attributes
-          rarity_rank
-          contract_address
-          market_status
-          name
-          image
-          description
-          updatedAt
-          dna
-          trait
-          listData {
-            id
-            owner
-            price
-          }
-          bidData {
-            id
-            owner
-            bidder
-            price_total
-            price_value
-            price_fee
-          }
-          selled {
-            id
-            seller
-            buyer
-            price_total
-            price_value
-            price_fee
-          }
-        }
+        ${nftQuery}
         contracts: contracts(first: 1 where: { nftSymbol: "${token.collectionId}" }) {
           producerFee
         }
       }`;
     const data = await this.$graphql.default.request(query)
+    let multiNftInfo = data.contractInfos[0]
+    if (data.ownedContractInfos.length > 0) {
+      multiNftInfo = data.ownedContractInfos[0]
+    }
+    else if (data.listedContractInfos.length > 0) {
+      multiNftInfo = data.listedContractInfos[0]
+    }
     const nftInfo = {
-      ...data.contractInfo,
+      ...(isMultiNft ? multiNftInfo : data.contractInfo),
+      multiNft: (isMultiNft ? data.multiNFTs[0] : null),
       producerFee: data.contracts[0].producerFee
     }
     commit('setNewNft', nftInfo)

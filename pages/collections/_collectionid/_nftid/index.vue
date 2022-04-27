@@ -284,15 +284,25 @@ export default {
     address() {
       return this.$store.state.address
     },
+    isMultiNft() {
+      return this.$store.state.multiNftSymbols.includes(this.nft.contract)
+    },
     nftName() {
-      if (!this.nft.name) return ''
-      return this.nft.contract !== 'nomdom' ? this.nft.name : `${this.nft.name}.nom`
+      if (!this.isMultiNft) {
+        if (!this.nft.name) {
+          return ''
+        } else {
+          return this.nft.contract !== 'nomdom' ? this.nft.name : `${this.nft.name}.nom`
+        }
+      } else {
+        return this.$store.state.collectionList.find(item => item.route === this.nft.contract).name
+      }
     },
     totalQuantityCount() {
-      return this.collectionInfo.mint_count
+      return this.nft.multiNft ? this.nft.multiNft.mint_count : 0
     },
     totalOwnedCount() {
-      return this.collectionInfo.owned_count || 0
+      return this.collectionInfo.owned_count
     },
     saleCountInfo() {
       if (this.totalOwnedCount && (this.seller || (!this.seller && this.market_status !== 'LISTED'))) {
@@ -304,9 +314,9 @@ export default {
     },
     quantityCountInfo() {
       if (this.seller || (!this.seller && this.nft.market_status !== 'LISTED')) {
-        return this.totalQuantityCount ? `Quantity: ${this.totalOwnedCount} of ${this.totalQuantityCount}` : null
+        return this.totalQuantityCount && (this.totalOwnedCount !== undefined) ? `Quantity: ${this.totalOwnedCount} of ${this.totalQuantityCount}` : null
       } else {
-        const totalListCount = this.collectionInfo.list_count
+        const totalListCount = this.nft.multiNft ? this.nft.multiNft.list_count : 0
         return totalListCount ? `${totalListCount - this.collectionInfo.owned_list_count} of ${this.totalQuantityCount} available` : null
       }
     },
@@ -420,7 +430,7 @@ export default {
       if (multiNftSymbols.includes(this.$route.params.collectionid)) {
         if ((!this.seller || (this.seller && this.nft.market_status !== 'LISTED'))) {
           const collectionResult = await this.$store.dispatch('getCollectionInfo') || {}
-          const ownedCollectionInfo = await this.$store.dispatch('getOwnedCollectionInfo', this.$route.params.collectionid)
+          const ownedCollectionInfo = await this.$store.dispatch('getOwnedCollectionInfo', this.nft)
           this.collectionInfo = {
             ...collectionResult,
             ...ownedCollectionInfo

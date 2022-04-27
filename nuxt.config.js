@@ -49,7 +49,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-resync-refi',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/celo-resync-multinft',
         options: {}
       },
       ubeswap: {
