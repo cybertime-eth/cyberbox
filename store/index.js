@@ -571,7 +571,7 @@ export const actions = {
   async getLatestListings({dispatch}) {
     const query = gql`
       query Sample {
-        contractLists(first: 12 orderBy: updatedAt, orderDirection: desc) {
+        contractLists(first: 12 orderBy: updatedAt, orderDirection: desc where: { contract_not: "knoxnft"}) {
 			    id
           contract
           contract_id

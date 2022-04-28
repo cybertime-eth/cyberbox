@@ -145,7 +145,7 @@ export default {
           })
         }
       }
-      this.filteredNft = this.listNft
+      this.filteredNft = this.listNft.filter(item => item.contract !== 'knoxnft')
     },
     async fetchMyCollection() {
       this.$store.commit('changeCountPage', 1)
@@ -170,7 +170,7 @@ export default {
       const newCollectionFilters = this.collectionFilters
       for (let collection of this.$store.state.collectionList) {
         const nftCount = await this.$store.dispatch('getCollectionCountNft', collection.route)
-        if (nftCount > 0) {
+        if (nftCount > 0 && collection.route !== 'knoxnft')  {
           const filterIndex = newCollectionFilters.findIndex(item => item.contract === collection.route)
           if (filterIndex >= 0) {
             newCollectionFilters[filterIndex].count = nftCount
@@ -181,9 +181,9 @@ export default {
               image: `/${collection.route}.png`,
               count: nftCount
             })
-            if (collection.route === 'knoxnft' && !this.multiNftInfo[collection.route]) {
-              this.loadOwnedMultiNftInfo(collection.route)
-            }
+            // if (collection.route === 'knoxnft' && !this.multiNftInfo[collection.route]) {
+            //   this.loadOwnedMultiNftInfo(collection.route)
+            // }
           }
           this.collectionFilters = newCollectionFilters
         }
@@ -210,7 +210,7 @@ export default {
         this.$store.commit('changeSortData', 'myNft')
         this.listNft = await this.$store.dispatch('getGraphData')
         this.listNft.map(item => item.price = item.price / 1000)
-        this.filteredNft = this.listNft
+        this.filteredNft = this.listNft.filter(item => item.contract !== 'knoxnft')
       } else {
         let filteredNftList = []
         let filterNftCount = 0
@@ -230,7 +230,7 @@ export default {
           this.$store.commit('changeMyCollectionSort', payload)
           this.listNft = await this.$store.dispatch('getGraphData')
           this.listNft.map(item => item.price = item.price / 1000)
-          this.filteredNft = this.listNft
+          this.filteredNft = this.listNft.filter(item => item.contract !== 'knoxnft')
         }
       }
 
