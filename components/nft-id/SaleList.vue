@@ -222,7 +222,8 @@ export default {
     },
     completeSell(newPrice) {
       this.updateNftStatus({
-        ...this.currNft,
+		...this.currNft,
+		market_status: 'LISTED',
         price: newPrice,
         selling: false
       })
