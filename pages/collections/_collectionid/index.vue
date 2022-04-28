@@ -212,6 +212,8 @@ export default {
           break
         case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
           break
+        case 'knoxnft': imageSrc = '/collections/KnoxersDAO.png'
+          break
         default: imageSrc = this.collection.image
           break
       }
