@@ -72,7 +72,7 @@ export default {
     },
     nftName() {
       if (this.multiNft) {
-        return this.$store.state.collectionList.find(item => item.route === this.nft.nftSymbol).name
+        return this.$store.state.multiNftNames.find(item => this.nft.image.includes(item.id)).name
       } else {
         return `${this.nft.name || this.nft.contract_name}${this.nft.contract === 'nomdom' ? '.nom' : ''}`
       }

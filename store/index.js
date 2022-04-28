@@ -17,7 +17,6 @@ const ContractKit = require('@celo/contractkit')
 import filter from './../config.js'
 import redstone from 'redstone-api'
 export const state = () => ({
-  // marketMain: '0x748198af1470338c2CA650F2818DcCef9DC1FE40',
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A', 
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
@@ -51,6 +50,12 @@ export const state = () => ({
   pagination: null,
   collectionSetting: null,
   multiNftSymbols: ['knoxnft'],
+  multiNftNames: [
+    { id: 'COMMON', name: 'Knoxer' },
+    { id: 'LEGENDARY', name: 'LydianKnoxer' },
+    { id: 'RARE', name: 'SuperKnoxer' },
+    { id: 'SUPER-RARE', name: 'MegaKnoxer' }
+  ],
 
   collectionList: [
     {
@@ -1494,7 +1499,7 @@ export const mutations = {
         ...nft,
         price: nft.price ? nft.price / 1000 : nft.price_total / 1000
       })
-	}
+  	}
 	state.pagination = null
   },
   addNftToList(state, list) {

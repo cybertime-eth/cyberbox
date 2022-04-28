@@ -58,18 +58,15 @@
                                         Edit
                                         <img class="listing__table-content-item-buttons-button-loading" src="/loading-button-black.svg" alt="loading" v-if="nft.selling || nft.deleting">
                                     </button>
-                                    <div class="listing__table-content-item-buttons-dropdown" v-if="nft.showDropdown">
+                                    <div class="listing__table-content-item-buttons-dropdown" :class="{ sell: !nftListedByOwner(nft) }" v-if="nft.showDropdown">
                                         <div class="listing__table-content-item-buttons-dropdown-item" @click="showRemoveNftAlert(nft)" v-if="nftListedByOwner(nft)">
                                             <img src="/outline-sell.svg" alt="delete">
                                             <h3>Remove<br/>from market</h3>
                                         </div>
-                                        <div class="listing__table-content-item-buttons-dropdown-item" @click="showSellModal(nft)" v-if="nftListedByOwner(nft)">
-                                            <img src="/refresh-dollar.svg" alt="change">
-                                            <h3>Change price</h3>
+                                        <div class="listing__table-content-item-buttons-dropdown-item" @click="showSellModal(nft)">
+                                            <img src="/refresh-dollar.svg" alt="sell">
+                                            <h3>{{ nftListedByOwner(nft) ? 'Change price' : 'Sell' }}</h3>
                                         </div>
-										<button class="listing__table-content-item-buttons-button listing__table-content-item-buttons-button-sell" @click="showSellModal(nft)" v-else>
-											Sell<img class="listing__table-content-item-buttons-button-loading" src="/loading-button.svg" alt="loading" v-if="nft.selling">
-										</button>
                                     </div>
                                 </div>
                                 <button class="listing__table-content-item-buttons-button" @click="showBuyModal(nft)" v-else>
@@ -445,6 +442,9 @@ export default {
               margin-top: 0.1rem;
               box-shadow: 0px 5px 30px rgb(0 0 0 / 5%);
               border-radius: 4px;
+			  &.sell {
+				width: 100%;
+			  }
               &-item {
                 display: flex;
                 align-items: flex-start;
@@ -453,7 +453,8 @@ export default {
                   margin-right: 1.3rem;
                 }
                 h3 {
-                  font-size: 1.4rem
+                  font-size: 1.4rem;
+				  line-height: 1;
                 }
                 &:hover {
                   background: rgb(0 0 0 / 4%)

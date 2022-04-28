@@ -295,7 +295,7 @@ export default {
           return this.nft.contract !== 'nomdom' ? this.nft.name : `${this.nft.name}.nom`
         }
       } else {
-        return this.$store.state.collectionList.find(item => item.route === this.nft.contract).name
+        return this.$store.state.multiNftNames.find(item => this.nft.image.includes(item.id)).name
       }
     },
     totalQuantityCount() {
