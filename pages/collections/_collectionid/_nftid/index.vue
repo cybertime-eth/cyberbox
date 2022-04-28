@@ -5,7 +5,7 @@
         <a class="nft__crumbs" @click="handleClickBack">
           Back
           <img src="/array-right.svg" alt="array">
-          <span>{{ nftName }}</span>
+          <span>{{ collectionName }}</span>
         </a>
 
 
@@ -21,7 +21,7 @@
             <div v-if="!nftReloading">
               <div class="nft__block-info-collection">
                 <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
-                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2>
+                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName }}</h2>
               </div>
               <h1 class="nft__block-info-name">{{ nftName }}</h1>
   <!--            <p class="nft__block-info-date" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/time.svg" alt="time"> Sale ends in-->
@@ -70,7 +70,7 @@
             <div v-if="!nftReloading">
               <div class="nft__block-info-collection">
                 <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
-                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2>
+                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName }}</h2>
               </div>
               <h1 class="nft__block-info-name">{{ nftName }}</h1>
   <!--            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in-->
@@ -295,7 +295,7 @@ export default {
           return this.nft.contract !== 'nomdom' ? this.nft.name : `${this.nft.name}.nom`
         }
       } else {
-        return this.$store.state.multiNftNames.find(item => this.nft.image.includes(item.id)).name
+        return this.$store.state.multiNftNames.find(item => item.id === this.$route.params.nftid).name
       }
     },
     totalQuantityCount() {
@@ -379,6 +379,11 @@ export default {
     },
     refiPrice() {
       return this.$store.state.cMCO2Price
+    },
+    collectionName() {
+      if (!this.nft.contract) return ''
+      const collection = this.$store.state.collectionList.find(item => item.route === this.nft.contract)
+      return collection?.name
     }
   },
   head() {
@@ -395,11 +400,6 @@ export default {
   methods: {
     collectionIcon(contract) {
       return contract ? `/${contract}.png` : null
-    },
-    collectionName(contract) {
-      if (!contract) return ''
-      const collection = this.$store.state.collectionList.find(item => item.route === contract)
-      return collection?.name
     },
     async loadNft() {
       const nft = await this.$store.dispatch('getNft', {
