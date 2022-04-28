@@ -12,9 +12,12 @@
                 <div class="listing__table-content">
                     <div class="listing__table-content-item" :key="nft.contract_id" v-for="nft of nftList" v-if="!isMobile()">
                         <h3 class="quantitiy-num">1</h3>
-                        <div class="listing__table-content-item-price">
+                        <div class="listing__table-content-item-price" v-if="nft.market_status === 'LISTED'">
                             <h3 class="listing__table-content-item-price-celo"><img src="/celo.svg" alt="celo"> {{ nft.price }}</h3>
                             <h3 class="listing__table-content-item-price-usd">${{ nftDollarPrice(nft) }}</h3>
+                        </div>
+						<div class="listing__table-content-item-price" v-else>
+                            <h3 class="listing__table-content-item-price-usd">-</h3>
                         </div>
                         <h3>{{ nftFromAddress(nft) }}</h3>
                         <h3 class="listing__table-content-item-date">
@@ -22,11 +25,14 @@
                             <a :href="nftTxnAddress(nft)" target="_blank"><img src="/share.svg" alt="share"></a>
                         </h3>
                         <div class="listing__table-content-item-buttons">
-                            <button class="listing__table-content-item-buttons-button listing__table-content-item-buttons-button-remove" @click="showRemoveNftAlert(nft)" v-if="nftOwned(nft)">
+                            <button class="listing__table-content-item-buttons-button listing__table-content-item-buttons-button-remove" @click="showRemoveNftAlert(nft)" v-if="nftListedByOwner(nft)">
                                 Remove<img class="listing__table-content-item-buttons-button-loading" src="/loading-button-black.svg" alt="loading" v-if="nft.deleting">
                             </button>
-                            <button class="listing__table-content-item-buttons-button listing__table-content-item-buttons-button-change" @click="showSellModal(nft)" v-if="nftOwned(nft)">
+                            <button class="listing__table-content-item-buttons-button listing__table-content-item-buttons-button-change" @click="showSellModal(nft)" v-if="nftListedByOwner(nft)">
                                 Change price<img class="listing__table-content-item-buttons-button-loading" src="/loading-button-black.svg" alt="loading" v-if="nft.selling">
+                            </button>
+							<button class="listing__table-content-item-buttons-button" @click="showSellModal(nft)" v-else-if="nftOwned(nft)">
+                                Sell<img class="listing__table-content-item-buttons-button-loading" src="/loading-button.svg" alt="loading" v-if="nft.selling">
                             </button>
                             <button class="listing__table-content-item-buttons-button" @click="showBuyModal(nft)" v-else>
                                 Buy<img class="listing__table-content-item-buttons-button-loading" src="/loading-button.svg" alt="loading" v-if="nft.buying">
@@ -39,10 +45,13 @@
                             <p class="listing__table-content-item-info-date">{{ nftUpdatedDate(nft) }}</p>
                         </div>
                         <div class="listing__table-content-item-buttons">
-                            <div class="listing__table-content-item-price">
+                            <div class="listing__table-content-item-price" v-if="nft.market_status === 'LISTED'">
                                 <h3 class="listing__table-content-item-price-celo"><img src="/celo.svg" alt="celo"> {{ nft.price }}</h3>
                                 <p class="listing__table-content-item-price-usd">${{ nftDollarPrice(nft) }}</p>
                             </div>
+							<div class="listing__table-content-item-price" v-else>
+								<h3 class="listing__table-content-item-price-usd">-</h3>
+							</div>
                             <div class="listing__table-content-item-buttons">
                                 <div class="listing__table-content-item-buttons-wrapper" v-if="nftOwned(nft)">
                                     <button class="listing__table-content-item-buttons-button listing__table-content-item-buttons-button-edit" @click="showNftActionsDropdown(nft)">
@@ -50,14 +59,17 @@
                                         <img class="listing__table-content-item-buttons-button-loading" src="/loading-button-black.svg" alt="loading" v-if="nft.selling || nft.deleting">
                                     </button>
                                     <div class="listing__table-content-item-buttons-dropdown" v-if="nft.showDropdown">
-                                        <div class="listing__table-content-item-buttons-dropdown-item" @click="showRemoveNftAlert(nft)">
+                                        <div class="listing__table-content-item-buttons-dropdown-item" @click="showRemoveNftAlert(nft)" v-if="nftListedByOwner(nft)">
                                             <img src="/outline-sell.svg" alt="delete">
                                             <h3>Remove<br/>from market</h3>
                                         </div>
-                                        <div class="listing__table-content-item-buttons-dropdown-item" @click="showSellModal(nft)">
+                                        <div class="listing__table-content-item-buttons-dropdown-item" @click="showSellModal(nft)" v-if="nftListedByOwner(nft)">
                                             <img src="/refresh-dollar.svg" alt="change">
                                             <h3>Change price</h3>
                                         </div>
+										<button class="listing__table-content-item-buttons-button listing__table-content-item-buttons-button-sell" @click="showSellModal(nft)" v-else>
+											Sell<img class="listing__table-content-item-buttons-button-loading" src="/loading-button.svg" alt="loading" v-if="nft.selling">
+										</button>
                                     </div>
                                 </div>
                                 <button class="listing__table-content-item-buttons-button" @click="showBuyModal(nft)" v-else>
@@ -176,9 +188,12 @@ export default {
     },
     nftTxnAddress(nft) {
       return `https://explorer.celo.org/address/${nft.contract_address}`
-    },
+	},
     nftOwned(nft) {
-      return this.$store.state.fullAddress !== nft.owner
+      return this.$store.state.fullAddress === nft.owner
+	},
+	nftListedByOwner(nft) {
+      return this.nftOwned(nft) && nft.market_status === 'LISTED'
     },
     showSellModal(nft) {
       if (nft.selling || nft.deleting) return
@@ -346,6 +361,7 @@ export default {
         }
         &-buttons {
           display: flex;
+		  align-items: center;
           &-button {
             display: flex;
             align-items: center;

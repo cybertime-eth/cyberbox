@@ -33,7 +33,9 @@
         <span class="collection__item-info-price-quantity">{{ nftQuantity }}</span>
       </div>
       <h3 class="collection__item-info-price-null" v-else>Not for sale <span class="collection__item-info-price-quantity">{{ nftQuantity }}</span></h3>
-      <button class="collection__item-info-details" @click="routeNft(true)">Details</button>
+      <div class="collection__item-info-details-box">
+        <button class="collection__item-info-details" @click="routeNft(true)">Details</button>
+      </div>
     </div>
     <transfer :nft="nft" @closeModal="showTransferModal = false" v-if="showTransferModal" />
   </div>
@@ -210,6 +212,8 @@ export default {
 <style lang="scss">
 .collection {
   &__item {
+    display: flex;
+    flex-direction: column;
     width: 20rem;
     height: 45rem;
     border-radius: .4rem;
@@ -272,6 +276,9 @@ export default {
       }
     }
     &-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
       padding: 1.6rem .8rem 2.4rem;
       &-name {
         white-space: nowrap;
@@ -345,6 +352,12 @@ export default {
         font-size: 1.3rem;
         margin-top: 1.5rem;
         background: $modalColor;
+        &-box {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+        }
       }
     }
     &:hover {

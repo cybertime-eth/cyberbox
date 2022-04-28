@@ -105,7 +105,7 @@ export default {
   },
   methods: {
     isMultiNft(nft) {
-      return this.$store.state.multiNftSymbols.includes(nft.contract)
+      return this.$store.state.multiNftSymbols.includes(nft.nftSymbol)
     },
     async reloadMyCollection() {
       if (!localStorage.getItem('move_back')) {
@@ -130,7 +130,7 @@ export default {
       if (!this.isMultiNft(nft)) {
         return `/collections/${nft.contract}/${nft.contract !== 'nomdom' ? nft.contract_id : nft.image}`
       } else {
-        return `/collections/${nft.contract}/${nft.image.substring(nft.image.lastIndexOf('/') + 1).split('.')[0]}`
+        return `/collections/${nft.nftSymbol}/${nft.image.substring(nft.image.lastIndexOf('/') + 1).split('.')[0]}`
       }
     },
     showFixedFooter(show) {
@@ -144,7 +144,7 @@ export default {
     async addMyCollection() {
       const result = await this.$store.dispatch('getGraphData')
       for (let nft of result) {
-        if (nft.contract !== 'nom' && nft.contract !== 'knoxnft') {
+        if (nft.contract !== 'nom') {
           this.listNft.push({
             ...nft,
             price: nft.price / 1000
@@ -205,7 +205,7 @@ export default {
         this.$store.commit('changeSortData', 'myNft')
         this.listNft = await this.$store.dispatch('getGraphData')
         this.listNft.map(item => item.price = item.price / 1000)
-        this.filteredNft = this.listNft.filter(item => item.contract !== 'knoxnft')
+        this.filteredNft = this.listNft
       } else {
         let filteredNftList = []
         let filterNftCount = 0
@@ -225,7 +225,7 @@ export default {
           this.$store.commit('changeMyCollectionSort', payload)
           this.listNft = await this.$store.dispatch('getGraphData')
           this.listNft.map(item => item.price = item.price / 1000)
-          this.filteredNft = this.listNft.filter(item => item.contract !== 'knoxnft')
+          this.filteredNft = this.listNft
         }
       }
 

@@ -1,5 +1,5 @@
 import Web3 from 'web3'
-import {ethers, Wallet, providers, BigNumber} from 'ethers'
+import {ethers, providers, BigNumber} from 'ethers'
 import WalletConnectProvider from "@walletconnect/web3-provider"
 import { mobileLinkChoiceKey, setLocal, removeLocal } from "@walletconnect/utils"
 import ENS from "@ensdomains/ensjs"
@@ -17,7 +17,8 @@ const ContractKit = require('@celo/contractkit')
 import filter from './../config.js'
 import redstone from 'redstone-api'
 export const state = () => ({
-  marketMain: '0x748198af1470338c2CA650F2818DcCef9DC1FE40',
+  // marketMain: '0x748198af1470338c2CA650F2818DcCef9DC1FE40',
+  marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A', 
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   user: {},
@@ -423,7 +424,7 @@ export const actions = {
     let rarityNfts = null
     let queryTables = ''
     const queryFormat = `
-      contractInfos(sort first: 48 condition) {
+    contractInfos: contractInfos(sort first: 48 condition) {
         id
         contract
         contract_id
@@ -463,6 +464,20 @@ export const actions = {
           price_fee
         }
       }
+      multiNFTs: multiNFTs(firt: 48) {
+        id
+        nftSymbol
+        keySting
+        image
+        mint_count
+        list_count
+        sell_count
+        sell_max_price
+        sell_min_price
+        sell_total_price
+        list_min_price
+        list_max_price
+      }
     `
     if (traitFilters && traitFilters.length > 0) {
       traitFilters.forEach((item, index) => {
@@ -500,6 +515,22 @@ export const actions = {
     }
     if ($nuxt.$route.params.collectionid !== 'nomdom') {
       contractInfos = await dispatch('getRarirtyCollections', { contractInfos: contractInfos, rarityNfts })
+    }
+    if ($nuxt.$route.name === 'mycollection') {
+      let multiNftInfos = contractInfos.filter(item => state.multiNftSymbols.includes(item.contract))
+      if (multiNftInfos.length > 0) {
+        const nftImages = multiNftInfos.map(item => item.image)
+        const multiNftIds = multiNftInfos.filter((item, index) => nftImages.indexOf(item.image) === index).map(item => item.id)
+        contractInfos = contractInfos.filter(item => !state.multiNftSymbols.includes(item.contract) || (state.multiNftSymbols.includes(item.contract) && multiNftIds.includes(item.id)))
+        contractInfos = contractInfos.map(item => {
+          if (state.multiNftSymbols.includes(item.contract)) {
+            const newItem = data.multiNFTs.find(nft => nft.nftSymbol === item.contract && nft.image === item.image) || {}
+            newItem.price = newItem.list_min_price
+            return newItem
+          }
+          return item
+        })
+      }
     }
     state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
     return contractInfos
@@ -579,7 +610,7 @@ export const actions = {
           description
           updatedAt
         },
-        listed: contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" contract: "${state.nft.contract}" market_status: "LISTED" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
+        owned: contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" contract: "${state.nft.contract}" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
 			    id
           contract
           contract_id
@@ -597,7 +628,7 @@ export const actions = {
       }`
     const data = await this.$graphql.default.request(query)
     return [
-      ...data.listed,
+      ...data.owned,
       ...data.sale
     ]
   },
@@ -992,6 +1023,9 @@ export const actions = {
         contractInfos: contractInfos(first: 1 where: { contract: "${token.collectionId}" image_contains: "${token.id}" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
         }
+        ownedListedInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract: "${token.collectionId}" image_contains: "${token.id}" market_status: "LISTED" } orderBy: price orderDirection: asc ) {
+          ${infoAttributes}
+        }
         ownedContractInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract: "${token.collectionId}" image_contains: "${token.id}" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
         }
@@ -1025,7 +1059,10 @@ export const actions = {
     let multiNftInfo = null
     if (isMultiNft) {
       multiNftInfo = data.contractInfos[0]
-      if (data.ownedContractInfos.length > 0) {
+      if (data.ownedListedInfos.length > 0) {
+        multiNftInfo = data.ownedListedInfos[0]
+      }
+      else if (data.ownedContractInfos.length > 0) {
         multiNftInfo = data.ownedContractInfos[0]
       }
       else if (data.listedContractInfos.length > 0) {
