@@ -17,7 +17,7 @@ const ContractKit = require('@celo/contractkit')
 import filter from './../config.js'
 import redstone from 'redstone-api'
 export const state = () => ({
-  marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
+  marketMain: '0x748198af1470338c2CA650F2818DcCef9DC1FE40',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A', 
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   user: {},
@@ -1022,16 +1022,19 @@ export const actions = {
         }
       }`;
     const data = await this.$graphql.default.request(query)
-    let multiNftInfo = data.contractInfos[0]
-    if (data.ownedContractInfos.length > 0) {
-      multiNftInfo = data.ownedContractInfos[0]
-    }
-    else if (data.listedContractInfos.length > 0) {
-      multiNftInfo = data.listedContractInfos[0]
+    let multiNftInfo = null
+    if (isMultiNft) {
+      multiNftInfo = data.contractInfos[0]
+      if (data.ownedContractInfos.length > 0) {
+        multiNftInfo = data.ownedContractInfos[0]
+      }
+      else if (data.listedContractInfos.length > 0) {
+        multiNftInfo = data.listedContractInfos[0]
+      }
     }
     const nftInfo = {
       ...(isMultiNft ? multiNftInfo : data.contractInfo),
-      multiNft: (isMultiNft ? data.multiNFTs[0] : null),
+      multiNft: (isMultiNft && data.multiNFTs.length > 0 ? data.multiNFTs[0] : null),
       producerFee: data.contracts[0].producerFee
     }
     commit('setNewNft', nftInfo)

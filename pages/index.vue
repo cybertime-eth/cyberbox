@@ -134,7 +134,7 @@ export default {
       cmco2Price = await this.$store.dispatch('getCMCO2TokenPrice')
     }
     const collections = await this.$store.dispatch('getCollectionInfo', true)
-    const invisibleTokens = ['knoxnft', 'cconnectpunks']
+    const invisibleTokens = ['cconnectpunks']
     let totalCO2Amount = 0
     this.collectionList = collections.filter(item => !invisibleTokens.includes(item.nftSymbol)).map(item => {
       const co2celoPrice = item.sell_refi_price / 1000 * item.producerFee / 1000 * cmco2Price

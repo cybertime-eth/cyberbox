@@ -116,11 +116,7 @@ export default {
     },
     nftQuantity() {
       if (this.multiNft) {
-        if (this.priceVisible) {
-          return `${this.nft.list_count}/${this.nft.mint_count}`
-        } else {
-          return `${this.nft.mint_count - this.nft.list_count}/${this.nft.mint_count}`
-        }
+        return `${this.nft.list_count}/${this.nft.mint_count}`
       } else {
         return ''
       }
