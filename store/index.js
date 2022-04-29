@@ -390,6 +390,24 @@ export const actions = {
     }
     return newContractInfos
   },
+  replaceMultiNftCollections({state}, collectionData) {
+	let contractInfos = collectionData.contractInfos
+	let multiNftInfos = contractInfos.filter(item => state.multiNftSymbols.includes(item.contract))
+	if (multiNftInfos.length > 0) {
+	  const nftImages = multiNftInfos.map(item => item.image)
+	  const multiNftIds = multiNftInfos.filter((item, index) => nftImages.indexOf(item.image) === index).map(item => item.id)
+	  contractInfos = contractInfos.filter(item => !state.multiNftSymbols.includes(item.contract) || (state.multiNftSymbols.includes(item.contract) && multiNftIds.includes(item.id)))
+	  contractInfos = contractInfos.map(item => {
+		if (state.multiNftSymbols.includes(item.contract)) {
+		  const newItem = collectionData.multiNFTs.find(nft => nft.nftSymbol === item.contract && nft.image === item.image) || {}
+		  newItem.price = newItem.list_min_price
+		  return newItem
+		}
+		return item
+	  })
+	}
+	return contractInfos
+  },
   async getMultiNftGraphData({commit}, filter) {
     let condition = ''
     if (filter === 'listed') {
@@ -522,20 +540,10 @@ export const actions = {
       contractInfos = await dispatch('getRarirtyCollections', { contractInfos: contractInfos, rarityNfts })
     }
     if ($nuxt.$route.name === 'mycollection') {
-      let multiNftInfos = contractInfos.filter(item => state.multiNftSymbols.includes(item.contract))
-      if (multiNftInfos.length > 0) {
-        const nftImages = multiNftInfos.map(item => item.image)
-        const multiNftIds = multiNftInfos.filter((item, index) => nftImages.indexOf(item.image) === index).map(item => item.id)
-        contractInfos = contractInfos.filter(item => !state.multiNftSymbols.includes(item.contract) || (state.multiNftSymbols.includes(item.contract) && multiNftIds.includes(item.id)))
-        contractInfos = contractInfos.map(item => {
-          if (state.multiNftSymbols.includes(item.contract)) {
-            const newItem = data.multiNFTs.find(nft => nft.nftSymbol === item.contract && nft.image === item.image) || {}
-            newItem.price = newItem.list_min_price
-            return newItem
-          }
-          return item
-        })
-      }
+	  contractInfos = await dispatch('replaceMultiNftCollections', {
+		contractInfos,
+		multiNFTs: data.multiNFTs
+	  })
     }
     state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
     return contractInfos
@@ -640,8 +648,8 @@ export const actions = {
   async getLatestListings({dispatch}) {
     const query = gql`
       query Sample {
-        contractLists(first: 12 orderBy: updatedAt, orderDirection: desc) {
-			    id
+        contractLists: contractLists(first: 12 orderBy: updatedAt, orderDirection: desc) {
+		  id
           contract
           contract_id
           mint_key
@@ -650,10 +658,28 @@ export const actions = {
           image
           owner
           updatedAt
-        },
+		}
+		multiNFTs: multiNFTs(firt: 48) {
+		  id
+		  nftSymbol
+		  keySting
+		  image
+		  mint_count
+		  list_count
+		  sell_count
+		  sell_max_price
+		  sell_min_price
+		  sell_total_price
+		  list_min_price
+		  list_max_price
+		}
       }`
     const data = await this.$graphql.default.request(query)
-    const contractInfos = await dispatch('getRarirtyCollections', { contractInfos: data.contractLists })
+	let contractInfos = await dispatch('getRarirtyCollections', { contractInfos: data.contractLists })
+	contractInfos = await dispatch('replaceMultiNftCollections', {
+	  contractInfos,
+	  multiNFTs: data.multiNFTs
+	})
     return contractInfos
   },
 

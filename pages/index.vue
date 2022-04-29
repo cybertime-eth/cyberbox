@@ -30,7 +30,7 @@
             <carousel :per-page="1" :navigate-to="listingPageNum" :mouse-drag="false" :paginationEnabled="false" :speed="1000">
               <slide :key="pageNum" v-for="pageNum of listingPageCount">
                 <div class="refi__block-listings-items-slide">
-                  <nft :nft="nft" :key="index"  v-for="(nft, index) in pageListings(pageNum)" :owner="nftOwned(nft)" :route="`/collections/${nft.contract}/${routeNftId(nft)}`"/>
+                  <nft :nft="nft" :key="index"  v-for="(nft, index) in pageListings(pageNum)" :owner="nftOwned(nft)" :multiNft="isMultiNft(nft)" :route="nftRoute(nft)"/>
                 </div>
               </slide>
             </carousel>
@@ -183,11 +183,18 @@ export default {
     }
   },
   methods: {
-    routeNftId(nft) {
-      return nft.contract !== 'nomdom' ? nft.contract_id : nft.image
-    },
     nftOwned(nft) {
       return nft.owner && nft.owner.toLowerCase() === this.$store.state.fullAddress
+    },
+    isMultiNft(nft) {
+      return this.$store.state.multiNftSymbols.includes(nft.nftSymbol)
+    },
+    nftRoute(nft) {
+      if (!this.isMultiNft(nft)) {
+        return `/collections/${nft.contract}/${nft.contract !== 'nomdom' ? nft.contract_id : nft.image}`
+      } else {
+        return `/collections/${nft.nftSymbol}/${nft.image.substring(nft.image.lastIndexOf('/') + 1).split('.')[0]}`
+      }
     },
     pageListings(page) {
       const itemsCount = !this.isMobile() ? 6 : 2;

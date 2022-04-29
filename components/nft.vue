@@ -92,7 +92,7 @@ export default {
       return visibleFilter || visibleStatus
     },
     nftPrice() {
-      let number = !this.multiNft ? this.nft.price : this.nft.list_min_price
+      let number = !this.multiNft ? this.nft.price : this.nft.list_min_price / 1000
       let decPlaces = 1;
       decPlaces = Math.pow(10, decPlaces);
 
