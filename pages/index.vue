@@ -1,6 +1,6 @@
 <template>
   <section class="refi container-xl">
-    <h1 class="refi__title">Regenerate Nature<br/>by trading NFTs</h1>
+    <h1 class="refi__title">Regenerate Nature by trading NFTs</h1>
     <h3 class="refi__subtitle">CyberBox is the first NFT marketplace with ReFi integration</h3>
     <div class="refi__block">
       <div class="refi__block-info">
@@ -264,7 +264,8 @@ export default {
   &__subtitle {
     padding-top: 4rem;
     text-align: center;
-    font-size: 2rem;
+    font-weight: 500;
+    font-size: 1.8rem;
   }
   &__block {
     padding-top: 4.4rem;

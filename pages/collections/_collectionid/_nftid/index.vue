@@ -57,7 +57,18 @@
                 <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }} ton CO2</span>
               </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
-              <Attributes :item="attributes" :info="nft"/>
+              <Attributes :item="attributes" :info="nft" v-if="!isMultiNft"/>
+              <div class="nft__block-info-address" v-else-if="nft.contract_address">
+                <h3 class="nft__block-info-address-title">Contract Address</h3>
+                <a
+                  :href="`https://explorer.celo.org/address/${nft.contract_address}`"
+                  target="_blank"
+                  class="nft__block-info-address-subtitle"
+                >
+                  {{ cutContractAddress }}
+                  <img src="/send.svg" alt="send">
+                </a>
+              </div>
             </div>
             <div class="nft__block-info-loading" v-else>
               <img src="/loading-nft.gif" alt="load">
@@ -120,7 +131,18 @@
                 <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }} ton CO2</span>
               </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
-              <Attributes :item="attributes" :info="nft"/>
+              <Attributes :item="attributes" :info="nft" v-if="!isMultiNft"/>
+              <div class="nft__block-info-address" v-else-if="nft.contract_address">
+                <h3 class="nft__block-info-address-title">Contract Address</h3>
+                <a
+                  :href="`https://explorer.celo.org/address/${nft.contract_address}`"
+                  target="_blank"
+                  class="nft__block-info-address-subtitle"
+                >
+                  {{ cutContractAddress }}
+                  <img src="/send.svg" alt="send">
+                </a>
+              </div>
             </div>
             <div class="nft__block-info-loading" v-else>
               <img src="/loading-nft.gif" alt="load">
@@ -285,7 +307,7 @@ export default {
       return this.$store.state.address
     },
     isMultiNft() {
-      return this.$store.state.multiNftSymbols.includes(this.nft.contract)
+      return this.$store.state.multiNftSymbols.includes(this.$route.params.collectionid)
     },
     nftName() {
       if (!this.isMultiNft) {
@@ -296,6 +318,18 @@ export default {
         }
       } else {
         return this.$store.state.multiNftNames.find(item => item.id === this.$route.params.nftid).name
+      }
+    },
+    cutContractAddress() {
+      const address = this.nft.contract_address
+      if (address) {
+        const startID = address.split("").slice(0, 6);
+        const endID = address.split("").slice(-4);
+        const dotArr = [".", ".", "."];
+        return startID
+          .concat(dotArr)
+          .concat(endID)
+          .join("");
       }
     },
     totalQuantityCount() {
@@ -683,6 +717,27 @@ export default {
       &-description {
         padding-top: 2.4rem;
       }
+      &-address {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 2.5rem;
+        padding-bottom: 1.8rem;
+        font-size: 1.6rem;
+        &-title {
+          font-family: OpenSans-SemiBold;
+          font-weight: 600;
+        }
+        &-subtitle {
+          display: flex;
+          align-items: center;
+          font-family: OpenSans-Regular;
+          font-weight: 400;
+          img {
+            margin-left: 1rem;
+          }
+        }
+      }
       &-price {
         &-celo {
           display: flex;
@@ -1018,6 +1073,19 @@ export default {
         }
         &-description {
           padding-top: 1.5rem;
+        }
+        &-address {
+          padding-left: 0.8rem;
+          padding-right: 0.8rem;
+          &-title {
+            font-size: 1.4rem;
+          }
+          &-subtitle {
+            font-size: 1.4rem;
+            img {
+              margin-left: 0.8rem;
+            }
+          }
         }
         &-price {
           &-celo {

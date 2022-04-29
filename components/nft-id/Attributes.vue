@@ -62,7 +62,7 @@ export default {
       }
     },
     attributesVisible() {
-      return this.info.contract !== 'nomdom' && this.info.contract !== 'knoxnft'
+      return this.info.contract !== 'nomdom'
     }
   },
   methods: {
