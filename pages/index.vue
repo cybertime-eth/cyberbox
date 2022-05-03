@@ -121,12 +121,14 @@ export default {
   },
   async created() {
     // Latest 12 Listings
-    const latestListings = await this.$store.dispatch('getLatestListings')
-    latestListings.map(item => {
-      item.price = item.price / 1000
+    const newListings = await this.$store.dispatch('getLatestListings')
+    newListings.map(item => {
+      if (item.price) {
+        item.price = item.price / 1000
+      }
       item.market_status = 'LISTED'
     })
-    this.latestListings = latestListings
+    this.latestListings = newListings
 
     // Hot Collections
     let cmco2Price = this.$store.state.cMCO2Price
@@ -163,9 +165,9 @@ export default {
     },
     listingPageCount() {
       if (!this.isMobile()) {
-        return this.latestListings.length / 6
+        return Math.round(this.latestListings.length / 6)
       } else {
-        return this.latestListings.length / 2
+        return Math.round(this.latestListings.length / 2)
       }
     },
     footerTitle() {

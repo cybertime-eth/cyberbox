@@ -155,7 +155,7 @@
           <div class="nft__details-tab">
             <p class="nft__details-tab-item">Listings</p>
           </div>
-          <SaleList class="nft__details-content" :celoPrice="celoPrice" :collection="collectionInfo.multiNftList" :approved="nftApproved" :balance="balance" @onSale="multiNftSaling=true" @onComplete="multiNftSaling=false"  />
+          <SaleList class="nft__details-content" :nft="nft" :celoPrice="celoPrice" :collection="collectionInfo.multiNftList" :approved="nftApproved" :balance="balance" @onSale="multiNftSaling=true" @onComplete="multiNftSaling=false"  />
         </div>
       </div>
     </div>

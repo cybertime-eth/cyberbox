@@ -89,7 +89,7 @@ import SellToken from '@/components/modals/sellToken'
 import BuyToken from '@/components/modals/buyToken';
 import ConfirmAlert from '@/components/modals/ConfirmAlert';
 export default {
-  props: ['collection', 'celoPrice', 'approved', 'balance'],
+  props: ['nft', 'collection', 'celoPrice', 'approved', 'balance'],
   data() {
     return {
       nftList: [],
@@ -195,7 +195,8 @@ export default {
     showSellModal(nft) {
       if (nft.selling || nft.deleting) return
       this.$emit('onSale')
-      this.currNft = nft
+	  this.currNft = nft
+	  this.$store.commit('setNewNft', nft)
       this.showSellTokenModal = true
       this.updateNftStatus({
         ...this.currNft,
@@ -227,7 +228,8 @@ export default {
         price: newPrice,
         selling: false
       })
-      this.showSellTokenModal = false
+	  this.showSellTokenModal = false
+	  this.$store.commit('setNewNft', this.nft)
       this.$emit('onComplete')
     },
     showRemoveNftAlert(nft) {
@@ -276,7 +278,8 @@ export default {
       })
       this.currNft = null
       this.showSellTokenModal = false
-      this.showBuyTokenModal = false
+	  this.showBuyTokenModal = false
+	  this.$store.commit('setNewNft', this.nft)
       this.$emit('onComplete')
     },
     showNftActionsDropdown(nft) {

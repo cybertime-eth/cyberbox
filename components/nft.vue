@@ -88,11 +88,11 @@ export default {
     },
     priceVisible() {
       const visibleFilter = (this.filter === 'listed' || this.filter === 'bought')
-      const visibleStatus = (!this.multiNft && this.nft.price > 0 && this.nft.market_status === 'LISTED') || (this.multiNft && this.nft.list_count > 0 && this.nft.list_min_price > 0)
+      const visibleStatus = (!this.multiNft && this.nft.price > 0 && this.nft.market_status === 'LISTED') || (this.multiNft && this.nft.list_count > 0 && this.nft.list_price > 0)
       return visibleFilter || visibleStatus
     },
     nftPrice() {
-      let number = !this.multiNft ? this.nft.price : this.nft.list_min_price / 1000
+      let number = !this.multiNft ? this.nft.price : (this.nft.list_price ? this.nft.list_price / 1000 : null)
       let decPlaces = 1;
       decPlaces = Math.pow(10, decPlaces);
 
