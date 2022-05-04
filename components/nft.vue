@@ -32,7 +32,7 @@
         </div>
         <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span>
       </div>
-      <h3 class="collection__item-info-price-null" :class="{ multinft: multiNft }" v-else>Not for sale <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span></h3>
+      <h3 class="collection__item-info-price-null" :class="{ multinft: multiNft }" v-else>{{ saleInfo }} <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span></h3>
       <div class="collection__item-info-details-box">
         <button class="collection__item-info-details" @click="routeNft(true)">Details</button>
       </div>
@@ -53,7 +53,9 @@ export default {
       modalId: 0,
       showTransferModal: false,
       nftImageLoaded: false,
-      cdnImage: null
+      cdnImage: null,
+      ownedMultiNftCount: 0,
+      ownedMultiNftListCount: 0
     }
   },
   computed: {
@@ -88,8 +90,11 @@ export default {
     },
     priceVisible() {
       const visibleFilter = (this.filter === 'listed' || this.filter === 'bought')
-      const visibleStatus = (!this.multiNft && this.nft.price > 0 && this.nft.market_status === 'LISTED') || (this.multiNft && this.nft.list_count > 0 && this.nft.list_price > 0)
+      const visibleStatus = (!this.multiNft && this.nft.price > 0 && this.nft.market_status === 'LISTED') || (!this.seller && this.multiNft && this.nft.list_count > 0 && this.nft.list_price > 0)
       return visibleFilter || visibleStatus
+    },
+    saleInfo() {
+      return (this.seller && this.multiNft && this.ownedMultiNftListCount > 0) ? 'For sale' : 'Not for sale'
     },
     nftPrice() {
       let number = !this.multiNft ? this.nft.price : (this.nft.list_price ? this.nft.list_price / 1000 : null)
@@ -119,7 +124,11 @@ export default {
     },
     nftQuantity() {
       if (this.multiNft) {
-        return `${this.nft.list_count}/${this.nft.mint_count}`
+        if (!this.seller) {
+          return `${this.nft.list_count}/${this.nft.mint_count}`
+        } else {
+          return this.ownedMultiNftCount > 0 ? `${this.ownedMultiNftListCount}/${this.ownedMultiNftCount}` : null
+        }
       } else {
         return null
       }
@@ -134,8 +143,16 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     this.loadCDNImage()
+    if (this.seller && this.multiNft) {
+      const ownedCollectionInfo = await this.$store.dispatch('getOwnedCollectionInfo', {
+        contract: this.nft.nftSymbol,
+        image: this.nft.image
+      })
+      this.ownedMultiNftCount = ownedCollectionInfo.owned_count
+      this.ownedMultiNftListCount = ownedCollectionInfo.owned_list_count
+    }
   },
   methods: {
     getCDNImageUrl() {
