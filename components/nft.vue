@@ -25,14 +25,14 @@
       <p class="collection__item-info-id" v-if="!multiNft">Token ID {{ nftID }}</p>
       <p class="collection__item-info-type" :class="{multinft: multiNft}" v-if="sellInfo">Last sell</p>
       <p class="collection__item-info-type" :class="{multinft: multiNft}" v-else>Price</p>
-      <div class="collection__item-info-price-box" v-if="priceVisible">
-        <div class="collection__item-info-price">
+      <div class="collection__item-info-price-box" :class="{ multinft: multiNft }" v-if="priceVisible">
+        <div class="collection__item-info-price" >
           <img src="/celo.svg" alt="celo">
           <h3 class="collection__item-info-price-text">{{ nftPrice }}</h3>
         </div>
-        <span class="collection__item-info-price-quantity">{{ nftQuantity }}</span>
+        <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span>
       </div>
-      <h3 class="collection__item-info-price-null" v-else>Not for sale <span class="collection__item-info-price-quantity">{{ nftQuantity }}</span></h3>
+      <h3 class="collection__item-info-price-null" :class="{ multinft: multiNft }" v-else>Not for sale <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span></h3>
       <div class="collection__item-info-details-box">
         <button class="collection__item-info-details" @click="routeNft(true)">Details</button>
       </div>
@@ -121,7 +121,7 @@ export default {
       if (this.multiNft) {
         return `${this.nft.list_count}/${this.nft.mint_count}`
       } else {
-        return ''
+        return null
       }
     },
   },
@@ -391,6 +391,14 @@ export default {
           }
           &-text {
             font-size: 1.4rem;
+          }
+          &-box, &-null {
+            &.multinft {
+              display: block;
+              .collection__item-info-price-quantity {
+                display: block;
+              }
+            }
           }
         }
         &-id {
