@@ -3,7 +3,7 @@
     <div class="menu-mobile-header container-xl">
       <img src="/logo.svg" alt="logo" class="menu-mobile-header-logo">
       <div class="menu-mobile-header-walletbox">
-        <div class="header__wallet" ref="wallet" v-if="address" @click="showProfileMenu = !showProfileMenu">
+        <div class="header__wallet" ref="wallet" v-if="address">
           <h3 class="header__wallet-address">{{ address }}</h3>
           <div class="header__wallet-avatar gradient-button">
             <img src="/celo.svg" alt="avatar">
@@ -13,24 +13,24 @@
       </div>
     </div>
     <div class="menu-mobile-list container-xl" @click="closeModal">
-      <nuxt-link to="/explorer" active-class="gradient-text" class="menu-mobile-list-link">Explorer</nuxt-link>
-      <nuxt-link to="/rankings" active-class="gradient-text" class="menu-mobile-list-link">Rankings</nuxt-link>
-      <nuxt-link to="/loans" active-class="gradient-text" class="menu-mobile-list-link">NFT loans</nuxt-link>
+      <div class="menu-mobile-list-links">
+        <nuxt-link to="/explorer" active-class="gradient-text" class="menu-mobile-list-link">Explorer</nuxt-link>
+        <nuxt-link to="/rankings" active-class="gradient-text" class="menu-mobile-list-link">Rankings</nuxt-link>
+        <nuxt-link to="/loans" active-class="gradient-text" class="menu-mobile-list-link">NFT loans</nuxt-link>
+      </div>
+      <client-only>
+        <profileModal :sideMenu="true" v-if="isMobile()"/>
+      </client-only>
       <!-- <a href="https://forms.gle/R7LmANz7iqsCA88X8" target="_blank" class="menu-mobile-list-link">Launchpad</a> -->
     </div>
-    <profileModal v-show="showProfileMenu" @closeModal="showProfileMenu = false"/>
   </div>
 </template>
 <script>
 import profileModal from '@/components/modals/profileModal'
+
 export default {
   components: {
     profileModal
-  },
-  data() {
-    return {
-      showProfileMenu: false
-    }
   },
   computed: {
     address() {
@@ -44,24 +44,14 @@ export default {
       }
     }
   },
-  beforeMount() {
-    window.addEventListener('click', this.handleClickWindow)
-  },
-  beforeDestroy() {
-    window.removeEventListener('click', this.handleClickWindow)
-  },
   methods: {
-    handleClickWindow(e) {
-      if (this.$refs.wallet && !this.$refs.wallet.contains(e.target)) {
-        this.showProfileMenu = false
-      }
-    },
     closeModal() {
       this.$emit('closeModal', false)
     }
   }
 }
 </script>
+
 <style lang="scss">
 .menu-mobile {
   width: 100%;
@@ -91,10 +81,16 @@ export default {
     }
   }
   &-list {
+    height: calc(100vh - 15.2rem);
     display: flex;
     align-items: flex-start;
+    justify-content: space-between;
     flex-direction: column;
     padding-top: 4rem;
+    &-links {
+      display: flex;
+      flex-direction: column;
+    }
     &-link {
       width: 100%;
       padding-bottom: 2.5rem;
