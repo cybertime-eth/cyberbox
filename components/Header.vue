@@ -24,20 +24,29 @@
           </li> -->
         </ul>
       </nav>
-      <button class="header__box gradient-button" v-if="address" @click="$router.push('/mycollection')">
-       {{ myCollectionTitle }}
-      </button>
-      <button v-else class="header__null"></button>
-      <div class="header__wallet" ref="wallet" v-if="address" @click="showProfileMenu = !showProfileMenu">
-        <h3 class="header__wallet-address">{{ address }}</h3>
-        <div class="header__wallet-avatar gradient-button">
-          <img src="/celo.svg" alt="avatar">
+      <client-only>
+        <div class="header__box" v-if="address && !isMobile()">
+          <nuxt-link class="header__link" active-class="gradient-text" to="/mycollection" exact>My NFT</nuxt-link>
         </div>
-      </div>
+        <button v-else class="header__null"></button>
+        <div class="header__wallet" ref="wallet" v-if="address && !isMobile()" @click="showProfileMenu = !showProfileMenu">
+          <h3 class="header__wallet-address">{{ address }}</h3>
+          <div class="header__wallet-avatar gradient-button">
+            <img src="/celo.svg" alt="avatar">
+          </div>
+        </div>
+      </client-only>
       <button class="gradient-button header__connect" v-if="!address" @click="showConnectModal = true">Connect Wallet</button>
-      <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
-      <img src="/search-mobile.svg" alt="search" class="header__mobile-search" @click="showSearchView = true">
-      <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showMobileMenu">
+      <div class="header__mobile">
+        <client-only>
+          <div class="header__box" v-if="address && isMobile()">
+            <nuxt-link class="header__link" active-class="gradient-text" to="/mycollection" exact><img src="/mycollection.svg" alt="mycollection"></nuxt-link>
+          </div>
+        </client-only>
+        <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
+        <img src="/search-mobile.svg" alt="search" class="header__mobile-search" @click="showSearchView = true">
+        <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showMobileMenu">
+      </div>
       <div class="header__error-network" v-if="showWrongNetwork">
         <img src="/pulse.svg" alt="pulse">
         <p class="header__error-network-text">You are on the wrong network</p>
@@ -104,9 +113,6 @@ export default {
     },
     nftId() {
       return this.$route.params.nftid
-    },
-    myCollectionTitle() {
-      return !this.isMobile() || window.innerWidth > 460 ? 'My Collection' : 'My NFT'
     },
   },
   created() {
@@ -188,15 +194,8 @@ header {
     justify-content: space-between;
   }
   &__box {
-    width: 15.8rem;
-    height: 4.8rem;
+    justify-self: end;
     cursor: pointer;
-    &.gradient-button {
-      &::after {
-        left: -0.26rem;
-        right: -0.26rem;
-      }
-    }
   }
   &__error {
     &-network {
@@ -303,10 +302,8 @@ header {
       }
     }
     &__box {
-      min-width: 9.6rem;
-      height: 2.4rem;
-      margin-right: .8rem;
-      font-size: 1.3rem;
+      height: 1.8rem;
+      margin-right: 2.2rem;
     }
     &__connect {
       display: none;
@@ -333,6 +330,7 @@ header {
     &__wallet {
       width: 9.2rem;
       height: 2.4rem;
+      max-width: fit-content;
       justify-self: center;
       padding: .2rem 1rem;
       margin-right: 1rem;
@@ -347,11 +345,15 @@ header {
       }
     }
     &__mobile {
-      display: block;
+      display: flex;
+      align-items: center;
+      &-connect {
+        margin-right: 1.9rem;
+      }
       &-search {
         display: block;
         width: 1.8rem;
-        margin-right: 2.2rem;
+        margin-right: 1.9rem;
       }
       &-menu {
         display: block;

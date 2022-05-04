@@ -163,7 +163,7 @@
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
   <Transfer :nft="nft" @done="closeAndReload" @closeModal="showTransferModal=false"  v-if="showTransferModal" />
   <SellToken :nft="nft" :celoPrice="celoPrice" :approved="nftApproved" @done="closeAndReload" @closeModal="closeSellModal" v-if="showSellTokenModal" />
-  <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
+  <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" :multiNft="isMultiNft" @closeModal="closeModal"/>
   <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nftName"/>
 <!--    <History />-->
   </section>

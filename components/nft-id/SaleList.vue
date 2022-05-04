@@ -79,7 +79,7 @@
             </div>
         </div>
         <SellToken :nft="currNft" :celoPrice="celoPrice" :approved="approved" @done="completeSell" @closeModal="closeModal" v-if="currNft && showSellTokenModal" />
-        <BuyToken :nft="currNft" :priceToken="nftDollarPrice(currNft)" :balance="balance" @closeModal="closeModal" v-if="currNft && showBuyTokenModal" />
+        <BuyToken :nft="currNft" :priceToken="nftDollarPrice(currNft)" :balance="balance" @closeModal="closeModal" :multiNft="true" v-if="currNft && showBuyTokenModal" />
         <ConfirmAlert :title="confirmModalTitle" @confirm="removeCurrentNft" @close="cancelRemove" v-if="showRemoveModal" />
     </section>
 </template>
@@ -123,6 +123,7 @@ export default {
       if (this.$store.state.successRemoveToken === true) {
         this.deleteNftFromList()
       } else {
+		this.$store.commit('setNewNft', this.nft)
         this.updateNftStatus({
           ...this.currNft,
           deleting: false
@@ -208,6 +209,7 @@ export default {
       if (nft.buying) return
       this.$emit('onSale')
       this.currNft = nft
+      this.$store.commit('setNewNft', nft)
       this.showBuyTokenModal = true
       this.updateNftStatus({
         ...this.currNft,
@@ -263,7 +265,8 @@ export default {
       }
     },
     deleteNftFromList() {
-      this.$emit('onComplete')
+	  this.$store.commit('setNewNft', this.nft)
+	  this.$emit('onComplete')
       if (this.currNft) {
         this.nftList = this.nftList.filter(item => item.contract_id !== this.currNft.contract_id)
         this.currNft = null
