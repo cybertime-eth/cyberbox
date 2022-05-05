@@ -156,7 +156,7 @@ export default {
   },
   methods: {
     getCDNImageUrl() {
-      if (this.nft.contract !== 'nomstronaut' && !this.multiNft) {
+      if (this.nft.contract !== 'nomstronaut') {
         let fileExtension = this.nft.image.split('.').pop()
         let contractId = this.nft.contract_id
         if (fileExtension.split('//').length > 1 || this.nft.contract === 'nomdom') {
@@ -165,7 +165,8 @@ export default {
             contractId = this.nft.image
           }
         }
-        const imageURL = CDN_ROOT + this.nft.contract + `/${contractId}.${fileExtension}`
+        const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
+        const imageURL = CDN_ROOT + contractName + `/${contractId}.${fileExtension}`
         return imageURL
       } else {
         return null

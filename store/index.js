@@ -391,35 +391,45 @@ export const actions = {
     return newContractInfos
   },
   async getMultiNftPriceData({}, contractInfos) {
-	let queryCount = 0
 	const queryRequests = []
 	const queryFormat = `
 		contractLists(first: 1 orderBy: price orderDirection: asc where: { contract: "nftContract" image: "nftImage" }) {
 			price
+			contract_id
+		}
+	`
+	const queryFormat2 = `
+		contractLists: contractInfos(first: 1 orderBy: price orderDirection: asc where: { contract: "nftContract" image: "nftImage" }) {
+			contract_id
 		}
 	`
 	contractInfos.forEach(item => {
+	  let queryContent;
 	  if (item.list_count > 0) {
-		const queryContent = queryFormat.replace('nftContract', item.nftSymbol).replace('nftImage', item.image)
-		const query = gql`
-			query Sample {
-			${queryContent}
-		}`
-		queryRequests.push(this.$graphql.default.request(query))
-		queryCount++
+	    queryContent = queryFormat.replace('nftContract', item.nftSymbol).replace('nftImage', item.image)
 	  } else {
-		queryRequests.push(null)
+		queryContent = queryFormat2.replace('nftContract', item.nftSymbol).replace('nftImage', item.image)
+	  }
+	  const query = gql`
+		query Sample {
+		  ${queryContent}
+		}
+	  `
+	  queryRequests.push(this.$graphql.default.request(query))
+	})
+
+	const queryResults = await Promise.all(queryRequests)
+	contractInfos.map((item, index) => {
+	  const result = queryResults[index]
+	  if (result && result.contractLists.length > 0) {
+		if (result.contractLists[0].price) {
+		  item.list_price = result.contractLists[0].price
+		}
+		if (!item.contract_id) {
+		  item.contract_id = result.contractLists[0].contract_id
+		}
 	  }
 	})
-	if (queryCount > 0) {
-	  const queryResults = await Promise.all(queryRequests)
-	  contractInfos.map((item, index) => {
-	    const result = queryResults[index]
-		if (result && result.contractLists.length > 0) {
-		  item.list_price = result.contractLists[0].price
-	    }
-	  })
-	}
 	return contractInfos
   },
   async replaceMultiNftCollections({state, dispatch}, collectionData) {
@@ -683,7 +693,6 @@ export const actions = {
     const query = gql`
       query Sample {
         contractLists: contractLists(first: 12 orderBy: updatedAt, orderDirection: desc) {
-		  id
           contract
           contract_id
           mint_key
