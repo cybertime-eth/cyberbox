@@ -198,7 +198,7 @@ export default {
       cmco2Price = await this.$store.dispatch('getCMCO2TokenPrice')
     }
     this.cmco2Price = cmco2Price
-    const invisibleTokens = ['knoxnft', 'cconnectpunks']
+    const invisibleTokens = ['cconnectpunks']
     for (let [index, item] of result.entries()) {
       if (!invisibleTokens.includes(item.nftSymbol)) {
         let volume = 0;

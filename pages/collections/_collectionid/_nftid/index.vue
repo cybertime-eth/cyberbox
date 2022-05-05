@@ -5,7 +5,7 @@
         <a class="nft__crumbs" @click="handleClickBack">
           Back
           <img src="/array-right.svg" alt="array">
-          <span>{{ nftName }}</span>
+          <span>{{ collectionName }}</span>
         </a>
 
 
@@ -21,7 +21,7 @@
             <div v-if="!nftReloading">
               <div class="nft__block-info-collection">
                 <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
-                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2>
+                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName }}</h2>
               </div>
               <h1 class="nft__block-info-name">{{ nftName }}</h1>
   <!--            <p class="nft__block-info-date" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/time.svg" alt="time"> Sale ends in-->
@@ -57,7 +57,18 @@
                 <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }} ton CO2</span>
               </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
-              <Attributes :item="attributes" :info="nft"/>
+              <Attributes :item="attributes" :info="nft" v-if="!isMultiNft"/>
+              <div class="nft__block-info-address" v-else-if="nft.contract_address">
+                <h3 class="nft__block-info-address-title">Contract Address</h3>
+                <a
+                  :href="`https://explorer.celo.org/address/${nft.contract_address}`"
+                  target="_blank"
+                  class="nft__block-info-address-subtitle"
+                >
+                  {{ cutContractAddress }}
+                  <img src="/send.svg" alt="send">
+                </a>
+              </div>
             </div>
             <div class="nft__block-info-loading" v-else>
               <img src="/loading-nft.gif" alt="load">
@@ -70,7 +81,7 @@
             <div v-if="!nftReloading">
               <div class="nft__block-info-collection">
                 <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
-                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName(nft.contract) }}</h2>
+                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName }}</h2>
               </div>
               <h1 class="nft__block-info-name">{{ nftName }}</h1>
   <!--            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in-->
@@ -120,7 +131,18 @@
                 <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }} ton CO2</span>
               </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
-              <Attributes :item="attributes" :info="nft"/>
+              <Attributes :item="attributes" :info="nft" v-if="!isMultiNft"/>
+              <div class="nft__block-info-address" v-else-if="nft.contract_address">
+                <h3 class="nft__block-info-address-title">Contract Address</h3>
+                <a
+                  :href="`https://explorer.celo.org/address/${nft.contract_address}`"
+                  target="_blank"
+                  class="nft__block-info-address-subtitle"
+                >
+                  {{ cutContractAddress }}
+                  <img src="/send.svg" alt="send">
+                </a>
+              </div>
             </div>
             <div class="nft__block-info-loading" v-else>
               <img src="/loading-nft.gif" alt="load">
@@ -133,7 +155,7 @@
           <div class="nft__details-tab">
             <p class="nft__details-tab-item">Listings</p>
           </div>
-          <SaleList class="nft__details-content" :celoPrice="celoPrice" :collection="collectionInfo.multiNftList" :approved="nftApproved" :balance="balance" @onSale="multiNftSaling=true" @onComplete="multiNftSaling=false"  />
+          <SaleList class="nft__details-content" :nft="nft" :celoPrice="celoPrice" :collection="collectionInfo.multiNftList" :approved="nftApproved" :balance="balance" @onSale="multiNftSaling=true" @onComplete="multiNftSaling=false"  />
         </div>
       </div>
     </div>
@@ -141,7 +163,7 @@
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
   <Transfer :nft="nft" @done="closeAndReload" @closeModal="showTransferModal=false"  v-if="showTransferModal" />
   <SellToken :nft="nft" :celoPrice="celoPrice" :approved="nftApproved" @done="closeAndReload" @closeModal="closeSellModal" v-if="showSellTokenModal" />
-  <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
+  <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" :multiNft="isMultiNft" @closeModal="closeModal"/>
   <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nftName"/>
 <!--    <History />-->
   </section>
@@ -284,15 +306,37 @@ export default {
     address() {
       return this.$store.state.address
     },
+    isMultiNft() {
+      return this.$store.state.multiNftSymbols.includes(this.$route.params.collectionid)
+    },
     nftName() {
-      if (!this.nft.name) return ''
-      return this.nft.contract !== 'nomdom' ? this.nft.name : `${this.nft.name}.nom`
+      if (!this.isMultiNft) {
+        if (!this.nft.name) {
+          return ''
+        } else {
+          return this.nft.contract !== 'nomdom' ? this.nft.name : `${this.nft.name}.nom`
+        }
+      } else {
+        return this.$store.state.multiNftNames.find(item => item.id === this.$route.params.nftid).name
+      }
+    },
+    cutContractAddress() {
+      const address = this.nft.contract_address
+      if (address) {
+        const startID = address.split("").slice(0, 6);
+        const endID = address.split("").slice(-4);
+        const dotArr = [".", ".", "."];
+        return startID
+          .concat(dotArr)
+          .concat(endID)
+          .join("");
+      }
     },
     totalQuantityCount() {
-      return this.collectionInfo.mint_count
+      return this.nft.multiNft ? this.nft.multiNft.mint_count : 0
     },
     totalOwnedCount() {
-      return this.collectionInfo.owned_count || 0
+      return this.collectionInfo.owned_count
     },
     saleCountInfo() {
       if (this.totalOwnedCount && (this.seller || (!this.seller && this.market_status !== 'LISTED'))) {
@@ -304,9 +348,9 @@ export default {
     },
     quantityCountInfo() {
       if (this.seller || (!this.seller && this.nft.market_status !== 'LISTED')) {
-        return this.totalQuantityCount ? `Quantity: ${this.totalOwnedCount} of ${this.totalQuantityCount}` : null
+        return this.totalQuantityCount && (this.totalOwnedCount !== undefined) ? `Quantity: ${this.totalOwnedCount} of ${this.totalQuantityCount}` : null
       } else {
-        const totalListCount = this.collectionInfo.list_count
+        const totalListCount = this.nft.multiNft ? this.nft.multiNft.list_count : 0
         return totalListCount ? `${totalListCount - this.collectionInfo.owned_list_count} of ${this.totalQuantityCount} available` : null
       }
     },
@@ -369,6 +413,11 @@ export default {
     },
     refiPrice() {
       return this.$store.state.cMCO2Price
+    },
+    collectionName() {
+      if (!this.nft.contract) return ''
+      const collection = this.$store.state.collectionList.find(item => item.route === this.nft.contract)
+      return collection?.name
     }
   },
   head() {
@@ -385,11 +434,6 @@ export default {
   methods: {
     collectionIcon(contract) {
       return contract ? `/${contract}.png` : null
-    },
-    collectionName(contract) {
-      if (!contract) return ''
-      const collection = this.$store.state.collectionList.find(item => item.route === contract)
-      return collection?.name
     },
     async loadNft() {
       const nft = await this.$store.dispatch('getNft', {
@@ -420,7 +464,7 @@ export default {
       if (multiNftSymbols.includes(this.$route.params.collectionid)) {
         if ((!this.seller || (this.seller && this.nft.market_status !== 'LISTED'))) {
           const collectionResult = await this.$store.dispatch('getCollectionInfo') || {}
-          const ownedCollectionInfo = await this.$store.dispatch('getOwnedCollectionInfo', this.$route.params.collectionid)
+          const ownedCollectionInfo = await this.$store.dispatch('getOwnedCollectionInfo', this.nft)
           this.collectionInfo = {
             ...collectionResult,
             ...ownedCollectionInfo
@@ -672,6 +716,27 @@ export default {
       }
       &-description {
         padding-top: 2.4rem;
+      }
+      &-address {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 2.5rem;
+        padding-bottom: 1.8rem;
+        font-size: 1.6rem;
+        &-title {
+          font-family: OpenSans-SemiBold;
+          font-weight: 600;
+        }
+        &-subtitle {
+          display: flex;
+          align-items: center;
+          font-family: OpenSans-Regular;
+          font-weight: 400;
+          img {
+            margin-left: 1rem;
+          }
+        }
       }
       &-price {
         &-celo {
@@ -1008,6 +1073,19 @@ export default {
         }
         &-description {
           padding-top: 1.5rem;
+        }
+        &-address {
+          padding-left: 0.8rem;
+          padding-right: 0.8rem;
+          &-title {
+            font-size: 1.4rem;
+          }
+          &-subtitle {
+            font-size: 1.4rem;
+            img {
+              margin-left: 0.8rem;
+            }
+          }
         }
         &-price {
           &-celo {

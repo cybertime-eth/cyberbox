@@ -1,5 +1,5 @@
 <template>
-  <ul class="profile__menu" @mouseleave="closeModal">
+  <ul class="profile__menu" :class="{sidemenu: sideMenu }" @mouseleave="closeModal">
     <!-- <li class="profile__menu-list">
       <nuxt-link to="/mycollection" class="profile__menu-link">
         <div class="profile__menu-link-info">
@@ -35,6 +35,7 @@
 </template>
 <script>
 export default {
+  props: ['sideMenu'],
   computed: {
     user() {
       return this.$store.state.user
@@ -119,6 +120,23 @@ export default {
     right: 0;
     top: 6.6rem;
     width: 100%;
+    &.sidemenu {
+      position: static;
+      top: auto;
+      box-shadow: none;
+      border: 0;
+      border-radius: 0;
+      .profile__menu-link {
+        display: block;
+      }
+      .profile__menu-list {
+        height: auto;
+        padding: 0 0 2.5rem;
+        img {
+          display: none;
+        }
+      }
+    }
   }
 }
 </style>

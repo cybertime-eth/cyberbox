@@ -59,7 +59,7 @@
 </template>
 <script>
 export default {
-  props: ['nft', 'priceToken', 'balance'],
+  props: ['nft', 'priceToken', 'balance', 'multiNft'],
   computed: {
     nftNameSuffix() {
       return this.nft.contract !== 'nomdom' ? '' : '.nom'
@@ -108,7 +108,7 @@ export default {
       this.pending = true
       try {
         await this.$store.dispatch('buyNFT', {
-          id: this.$route.params.nftid,
+          id: !this.multiNft ? this.$route.params.nftid : this.nft.contract_id,
           price: this.nft.price
         })
       } catch (error) {

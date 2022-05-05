@@ -15,24 +15,27 @@
         <h3>Copy link</h3>
       </div>
     </div>
-    <img :src="realNftImage(nft)" alt="item" class="collection__item-image" v-if="nftImageLoaded">
+    <img :src="realNftImage()" alt="item" class="collection__item-image" v-if="nftImageLoaded">
     <div class="collection__item-loading" v-else>
       <img src="/loading-nft.gif" alt="load">
     </div>
     <div class="collection__item-info">
-      <h2 class="collection__item-info-name">
-        {{ nft.name || nft.contract_name }}{{nftNameSuffix}}
-      </h2>
-      <p class="collection__item-info-rank" v-if="nft.contract !== 'nomdom'">Rarity Rank {{ nft.rating_index }}</p>
-      <p class="collection__item-info-id">Token ID {{ nftID(nft.contract_id) }}</p>
-      <p class="collection__item-info-type" v-if="sellInfo">Last sell</p>
-      <p class="collection__item-info-type" v-else>Price</p>
-      <div class="collection__item-info-price" v-if="!multiNft && nft.price > 0 && nft.market_status === 'LISTED' || (filter === 'listed' || filter === 'bought')">
-        <img src="/celo.svg" alt="celo">
-        <h3 class="collection__item-info-price-text">{{ nftPrice(nft.price) }}</h3>
+      <h2 class="collection__item-info-name" :class="{multinft: multiNft}">{{ nftName }}</h2>
+      <p class="collection__item-info-rank" v-if="nft.contract !== 'nomdom' && !multiNft">Rarity Rank {{ nft.rating_index }}</p>
+      <p class="collection__item-info-id" v-if="!multiNft">Token ID {{ nftID }}</p>
+      <p class="collection__item-info-type" :class="{multinft: multiNft}" v-if="sellInfo">Last sell</p>
+      <p class="collection__item-info-type" :class="{multinft: multiNft}" v-else>Price</p>
+      <div class="collection__item-info-price-box" :class="{ multinft: multiNft }" v-if="priceVisible">
+        <div class="collection__item-info-price" >
+          <img src="/celo.svg" alt="celo">
+          <h3 class="collection__item-info-price-text">{{ nftPrice }}</h3>
+        </div>
+        <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span>
       </div>
-      <h3 class="collection__item-info-price-null" v-else>{{ saleStatusInfo }}</h3>
-      <button class="collection__item-info-details" @click="routeNft(true)">Details</button>
+      <h3 class="collection__item-info-price-null" :class="{ multinft: multiNft }" v-else>{{ saleInfo }} <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span></h3>
+      <div class="collection__item-info-details-box">
+        <button class="collection__item-info-details" @click="routeNft(true)">Details</button>
+      </div>
     </div>
     <transfer :nft="nft" @closeModal="showTransferModal = false" v-if="showTransferModal" />
   </div>
@@ -50,7 +53,9 @@ export default {
       modalId: 0,
       showTransferModal: false,
       nftImageLoaded: false,
-      cdnImage: null
+      cdnImage: null,
+      ownedMultiNftCount: 0,
+      ownedMultiNftListCount: 0
     }
   },
   computed: {
@@ -67,20 +72,67 @@ export default {
         return 'Sell'
       }
     },
-    nftNameSuffix() {
-      return this.nft.contract === 'nomdom' ? '.nom' : ''
-    },
-    saleStatusInfo() {
-      if (!this.multiNft) {
-        return 'Not for sale'
+    nftName() {
+      if (this.multiNft) {
+        const nftId = this.nft.id.split('/')[1].split('.')[0]
+        return this.$store.state.multiNftNames.find(item => item.id === nftId).name
       } else {
-        if (this.multiNft.owned_list_count) {
-          return `For sale ${this.multiNft.owned_list_count}/${this.multiNft.owned_count}`
-        } else {
-          return `Not for sale ${this.multiNft.owned_count - this.multiNft.owned_list_count}/${this.multiNft.owned_count}`
+        return `${this.nft.name || this.nft.contract_name}${this.nft.contract === 'nomdom' ? '.nom' : ''}`
+      }
+    },
+    nftID() {
+      const id = this.nft.contract_id
+      if (id >= 0) {
+        return BigNumber.from(id).toNumber()
+      } else {
+        return id
+      }
+    },
+    priceVisible() {
+      const visibleFilter = (this.filter === 'listed' || this.filter === 'bought')
+      const visibleStatus = (!this.multiNft && this.nft.price > 0 && this.nft.market_status === 'LISTED') || (!this.seller && this.multiNft && this.nft.list_count > 0 && this.nft.list_price > 0)
+      return visibleFilter || visibleStatus
+    },
+    saleInfo() {
+      return (this.seller && this.multiNft && this.ownedMultiNftListCount > 0) ? 'For sale' : 'Not for sale'
+    },
+    nftPrice() {
+      let number = !this.multiNft ? this.nft.price : (this.nft.list_price ? this.nft.list_price / 1000 : null)
+      let decPlaces = 1;
+      decPlaces = Math.pow(10, decPlaces);
+
+      const abbrev = ["K", "M", "B", "T"];
+
+      for (let i = abbrev.length - 1; i >= 0; i--) {
+
+        let size = Math.pow(10, (i + 1) * 3);
+
+        if (size <= number) {
+          number = Math.round(number * decPlaces / size) / decPlaces;
+
+          if ((number === 1000) && (i < abbrev.length - 1)) {
+            number = 1;
+            i++;
+          }
+
+          number += abbrev[i];
+
+          break;
         }
       }
-    }
+      return number;
+    },
+    nftQuantity() {
+      if (this.multiNft) {
+        if (!this.seller) {
+          return `${this.nft.list_count}/${this.nft.mint_count}`
+        } else {
+          return this.ownedMultiNftCount > 0 ? `${this.ownedMultiNftListCount}/${this.ownedMultiNftCount}` : null
+        }
+      } else {
+        return null
+      }
+    },
   },
   props: ['nft', 'route', 'owner', 'seller', 'filter', 'multiNft'],
   watch: {
@@ -91,12 +143,20 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     this.loadCDNImage()
+    if (this.seller && this.multiNft) {
+      const ownedCollectionInfo = await this.$store.dispatch('getOwnedCollectionInfo', {
+        contract: this.nft.nftSymbol,
+        image: this.nft.image
+      })
+      this.ownedMultiNftCount = ownedCollectionInfo.owned_count
+      this.ownedMultiNftListCount = ownedCollectionInfo.owned_list_count
+    }
   },
   methods: {
     getCDNImageUrl() {
-      if (this.nft.contract !== 'nomstronaut') {
+      if (this.nft.contract !== 'nomstronaut' && !this.multiNft) {
         let fileExtension = this.nft.image.split('.').pop()
         let contractId = this.nft.contract_id
         if (fileExtension.split('//').length > 1 || this.nft.contract === 'nomdom') {
@@ -156,38 +216,6 @@ export default {
         e.stopPropagation()
       }
     },
-    nftPrice(number) {
-      let decPlaces = 1;
-      decPlaces = Math.pow(10, decPlaces);
-
-      const abbrev = ["K", "M", "B", "T"];
-
-      for (let i = abbrev.length - 1; i >= 0; i--) {
-
-        let size = Math.pow(10, (i + 1) * 3);
-
-        if (size <= number) {
-          number = Math.round(number * decPlaces / size) / decPlaces;
-
-          if ((number === 1000) && (i < abbrev.length - 1)) {
-            number = 1;
-            i++;
-          }
-
-          number += abbrev[i];
-
-          break;
-        }
-      }
-      return number;
-    },
-    nftID(id) {
-      if (id >= 0) {
-        return BigNumber.from(id).toNumber()
-      } else {
-        return id
-      }
-    },
     routeNft(payload) {
       if (!this.seller) {
         this.$router.push(this.route)
@@ -202,6 +230,8 @@ export default {
 <style lang="scss">
 .collection {
   &__item {
+    display: flex;
+    flex-direction: column;
     width: 20rem;
     height: 45rem;
     border-radius: .4rem;
@@ -264,6 +294,9 @@ export default {
       }
     }
     &-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
       padding: 1.6rem .8rem 2.4rem;
       &-name {
         white-space: nowrap;
@@ -271,6 +304,10 @@ export default {
         text-overflow: ellipsis;
         font-size: 1.8rem;
         font-family: OpenSans-SemiBold;
+        &.multinft {
+          border-bottom: .1rem solid $modalColor;
+          padding-bottom: 1.6rem;
+        }
       }
       &-rarity {
         color: $grayLight;
@@ -300,14 +337,31 @@ export default {
           }
         }
         &-null {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
           color: $border;
           padding-top: .4rem;
+        }
+        &-box {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        &-quantity {
+          font-family: OpenSans-SemiBold;
+          font-weight: 600;
+          font-size: 1.4rem;
+          color: $grayLight;
         }
       }
       &-type {
         color: $border;
         font-size: 1.1rem;
         padding-top: 2.4rem;
+        &.multinft {
+          padding-top: 0.8rem;
+        }
       }
       &-details {
         width: 18.4rem;
@@ -316,6 +370,12 @@ export default {
         font-size: 1.3rem;
         margin-top: 1.5rem;
         background: $modalColor;
+        &-box {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+        }
       }
     }
     &:hover {
@@ -348,6 +408,14 @@ export default {
           }
           &-text {
             font-size: 1.4rem;
+          }
+          &-box, &-null {
+            &.multinft {
+              display: block;
+              .collection__item-info-price-quantity {
+                display: block;
+              }
+            }
           }
         }
         &-id {

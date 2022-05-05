@@ -1,6 +1,6 @@
 <template>
   <section class="refi container-xl">
-    <h1 class="refi__title">Regenerate Nature<br/>by trading NFTs</h1>
+    <h1 class="refi__title">Regenerate Nature by trading NFTs</h1>
     <h3 class="refi__subtitle">CyberBox is the first NFT marketplace with ReFi integration</h3>
     <div class="refi__block">
       <div class="refi__block-info">
@@ -9,12 +9,6 @@
           <button class="refi__block-info-button gradient-button ranking" @click="$router.push('/rankings')">Rankings</button>
         </div>
         <img class="refi__block-info-picture" src="/earth.png" alt="earth">
-        <div class="refi__block-info-support">
-          <h3 class="refi__block-info-support-title">Supported & Powered by</h3>
-          <client-only>
-            <img class="refi__block-info-support-investors" :src="investorsIcon" alt="investors">
-          </client-only>
-        </div>
         <div class="refi__block-info-live" v-if="totalCO2Amount > 0">
           <h3 class="refi__block-info-live-title">LIVE <span/> Carbon Offsetting</h3>
           <div class="refi__block-info-live-co2 gradient-box">
@@ -30,7 +24,7 @@
             <carousel :per-page="1" :navigate-to="listingPageNum" :mouse-drag="false" :paginationEnabled="false" :speed="1000">
               <slide :key="pageNum" v-for="pageNum of listingPageCount">
                 <div class="refi__block-listings-items-slide">
-                  <nft :nft="nft" :key="index"  v-for="(nft, index) in pageListings(pageNum)" :owner="nftOwned(nft)" :route="`/collections/${nft.contract}/${routeNftId(nft)}`"/>
+                  <nft :nft="nft" :key="index"  v-for="(nft, index) in pageListings(pageNum)" :owner="nftOwned(nft)" :multiNft="isMultiNft(nft)" :route="nftRoute(nft)"/>
                 </div>
               </slide>
             </carousel>
@@ -99,6 +93,12 @@
           </div>
         </div>
         <button class="refi__block-footer-button refi__block-info-button explorer" @click="$router.push('/explorer')">Explorer NFT</button>
+        <div class="refi__block-info-support">
+          <h3 class="refi__block-info-support-title">Supported & Powered by</h3>
+          <client-only>
+            <img class="refi__block-info-support-investors" :src="investorsIcon" alt="investors">
+          </client-only>
+        </div>
       </div>
     </div>
   </section>
@@ -121,12 +121,14 @@ export default {
   },
   async created() {
     // Latest 12 Listings
-    const latestListings = await this.$store.dispatch('getLatestListings')
-    latestListings.map(item => {
-      item.price = item.price / 1000
+    const newListings = await this.$store.dispatch('getLatestListings')
+    newListings.map(item => {
+      if (item.price) {
+        item.price = item.price / 1000
+      }
       item.market_status = 'LISTED'
     })
-    this.latestListings = latestListings
+    this.latestListings = newListings
 
     // Hot Collections
     let cmco2Price = this.$store.state.cMCO2Price
@@ -134,7 +136,7 @@ export default {
       cmco2Price = await this.$store.dispatch('getCMCO2TokenPrice')
     }
     const collections = await this.$store.dispatch('getCollectionInfo', true)
-    const invisibleTokens = ['knoxnft', 'cconnectpunks']
+    const invisibleTokens = ['cconnectpunks']
     let totalCO2Amount = 0
     this.collectionList = collections.filter(item => !invisibleTokens.includes(item.nftSymbol)).map(item => {
       const co2celoPrice = item.sell_refi_price / 1000 * item.producerFee / 1000 * cmco2Price
@@ -163,9 +165,9 @@ export default {
     },
     listingPageCount() {
       if (!this.isMobile()) {
-        return this.latestListings.length / 6
+        return Math.round(this.latestListings.length / 6)
       } else {
-        return this.latestListings.length / 2
+        return Math.round(this.latestListings.length / 2)
       }
     },
     footerTitle() {
@@ -183,11 +185,18 @@ export default {
     }
   },
   methods: {
-    routeNftId(nft) {
-      return nft.contract !== 'nomdom' ? nft.contract_id : nft.image
-    },
     nftOwned(nft) {
       return nft.owner && nft.owner.toLowerCase() === this.$store.state.fullAddress
+    },
+    isMultiNft(nft) {
+      return this.$store.state.multiNftSymbols.includes(nft.nftSymbol)
+    },
+    nftRoute(nft) {
+      if (!this.isMultiNft(nft)) {
+        return `/collections/${nft.contract}/${nft.contract !== 'nomdom' ? nft.contract_id : nft.image}`
+      } else {
+        return `/collections/${nft.nftSymbol}/${nft.image.substring(nft.image.lastIndexOf('/') + 1).split('.')[0]}`
+      }
     },
     pageListings(page) {
       const itemsCount = !this.isMobile() ? 6 : 2;
@@ -264,7 +273,8 @@ export default {
   &__subtitle {
     padding-top: 4rem;
     text-align: center;
-    font-size: 2rem;
+    font-weight: 500;
+    font-size: 1.8rem;
   }
   &__block {
     padding-top: 4.4rem;
@@ -301,8 +311,7 @@ export default {
         margin-top: 7rem;
       }
       &-support {
-        padding-top: 13.4rem;
-        padding-bottom: 12.4rem;
+        padding-top: 15.7rem;
         &-title {
           font-weight: 400;
           font-size: 1.8rem;
@@ -315,6 +324,7 @@ export default {
         }
       }
       &-live {
+        padding-top: 11.4rem;
         padding-bottom: 4.5rem;
         &-title {
           text-align: center;
@@ -594,8 +604,7 @@ export default {
           margin-top: 3.8rem;
         }
         &-support {
-          padding-top: 5.1rem;
-          padding-bottom: 4.5rem;
+          padding-top: 5.8rem;
           &-title {
             font-size: 1.2rem;
           }
@@ -605,6 +614,7 @@ export default {
           }
         }
         &-live {
+          padding-top: 7rem;
           padding-bottom: 4.5rem;
           &-title {
             font-size: 1.6rem;

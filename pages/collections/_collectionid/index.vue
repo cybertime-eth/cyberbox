@@ -56,7 +56,7 @@
           Sold
         </button>
       </div>
-      <div class="collection__sort">
+      <div class="collection__sort" v-if="!isMultiNftCollection">
         <button
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'mint-lowest'}"
@@ -128,7 +128,7 @@
       <div class="collection__info" v-else>
         <h3 class="collection__info-items">{{ countItems }} items</h3>
         <div class="collection__info-nft">
-          <div class="collection__info-nft-search search-box">
+          <div class="collection__info-nft-search search-box" v-if="!isMultiNftCollection">
             <input class="search-box-input" :type="!isNomDomain ? 'number' : 'text'" min="1" :placeholder="fitlerPlaceholder" v-model="searchName" @input="searchNft">
             <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
             <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
@@ -145,7 +145,7 @@
         <img src="/loading-button.svg" alt="load">
       </div>
       <div class="collection__items" v-else-if="nftList.length && !loading">
-        <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :owner="nftOwned(nft)" :seller="false" :route="`/collections/${nft.contract}/${routeNftId(nft)}`"/>
+        <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :owner="nftOwned(nft)" :multiNft="isMultiNftCollection" :seller="false" :route="nftRoute(nft)"/>
       </div>
       <p class="collection__empty-items" v-else-if="!loading">There are no results matching your selected criteria</p>
     </div>
@@ -212,10 +212,15 @@ export default {
           break
         case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
           break
+        case 'knoxnft': imageSrc = '/collections/KnoxersDAO.png'
+          break
         default: imageSrc = this.collection.image
           break
       }
       return imageSrc
+    },
+    isMultiNftCollection() {
+      return this.$store.state.multiNftSymbols.includes(this.$route.params.collectionid)
     },
     isNomDomain() {
       return this.$route.params.collectionid === 'nomdom'
@@ -279,8 +284,12 @@ export default {
     }
   },
   methods: {
-    routeNftId(nft) {
-      return nft.contract !== 'nomdom' ? nft.contract_id : nft.image
+    nftRoute(nft) {
+      if (!this.isMultiNftCollection) {
+        return `/collections/${nft.contract}/${nft.contract !== 'nomdom' ? nft.contract_id : nft.image}`
+      } else {
+        return `/collections/${nft.nftSymbol}/${nft.id.split('/')[1].split('.')[0]}`
+      }
     },
     nftOwned(nft) {
       return nft.owner && nft.owner.toLowerCase() === this.$store.state.fullAddress
@@ -345,8 +354,9 @@ export default {
       })
     },
     async changeSort(id) {
-      this.loading = true
       this.sort = id
+      if (this.isMultiNftCollection) return
+      this.loading = true
       let sortPrefix = ''
       if (this.myNft) {
         if (this.address) {
@@ -379,6 +389,7 @@ export default {
     },
     changeMyNftStatus() {
       this.myNft = !this.myNft
+      if (!this.isMultiNftCollection) return
       this.changeMyNftFilter()
       this.changeCollectionSetting({ myNft: this.myNft })
     },

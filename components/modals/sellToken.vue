@@ -6,7 +6,7 @@
         </div>
         <h2 class="modal__title">{{ modalTitle }}</h2>
         <div class="modal__sell">
-          <div v-if="!showSuccessModal">
+          <div class="modal__sell-block" v-if="!showSuccessModal">
             <div class="modal__sell-info">
               <img class="modal__image" :src="getNFTImage(nft)">
               <div class="modal__sell-nft">
@@ -467,6 +467,18 @@ export default {
     }
     &__sell {
       padding-top: 1.6rem;
+      @media(max-height: 630px) {
+        &-block {
+          max-height: 65vh;
+          overflow-x: hidden;
+          overflow-y: auto;
+          padding-right: 0.2rem;
+          scrollbar-width: none;
+          &::-webkit-scrollbar {
+            display: none;
+          }
+        }
+      }
       &-header {
         width: calc(100% + 1.6rem);
         height: 4rem;
@@ -511,6 +523,7 @@ export default {
       &-content {
         width: 100%;
         padding: 1.6rem 0;
+        margin: 0;
         font-size: 1.2rem;
       }
       &-buttons {
