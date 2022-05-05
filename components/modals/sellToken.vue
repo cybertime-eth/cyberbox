@@ -6,7 +6,7 @@
         </div>
         <h2 class="modal__title">{{ modalTitle }}</h2>
         <div class="modal__sell">
-          <div class="modal__sell-block" v-if="!showSuccessModal">
+          <div class="modal__sell-block" :class="{'not-approved': !approved}" v-if="!showSuccessModal">
             <div class="modal__sell-info">
               <img class="modal__image" :src="getNFTImage(nft)">
               <div class="modal__sell-nft">
@@ -528,17 +528,34 @@ export default {
     }
   }
 }
-@media screen and (max-width: 460px) and (max-height: 630px) {
+@mixin block-overflow {
+  max-height: 65vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+@media screen and (max-height: 750px) {
   .modal {
     &__sell {
       &-block {
-        max-height: 65vh;
-        overflow-x: hidden;
-        overflow-y: auto;
-        padding-right: 0.2rem;
-        scrollbar-width: none;
-        &::-webkit-scrollbar {
-          display: none;
+        &.not-approved {
+          @include block-overflow;
+        }
+      }
+    }
+  }
+}
+@media screen and (max-height: 700px) {
+  .modal {
+    &__sell {
+      &-block {
+        @include block-overflow;
+        &.not-approved {
+          max-height: 60vh;
         }
       }
     }
