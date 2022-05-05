@@ -351,7 +351,8 @@ export default {
         return this.totalQuantityCount && (this.totalOwnedCount !== undefined) ? `Quantity: ${this.totalOwnedCount} of ${this.totalQuantityCount}` : null
       } else {
         const totalListCount = this.nft.multiNft ? this.nft.multiNft.list_count : 0
-        return totalListCount ? `${totalListCount - this.collectionInfo.owned_list_count} of ${this.totalQuantityCount} available` : null
+        const ownedListCount = this.collectionInfo.owned_list_count || 0
+        return this.totalQuantityCount ? `${totalListCount - ownedListCount} of ${this.totalQuantityCount} available` : null
       }
     },
     confirmButtonText() {
