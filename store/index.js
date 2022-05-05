@@ -481,46 +481,46 @@ export const actions = {
     let rarityNfts = null
     let queryTables = ''
     const queryFormat = `
-    contractInfos: contractInfos(sort first: 48 condition) {
-        id
-        contract
-        contract_id
-        mint_key
-        price
-        seller
-        owner
-        attributes
-        rarity_rank
-        contract_address
-        market_status
-        name
-        image
-        description
-        updatedAt
-        dna
-        trait
-        listData {
-          id
-          owner
-          price
-        }
-        bidData {
-          id
-          owner
-          bidder
-          price_total
-          price_value
-          price_fee
-        }
-        selled {
-          id
-          seller
-          buyer
-          price_total
-          price_value
-          price_fee
-        }
-      }
+		contractInfos: contractInfos(sort first: 48 condition) {
+			id
+			contract
+			contract_id
+			mint_key
+			price
+			seller
+			owner
+			attributes
+			rarity_rank
+			contract_address
+			market_status
+			name
+			image
+			description
+			updatedAt
+			dna
+			trait
+			listData {
+			id
+			owner
+			price
+			}
+			bidData {
+			id
+			owner
+			bidder
+			price_total
+			price_value
+			price_fee
+			}
+			selled {
+			id
+			seller
+			buyer
+			price_total
+			price_value
+			price_fee
+			}
+		}
       multiNFTs: multiNFTs(firt: 48) {
         id
         nftSymbol
