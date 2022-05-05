@@ -9,12 +9,6 @@
           <button class="refi__block-info-button gradient-button ranking" @click="$router.push('/rankings')">Rankings</button>
         </div>
         <img class="refi__block-info-picture" src="/earth.png" alt="earth">
-        <div class="refi__block-info-support">
-          <h3 class="refi__block-info-support-title">Supported & Powered by</h3>
-          <client-only>
-            <img class="refi__block-info-support-investors" :src="investorsIcon" alt="investors">
-          </client-only>
-        </div>
         <div class="refi__block-info-live" v-if="totalCO2Amount > 0">
           <h3 class="refi__block-info-live-title">LIVE <span/> Carbon Offsetting</h3>
           <div class="refi__block-info-live-co2 gradient-box">
@@ -99,6 +93,12 @@
           </div>
         </div>
         <button class="refi__block-footer-button refi__block-info-button explorer" @click="$router.push('/explorer')">Explorer NFT</button>
+        <div class="refi__block-info-support">
+          <h3 class="refi__block-info-support-title">Supported & Powered by</h3>
+          <client-only>
+            <img class="refi__block-info-support-investors" :src="investorsIcon" alt="investors">
+          </client-only>
+        </div>
       </div>
     </div>
   </section>
@@ -311,8 +311,7 @@ export default {
         margin-top: 7rem;
       }
       &-support {
-        padding-top: 13.4rem;
-        padding-bottom: 12.4rem;
+        padding-top: 15.7rem;
         &-title {
           font-weight: 400;
           font-size: 1.8rem;
@@ -325,6 +324,7 @@ export default {
         }
       }
       &-live {
+        padding-top: 11.4rem;
         padding-bottom: 4.5rem;
         &-title {
           text-align: center;
@@ -604,8 +604,7 @@ export default {
           margin-top: 3.8rem;
         }
         &-support {
-          padding-top: 5.1rem;
-          padding-bottom: 4.5rem;
+          padding-top: 5.8rem;
           &-title {
             font-size: 1.2rem;
           }
@@ -615,6 +614,7 @@ export default {
           }
         }
         &-live {
+          padding-top: 7rem;
           padding-bottom: 4.5rem;
           &-title {
             font-size: 1.6rem;
