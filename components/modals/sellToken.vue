@@ -467,18 +467,6 @@ export default {
     }
     &__sell {
       padding-top: 1.6rem;
-      @media(max-height: 630px) {
-        &-block {
-          max-height: 65vh;
-          overflow-x: hidden;
-          overflow-y: auto;
-          padding-right: 0.2rem;
-          scrollbar-width: none;
-          &::-webkit-scrollbar {
-            display: none;
-          }
-        }
-      }
       &-header {
         width: calc(100% + 1.6rem);
         height: 4rem;
@@ -537,6 +525,22 @@ export default {
     }
     &__step {
       padding: 0 4.5rem;
+    }
+  }
+}
+@media screen and (max-width: 460px) and (max-height: 630px) {
+  .modal {
+    &__sell {
+      &-block {
+        max-height: 65vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding-right: 0.2rem;
+        scrollbar-width: none;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      }
     }
   }
 }
