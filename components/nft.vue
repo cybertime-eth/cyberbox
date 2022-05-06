@@ -1,5 +1,5 @@
 <template>
-  <div class="collection__item" @click="routeNft(false)">
+  <div class="collection__item" :class="{ multinft: multiNft && $route.params.collectionid }" @click="routeNft(false)">
     <img src="/more.png" alt="more" v-if="moreButtonVisible" class="collection__item-more" @click="openModal(nft.id, $event)">
     <div class="collection__item-modal" v-if="modalId === nft.id" @mouseleave="modalId = 0">
       <div class="collection__item-modal-button" @click="routeNft(true)">
@@ -23,17 +23,17 @@
       <h2 class="collection__item-info-name" :class="{multinft: multiNft}">{{ nftName }}</h2>
       <p class="collection__item-info-rank" v-if="nft.contract !== 'nomdom' && !multiNft">Rarity Rank {{ nft.rating_index }}</p>
       <p class="collection__item-info-id" v-if="!multiNft">Token ID {{ nftID }}</p>
-      <p class="collection__item-info-type" :class="{multinft: multiNft}" v-if="sellInfo">Last sell</p>
-      <p class="collection__item-info-type" :class="{multinft: multiNft}" v-else>Price</p>
-      <div class="collection__item-info-price-box" :class="{ multinft: multiNft }" v-if="priceVisible">
-        <div class="collection__item-info-price" >
-          <img src="/celo.svg" alt="celo">
-          <h3 class="collection__item-info-price-text">{{ nftPrice }}</h3>
+      <div class="collection__item-info-bottom">
+        <p class="collection__item-info-type" :class="{multinft: multiNft}" v-if="sellInfo">Last sell</p>
+        <p class="collection__item-info-type" :class="{multinft: multiNft}" v-else>Price</p>
+        <div class="collection__item-info-price-box" :class="{ multinft: multiNft }" v-if="priceVisible">
+          <div class="collection__item-info-price" >
+            <img src="/celo.svg" alt="celo">
+            <h3 class="collection__item-info-price-text">{{ nftPrice }}</h3>
+          </div>
+          <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span>
         </div>
-        <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span>
-      </div>
-      <h3 class="collection__item-info-price-null" :class="{ multinft: multiNft }" v-else>{{ saleInfo }} <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span></h3>
-      <div class="collection__item-info-details-box">
+        <h3 class="collection__item-info-price-null" :class="{ multinft: multiNft }" v-else>{{ saleInfo }} <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span></h3>
         <button class="collection__item-info-details" @click="routeNft(true)">Details</button>
       </div>
     </div>
@@ -241,6 +241,9 @@ export default {
     cursor: pointer;
     position: relative;
     top: 0;
+    &.multinft {
+      height: 37rem;
+    }
     &-modal {
       position: absolute;
       top: 3.8rem;
@@ -323,6 +326,12 @@ export default {
         border-bottom: .1rem solid $modalColor;
         padding-bottom: 1.3rem;
       }
+      &-bottom {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
       &-price {
         display: flex;
         align-items: center;
@@ -371,12 +380,6 @@ export default {
         font-size: 1.3rem;
         margin-top: 1.5rem;
         background: $modalColor;
-        &-box {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-        }
       }
     }
     &:hover {

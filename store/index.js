@@ -58,6 +58,18 @@ export const state = () => ({
   ],
 
   collectionList: [
+	{
+	  id: 20,
+	  name: 'KnoxerDAO',
+	  route: 'knoxnft',
+	  image: '/collections/knoxnft.png',
+	  banner: '/collections/knoxnft-banner.png',
+	  logo: '/collections/knoxnft-logo.png',
+	  website: 'https://www.knoxdao.xyz/?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
+	  twitter: 'https://twitter.com/KnoxEdgeDAO?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
+	  discord: 'https://discord.gg/Ec5ZwdzZ?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
+	  description: 'Knoxers are Celorians with wisdom beyond those of the same kind :and the ability to see the future:. According to ancient Celorian myths some Knoxers even possess diamond hands and laser eyes'
+	},
     {
       id: 1,
       name: 'NOM domains',
@@ -295,18 +307,6 @@ export const state = () => ({
       discord: 'https://discord.com/invite/ktSQm5ukbq',
       description: 'Celo Monkey Business CeloOrg 888 inspired generative NFTs'
     },
-    {
-      id: 20,
-      name: 'KnoxerDAO',
-      route: 'knoxnft',
-      image: '/collections/knoxnft.png',
-      banner: '/collections/knoxnft-banner.png',
-      logo: '/collections/knoxnft-logo.png',
-      website: 'https://www.knoxdao.xyz/?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
-      twitter: 'https://twitter.com/KnoxEdgeDAO?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
-      discord: 'https://discord.gg/Ec5ZwdzZ?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
-      description: 'Knoxers are Celorians with wisdom beyond those of the same kind :and the ability to see the future:. According to ancient Celorian myths some Knoxers even possess diamond hands and laser eyes'
-    },
     // {
     //   id: 14,
     //   name: 'PixelAva',
@@ -436,9 +436,8 @@ export const actions = {
 	let contractInfos = collectionData.contractInfos
 	let multiNftInfos = contractInfos.filter(item => state.multiNftSymbols.includes(item.contract))
 	if (multiNftInfos.length > 0) {
-	  const nftImages = multiNftInfos.map(item => item.image)
-	  const multiNftIds = multiNftInfos.filter((item, index) => nftImages.indexOf(item.image) === index).map(item => item.id)
-	  contractInfos = contractInfos.filter(item => !state.multiNftSymbols.includes(item.contract) || (state.multiNftSymbols.includes(item.contract) && multiNftIds.includes(item.id)))
+	  const nftImages = contractInfos.map(item => item.image)
+	  contractInfos = contractInfos.filter((item, index) => nftImages.indexOf(item.image) === index)
 	  contractInfos = contractInfos.map(item => {
 		if (state.multiNftSymbols.includes(item.contract)) {
 		  const newItem = collectionData.multiNFTs.find(nft => nft.nftSymbol === item.contract && nft.image === item.image) || {}
@@ -652,8 +651,8 @@ export const actions = {
     if (!state.fullAddress) return {}
     const query = gql`
       query Sample {
-        sale: contractInfos(first: 1000 where: { owner_not: "${state.fullAddress.toLowerCase()}"  contract: "${state.nft.contract}" market_status: "LISTED" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
-			    id
+        sale: contractInfos(first: 1000 orderBy: price where: { owner_not: "${state.fullAddress.toLowerCase()}"  contract: "${state.nft.contract}" market_status: "LISTED" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
+		  id
           contract
           contract_id
           mint_key
