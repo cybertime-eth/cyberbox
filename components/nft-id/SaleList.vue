@@ -163,17 +163,17 @@ export default {
         .join("")
     },
     nftUpdatedDate(nft) {
-      let difference = new Date() - parseInt(nft.updatedAt) * 1000;
+	  let difference = new Date() - parseInt(nft.updatedAt) * 1000;
       const daysDifference = Math.floor(difference/1000/60/60/24)
-      difference -= this.daysDifference*1000*60*60*24
+      difference -= daysDifference*1000*60*60*24
 
       const hoursDifference = Math.floor(difference/1000/60/60)
-      difference -= this.hoursDifference*1000*60*60
+      difference -= hoursDifference*1000*60*60
 
       const minutesDifference = Math.floor(difference/1000/60)
-      difference -= this.minutesDifference*1000*60
+      difference -= minutesDifference*1000*60
 
-      const secondsDifference = Math.floor(difference/1000)
+	  const secondsDifference = Math.floor(difference/1000)
       if (daysDifference) {
         return `${daysDifference} day${daysDifference > 1 ? 's' : ''} ago`
       } else if (hoursDifference) {
@@ -337,7 +337,8 @@ export default {
           &-celo {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+			justify-content: flex-end;
+			font-family: OpenSans-SemiBold;
             font-weight: 600;
             img {
               width: 1.6rem;
@@ -423,7 +424,10 @@ export default {
             &-celo {
               padding-bottom: 0.4rem;
               font-size: 1.4rem;
-            }
+			}
+			&-usd {
+			  font-size: 1.2rem;
+			}
           }
           &-buttons {
             &-wrapper {
@@ -468,7 +472,17 @@ export default {
                 }
               }
             }
-          }
+		  }
+		  &-info {
+			&-address {
+			  font-family: OpenSans-SemiBold;
+			  font-weight: 600;
+			  font-size: 1.4rem;
+			}
+			&-date {
+			  font-size: 1.2rem;
+			}
+		  }
         }
       }
     }

@@ -651,19 +651,15 @@ export const actions = {
     if (!state.fullAddress) return {}
     const query = gql`
       query Sample {
-        sale: contractInfos(first: 1000 orderBy: price where: { owner_not: "${state.fullAddress.toLowerCase()}"  contract: "${state.nft.contract}" market_status: "LISTED" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
+        sale: contractLists(first: 1000 orderBy: price where: { owner_not: "${state.fullAddress.toLowerCase()}"  contract: "${state.nft.contract}" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
 		  id
           contract
           contract_id
           mint_key
           price
-          seller
           owner
-          contract_address
-          market_status
-          name
+          contract_name
           image
-          description
           updatedAt
         },
         owned: contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" contract: "${state.nft.contract}" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
@@ -682,10 +678,14 @@ export const actions = {
           updatedAt
         }
       }`
-    const data = await this.$graphql.default.request(query)
+	const data = await this.$graphql.default.request(query)
+	const saleNfts = data.sale.map(item => {
+		item.market_status = 'LISTED'
+		return item
+	})
     return [
       ...data.owned,
-      ...data.sale
+      ...saleNfts
     ]
   },
   async getLatestListings({dispatch}) {
