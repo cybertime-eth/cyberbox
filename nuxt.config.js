@@ -31,12 +31,13 @@ export default {
   plugins: [
     '@/plugins/aos.client.js',
     '@/plugins/analytics.client.js',
+    '@/plugins/amplitude.client.js',
     '@/plugins/outside.js',
     '@/plugins/components.js',
     '@/plugins/vue-carousel.client.js',
     '@/plugins/utils.js',
     '@/plugins/bugsnag.js',
-    '@/plugins/logrocket.js'
+    '@/plugins/logrocket.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
