@@ -37,7 +37,7 @@ export default {
     '@/plugins/vue-carousel.client.js',
     '@/plugins/utils.js',
     '@/plugins/bugsnag.js',
-    '@/plugins/logrocket.js',
+    '@/plugins/logrocket.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -52,7 +52,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/multi-nft-list-count-five',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/add-celoerectus',
         options: {}
       },
       ubeswap: {

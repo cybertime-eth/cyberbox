@@ -307,7 +307,20 @@ export const state = () => ({
       twitter: 'https://twitter.com/CeloMBS',
       discord: 'https://discord.com/invite/ktSQm5ukbq',
       description: 'Celo Monkey Business CeloOrg 888 inspired generative NFTs'
-    },
+	},
+	{
+	  id: 21,
+	  name: 'CeloErectus',
+	  route: 'cer',
+	  image: '/collections/cer.png',
+	  banner: '/collections/cer-banner.png',
+	  logo: '/collections/cer-logo.png',
+	  website: 'https://celoerectus.art/',
+	  twitter: 'https://twitter.com/CeloErectus',
+	  discord: 'https://discord.gg/eEPJCfeYf7',
+	  telegram: 'https://t.me/celoerectus',
+	  description: 'New creative NFT Collection on the Celo blockchain!'
+	},
     // {
     //   id: 14,
     //   name: 'PixelAva',
