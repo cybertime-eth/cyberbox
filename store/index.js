@@ -30,6 +30,7 @@ export const state = () => ({
   nftList: [],
   myNftList: [],
   traitFilters: [],
+  notificationList: [],
   filteredTraits: null,
   nft: {},
   approveToken: '',
@@ -651,7 +652,7 @@ export const actions = {
     if (!state.fullAddress) return {}
     const query = gql`
       query Sample {
-        sale: contractLists(first: 1000 orderBy: price where: { owner_not: "${state.fullAddress.toLowerCase()}"  contract: "${state.nft.contract}" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
+        sale: contractLists(first: 1000 orderBy: price where: { contract: "${state.nft.contract}" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
 		  id
           contract
           contract_id
@@ -661,8 +662,16 @@ export const actions = {
           contract_name
           image
           updatedAt
-        },
-        owned: contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" contract: "${state.nft.contract}" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
+		},
+		addressInfos: contractInfos(first: 1000 orderBy: price where: { contract: "${state.nft.contract}" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
+		  id
+		  contract_id
+		  contract_address
+		},
+		contracts: contracts(first: 1 where: { nftSymbol: "${state.nft.contract}" }) {
+		  producerFee
+		},
+        owned: contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" market_status_not: "LISTED" contract: "${state.nft.contract}" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
 		  id
           contract
           contract_id
@@ -679,13 +688,26 @@ export const actions = {
         }
       }`
 	const data = await this.$graphql.default.request(query)
-	const saleNfts = data.sale.map(item => {
-		item.market_status = 'LISTED'
+	const producerFee = data.contracts[0].producerFee
+	const owned = data.owned.map(item => {
+		item.refiOffset = 1 * (producerFee / 1000) * state.cMCO2Price
 		return item
 	})
+	const saleNfts = data.sale.map(item => {
+		item.market_status = 'LISTED'
+		item.refiOffset = (item.price / 1000) * (producerFee / 1000) * state.cMCO2Price
+		const contractAddress = data.addressInfos.find(addressItem => addressItem.contract_id === item.contract_id)
+		if (contractAddress) {
+		  item.contract_address = contractAddress.contract_address
+		}
+		return item
+	})
+	const ownedSale = saleNfts.filter(item => item.owner === state.fullAddress.toLowerCase())
+	const othersSale = saleNfts.filter(item => item.owner !== state.fullAddress.toLowerCase())
     return [
-      ...data.owned,
-      ...saleNfts
+	  ...owned,
+	  ...ownedSale,
+      ...othersSale
     ]
   },
   async getLatestListings({dispatch}) {
@@ -838,6 +860,10 @@ export const actions = {
       contractSells = await dispatch('getRarirtyCollections', { contractInfos: contractSells, sold: true })
     }
     state.pagination ? commit('addNftToList', contractSells) : commit('setNewNftList', contractSells)
+  },
+
+  getNotifications() {
+
   },
 
   // AUTHORIZATION
@@ -1591,6 +1617,9 @@ export const mutations = {
       newNftList = newNftList.sort((a, b) => a.contract_id - b.contract_id)
     }
     state.nftList = newNftList
+  },
+  setNotificationList(state, list) {
+    state.notificationList = list
   },
   setNewNft(state, nft) {
     state.nft = {
