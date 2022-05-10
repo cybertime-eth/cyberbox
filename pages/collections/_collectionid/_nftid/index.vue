@@ -155,7 +155,15 @@
           <div class="nft__details-tab">
             <p class="nft__details-tab-item">Listings</p>
           </div>
-          <SaleList class="nft__details-content" :nft="nft" :celoPrice="celoPrice" :collection="collectionInfo.multiNftList" :approved="nftApproved" :balance="balance" @onSale="multiNftSaling=true" @onComplete="multiNftSaling=false"  />
+          <SaleList class="nft__details-content"
+            :nft="nft"
+            :celoPrice="celoPrice"
+            :balance="balance"
+            :approved="nftApproved"
+            :collection="collectionInfo.multiNftList"
+            @onSale="multiNftSaling=true"
+            @onComplete="multiNftSaling=false"
+          />
         </div>
       </div>
     </div>
@@ -455,6 +463,11 @@ export default {
     },
     async loadMultiNftCollection() {
       const multiNftCollection = await this.$store.dispatch('getMultiNftCollection')
+	  const sales = multiNftCollection.filter(item => item.market_status === 'LISTED')
+      if (!this.$store.state.buyTokenApproved && sales.length > 0) {
+		const price = sales.map(item => item.price / 1000).sort()[sales.length - 1]
+        this.$store.dispatch('checkBuyTokenApproved', price)
+      }
       this.collectionInfo = {
         ...this.collectionInfo,
         multiNftList: multiNftCollection
