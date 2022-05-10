@@ -465,7 +465,7 @@ export default {
       const multiNftCollection = await this.$store.dispatch('getMultiNftCollection')
 	  const sales = multiNftCollection.filter(item => item.market_status === 'LISTED')
       if (!this.$store.state.buyTokenApproved && sales.length > 0) {
-		const price = sales.map(item => item.price / 1000).sort()[sales.length - 1]
+		const price = sales.map(item => item.price / 1000).sort((a, b) => b-a)[0]
         this.$store.dispatch('checkBuyTokenApproved', price)
       }
       this.collectionInfo = {
