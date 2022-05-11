@@ -503,13 +503,10 @@ export const actions = {
       return await dispatch('getMultiNftGraphData')
     }
     let sort = getters.paginationSort
-    const collectionFilterCondition = getters.collectionFilterCondition
 	let condition = ''
+	const collectionFilterCondition = getters.collectionFilterCondition
 	if ($nuxt.$route.params.collectionid) {
 	  condition = `where: { contract: "${$nuxt.$route.params.collectionid}" ${collectionFilterCondition}}`
-	} else if (collectionFilterCondition) {
-	  sort = 'orderBy: mint_key'
-	  condition = `where: { owner: "${getters.storedAddress}" ${collectionFilterCondition}}`
 	}
     let rarityNfts = null
     let queryTables = ''
@@ -1713,7 +1710,9 @@ export const mutations = {
       } else if (type.toLowerCase().includes('sold')) {
         myNftSort = `where: { seller: "${address.toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`
       } else {
-        myNftSort = `where: { owner: "${address.toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`        
+		if ($nuxt.$route.params.collectionid) {
+		  myNftSort = `where: { owner: "${address.toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`
+		}
       }
     }
     switch (type) {
@@ -1785,16 +1784,39 @@ export const mutations = {
     }
   }
   },
-  changeMyCollectionSort(state, contract) {
+  changeMyCollectionSort(state, option) {
     let address = state.fullAddress
     if (!address && process.browser) {
       address = localStorage.getItem('address')
-    }
-    if (contract === 'sale') {
-      state.sort = `where: { owner: "${address.toLowerCase()}" market_status: "LISTED"} orderBy: contract_id`  
-    } else {
-      state.sort = `where: { owner: "${address.toLowerCase()}" contract: "${contract}"} orderBy: contract_id`  
-    }
+	}
+
+	const mintNumFilter = option && option.mintNum ? `mint_key_contains: "${option.mintNum}"` : ''
+	let newSort = `where: { owner: "${address.toLowerCase()}" ${mintNumFilter}}`
+	if (option) {
+	  if (option.filter) {
+		if (option.filter === 'sale') {
+		  newSort = `where: { owner: "${address.toLowerCase()}" market_status: "LISTED" ${mintNumFilter}}`  
+		} else if (option.filter !=='all') {
+		  newSort = `where: { owner: "${address.toLowerCase()}" contract: "${option.filter}" ${mintNumFilter}}`
+		}
+	  }
+
+	  switch (option.type) {
+		case 'mint-highest': newSort += ' orderBy: contract_id orderDirection: desc'
+		  break
+		case 'price-lowest': newSort += ' orderBy: price'
+		  break
+		case 'price-highest': newSort += ' orderBy: price orderDirection: desc'
+		  break
+		default: newSort += ' orderBy: contract_id'
+		  break
+	  }
+	} else {
+	  state.mintNumFilter = null
+	  newSort += ' orderBy: contract_id'
+	}
+
+	state.sort = newSort
     state.countPage = 1
     state.pagination = null
   },

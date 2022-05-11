@@ -1,6 +1,6 @@
 <template>
   <section class="my-collection container-xl">
-    <div class="my-collection-header">
+    <div class="my-collection-header" v-if="address">
       <div class="my-collection-header-avatar"></div>
       <div class="my-collection-header-address">
         <h1 class="my-collection-header-address-highlight">{{ cuttenAddress }}</h1>
@@ -31,13 +31,13 @@
       </div>
       <div class="my-collection-sort" v-if="activeFilter !== 'knoxnft'">
 		<div class="my-collection-sort-buttons" v-if="activeFilter !== 'all'">
-			<CustomSelect :options="sortOptions" @change="changeSort"/>
-			<div class="my-collection-sort-buttons-box" :class="{ 'no-traits': !isTraitVisible }">
-			  	<button class="my-collection-sort-buttons-button" :class="{active: activeSort === 'mint-lowest'}" @click="changeSort('mint-lowest')">
+			<CustomSelect :options="sortOptions" :selected="activePriceSort" @change="changeSort"/>
+			<div class="my-collection-sort-buttons-box" :class="{ 'no-traits': !isTraitVisible }" v-if="activeFilter !== 'sale'">
+			  	<button class="my-collection-sort-buttons-button" :class="{active: activeSort === 'mint-highest'}" @click="changeSort('mint-highest')">
 					<span>Token ID</span>
 					<img src="/arrow-down.svg" alt="down">
 			  	</button>
-				<button class="my-collection-sort-buttons-button" :class="{active: activeSort === 'mint-highest'}" @click="changeSort('mint-highest')">
+				<button class="my-collection-sort-buttons-button" :class="{active: activeSort === 'mint-lowest'}" @click="changeSort('mint-lowest')">
 					<span>Token ID</span>
 				  	<img src="/arrow-up.svg" alt="up">
 			  	</button>
@@ -88,6 +88,7 @@ export default {
       filteredNft: false,
 	  activeFilter: 'all',
 	  activeSort: null,
+	  activePriceSort: null,
 	  searchName: '',
       totalNftCount: 0,
 	  saleNftCount: 0,
@@ -152,8 +153,8 @@ export default {
 	},
 	sortOptions() {
 	  return [
-		{ key: 'lowest_price', value: 'Lowest price' },
-		{ key: 'highest_price', value: 'Highest price' }
+		{ key: 'price-lowest', value: 'Lowest price' },
+		{ key: 'price-highest', value: 'Highest price' }
 	  ]
 	}
   },
@@ -163,8 +164,7 @@ export default {
     },
     successTransfer() {
       if (this.$store.state.successTransferToken) {
-        this.listNft = []
-        this.fetchMyCollection()
+        this.fetchMyCollection(false)
       }
     },
     filteredNft() {
@@ -220,24 +220,37 @@ export default {
         footerEl.classList.remove('fixed')
       }
     },
-    async addMyCollection() {
-      const result = await this.$store.dispatch('getGraphData')
+    async addMyCollection(isReplace = true) {
+	  const result = await this.$store.dispatch('getGraphData')
+	  const newNftList = isReplace ? this.listNft : []
       for (let nft of result) {
         if (nft.contract !== 'nom') {
-          this.listNft.push({
+          newNftList.push({
             ...nft,
             price: nft.price / 1000
           })
         }
-      }
-      this.filteredNft = JSON.parse(JSON.stringify(this.listNft))
+	  }
+	  if (isReplace) {
+		this.listNft = newNftList
+	  }
+      this.filteredNft = JSON.parse(JSON.stringify(newNftList))
     },
-    async fetchMyCollection() {
+    async fetchMyCollection(startLoading = true) {
       this.$store.commit('changeCountPage', 1)
-      if (!this.listNft.length) {
-        this.loading = true
-        this.$store.commit('changeSortData', 'myNft')
-        await this.addMyCollection()
+      if (!this.listNft.length || !startLoading) {
+		this.loading = startLoading
+		if (!this.activeSort && !this.searchName) {
+		  this.$store.commit('changeSortData', 'myNft')
+		} else {
+		  const searchValue = this.searchName ? parseInt(this.searchName) : null
+		  this.$store.commit('changeMyCollectionSort', {
+			filter: this.activeFilter,
+			type: this.activeSort,
+			mintNum: searchValue
+		  })
+		}
+        await this.addMyCollection(startLoading)
         this.loading = false
       }
     },
@@ -272,19 +285,17 @@ export default {
         await this.addMyCollection()
       }
     },
-    contractDaosLength(contract) {
-      if (this.listNft) {
-        const list = this.listNft
-        const countListing = list.filter(item => item.contract === contract)
-        return countListing.length
-      }
-    },
     async filter(payload) {
+	  this.activeSort = null
+	  this.activePriceSort = null
+	  this.searchName = ''
+	  
       if (payload === 'all') {
         this.$store.commit('changeSortData', 'myNft')
         this.listNft = await this.$store.dispatch('getGraphData')
         this.listNft.map(item => item.price = item.price / 1000)
-        this.filteredNft = JSON.parse(JSON.stringify(this.listNft))
+		this.filteredNft = JSON.parse(JSON.stringify(this.listNft))
+		this.$store.commit('changeMyCollectionSort', null)
       } else {
         let filteredNftList = []
         let filterNftCount = 0
@@ -292,20 +303,21 @@ export default {
           filteredNftList = this.listNft.filter(item => item.market_status === 'LISTED')
           filterNftCount = this.saleNftCount
         } else {
-          filteredNftList = this.listNft.filter(item => item.contract === payload)
-          const filterCollection = this.collectionFilters.find(item => item.contract === payload)
+          filteredNftList = this.listNft.filter(item => item.contract === payload || item.nftSymbol === payload)
+		  const filterCollection = this.collectionFilters.find(item => item.contract === payload)
           if (filterCollection) {
             filterNftCount = filterCollection.count
           }
         }
         if (filteredNftList.length === this.$store.state.countPage * 48 || (filteredNftList.length === filterNftCount && filterNftCount > 0)) {
-          this.filteredNft = filteredNftList
+		  this.filteredNft = filteredNftList
+		  this.$store.commit('changeMyCollectionSort', null)
         } else {
-          this.$store.commit('changeMyCollectionSort', payload)
-          this.listNft = await this.$store.dispatch('getGraphData')
-          this.listNft.map(item => item.price = item.price / 1000)
-          this.filteredNft = JSON.parse(JSON.stringify(this.listNft))
-        }
+          this.$store.commit('changeMyCollectionSort', { filter: payload })
+          const newNftList = await this.$store.dispatch('getGraphData')
+          newNftList.map(item => item.price = item.price / 1000)
+          this.filteredNft = JSON.parse(JSON.stringify(newNftList))
+		}
       }
 
       this.activeFilter = payload
@@ -315,33 +327,26 @@ export default {
         myFilter: payload
       })
 	},
+	changePriceSort(sort) {
+	  this.activePriceSort = sort
+	  this.fetchMyCollection(false)
+	},
 	changeSort(sort) {
 	  this.activeSort = sort
-	},
-	async fetchNftsBySearch() {
-	  this.filteredNft = false
-	  this.loading = true
-	  const searchValue = this.searchName ? parseInt(this.searchName) : this.searchName
-	  this.$store.commit('changeMintNumFilter', !searchValue ? null : searchValue)
-	  if (searchValue) {
-		const newNftList = await this.$store.dispatch('getGraphData')
-		newNftList.map(item => item.price = item.price / 1000)
-		this.filteredNft = newNftList
-	  } else {
-		await this.filter(this.activeFilter)
-	  }
-      this.loading = false
+	  this.fetchMyCollection(false)
 	},
 	searchNft: _.debounce(function() {
 	  if (this.searchName && parseInt(this.searchName) < 0) {
 		this.searchName = ''
-	  } else {
-		this.fetchNftsBySearch()
 	  }
+	  const searchValue = this.searchName ? parseInt(this.searchName) : null
+	  this.$store.commit('changeMintNumFilter', searchValue)
+	  this.fetchMyCollection(false)
 	}, 500),
 	clearSearch() {
 	  this.searchName = ''
-      this.fetchNftsBySearch()
+	  this.$store.commit('changeMintNumFilter', null)
+      this.fetchMyCollection(false)
 	},
 	updateTraitFilter() {
 
@@ -429,7 +434,7 @@ export default {
   &-filters {
     display: grid;
     align-self: flex-start;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(6, auto);
     grid-column-gap: 2rem;
 	grid-row-gap: 1.6rem;
 	padding-bottom: 0.5rem;
@@ -444,7 +449,8 @@ export default {
       border-radius: 2rem;
       padding: 0 1.6rem 0 1rem;
       display: flex;
-      align-items: center;
+	  align-items: center;
+	  width: fit-content;
       height: 3.2rem;
       cursor: pointer;
       transition: .3s;
@@ -500,11 +506,11 @@ export default {
 	  padding-bottom: 1.6rem;
 	  &-box {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(3, auto);
 		grid-column-gap: 1.6rem;
 		margin-left: 1.6rem;
 		&.no-traits {
-		  grid-template-columns: repeat(2, 1fr);
+		  grid-template-columns: repeat(2, auto);
 		}
 	  }
 	  &-button {
@@ -563,16 +569,66 @@ export default {
       font-weight: 600;
       font-size: 1.8rem;
     }
-    &-filters {
-      padding-top: 2.4rem;
-      &-item {
-        margin-right: .8rem;
-      }
-    }
     &-collection-filter {
       padding-top: 2.4rem;
       font-size: 1.4rem;
-    }
+	}
+	&-header {
+	  justify-content: center;
+	  flex-wrap: wrap;
+	  &-avatar {
+		width: 8rem;
+		height: 8rem;
+		margin: 0.8rem 0 2.4rem;
+	  }
+	  &-address {
+		width: 100%;
+    	display: flex;
+    	flex-direction: column;
+    	align-items: center;
+	  }
+	}
+	&-filters-container {
+	  display: block;
+	  padding-top: 3.2rem;
+	}
+	&-filters {
+	  display: flex;
+	  grid-column-gap: 1.6rem;
+	  padding-top: 2.4rem;
+	}
+	&-sort {
+	  align-items: flex-start;
+	  min-height: 4.2rem;
+	  padding-top: 1rem;
+      position: relative;
+	  &-buttons {
+		flex-direction: column-reverse;
+		padding-bottom: 0;
+		&-box {
+		  margin-left: 0;
+		  padding-bottom: 1.6rem;
+		}
+		&-button {
+		  width: 10.4rem;
+		  &:nth-child(3) {
+			width: 6.4rem;
+			span {
+			  display: none;
+			}
+		  }
+		}
+		.custom-select {
+		  width: 14.4rem;
+		}
+	  }
+	  .search-box {
+		position: absolute;
+		right: 0;
+		bottom: 0;
+		width: 14.4rem !important;
+	  }
+	}
   }
 }
 </style>

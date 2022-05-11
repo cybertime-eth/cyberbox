@@ -18,15 +18,21 @@
 
 <script>
 export default {
-  props: ['options'],
+  props: ['options', 'selected'],
   data() {
     return {
       currOpion: '',
       showDropdown: false
     }
   },
+  watch: {
+    selected() {
+      console.log('0000', this.selected)
+      this.updateCurrOption()
+    }
+  },
   created() {
-    this.currOpion = this.options ? this.options[0].value : ''
+    this.updateCurrOption()
   },
   beforeMount() {
     window.addEventListener('click', this.handleClickWindow)
@@ -40,10 +46,20 @@ export default {
         this.showDropdown = false
       }
     },
+    updateCurrOption() {
+      if (this.selected) {
+        const selectedOption = this.options.find(item => item.key === this.selected)
+        if (selectedOption) {
+          this.currOpion = selectedOption.value
+        }
+      } else {
+        this.currOpion = this.options ? this.options[0].value : ''
+      }
+    },
     selectOption(option) {
       this.currOpion = option.value
       this.showDropdown = false
-      this.$emit('@change', option.key)
+      this.$emit('change', option.key)
     }
   }
 }
