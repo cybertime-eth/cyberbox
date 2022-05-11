@@ -488,8 +488,13 @@ export const actions = {
           list_max_price
         }
       }`
-    const data = await this.$graphql.default.request(query)
-	let contractInfos = data.multiNFTs
+	const data = await this.$graphql.default.request(query)
+	const orderedSymbols = ['COMMON', 'RARE', 'SUPER-RARE', 'LEGENDARY']
+	let contractInfos = data.multiNFTs.sort((a, b) => {
+	  const idA = a.id.replace('.png', '').split('/')[1]
+	  const idB = b.id.replace('.png', '').split('/')[1]
+	  return orderedSymbols.indexOf(idA) - orderedSymbols.indexOf(idB)
+	})
 	contractInfos = await dispatch('getMultiNftPriceData', contractInfos)
     commit('setNewNftList', contractInfos)
     return contractInfos
