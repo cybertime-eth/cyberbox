@@ -29,7 +29,24 @@
           <p class="my-collection-filters-item-content">{{ filterItem.count }}</p>
         </div>
       </div>
-      <div class="my-collections-sort">
+      <div class="my-collection-sort" v-if="activeFilter !== 'knoxnft'">
+		<div class="my-collection-sort-buttons" v-if="activeFilter !== 'all'">
+			<CustomSelect :options="sortOptions" @change="changeSort"/>
+			<div class="my-collection-sort-buttons-box" :class="{ 'no-traits': !isTraitVisible }">
+			  	<button class="my-collection-sort-buttons-button" :class="{active: activeSort === 'mint-lowest'}" @click="changeSort('mint-lowest')">
+					<span>Token ID</span>
+					<img src="/arrow-down.svg" alt="down">
+			  	</button>
+				<button class="my-collection-sort-buttons-button" :class="{active: activeSort === 'mint-highest'}" @click="changeSort('mint-highest')">
+					<span>Token ID</span>
+				  	<img src="/arrow-up.svg" alt="up">
+			  	</button>
+				<button class="my-collection-sort-buttons-button" v-if="isTraitVisible">
+					<span>Traits</span>
+				  	<img src="/trait.svg" alt="trait">
+			  	</button>
+			</div>
+		</div>
         <div class="collection__info-nft-search search-box">
           <input class="search-box-input" type="number" min="1" placeholder="Mint number" v-model="searchName" @input="searchNft">
           <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
@@ -41,11 +58,26 @@
     <div class="my-collection__items">
       <nft :nft="nft" :key="idx" :route="nftRoute(nft)" :seller="true" :multiNft="isMultiNft(nft)" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
     </div>
+	<TraitsFilterModal
+      :show="showTraitsFilter"
+      :mintCount="collectionInfo.mint_count"
+      :filtersCount="collectionInfo.filtersCount"
+      @updateFilter="updateTraitFilter"
+      @close="showTraitsFilter = false"
+      v-if="showTraitsFilter"
+    />
   </section>
 </template>
 <script>
+import _ from 'lodash'
 import nft from '@/components/nft.vue'
+import CustomSelect from '@/components/utility/CustomSelect.vue'
+import TraitsFilterModal from '@/components/modals/traitsFilterModal'
 export default {
+  components: {
+	CustomSelect,
+	TraitsFilterModal
+  },
   data() {
     return {
       showTransfer: false,
@@ -55,9 +87,12 @@ export default {
       collectionFilters: [],
       filteredNft: false,
 	  activeFilter: 'all',
+	  activeSort: null,
 	  searchName: '',
       totalNftCount: 0,
-      saleNftCount: 0,
+	  saleNftCount: 0,
+	  showTraitsFilter: false,
+	  collectionInfo: {}
     }
   },
   beforeDestroy() {
@@ -96,7 +131,10 @@ export default {
     currCollectionFilter() {
       const filteredCollection = this.$store.state.collectionList.find(item => item.route === this.activeFilter)
       return filteredCollection?.name || ''
-    },
+	},
+	isTraitVisible() {
+	  return !['sale', 'nomdom', 'knoxnft'].includes(this.activeFilter)
+	},
     nftCount() {
       return this.totalNftCount > this.listNft.length ? this.totalNftCount : this.listNft.length
     },
@@ -111,7 +149,13 @@ export default {
     },
     successTransferToken() {
       return this.$store.state.successTransferToken
-    }
+	},
+	sortOptions() {
+	  return [
+		{ key: 'lowest_price', value: 'Lowest price' },
+		{ key: 'highest_price', value: 'Highest price' }
+	  ]
+	}
   },
   watch: {
     address() {
@@ -271,11 +315,36 @@ export default {
         myFilter: payload
       })
 	},
-	searchNft() {
-	  
+	changeSort(sort) {
+	  this.activeSort = sort
 	},
+	async fetchNftsBySearch() {
+	  this.filteredNft = false
+	  this.loading = true
+	  const searchValue = this.searchName ? parseInt(this.searchName) : this.searchName
+	  this.$store.commit('changeMintNumFilter', !searchValue ? null : searchValue)
+	  if (searchValue) {
+		const newNftList = await this.$store.dispatch('getGraphData')
+		newNftList.map(item => item.price = item.price / 1000)
+		this.filteredNft = newNftList
+	  } else {
+		await this.filter(this.activeFilter)
+	  }
+      this.loading = false
+	},
+	searchNft: _.debounce(function() {
+	  if (this.searchName && parseInt(this.searchName) < 0) {
+		this.searchName = ''
+	  } else {
+		this.fetchNftsBySearch()
+	  }
+	}, 500),
 	clearSearch() {
-	  
+	  this.searchName = ''
+      this.fetchNftsBySearch()
+	},
+	updateTraitFilter() {
+
 	},
     closeModal(payload) {
       this.showTransfer = payload
@@ -353,17 +422,18 @@ export default {
   }
   &-filters-container {
     display: flex;
-    justify-content: space-between;
+	justify-content: space-between;
+	padding-top: 5.5rem;
+	padding-bottom: 1rem;
   }
   &-filters {
     display: grid;
     align-self: flex-start;
     grid-template-columns: repeat(6, 1fr);
     grid-column-gap: 2rem;
-    grid-row-gap: 1.6rem;
-    padding-top: 5.5rem;
-    padding-bottom: 1rem;
-    overflow-x: auto;
+	grid-row-gap: 1.6rem;
+	padding-bottom: 0.5rem;
+	overflow-x: auto;
     -ms-overflow-style: none;
     scrollbar-width: none;
     &::-webkit-scrollbar {
@@ -419,6 +489,56 @@ export default {
     text-align: left;
     font-weight: 600;
     font-size: 1.6rem;
+  }
+  &-sort {
+	display: flex;
+	flex-direction: column;
+    align-items: flex-end;
+	&-buttons {
+	  display: flex;
+      justify-content: flex-end;
+	  padding-bottom: 1.6rem;
+	  &-box {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		grid-column-gap: 1.6rem;
+		margin-left: 1.6rem;
+		&.no-traits {
+		  grid-template-columns: repeat(2, 1fr);
+		}
+	  }
+	  &-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 11.5rem;
+		height: 4rem;
+		background: $white;
+		box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+		border-radius: 0.8rem;
+		&.active {
+		  background: $lightGreen;
+		}
+		span {
+		  margin-right: 0.7rem;
+		  font-family: OpenSans-Regular;
+		  font-size: 1.4rem;
+		}
+		img {
+		  width: 1rem;
+		}
+		&:nth-child(3) {
+		  width: 11.3rem;
+		  img {
+			width: 2rem;
+		  }
+		}
+	  }
+	}
+	.search-box {
+	  width: 20rem !important;
+	  margin: 0;
+	}
   }
   &__loading {
     display: flex;

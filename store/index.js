@@ -369,6 +369,10 @@ export const getters = {
       return ''
     }
     return condition
+  },
+  storedAddress() {
+	const address = localStorage.getItem('address') || ''
+	return address.toLowerCase()
   }
 }
 export const actions = {
@@ -500,7 +504,13 @@ export const actions = {
     }
     let sort = getters.paginationSort
     const collectionFilterCondition = getters.collectionFilterCondition
-    let condition = $nuxt.$route.params.collectionid ? `where: { contract: "${$nuxt.$route.params.collectionid}" ${collectionFilterCondition}}` : ''
+	let condition = ''
+	if ($nuxt.$route.params.collectionid) {
+	  condition = `where: { contract: "${$nuxt.$route.params.collectionid}" ${collectionFilterCondition}}`
+	} else if (collectionFilterCondition) {
+	  sort = 'orderBy: mint_key'
+	  condition = `where: { owner: "${getters.storedAddress}" ${collectionFilterCondition}}`
+	}
     let rarityNfts = null
     let queryTables = ''
     const queryFormat = `
@@ -562,8 +572,8 @@ export const actions = {
     if (traitFilters && traitFilters.length > 0) {
       traitFilters.forEach((item, index) => {
         condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] ${collectionFilterCondition} }`
-        queryTables += `contractInfos${index}:` + queryFormat.replace('sort', sort).replace('condition', condition)
-      })
+        queryTables += queryFormat.replace('contractInfos:', `contractInfos${index}:`).replace('sort', sort).replace('condition', condition)
+	  })
     } else {
       if (state.raritySort && !state.sort.includes('owner') && $nuxt.$route.params.collectionid) {
         rarityNfts = await dispatch('getRarityNfts')
@@ -602,7 +612,7 @@ export const actions = {
 		multiNFTs: data.multiNFTs
 	  })
     }
-    state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
+	state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
     return contractInfos
   },
 
