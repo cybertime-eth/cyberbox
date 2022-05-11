@@ -27,6 +27,10 @@
       <client-only>
         <div class="header__box" v-if="address && !isMobile()">
           <nuxt-link class="header__link" active-class="gradient-text" to="/mycollection" exact>My NFT</nuxt-link>
+          <nuxt-link class="header__notification" to="/notification" exact>
+            <img src="/lightning.svg" alt="lightning">
+            <span class="header__notification-count">2</span>
+          </nuxt-link>
         </div>
         <button v-else class="header__null"></button>
         <div class="header__wallet" ref="wallet" v-if="address && !isMobile()" @click="showProfileMenu = !showProfileMenu">
@@ -39,6 +43,10 @@
       <button class="gradient-button header__connect" v-if="!address" @click="showConnectModal = true">Connect Wallet</button>
       <div class="header__mobile">
         <client-only>
+          <nuxt-link class="header__notification" to="/notification" exact v-if="isMobile()">
+            <img src="/lightning.svg" alt="lightning">
+            <span class="header__notification-count">2</span>
+          </nuxt-link>
           <div class="header__box" v-if="address && isMobile()">
             <nuxt-link class="header__link" active-class="gradient-text" to="/mycollection" exact><img src="/mycollection.svg" alt="mycollection"></nuxt-link>
           </div>
@@ -194,8 +202,38 @@ header {
     justify-content: space-between;
   }
   &__box {
+    display: flex;
+    align-items: center;
     justify-self: end;
     cursor: pointer;
+  }
+  &__notification {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.4rem;
+    height: 4.4rem;
+    background: $white;
+    margin-left: 4rem;
+    border-radius: 50%;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+    img {
+      width: 1.7rem;
+    }
+    &-count {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 2rem;
+      height: 2rem;
+      background: $pink;
+      border-radius: 50%;
+      line-height: 2rem;
+      text-align: center;
+      font-size: 1.1rem;
+      color: $white;
+    }
   }
   &__error {
     &-network {
@@ -301,9 +339,27 @@ header {
         display: none;
       }
     }
+    &__notification {
+      width: 2.4rem;
+      height: 2.4rem;
+      margin-left: 0;
+      margin-right: 1.9rem;
+      img {
+        width: 0.9rem;
+      }
+      &-count {
+        width: 1.1rem;
+        height: 1.1rem;
+        line-height: 1.1rem;
+        font-size: 0.7rem;
+      }
+    }
     &__box {
       height: 1.8rem;
       margin-right: 2.2rem;
+      a {
+        height: 100%;
+      }
     }
     &__connect {
       display: none;

@@ -223,6 +223,11 @@ ul {
   url(./assets/fonts/Cabin-Medium.ttf) format('truetype');
 }
 @font-face {
+  font-family: "Cabin-Regular";
+  src: local("Cabin-Regular"),
+  url(./assets/fonts/Cabin-Regular.ttf) format('truetype');
+}
+@font-face {
   font-family: 'OpenSans-Bold';
   src: local("OpenSans-Bold"),
   url(./assets/fonts/OpenSans-Bold.ttf) format('truetype');

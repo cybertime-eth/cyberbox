@@ -1,6 +1,12 @@
 <template>
   <section class="my-collection container-xl">
-    <h1 class="my-collection__title">My collection</h1>
+    <div class="my-collection-header">
+      <div class="my-collection-header-avatar"></div>
+      <div class="my-collection-header-address">
+        <h1 class="my-collection-header-address-highlight">{{ cuttenAddress }}</h1>
+        <p class="my-collection-header-address-copy" @click="copyAddress">{{ cuttenAddress }} <img src="/copy.svg" alt="copy"></p>
+      </div>
+    </div>
     <div class="my-collection__loading" v-if="!filteredNft && loading">
       <img src="/loading-button.svg" alt="load">
     </div>
@@ -8,18 +14,27 @@
       <h3 class="my-collection__empty-title">You don't have NFT yet</h3>
       <button class="gradient-button my-collection__empty-button" @click="$router.push('/')">Buy</button>
     </div>
-    <div class="my-collection-filters" v-if="filteredNft">
-      <div class="my-collection-filters-item" @click="filter('all')" :class="{'my-collection-filters-item-active': activeFilter === 'all'}">
-        <p class="my-collection-filters-item-text">All</p>
-        <p class="my-collection-filters-item-content">{{ nftCount }}</p>
+    <div class="my-collection-filters-container" v-if="filteredNft">
+      <div class="my-collection-filters">
+        <div class="my-collection-filters-item" @click="filter('all')" :class="{'my-collection-filters-item-active': activeFilter === 'all'}">
+          <p class="my-collection-filters-item-text">All</p>
+          <p class="my-collection-filters-item-content">{{ nftCount }}</p>
+        </div>
+        <div class="my-collection-filters-item" :class="{'my-collection-filters-item-active': activeFilter === 'sale'}" @click="filter('sale')" v-if="forSaleInfo > 0">
+          <p class="my-collection-filters-item-text">For sale</p>
+          <p class="my-collection-filters-item-content">{{ forSaleInfo }}</p>
+        </div>
+        <div class="my-collection-filters-item" :title="filterItem.name" :class="{'my-collection-filters-item-active': activeFilter === filterItem.contract}" :key="idx" @click="filter(filterItem.contract)" v-for="(filterItem, idx) in collectionFilters">
+          <img class="my-collection-filters-item-image" :src="filterItem.image" :alt="filterItem.contract">
+          <p class="my-collection-filters-item-content">{{ filterItem.count }}</p>
+        </div>
       </div>
-      <div class="my-collection-filters-item" :class="{'my-collection-filters-item-active': activeFilter === 'sale'}" @click="filter('sale')" v-if="forSaleInfo > 0">
-        <p class="my-collection-filters-item-text">For sale</p>
-        <p class="my-collection-filters-item-content">{{ forSaleInfo }}</p>
-      </div>
-      <div class="my-collection-filters-item" :title="filterItem.name" :class="{'my-collection-filters-item-active': activeFilter === filterItem.contract}" :key="idx" @click="filter(filterItem.contract)" v-for="(filterItem, idx) in collectionFilters">
-        <img class="my-collection-filters-item-image" :src="filterItem.image" :alt="filterItem.contract">
-        <p class="my-collection-filters-item-content">{{ filterItem.count }}</p>
+      <div class="my-collections-sort">
+        <div class="collection__info-nft-search search-box">
+          <input class="search-box-input" type="number" min="1" placeholder="Mint number" v-model="searchName" @input="searchNft">
+          <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
+          <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
+        </div>
       </div>
     </div>
     <p class="my-collection-collection-filter" v-if="activeFilter !== 'all' && activeFilter !== 'sale'">{{ currCollectionFilter }}</p>
@@ -39,7 +54,8 @@ export default {
       listNft: [],
       collectionFilters: [],
       filteredNft: false,
-      activeFilter: 'all',
+	  activeFilter: 'all',
+	  searchName: '',
       totalNftCount: 0,
       saleNftCount: 0,
     }
@@ -64,6 +80,18 @@ export default {
   computed: {
     address() {
       return this.$store.state.fullAddress
+    },
+    cuttenAddress() {
+      const address = this.address
+      if (address) {
+        const startID = address.split("").slice(0, 6);
+        const endID = address.split("").slice(-4);
+        const dotArr = [".", ".", "."];
+        return startID
+          .concat(dotArr)
+          .concat(endID)
+          .join("");
+      }
     },
     currCollectionFilter() {
       const filteredCollection = this.$store.state.collectionList.find(item => item.route === this.activeFilter)
@@ -106,6 +134,13 @@ export default {
   methods: {
     isMultiNft(nft) {
       return this.$store.state.multiNftSymbols.includes(nft.nftSymbol)
+    },
+    copyAddress() {
+      this.$copyText(this.address)
+      this.$store.commit('setMessage', 'Address copied!')
+      setTimeout(() => {
+        this.$store.commit('setMessage', '')
+      }, 2000)
     },
     async reloadMyCollection() {
       if (!localStorage.getItem('move_back')) {
@@ -151,7 +186,7 @@ export default {
           })
         }
       }
-      this.filteredNft = this.listNft.filter(item => item.contract !== 'knoxnft')
+      this.filteredNft = JSON.parse(JSON.stringify(this.listNft))
     },
     async fetchMyCollection() {
       this.$store.commit('changeCountPage', 1)
@@ -168,7 +203,7 @@ export default {
       const newCollectionFilters = this.collectionFilters
       for (let collection of this.$store.state.collectionList) {
         const nftCount = await this.$store.dispatch('getCollectionCountNft', collection.route)
-        if (nftCount > 0 && collection.route !== 'knoxnft')  {
+        if (nftCount > 0)  {
           const filterIndex = newCollectionFilters.findIndex(item => item.contract === collection.route)
           if (filterIndex >= 0) {
             newCollectionFilters[filterIndex].count = nftCount
@@ -205,7 +240,7 @@ export default {
         this.$store.commit('changeSortData', 'myNft')
         this.listNft = await this.$store.dispatch('getGraphData')
         this.listNft.map(item => item.price = item.price / 1000)
-        this.filteredNft = this.listNft.filter(item => item.contract !== 'knoxnft')
+        this.filteredNft = JSON.parse(JSON.stringify(this.listNft))
       } else {
         let filteredNftList = []
         let filterNftCount = 0
@@ -225,7 +260,7 @@ export default {
           this.$store.commit('changeMyCollectionSort', payload)
           this.listNft = await this.$store.dispatch('getGraphData')
           this.listNft.map(item => item.price = item.price / 1000)
-          this.filteredNft = this.listNft.filter(item => item.contract !== 'knoxnft')
+          this.filteredNft = JSON.parse(JSON.stringify(this.listNft))
         }
       }
 
@@ -235,7 +270,13 @@ export default {
         ...collectionSetting,
         myFilter: payload
       })
-    },
+	},
+	searchNft() {
+	  
+	},
+	clearSearch() {
+	  
+	},
     closeModal(payload) {
       this.showTransfer = payload
       this.showPurchased = payload
@@ -246,12 +287,47 @@ export default {
 <style lang="scss">
 .my-collection {
   display: flex;
-  align-items: center;
   flex-direction: column;
-  padding-top: 4.2rem;
+  padding-top: 4.8rem;
   padding-bottom: 20rem;
-  &__title {
-    font-family: Cabin-Bold;
+  &-header {
+    display: flex;
+    align-items: center;
+    &-avatar {
+      width: 11.2rem;
+      height: 11.2rem;
+      border-radius: 50%;
+      background: $white;
+      margin-right: 1.6rem;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    &-address {
+      &-highlight {
+        background: linear-gradient(to right, #A90DEC, #3121E2, #1AB9EA);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-family: Cabin-Medium;
+        font-weight: 500;
+        font-size: 3.2rem;
+      }
+      &-copy {
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        width: -moz-fit-content;
+        background: $white;
+        padding: 0.8rem 1.6rem;
+        margin-top: 1.6rem;
+        border-radius: 2.5rem;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+        font-size: 1.6rem;
+        cursor: pointer;
+        img {
+          width: 1.3rem;
+          margin-left: 2rem;
+        }
+      }
+    }
   }
   &__empty {
     padding-top: 6rem;
@@ -275,13 +351,18 @@ export default {
     grid-row-gap: 2.4rem;
     padding-top: 2.2rem;
   }
-  &-filters {
+  &-filters-container {
     display: flex;
-    align-items: center;
+    justify-content: space-between;
+  }
+  &-filters {
+    display: grid;
     align-self: flex-start;
+    grid-template-columns: repeat(6, 1fr);
+    grid-column-gap: 2rem;
+    grid-row-gap: 1.6rem;
     padding-top: 5.5rem;
     padding-bottom: 1rem;
-    width: 100%;
     overflow-x: auto;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -296,7 +377,6 @@ export default {
       align-items: center;
       height: 3.2rem;
       cursor: pointer;
-      margin-right: 2rem;
       transition: .3s;
       background: $white;
       position: relative;
