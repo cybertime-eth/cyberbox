@@ -562,7 +562,7 @@ export const actions = {
     if (traitFilters && traitFilters.length > 0) {
       traitFilters.forEach((item, index) => {
         condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] ${collectionFilterCondition} }`
-        queryTables += `contractInfos${index}:` + queryFormat.replace('sort', sort).replace('condition', condition)
+        queryTables += queryFormat.replace('contractInfos:', `contractInfos${index}:`).replace('sort', sort).replace('condition', condition)
       })
     } else {
       if (state.raritySort && !state.sort.includes('owner') && $nuxt.$route.params.collectionid) {
