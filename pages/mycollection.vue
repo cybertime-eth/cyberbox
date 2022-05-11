@@ -151,7 +151,7 @@ export default {
           })
         }
       }
-      this.filteredNft = this.listNft.filter(item => item.contract !== 'knoxnft')
+      this.filteredNft = JSON.parse(JSON.stringify(this.listNft))
     },
     async fetchMyCollection() {
       this.$store.commit('changeCountPage', 1)
@@ -168,7 +168,7 @@ export default {
       const newCollectionFilters = this.collectionFilters
       for (let collection of this.$store.state.collectionList) {
         const nftCount = await this.$store.dispatch('getCollectionCountNft', collection.route)
-        if (nftCount > 0 && collection.route !== 'knoxnft')  {
+        if (nftCount > 0)  {
           const filterIndex = newCollectionFilters.findIndex(item => item.contract === collection.route)
           if (filterIndex >= 0) {
             newCollectionFilters[filterIndex].count = nftCount
@@ -205,7 +205,7 @@ export default {
         this.$store.commit('changeSortData', 'myNft')
         this.listNft = await this.$store.dispatch('getGraphData')
         this.listNft.map(item => item.price = item.price / 1000)
-        this.filteredNft = this.listNft.filter(item => item.contract !== 'knoxnft')
+        this.filteredNft = JSON.parse(JSON.stringify(this.listNft))
       } else {
         let filteredNftList = []
         let filterNftCount = 0
@@ -225,7 +225,7 @@ export default {
           this.$store.commit('changeMyCollectionSort', payload)
           this.listNft = await this.$store.dispatch('getGraphData')
           this.listNft.map(item => item.price = item.price / 1000)
-          this.filteredNft = this.listNft.filter(item => item.contract !== 'knoxnft')
+          this.filteredNft = JSON.parse(JSON.stringify(this.listNft))
         }
       }
 
