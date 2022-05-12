@@ -36,8 +36,8 @@ export default {
     '@/plugins/components.js',
     '@/plugins/vue-carousel.client.js',
     '@/plugins/utils.js',
-    // '@/plugins/bugsnag.js',
-    // '@/plugins/logrocket.js'
+    '@/plugins/bugsnag.js',
+    '@/plugins/logrocket.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

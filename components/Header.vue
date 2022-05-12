@@ -29,7 +29,7 @@
           <nuxt-link class="header__link" active-class="gradient-text" to="/mycollection" exact>My NFT</nuxt-link>
           <nuxt-link class="header__notification" to="/notification" exact>
             <img src="/lightning.svg" alt="lightning">
-            <span class="header__notification-count">2</span>
+            <span class="header__notification-count" v-if="notificationCount">{{ notificationCount }}</span>
           </nuxt-link>
         </div>
         <button v-else class="header__null"></button>
@@ -45,7 +45,7 @@
         <client-only>
           <nuxt-link class="header__notification" to="/notification" exact v-if="isMobile()">
             <img src="/lightning.svg" alt="lightning">
-            <span class="header__notification-count">2</span>
+            <span class="header__notification-count" v-if="notificationCount">{{ notificationCount }}</span>
           </nuxt-link>
           <div class="header__box" v-if="address && isMobile()">
             <nuxt-link class="header__link" active-class="gradient-text" to="/mycollection" exact><img src="/mycollection.svg" alt="mycollection"></nuxt-link>
@@ -122,6 +122,14 @@ export default {
     nftId() {
       return this.$route.params.nftid
     },
+    notificationCount() {
+      let count = 0
+      const list = this.$store.state.notificationList
+      list.forEach(info => {
+        count += info.items.filter(item => !item.read).length
+      })
+      return count
+    }
   },
   created() {
     if (process.browser) {

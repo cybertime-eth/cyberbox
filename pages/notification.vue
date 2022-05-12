@@ -1,4 +1,5 @@
 <template>
+import { setTimeout } from 'timers';
     <section id="notification">
         <div class="notification container-xl">
             <h1 class="notification__title">Notifications</h1>
@@ -6,93 +7,39 @@
                 <p class="notification__tab-item" :class="{active: activeTab === 1}" @click="clickTab(1)">All</p>
                 <p class="notification__tab-item" :class="{active: activeTab === 2}" @click="clickTab(2)">My activities</p>
             </div>
-            <div class="notification__block" v-if="true">
-                <div class="notification__list">
-                    <h2 class="notification__list-date">April 2022</h2>
-                    <div class="notification__list-items">
-                        <div class="notification__list-item">
-                            <div class="notification__list-item-avatar">
-                                <div class="notification__list-item-avatar-box">
-                                    <img src="/daos.png" alt="nft">
+            <div class="notification__block" v-if="filteredList.length > 0">
+                <div class="notification__list-container">
+                    <div class="notification__list" :key="idx" v-for="(info, idx) of filteredList">
+                        <h2 class="notification__list-date">{{ notificationDate(info.date) }}</h2>
+                        <div class="notification__list-items" :key="lidx" v-for="(item, lidx) of info.items">
+                            <div class="notification__list-item" :class="{unread: !item.read}">
+                                <div class="notification__list-item-avatar">
+                                    <div class="notification__list-item-avatar-box">
+                                        <img :src="item.image" alt="nft">
+                                    </div>
+                                    <span class="notification__list-item-type" :class="{[notificationType(item)]: true}">
+                                        <img :src="notificationIcon(item)" alt="icon">
+                                    </span>
                                 </div>
-                                <span class="notification__list-item-type">
-                                    <img src="/bookmark-filled.svg" alt="bookmark">
-                                </span>
-                            </div>
-                            <div class="notification__list-item-info">
-                                <h2 class="notification__list-item-info-name">Seloapes #1112</h2>
-                                <p class="notification__list-item-info-status">
-                                    Listed by <span class="notification__list-item-info-status-circle"/> <b>You</b> for <b>34 CELO</b>
-                                </p>
-                                <p class="notification__list-item-info-time">4 hour ago <img src="/share.svg" alt="share"></p>
-                            </div>
-                        </div>
-                        <div class="notification__list-item">
-                            <div class="notification__list-item-avatar">
-                                <div class="notification__list-item-avatar-box">
-                                    <img src="/daos.png" alt="nft">
+                                <div class="notification__list-item-info">
+                                    <h2 class="notification__list-item-info-name">{{ item.name }}</h2>
+                                    <p class="notification__list-item-info-status" v-if="item.type === 'LISTED'">
+                                        Listed by <span class="notification__list-item-info-status-circle"/> <b>You</b> for <b>{{ item.price }} CELO</b>
+                                    </p>
+                                    <p class="notification__list-item-info-status" v-if="item.type === 'SOLD'">
+                                        Sold to <span class="notification__list-item-info-status-circle other"/> <b>{{ item.seller }}</b> for <b>{{ item.price }} CELO</b>
+                                    </p>
+                                    <p class="notification__list-item-info-status" v-if="item.type === 'BOUGHT'">
+                                        Bought from <span class="notification__list-item-info-status-circle"/> <b>{{ item.seller }}</b> for <b>{{ item.price }} CELO</b>
+                                    </p>
+                                    <p class="notification__list-item-info-status" v-if="item.type === 'TRANSFERED' && !item.owned">
+                                        Transfered from <span class="notification__list-item-info-status-circle"/> <b>You</b> to <span class="notification__list-item-info-status-circle other"/> <b>{{ item.receiver }}</b>
+                                    </p>
+                                    <p class="notification__list-item-info-status" v-if="item.type === 'TRANSFERED' && item.owned">
+                                        Transfered from <span class="notification__list-item-info-status-circle other"/> <b>{{ item.sender }}</b> to <span class="notification__list-item-info-status-circle"/> <b>You</b>
+                                    </p>
+                                    <p class="notification__list-item-info-time">4 hour ago <img src="/share.svg" alt="share"></p>
                                 </div>
-                                <span class="notification__list-item-type sale">
-                                    <img src="/sales-filled.svg" alt="bookmark">
-                                </span>
-                            </div>
-                            <div class="notification__list-item-info">
-                                <h2 class="notification__list-item-info-name">Seloapes #1112</h2>
-                                <p class="notification__list-item-info-status">
-                                    Sold to <span class="notification__list-item-info-status-circle other"/> <b>0x5cbd</b> for <b>34 CELO</b>
-                                </p>
-                                <p class="notification__list-item-info-time">4 hour ago <img src="/share.svg" alt="share"></p>
-                            </div>
-                        </div>
-                        <div class="notification__list-item">
-                            <div class="notification__list-item-avatar">
-                                <div class="notification__list-item-avatar-box">
-                                    <img src="/daos.png" alt="nft">
-                                </div>
-                                <span class="notification__list-item-type purchase">
-                                    <img src="/check-filled.svg" alt="bookmark">
-                                </span>
-                            </div>
-                            <div class="notification__list-item-info">
-                                <h2 class="notification__list-item-info-name">Seloapes #1112</h2>
-                                <p class="notification__list-item-info-status">
-                                    Bought from <span class="notification__list-item-info-status-circle"/> <b>0x5cbd</b> for <b>34 CELO</b>
-                                </p>
-                                <p class="notification__list-item-info-time">4 hour ago <img src="/share.svg" alt="share"></p>
-                            </div>
-                        </div>
-                        <div class="notification__list-item">
-                            <div class="notification__list-item-avatar">
-                                <div class="notification__list-item-avatar-box">
-                                    <img src="/daos.png" alt="nft">
-                                </div>
-                                <span class="notification__list-item-type transmit">
-                                    <img src="/transmit-filled.svg" alt="bookmark">
-                                </span>
-                            </div>
-                            <div class="notification__list-item-info">
-                                <h2 class="notification__list-item-info-name">Seloapes #1112</h2>
-                                <p class="notification__list-item-info-status">
-                                    Transfered from <span class="notification__list-item-info-status-circle"/> <b>You</b> to <span class="notification__list-item-info-status-circle other"/> <b>0x5cbd</b> for <b>34 CELO</b>
-                                </p>
-                                <p class="notification__list-item-info-time">4 hour ago <img src="/share.svg" alt="share"></p>
-                            </div>
-                        </div>
-                        <div class="notification__list-item">
-                            <div class="notification__list-item-avatar">
-                                <div class="notification__list-item-avatar-box">
-                                    <img src="/daos.png" alt="nft">
-                                </div>
-                                <span class="notification__list-item-type transmit">
-                                    <img src="/transmit-filled.svg" alt="bookmark">
-                                </span>
-                            </div>
-                            <div class="notification__list-item-info">
-                                <h2 class="notification__list-item-info-name">Seloapes #1112</h2>
-                                <p class="notification__list-item-info-status">
-                                    Transfered from <span class="notification__list-item-info-status-circle other"/> <b>0x5cbd</b> to <span class="notification__list-item-info-status-circle"/> <b>You</b>
-                                </p>
-                                <p class="notification__list-item-info-time">4 hour ago <img src="/share.svg" alt="share"></p>
                             </div>
                         </div>
                     </div>
@@ -128,20 +75,99 @@ export default {
   data() {
     return {
       activeTab: 1,
-      activeFilter: null
+      activeFilter: null,
+      filteredList: []
+    }
+  },
+  computed: {
+    notifications() {
+      return this.$store.state.notificationList
     }
   },
   mounted() {
-    const footerEl = document.querySelector('.footer')
-    footerEl.classList.remove('fixed')
     document.body.style.overflow = 'visible'
+    this.initNotifications()
+  },
+  watch: {
+    notifications() {
+      this.initNotifications()
+    }
   },
   methods: {
+    initNotifications() {
+      let count = 0
+      const list = this.notifications
+      list.forEach(info => {
+        count += info.items.filter(item => !item.read).length
+      })
+      this.filteredList = [
+        ...this.notifications
+      ]
+
+      if (count > 0) {
+        setTimeout(() => {
+          list.map(info => info.items.map(item => item.read = true))
+          this.$store.commit('setNotificationList', list)
+        }, 3000)
+      }
+
+      this.updateFooter()
+    },
+    updateFooter() {
+      const footerEl = document.querySelector('.footer')
+      if (this.filteredList.length > 0) {
+        footerEl.classList.remove('fixed')
+      } else {
+        footerEl.classList.add('fixed')
+      }
+    },
+    notificationDate(datetime) {
+      const date = new Date(datetime)
+      const year = date.getFullYear()
+      const month = date.toLocaleString('default', { month: 'long' })
+      return `${month} ${year}`
+    },
+    notificationType(notification) {
+      switch(notification.type) {
+        case 'SOLD': return 'sale'
+            break
+        case 'BOUGHT': return 'purchase'
+            break
+        case 'TRANSFERED': return 'transmit'
+            break
+        default: return ''
+            break
+      }
+    },
+    notificationIcon(notification) {
+      switch(notification.type) {
+        case 'SOLD': return '/sales-filled.svg'
+            break
+        case 'BOUGHT': return '/check-filled.svg'
+            break
+        case 'TRANSFERED': return '/transmit-filled.svg'
+            break
+        default: return '/bookmark-filled.svg'
+            break
+      }
+    },
     clickTab(tab) {
       this.activeTab = tab
     },
     changeFilter(filter) {
       this.activeFilter = filter;
+      let type = ''
+      switch(filter) {
+        case 'sale': type = 'SOLD'
+            break
+        case 'purchase': type = 'BOUGHT'
+            break
+        case 'transmit': type = 'TRANSFERED'
+            break
+        default: type = 'LISTED'
+            break
+      }
+      this.filteredList = this.notifications.filter(info => info.items.filter(item => item.type === type).length > 0)
     }
   }
 }
@@ -185,9 +211,15 @@ export default {
     display: flex;
     padding-top: 3.7rem;
   }
-  &__list {
-    padding-bottom: 4.9rem;
+
+  &__list-container {
     padding-right: 2.4rem;
+    .notification__list:first-child {
+      padding-top: 0;
+    }
+  }
+  &__list {
+    padding-top: 4.9rem;
     &-date {
       font-family: OpenSans-SemiBold;
       font-weight: 600;
@@ -235,6 +267,9 @@ export default {
         }
         &.sale {
           background: $yellow;
+          img {
+            transform: translateX(-0.1rem);
+          }
         }
         &.purchase {
           background: $green;
@@ -311,9 +346,6 @@ export default {
         }
         &.purchase {
           background: $lightGreen;
-          img {
-            width: 100%;
-          }
         }
         &.sales {
           background: #FFF1D2;
@@ -365,7 +397,6 @@ export default {
       }
     }
     &__list {
-      padding-top: 2.4rem;
       &:first-child {
         padding-top: 3.5rem;
       }

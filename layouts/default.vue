@@ -35,6 +35,7 @@ export default {
     if (!this.$store.state.cMCO2Price) {
       await this.$store.dispatch('getCMCO2TokenPrice')
     }
+    this.$store.dispatch('loadNotificationList')
   }
 }
 </script>

@@ -41,9 +41,10 @@
 					<span>Token ID</span>
 				  	<img src="/arrow-up.svg" alt="up">
 			  	</button>
-				<button class="my-collection-sort-buttons-button" v-if="isTraitVisible">
-					<span>Traits</span>
+				<button class="my-collection-sort-buttons-button" @click="showTrailtsModal" v-if="isTraitVisible">
+					<span class="my-collection-sort-buttons-button-name">Traits</span>
 				  	<img src="/trait.svg" alt="trait">
+					<span class="my-collection-sort-buttons-button-bage" v-if="filtersCount">{{ filtersCount }}</span>
 			  	</button>
 			</div>
 		</div>
@@ -60,8 +61,8 @@
     </div>
 	<TraitsFilterModal
       :show="showTraitsFilter"
-      :mintCount="collectionInfo.mint_count"
-      :filtersCount="collectionInfo.filtersCount"
+      :mintCount="activeMintCount"
+      :filtersCount="filtersCount"
       @updateFilter="updateTraitFilter"
       @close="showTraitsFilter = false"
       v-if="showTraitsFilter"
@@ -92,8 +93,9 @@ export default {
 	  searchName: '',
       totalNftCount: 0,
 	  saleNftCount: 0,
+	  activeMintCount: 0,
 	  showTraitsFilter: false,
-	  collectionInfo: {}
+	  traitFilters: null
     }
   },
   beforeDestroy() {
@@ -156,7 +158,17 @@ export default {
 		{ key: 'price-lowest', value: 'Lowest price' },
 		{ key: 'price-highest', value: 'Highest price' }
 	  ]
-	}
+	},
+	filtersCount() {
+	  let sectionCount = 0
+      this.$store.state.traitFilters.forEach(item => {
+        const filteredValues = item.values.filter(filterItem => filterItem.checked)
+        if (filteredValues.length > 0) {
+          sectionCount++
+        }
+      })
+      return sectionCount
+    }
   },
   watch: {
     address() {
@@ -188,6 +200,7 @@ export default {
     },
     async reloadMyCollection() {
       if (!localStorage.getItem('move_back')) {
+		this.$store.commit('setTraitFilters', [])
         await this.fetchMyCollection()
         this.loadNftCounts()
       } else {
@@ -221,7 +234,13 @@ export default {
       }
     },
     async addMyCollection(isReplace = true) {
-	  const result = await this.$store.dispatch('getGraphData')
+	  let traitFilterInfo = null
+	  if (this.traitFilters && this.traitFilters.length > 0) {
+		traitFilterInfo = {
+		  traitFilters: this.traitFilters
+		}
+	  }
+	  const result = await this.$store.dispatch('getGraphData', traitFilterInfo)
 	  const newNftList = isReplace ? this.listNft : []
       for (let nft of result) {
         if (nft.contract !== 'nom') {
@@ -237,17 +256,19 @@ export default {
       this.filteredNft = JSON.parse(JSON.stringify(newNftList))
     },
     async fetchMyCollection(startLoading = true) {
-      this.$store.commit('changeCountPage', 1)
+	  this.$store.commit('changeCountPage', 1)
       if (!this.listNft.length || !startLoading) {
 		this.loading = startLoading
-		if (!this.activeSort && !this.searchName) {
+		const filterExists = this.activeSort || this.searchName || this.traitFilters
+		if (!filterExists) {
 		  this.$store.commit('changeSortData', 'myNft')
 		} else {
 		  const searchValue = this.searchName ? parseInt(this.searchName) : null
 		  this.$store.commit('changeMyCollectionSort', {
 			filter: this.activeFilter,
 			type: this.activeSort,
-			mintNum: searchValue
+			mintNum: searchValue,
+			traits: this.traitFilters
 		  })
 		}
         await this.addMyCollection(startLoading)
@@ -259,22 +280,26 @@ export default {
       this.saleNftCount = await this.$store.dispatch('getCollectionCountNft', 'sale')
       const newCollectionFilters = this.collectionFilters
       for (let collection of this.$store.state.collectionList) {
-        const nftCount = await this.$store.dispatch('getCollectionCountNft', collection.route)
+		const countInfo = await this.$store.dispatch('getCollectionCountNft', { nftSymbol: collection.route })
+		const nftCount = countInfo.owned_count
+		const mintCount = countInfo.mint_count
         if (nftCount > 0)  {
           const filterIndex = newCollectionFilters.findIndex(item => item.contract === collection.route)
           if (filterIndex >= 0) {
-            newCollectionFilters[filterIndex].count = nftCount
+			newCollectionFilters[filterIndex].count = nftCount
+			newCollectionFilters[filterIndex].mintCount = mintCount
           } else {
             newCollectionFilters.push({
               contract: collection.route,
               name: collection.name,
               image: `/${collection.route}.png`,
-              count: nftCount
+			  count: nftCount,
+			  mintCount
             })
           }
           this.collectionFilters = newCollectionFilters
         }
-      }
+	  }
     },
     async addCurrentPage() {
       const count = this.$store.state.countPage
@@ -289,6 +314,8 @@ export default {
 	  this.activeSort = null
 	  this.activePriceSort = null
 	  this.searchName = ''
+	  this.traitFilters = null
+	  this.$store.commit('setTraitFilters', [])
 	  
       if (payload === 'all') {
         this.$store.commit('changeSortData', 'myNft')
@@ -316,7 +343,7 @@ export default {
           this.$store.commit('changeMyCollectionSort', { filter: payload })
           const newNftList = await this.$store.dispatch('getGraphData')
           newNftList.map(item => item.price = item.price / 1000)
-          this.filteredNft = JSON.parse(JSON.stringify(newNftList))
+          this.filteredNft = newNftList
 		}
       }
 
@@ -325,7 +352,10 @@ export default {
       this.$store.commit('updateCollectionSetting', {
         ...collectionSetting,
         myFilter: payload
-      })
+	  })
+	  if (this.isTraitVisible) {
+		await this.$store.dispatch('loadTraitFilters', payload)
+	  }
 	},
 	changePriceSort(sort) {
 	  this.activePriceSort = sort
@@ -348,9 +378,15 @@ export default {
 	  this.$store.commit('changeMintNumFilter', null)
       this.fetchMyCollection(false)
 	},
-	updateTraitFilter() {
-
+	showTrailtsModal() {
+	  const collectionFilter = this.collectionFilters.find(item => item.contract === this.activeFilter)
+	  this.activeMintCount = collectionFilter ? collectionFilter.mintCount : 0
+	  this.showTraitsFilter = true
 	},
+	async updateTraitFilter(filters, filteredCount) {
+      this.traitFilters = filters
+	  this.fetchMyCollection(false)
+    },
     closeModal(payload) {
       this.showTransfer = payload
       this.showPurchased = payload
@@ -374,6 +410,7 @@ export default {
       background: $white;
       margin-right: 1.6rem;
       box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+	  overflow: hidden;
     }
     &-address {
       &-highlight {
@@ -533,6 +570,9 @@ export default {
 		img {
 		  width: 1rem;
 		}
+		&-bage {
+		  margin-left: 0.4rem;
+		}
 		&:nth-child(3) {
 		  width: 11.3rem;
 		  img {
@@ -586,6 +626,15 @@ export default {
     	display: flex;
     	flex-direction: column;
     	align-items: center;
+		&-highlight {
+		  font-size: 2.2rem;
+		}
+		&-copy {
+		  font-size: 1.4rem;
+		  img {
+			margin-left: 1rem;
+		  }
+		}
 	  }
 	}
 	&-filters-container {
@@ -594,6 +643,7 @@ export default {
 	}
 	&-filters {
 	  display: flex;
+	  grid-template-columns: auto;
 	  grid-column-gap: 1.6rem;
 	  padding-top: 2.4rem;
 	}
@@ -613,9 +663,9 @@ export default {
 		  width: 10.4rem;
 		  &:nth-child(3) {
 			width: 6.4rem;
-			span {
-			  display: none;
-			}
+		  }
+		  &-name {
+			display: none;
 		  }
 		}
 		.custom-select {
