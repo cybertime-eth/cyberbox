@@ -1,5 +1,4 @@
 <template>
-import { setTimeout } from 'timers';
     <section id="notification">
         <div class="notification container-xl">
             <h1 class="notification__title">Notifications</h1>
