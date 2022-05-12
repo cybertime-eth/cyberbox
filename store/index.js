@@ -369,6 +369,10 @@ export const getters = {
       return ''
     }
     return condition
+  },
+  storedAddress() {
+	const address = localStorage.getItem('address') || ''
+	return address.toLowerCase()
   }
 }
 export const actions = {
@@ -504,10 +508,17 @@ export const actions = {
       return await dispatch('getMultiNftGraphData')
     }
     let sort = getters.paginationSort
-    const collectionFilterCondition = getters.collectionFilterCondition
-    let condition = $nuxt.$route.params.collectionid ? `where: { contract: "${$nuxt.$route.params.collectionid}" ${collectionFilterCondition}}` : ''
+	let condition = ''
+	const collectionFilterCondition = getters.collectionFilterCondition
+	if ($nuxt.$route.params.collectionid) {
+	  condition = `where: { contract: "${$nuxt.$route.params.collectionid}" ${collectionFilterCondition}}`
+	}
     let rarityNfts = null
-    let queryTables = ''
+	let queryTables = ''
+	let traitFilterList = null
+	if (traitFilters) {
+	  traitFilterList = traitFilters.length > 0 ? traitFilters : traitFilters.traitFilters
+	}
     const queryFormat = `
 		contractInfos: contractInfos(sort first: 48 condition) {
 			id
@@ -549,26 +560,33 @@ export const actions = {
 			price_fee
 			}
 		}
-      multiNFTs: multiNFTs(firt: 48) {
-        id
-        nftSymbol
-        keySting
-        image
-        mint_count
-        list_count
-        sell_count
-        sell_max_price
-        sell_min_price
-        sell_total_price
-        list_min_price
-        list_max_price
-      }
+		multiNFTs: multiNFTs(firt: 48) {
+			id
+			nftSymbol
+			keySting
+			image
+			mint_count
+			list_count
+			sell_count
+			sell_max_price
+			sell_min_price
+			sell_total_price
+			list_min_price
+			list_max_price
+		}
     `
-    if (traitFilters && traitFilters.length > 0) {
-      traitFilters.forEach((item, index) => {
-        condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] ${collectionFilterCondition} }`
-        queryTables += queryFormat.replace('contractInfos:', `contractInfos${index}:`).replace('sort', sort).replace('condition', condition)
-      })
+    if (traitFilterList && traitFilterList.length > 0) {
+	  const isMyCollection = !$nuxt.$route.params.collectionid
+	  traitFilterList.forEach((item, index) => {
+		let traitSort = sort
+		if (!isMyCollection) {
+		  condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] ${collectionFilterCondition} }`
+		} else {
+		  traitSort = sort.replace('trait_filter', `tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}]`)
+		  condition = ''
+		}
+      queryTables += queryFormat.replace('contractInfos:', `contractInfos${index}:`).replace('sort', traitSort).replace('condition', condition)
+	  })
     } else {
       if (state.raritySort && !state.sort.includes('owner') && $nuxt.$route.params.collectionid) {
         rarityNfts = await dispatch('getRarityNfts')
@@ -582,19 +600,21 @@ export const actions = {
         ${queryTables}
       }`;
     const data = await this.$graphql.default.request(query)
-    let contractInfos = data.contractInfos || []
-    if (traitFilters && traitFilters.length > 0) {
-      let contractIds = []
-      traitFilters.forEach((item, index) => {
-        const newContractInfos = data[`contractInfos${index}`].filter(dItem => !contractIds.includes(dItem.contract_id))
-        contractInfos = [
-          ...contractInfos,
-          ...newContractInfos
-        ]
-        contractIds = contractInfos.map(cItem => cItem.contract_id)
-      })
-      contractInfos = contractInfos.sort((a, b) => a.contract_id - b.contract_id)
-      commit('setFilteredTraits', traitFilters)
+	let contractInfos = data.contractInfos || []
+    if (traitFilterList && traitFilterList.length > 0) {
+	  let contractIds = []
+	  traitFilterList.forEach((item, index) => {
+		const newContractInfos = data[`contractInfos${index}`].filter(dItem => !contractIds.includes(dItem.contract_id))
+		contractInfos = [
+		...contractInfos,
+		...newContractInfos
+		]
+		contractIds = contractInfos.map(cItem => cItem.contract_id)
+	  })
+	  if (traitFilters.length > 0) {
+		contractInfos = contractInfos.sort((a, b) => a.contract_id - b.contract_id)
+	  }
+	  commit('setFilteredTraits', traitFilterList)
     } else {
       commit('setFilteredTraits', null)
     }
@@ -607,7 +627,7 @@ export const actions = {
 		multiNFTs: data.multiNFTs
 	  })
     }
-    state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
+	state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
     return contractInfos
   },
 
@@ -629,10 +649,14 @@ export const actions = {
     if (!state.fullAddress) return 0
 
     let countCondition = `contract: "${contract}"`
+    let nftSymbol = ''
     if (contract === 'all') {
       countCondition = ''
     } else if (contract === 'sale') {
       countCondition = 'market_status: "LISTED"'
+    } else {
+      nftSymbol = contract ? contract.nftSymbol : ''
+      countCondition = `contract: "${nftSymbol}"`
     }
     const query = gql`
       query Sample {
@@ -640,9 +664,20 @@ export const actions = {
 			    id
           contract
         }
+        contracts(first: 1 where: { nftSymbol: "${nftSymbol}" }) {
+			    id
+          mint_count
+        }
       }`
     const data = await this.$graphql.default.request(query)
-    return data.contractInfos.length
+    if (nftSymbol) {
+      return {
+        owned_count: data.contractInfos.length,
+        mint_count: data.contracts[0].mint_count
+      }
+    } else {
+      return data.contractInfos.length
+    }
   },
 
   async getOwnedCollectionInfo({state}, multiNft) {
@@ -1557,8 +1592,8 @@ export const actions = {
     }
   },
 
-  async loadTraitFilters({commit}) {
-    const symbol = $nuxt.$route.params.collectionid
+  async loadTraitFilters({commit}, nftSymbol) {
+    const symbol = $nuxt.$route.params.collectionid || nftSymbol
     const query = gql`
       query Sample {
         traitTypes(first: 1000 where: { nftSymbol: "${symbol}" }) {
@@ -1577,6 +1612,69 @@ export const actions = {
     const traitFilters = data.traitTypes
     traitFilters.map(item => item.values = data.traitValues.filter(filter => filter.traitType === item.traitType))
     commit('setTraitFilters', traitFilters)
+    return traitFilters
+  },
+
+  loadNotificationList({state, commit}) {
+	let dataList = state.notificationList
+	if (dataList.length === 0) {
+	  sleep(2000)
+	  dataList = [{
+		date: 1654030800000,
+		items: [{
+		  type: 'LISTED',
+		  name: 'Daopolis #189',
+		  image: 'https://cdn.cyberbox.art/daos/189.png',
+		  price: 34,
+		  owned: true,
+		}, {
+			type: 'SOLD',
+			name: 'Daopolis #190',
+			image: 'https://cdn.cyberbox.art/daos/190.png',
+			price: 20,
+			seller: '0x5cbd'
+		}, {
+			type: 'BOUGHT',
+			name: 'Daopolis #191',
+			image: 'https://cdn.cyberbox.art/daos/191.png',
+			price: 40,
+			owned: true,
+			seller: '0x5cbd',
+			read: true
+		}, {
+			type: 'TRANSFERED',
+			name: 'Daopolis #193',
+			image: 'https://cdn.cyberbox.art/daos/193.png',
+			receiver: '0x5cbd',
+			read: true
+		}, {
+			type: 'TRANSFERED',
+			name: 'Daopolis #194',
+			image: 'https://cdn.cyberbox.art/daos/194.png',
+			owned: true,
+			sender: '0x5cbd',
+			read: true
+		}]
+	  }, {
+		date: 1651352400000,
+		items: [{
+			type: 'SOLD',
+			name: 'Daopolis #195',
+			image: 'https://cdn.cyberbox.art/daos/195.png',
+			price: 10,
+			seller: '0x5cbd',
+			read: true
+		}, {
+			type: 'SOLD',
+			name: 'Daopolis #196',
+			image: 'https://cdn.cyberbox.art/daos/196.png',
+			price: 15,
+			seller: '0x5cbd',
+			read: true
+		}]
+	  }]
+	  commit('setNotificationList', dataList)
+	}
   }
 }
 
@@ -1708,7 +1806,9 @@ export const mutations = {
       } else if (type.toLowerCase().includes('sold')) {
         myNftSort = `where: { seller: "${address.toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`
       } else {
-        myNftSort = `where: { owner: "${address.toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`        
+		if ($nuxt.$route.params.collectionid) {
+		  myNftSort = `where: { owner: "${address.toLowerCase()}" contract: "${$nuxt.$route.params.collectionid}"}`
+		}
       }
     }
     switch (type) {
@@ -1780,16 +1880,40 @@ export const mutations = {
     }
   }
   },
-  changeMyCollectionSort(state, contract) {
+  changeMyCollectionSort(state, option) {
     let address = state.fullAddress
     if (!address && process.browser) {
       address = localStorage.getItem('address')
-    }
-    if (contract === 'sale') {
-      state.sort = `where: { owner: "${address.toLowerCase()}" market_status: "LISTED"} orderBy: contract_id`  
-    } else {
-      state.sort = `where: { owner: "${address.toLowerCase()}" contract: "${contract}"} orderBy: contract_id`  
-    }
+	}
+
+	const mintNumFilter = option && option.mintNum ? `mint_key_contains: "${option.mintNum}"` : ''
+	const traitFilter = (option && option.traits.length > 0) ? 'trait_filter' : ''
+	let newSort = `where: { owner: "${address.toLowerCase()}" ${mintNumFilter} ${traitFilter}}`
+	if (option) {
+	  if (option.filter) {
+		if (option.filter === 'sale') {
+		  newSort = `where: { owner: "${address.toLowerCase()}" market_status: "LISTED" ${mintNumFilter} ${traitFilter}}`  
+		} else if (option.filter !=='all') {
+		  newSort = `where: { owner: "${address.toLowerCase()}" contract: "${option.filter}" ${mintNumFilter} ${traitFilter}}`
+		}
+	  }
+
+	  switch (option.type) {
+		case 'mint-highest': newSort += ' orderBy: contract_id orderDirection: desc'
+		  break
+		case 'price-lowest': newSort += ' orderBy: price'
+		  break
+		case 'price-highest': newSort += ' orderBy: price orderDirection: desc'
+		  break
+		default: newSort += ' orderBy: contract_id'
+		  break
+	  }
+	} else {
+	  state.mintNumFilter = null
+	  newSort += ' orderBy: contract_id'
+	}
+
+	state.sort = newSort
     state.countPage = 1
     state.pagination = null
   },

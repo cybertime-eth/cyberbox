@@ -35,6 +35,7 @@ export default {
     if (!this.$store.state.cMCO2Price) {
       await this.$store.dispatch('getCMCO2TokenPrice')
     }
+    this.$store.dispatch('loadNotificationList')
   }
 }
 </script>
@@ -221,6 +222,11 @@ ul {
   font-family: "Cabin-Medium";
   src: local("Cabin-Medium"),
   url(./assets/fonts/Cabin-Medium.ttf) format('truetype');
+}
+@font-face {
+  font-family: "Cabin-Regular";
+  src: local("Cabin-Regular"),
+  url(./assets/fonts/Cabin-Regular.ttf) format('truetype');
 }
 @font-face {
   font-family: 'OpenSans-Bold';
