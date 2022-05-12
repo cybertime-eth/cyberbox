@@ -337,6 +337,10 @@ export const state = () => ({
   ],
 })
 
+const sleep = (time) => {
+  return new Promise(resolve => setTimeout(resolve, time));
+}
+
 export const getters = {
   walletConnectProvider() {
     return new WalletConnectProvider({
@@ -1613,7 +1617,7 @@ export const actions = {
   loadNotificationList({state, commit}) {
 	let dataList = state.notificationList
 	if (dataList.length === 0) {
-	  sleep(2000)
+    sleep(2000)
 	  dataList = [{
 		date: 1654030800000,
 		items: [{
