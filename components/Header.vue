@@ -124,8 +124,7 @@ export default {
     },
     notificationCount() {
       let count = 0
-      const list = this.$store.state.notificationList
-      list.forEach(info => {
+      this.$store.state.notificationList.forEach(info => {
         count += info.items.filter(item => !item.read).length
       })
       return count
