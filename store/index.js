@@ -732,6 +732,7 @@ export const actions = {
     const query = gql`
       query Sample {
         contractLists: contractLists(first: 12 orderBy: updatedAt, orderDirection: desc) {
+          id
           contract
           contract_id
           mint_key
