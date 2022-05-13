@@ -50,7 +50,7 @@
 			  	</button>
 			</div>
 		</div>
-        <div class="collection__info-nft-search search-box">
+        <div class="collection__info-nft-search search-box" :class="{ 'with-sort': activeFilter !== 'all' }">
           <input class="search-box-input" type="number" min="1" placeholder="Mint number" v-model="searchName" @input="searchNft">
           <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
           <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
@@ -681,7 +681,10 @@ export default {
 		position: absolute;
 		right: 0;
 		bottom: 0;
-		width: 14.4rem !important;
+		width: 100% !important;
+		&.with-sort {
+		  width: 14.4rem !important;
+		}
 	  }
 	}
   }
