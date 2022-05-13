@@ -106,6 +106,7 @@ export default {
       if (count > 0) {
         setTimeout(() => {
           list.map(info => info.items.map(item => item.read = true))
+		  this.$store.commit('setNotificationList', [])
           this.$store.commit('setNotificationList', list)
           this.filteredList = list
         }, 3000)
@@ -124,7 +125,7 @@ export default {
     notificationDate(datetime) {
       const date = new Date(datetime)
       const year = date.getFullYear()
-      const month = date.toLocaleString('default', { month: 'long' })
+      const month = date.toLocaleString('en-us', { month: 'long' })
       return `${month} ${year}`
     },
     notificationType(notification) {
@@ -384,14 +385,19 @@ export default {
       flex-direction: column-reverse;
     }
     &__filter {
-      position: static;;
+      position: static;
+      top: 0;
+      padding-bottom: 3.5rem;
+      &-title {
+        padding: 0;
+        font-size: 1.4rem;
+      }
       &-item {
-        margin-right: 0.8rem;
+        margin: 0.9rem 0.8rem 0 0;
         &:nth-child(2) {
           padding: 0.6rem;
         }
         &:nth-child(3) {
-          flex: 1;
           margin-right: 0.8rem;
         }
       }
@@ -399,6 +405,9 @@ export default {
     &__list {
       &:first-child {
         padding-top: 3.5rem;
+      }
+      &-date {
+        font-size: 1.4rem;
       }
       &-item {
         width: 100%;
