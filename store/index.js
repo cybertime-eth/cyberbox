@@ -337,8 +337,14 @@ export const state = () => ({
   ],
 })
 
-const sleep = (time) => {
-  return new Promise(resolve => setTimeout(resolve, time));
+const KEY_TRANSACTION_TYPE = {
+  LIST: 0,
+  DELIST: 1,
+  SELL: 2,
+  BUY: 3,
+  TRANSFER: 4,
+  TRANSFERED: 5,
+  CHANGEPRICE: 6,
 }
 
 export const getters = {
@@ -1620,66 +1626,99 @@ export const actions = {
     return traitFilters
   },
 
-  loadNotificationList({state, commit}) {
-	let dataList = state.notificationList
-	if (dataList.length === 0) {
-    sleep(2000)
-	  dataList = [{
-		date: 1654030800000,
-		items: [{
-		  type: 'LISTED',
-		  name: 'Daopolis #189',
-		  image: 'https://cdn.cyberbox.art/daos/189.png',
-		  price: 34,
-		  owned: true,
-		}, {
-			type: 'SOLD',
-			name: 'Daopolis #190',
-			image: 'https://cdn.cyberbox.art/daos/190.png',
-			price: 20,
-			seller: '0x5cbd'
-		}, {
-			type: 'BOUGHT',
-			name: 'Daopolis #191',
-			image: 'https://cdn.cyberbox.art/daos/191.png',
-			price: 40,
-			owned: true,
-			seller: '0x5cbd',
-			read: true
-		}, {
-			type: 'TRANSFERED',
-			name: 'Daopolis #193',
-			image: 'https://cdn.cyberbox.art/daos/193.png',
-			receiver: '0x5cbd',
-			read: true
-		}, {
-			type: 'TRANSFERED',
-			name: 'Daopolis #194',
-			image: 'https://cdn.cyberbox.art/daos/194.png',
-			owned: true,
-			sender: '0x5cbd',
-			read: true
-		}]
-	  }, {
-		date: 1651352400000,
-		items: [{
-			type: 'SOLD',
-			name: 'Daopolis #195',
-			image: 'https://cdn.cyberbox.art/daos/195.png',
-			price: 10,
-			seller: '0x5cbd',
-			read: true
-		}, {
-			type: 'SOLD',
-			name: 'Daopolis #196',
-			image: 'https://cdn.cyberbox.art/daos/196.png',
-			price: 15,
-			seller: '0x5cbd',
-			read: true
-		}]
-	  }]
-	  commit('setNotificationList', dataList)
+  async loadNotificationList({state, commit, getters}, owned) {
+	const today = new Date()
+	const timeBefore2Months = Math.floor(new Date(today.getFullYear(), today.getMonth() - 2, 1).getTime() / 1000)
+	const address = getters.storedAddress
+	let additonalQuery = ''
+	const queryFields = `
+	  id
+	  tokenId
+	  identify
+	  notify_type
+	  transaction
+	  fromAddress
+	  toAddress
+	  nftSymbol
+	  amount
+	  updatedAt
+	`
+	if (owned) {
+	  additonalQuery = `
+		owned: notifications(first: 10 orderBy: updatedAt orderDirection: desc where: { fromAddress: "${address}" notify_type_not_in: [1, 6] updatedAt_gte: ${timeBefore2Months} }) {
+		  ${queryFields}
+		}
+	  `
 	}
+
+	const query = gql`
+      query Sample {
+        notifications(first: 10 orderBy: updatedAt orderDirection: desc where: { notify_type_not_in: [1, 6] updatedAt_gte: ${timeBefore2Months} }) {
+		  ${queryFields}
+		}
+		notificationInfos(first: 1) {
+		  id
+		  total_count
+		}
+		${additonalQuery}
+	  }`
+	const data = await this.$graphql.default.request(query)
+	const maxId = parseInt(localStorage.getItem('notification_max_id') || '0')
+	const notificationList = []
+	let notifications = data.notifications
+	if (owned) {
+	  notifications = data.owned
+	}
+	notifications.forEach(item => {
+	  if (![KEY_TRANSACTION_TYPE.DELIST, KEY_TRANSACTION_TYPE.CHANGEPRICE].includes(item.notify_type)) {
+		const itemDate = new Date(item.updatedAt * 1000)
+		const updatedTime = new Date(itemDate.getFullYear(), itemDate.getMonth(), 1).getTime()
+		const notificationItem = item
+		const collection = state.collectionList.find(cItem => cItem.route === item.nftSymbol)
+		notificationItem.name = `${collection.name} #${item.tokenId}`
+		notificationItem.amount = item.amount / 1000
+		notificationItem.owner = notificationItem.fromAddress
+		notificationItem.from = item.fromAddress.substr(0, 6)
+		notificationItem.to = item.toAddress.substr(0, 6)
+		notificationItem.owned = item.fromAddress.toLowerCase() === address
+		notificationItem.totalCount = data.notificationInfos[0].total_count
+		notificationItem.read = parseInt(item.id) <= maxId
+
+		switch(item.notify_type) {
+		  case KEY_TRANSACTION_TYPE.LIST:
+			  notificationItem.type = 'LISTED'
+			break
+		  case KEY_TRANSACTION_TYPE.SELL:
+			  notificationItem.type = 'SOLD'
+			break
+		  case KEY_TRANSACTION_TYPE.BUY:
+			  notificationItem.type = 'BOUGHT'
+			  notificationItem.owned = false
+			break
+		  case KEY_TRANSACTION_TYPE.TRANSFER:
+		  	  notificationItem.type = 'TRANSFER'
+			break
+		  case KEY_TRANSACTION_TYPE.TRANSFERED:
+			  notificationItem.type = 'TRANSFERED'
+			  item.owned = item.toAddress.toLowerCase() === address
+			break
+		  default:
+		  	notificationItem.type = 'UNKNOWN'
+			break
+		}
+
+		const infoIndex = notificationList.findIndex(info => info.date === updatedTime)
+		if (infoIndex < 0) {
+		  notificationList.push({
+			date: updatedTime,
+			items: [notificationItem]
+		  })
+		} else {
+		  notificationList[infoIndex].items.push(notificationItem)
+		}	  
+	  }
+	})
+	commit('setNotificationList', notificationList)
   }
 }
 

@@ -8,13 +8,13 @@
             </div>
             <div class="notification__block" v-if="filteredList.length > 0">
                 <div class="notification__list-container">
-                    <div class="notification__list" :key="idx" v-for="(info, idx) of filteredList">
+                    <div class="notification__list" :key="idx" v-for="(info, idx) of filteredList" v-if="info.items.length > 0">
                         <h2 class="notification__list-date">{{ notificationDate(info.date) }}</h2>
                         <div class="notification__list-items">
                             <div class="notification__list-item" :class="{unread: !item.read}" :key="lidx" v-for="(item, lidx) of info.items">
                                 <div class="notification__list-item-avatar">
                                     <div class="notification__list-item-avatar-box">
-                                        <img :src="item.image" alt="nft">
+                                        <img :src="notificationImage(item)" alt="nft">
                                     </div>
                                     <span class="notification__list-item-type" :class="{[notificationType(item)]: true}">
                                         <img :src="notificationIcon(item)" alt="icon">
@@ -23,21 +23,21 @@
                                 <div class="notification__list-item-info">
                                     <h2 class="notification__list-item-info-name">{{ item.name }}</h2>
                                     <p class="notification__list-item-info-status" v-if="item.type === 'LISTED'">
-                                        Listed by <span class="notification__list-item-info-status-circle"/> <b>You</b> for <b>{{ item.price }} CELO</b>
+                                        Listed by <span class="notification__list-item-info-status-circle" :class="{other: !item.owned}"/> <b>{{ item.owned ? 'You' : item.from }}</b> for <b>{{ item.amount }} CELO</b>
                                     </p>
                                     <p class="notification__list-item-info-status" v-if="item.type === 'SOLD'">
-                                        Sold to <span class="notification__list-item-info-status-circle other"/> <b>{{ item.seller }}</b> for <b>{{ item.price }} CELO</b>
+                                        Sold to <span class="notification__list-item-info-status-circle other"/> <b>{{ item.to }}</b> for <b>{{ item.amount }} CELO</b>
                                     </p>
                                     <p class="notification__list-item-info-status" v-if="item.type === 'BOUGHT'">
-                                        Bought from <span class="notification__list-item-info-status-circle"/> <b>{{ item.seller }}</b> for <b>{{ item.price }} CELO</b>
+                                        Bought from <span class="notification__list-item-info-status-circle"/> <b>{{ item.from }}</b> for <b>{{ item.amount }} CELO</b>
                                     </p>
-                                    <p class="notification__list-item-info-status" v-if="item.type === 'TRANSFERED' && !item.owned">
-                                        Transfered from <span class="notification__list-item-info-status-circle"/> <b>You</b> to <span class="notification__list-item-info-status-circle other"/> <b>{{ item.receiver }}</b>
+                                    <p class="notification__list-item-info-status" v-if="item.type === 'TRANSFER'">
+                                        Transfered from <span class="notification__list-item-info-status-circle"/> <b>{{ item.owned ? 'You' : item.from }}</b> to <span class="notification__list-item-info-status-circle other"/> <b>{{ item.to }}</b>
                                     </p>
-                                    <p class="notification__list-item-info-status" v-if="item.type === 'TRANSFERED' && item.owned">
-                                        Transfered from <span class="notification__list-item-info-status-circle other"/> <b>{{ item.sender }}</b> to <span class="notification__list-item-info-status-circle"/> <b>You</b>
+                                    <p class="notification__list-item-info-status" v-if="item.type === 'TRANSFERED'">
+                                        Transfered from <span class="notification__list-item-info-status-circle other"/> <b>{{ item.from }}</b> to <span class="notification__list-item-info-status-circle"/> <b>{{ item.owned ? 'You' : item.to }}</b>
                                     </p>
-                                    <p class="notification__list-item-info-time">4 hour ago <img src="/share.svg" alt="share"></p>
+                                    <p class="notification__list-item-info-time">{{ notificationTime(item) }} <img src="/share.svg" alt="share"></p>
                                 </div>
                             </div>
                         </div>
@@ -64,18 +64,23 @@
                     </div>
                 </div>
             </div>
+			<div class="notification__loading" v-else-if="loading">
+			  <img src="/loading-button.svg" alt="load">
+		    </div>
             <p class="notification__empty" v-else>You don't have any action</p>
         </div>
     </section>
 </template>
 
 <script>
+import { CDN_ROOT } from "@/config"
 export default {
   data() {
     return {
       activeTab: 1,
       activeFilter: null,
-      filteredList: []
+	  filteredList: [],
+	  loading: false
     }
   },
   computed: {
@@ -101,22 +106,33 @@ export default {
       })
       this.filteredList = [
         ...this.notifications
-      ]
+	  ]
 
       if (count > 0) {
+		let maxId = parseInt(localStorage.getItem('notification_max_id') || '0')
         setTimeout(() => {
-          list.map(info => info.items.map(item => item.read = true))
+          list.map(info => {
+			info.items.map(item => {
+			  item.read = true
+			  if (parseInt(item.id) >= maxId) {
+				maxId = parseInt(item.id)
+			  }
+			})
+		  })
 		  this.$store.commit('setNotificationList', [])
           this.$store.commit('setNotificationList', list)
-          this.filteredList = list
+		  this.filteredList = list
+		  localStorage.setItem('notification_max_id', maxId)
         }, 3000)
       }
 
       this.updateFooter()
     },
     updateFooter() {
-      const footerEl = document.querySelector('.footer')
-      if (this.filteredList.length > 0) {
+	  const footerEl = document.querySelector('.footer')
+	  let notifyCount = 0
+	  this.filteredList.forEach(info => notifyCount += info.items.length)
+      if (notifyCount > 2) {
         footerEl.classList.remove('fixed')
       } else {
         footerEl.classList.add('fixed')
@@ -133,42 +149,91 @@ export default {
         case 'SOLD': return 'sale'
             break
         case 'BOUGHT': return 'purchase'
-            break
-        case 'TRANSFERED': return 'transmit'
+			break
+		case 'TRANSFER':
+		case 'TRANSFERED': return 'transmit'
             break
         default: return ''
             break
       }
-    },
+	},
+	notificationImage(notification) {
+      return CDN_ROOT + notification.nftSymbol + `/${notification.tokenId}.png`
+	},
     notificationIcon(notification) {
       switch(notification.type) {
         case 'SOLD': return '/sales-filled.svg'
             break
         case 'BOUGHT': return '/check-filled.svg'
-            break
-        case 'TRANSFERED': return '/transmit-filled.svg'
+			break
+		case 'TRANSFER': 
+		case 'TRANSFERED': return '/transmit-filled.svg'
             break
         default: return '/bookmark-filled.svg'
             break
       }
-    },
-    clickTab(tab) {
-      this.activeTab = tab
+	},
+	notificationTime(notification) {
+	  let difference = new Date() - parseInt(notification.updatedAt) * 1000;
+      const daysDifference = Math.floor(difference/1000/60/60/24)
+      difference -= daysDifference*1000*60*60*24
+
+      const hoursDifference = Math.floor(difference/1000/60/60)
+      difference -= hoursDifference*1000*60*60
+
+      const minutesDifference = Math.floor(difference/1000/60)
+      difference -= minutesDifference*1000*60
+
+	  const secondsDifference = Math.floor(difference/1000)
+      if (daysDifference) {
+        return `${daysDifference} day${daysDifference > 1 ? 's' : ''} ago`
+      } else if (hoursDifference) {
+        return `${hoursDifference} hour${hoursDifference > 1 ? 's' : ''} ago`
+      } else if (minutesDifference >= 5) {
+        return `${minutesDifference} minutes ago`
+      } else {
+        return 'a few minutes ago'
+      }
+	},
+	updateNotifications() {
+	  let newList = JSON.parse(JSON.stringify(this.notifications))
+	  if (this.activeFilter) {
+		const types = []
+		switch(this.activeFilter) {
+		  case 'sales': types.push('SOLD')
+			break
+		  case 'purchase': types.push('BOUGHT')
+			break
+		  case 'transfer':
+			types.push('TRANSFER')
+			types.push('TRANSFERED')
+		  break
+		  default: types.push('LISTED')
+			break
+		}
+		newList.map(info => info.items = info.items.filter(item => types.includes(item.type)))
+	  }
+	  this.filteredList = newList
+	  this.updateFooter()
+	},
+    async clickTab(tab) {
+	  if (this.activeTab !== tab) {
+		this.loading = true
+		this.filteredList = []
+		this.updateFooter()
+		this.activeFilter = null
+		this.activeTab = tab
+		await this.$store.dispatch('loadNotificationList', tab === 2)
+		this.loading = false
+	  } else {
+		this.activeFilter = ''
+		this.filteredList = JSON.parse(JSON.stringify(this.notifications))
+		this.updateFooter()
+	  }
     },
     changeFilter(filter) {
       this.activeFilter = filter;
-      let type = ''
-      switch(filter) {
-        case 'sale': type = 'SOLD'
-            break
-        case 'purchase': type = 'BOUGHT'
-            break
-        case 'transmit': type = 'TRANSFERED'
-            break
-        default: type = 'LISTED'
-            break
-      }
-      this.filteredList = this.notifications.filter(info => info.items.filter(item => item.type === type).length > 0)
+	  this.updateNotifications()
     }
   }
 }
@@ -214,6 +279,7 @@ export default {
   }
 
   &__list-container {
+	min-width: 54rem;
     padding-right: 2.4rem;
     .notification__list:first-child {
       padding-top: 0;
@@ -364,6 +430,16 @@ export default {
       }
     }
   }
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20rem;
+    img {
+      width: 8rem;
+      animation: loading 1s infinite;
+    }
+  }
   &__empty {
     padding: 5.6rem 0;
     text-align: center;
@@ -402,6 +478,9 @@ export default {
         }
       }
     }
+	&__list-container {
+	  min-width: auto;
+	}
     &__list {
       &:first-child {
         padding-top: 3.5rem;

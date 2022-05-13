@@ -123,9 +123,10 @@ export default {
       return this.$route.params.nftid
     },
     notificationCount() {
+      const totalCount = parseInt(localStorage.getItem('notification_max_id') || '0')
       let count = 0
       this.$store.state.notificationList.forEach(info => {
-        count += info.items.filter(item => !item.read).length
+        count += info.items.filter(item => totalCount > 0 ? parseInt(item.id) > totalCount : true).length
       })
       return count
     }
