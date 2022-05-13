@@ -1891,7 +1891,7 @@ export const mutations = {
 	}
 
 	const mintNumFilter = option && option.mintNum ? `mint_key_contains: "${option.mintNum}"` : ''
-	const traitFilter = (option && option.traits.length > 0) ? 'trait_filter' : ''
+	const traitFilter = (option && option.traits && option.traits.length > 0) ? 'trait_filter' : ''
 	let newSort = `where: { owner: "${address.toLowerCase()}" ${mintNumFilter} ${traitFilter}}`
 	if (option) {
 	  if (option.filter) {

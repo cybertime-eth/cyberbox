@@ -10,8 +10,8 @@
                 <div class="notification__list-container">
                     <div class="notification__list" :key="idx" v-for="(info, idx) of filteredList">
                         <h2 class="notification__list-date">{{ notificationDate(info.date) }}</h2>
-                        <div class="notification__list-items" :key="lidx" v-for="(item, lidx) of info.items">
-                            <div class="notification__list-item" :class="{unread: !item.read}">
+                        <div class="notification__list-items">
+                            <div class="notification__list-item" :class="{unread: !item.read}" :key="lidx" v-for="(item, lidx) of info.items">
                                 <div class="notification__list-item-avatar">
                                     <div class="notification__list-item-avatar-box">
                                         <img :src="item.image" alt="nft">
@@ -107,6 +107,7 @@ export default {
         setTimeout(() => {
           list.map(info => info.items.map(item => item.read = true))
           this.$store.commit('setNotificationList', list)
+          this.filteredList = list
         }, 3000)
       }
 

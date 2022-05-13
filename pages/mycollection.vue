@@ -1,7 +1,9 @@
 <template>
   <section class="my-collection container-xl">
     <div class="my-collection-header" v-if="address">
-      <div class="my-collection-header-avatar"></div>
+      <div class="my-collection-header-avatar">
+        <img src="/earth.png" alt="earth">
+      </div>
       <div class="my-collection-header-address">
         <h1 class="my-collection-header-address-highlight">{{ cuttenAddress }}</h1>
         <p class="my-collection-header-address-copy" @click="copyAddress">{{ cuttenAddress }} <img src="/copy.svg" alt="copy"></p>
@@ -411,6 +413,9 @@ export default {
       margin-right: 1.6rem;
       box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
 	  overflow: hidden;
+	  img {
+		width: 100%;
+	  }
     }
     &-address {
       &-highlight {
