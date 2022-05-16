@@ -380,8 +380,8 @@ export const getters = {
     }
     return condition
   },
-  storedAddress() {
-	const address = localStorage.getItem('address') || ''
+  storedAddress(state) {
+	const address = state.fullAddress || localStorage.getItem('address') || ''
 	return address.toLowerCase()
   }
 }
@@ -1112,6 +1112,7 @@ export const actions = {
   // GET INFORMATION USER
 
   async getBalance({state, getters}) {
+	if (!state.fullAddress) return 0
 	const web3 = new Web3(getters.provider)
 	const kit = ContractKit.newKitFromWeb3(web3)
 	const res = await kit.getTotalBalance(state.fullAddress)
@@ -1135,7 +1136,7 @@ export const actions = {
 
   // GET NFT
 
-  async getNft({commit, state}, token) {
+  async getNft({commit, state, getters}, token) {
     let nftQuery = ''
     const isMultiNft = state.multiNftSymbols.includes(token.collectionId)
     const infoAttributes = `
@@ -1184,7 +1185,7 @@ export const actions = {
         }
       `
     } else {
-      const address = state.fullAddress || localStorage.getItem('address')
+      const address = getters.storedAddress
       nftQuery = `
         contractInfos: contractInfos(first: 1 where: { contract: "${token.collectionId}" image_contains: "${token.id}" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
@@ -1305,7 +1306,7 @@ export const actions = {
     try {
       const contractAddress = state.nft.contract !== 'nomdom' ? state.nft.contract_address : state.nomContractAddress
       const contract = new ethers.Contract(contractAddress, AbiNft, signer)
-      const approvedForAll = await contract.isApprovedForAll(state.fullAddress, resultAddress)
+      const approvedForAll = await contract.isApprovedForAll(getters.storedAddress, resultAddress)
       if (!submitApprove) {
         return approvedForAll
       } else {
@@ -1845,7 +1846,7 @@ export const mutations = {
   },
   changeSortData(state, type) {
     let myNftSort = ''
-    let address = state.fullAddress
+    let address = state.fullAddress || localStorage.getItem('address') || ''
     if (!address && process.browser) {
       address = localStorage.getItem('address')
     }
@@ -1930,7 +1931,7 @@ export const mutations = {
   }
   },
   changeMyCollectionSort(state, option) {
-    let address = state.fullAddress
+    let address = state.fullAddress || localStorage.getItem('address') || ''
     if (!address && process.browser) {
       address = localStorage.getItem('address')
 	}
