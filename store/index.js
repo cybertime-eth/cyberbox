@@ -751,7 +751,7 @@ export const actions = {
         }
       }`
 	const data = await this.$graphql.default.request(query)
-	const producerFee = data.contracts[0].producerFee
+	const producerFee = data.contracts.length > 0 ? data.contracts[0].producerFee : 0
 	const owned = data.owned.map(item => {
 		item.refiOffset = 1 * (producerFee / 1000) * state.cMCO2Price
 		return item
@@ -1238,7 +1238,7 @@ export const actions = {
     const nftInfo = {
       ...(isMultiNft ? multiNftInfo : data.contractInfo),
       multiNft: (isMultiNft && data.multiNFTs.length > 0 ? data.multiNFTs[0] : null),
-      producerFee: data.contracts[0].producerFee
+      producerFee: data.contracts.length > 0 ? data.contracts[0].producerFee : 0
     }
     commit('setNewNft', nftInfo)
     return nftInfo
