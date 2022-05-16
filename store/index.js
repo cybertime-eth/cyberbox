@@ -942,24 +942,27 @@ export const actions = {
 
   async updateUser({commit, dispatch}) {
     const ethereum = window.ethereum
-    if (!ethereum) return
-	  const provider = new ethers.providers.Web3Provider(ethereum)
+	if (!ethereum) return
+
+	const provider = new ethers.providers.Web3Provider(ethereum)
     if (localStorage.getItem('address') && !localStorage.getItem('walletconnect') && ethereum) {
-      const signer = await provider.getSigner()
-      const address = await signer.getAddress()
-	    const chain = await provider.getNetwork()
       try {
+		const signer = await provider.getSigner()
+		const address = await signer.getAddress()
+		const chain = await provider.getNetwork()
+
         ethereum.on("chainChanged", async (chainId) => {
           commit('setChainId', BigNumber.from(chainId).toNumber())
         })
         ethereum.on("accountsChanged", async (accounts) => {
           dispatch('handleAccountChanged', accounts[0])
-        })
+		})
+		
+		commit('setAddress', address)
+		commit('setChainId', chain.chainId)
       } catch (error) {
         console.log(error)
       }
-      commit('setAddress', address)
-      commit('setChainId', chain.chainId)
 	}
   },
   async connectMetaTrust({commit}) {
