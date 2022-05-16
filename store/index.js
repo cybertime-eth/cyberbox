@@ -1633,6 +1633,8 @@ export const actions = {
 	let additonalQuery = ''
 	const queryFields = `
 	  id
+	  title
+	  image
 	  tokenId
 	  identify
 	  notify_type
@@ -1674,8 +1676,7 @@ export const actions = {
 		const itemDate = new Date(item.updatedAt * 1000)
 		const updatedTime = new Date(itemDate.getFullYear(), itemDate.getMonth(), 1).getTime()
 		const notificationItem = item
-		const collection = state.collectionList.find(cItem => cItem.route === item.nftSymbol)
-		notificationItem.name = `${collection.name} #${item.tokenId}`
+		notificationItem.name = `${item.title}${item.nftSymbol === 'nomdom' ? '.nom' : ''}`
 		notificationItem.amount = item.amount / 1000
 		notificationItem.owner = notificationItem.fromAddress
 		notificationItem.from = item.fromAddress.substr(0, 6)

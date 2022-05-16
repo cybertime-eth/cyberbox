@@ -156,24 +156,20 @@ export default {
   },
   methods: {
     getCDNImageUrl() {
-      if (this.nft.contract !== 'nomstronaut') {
-        let fileExtension = this.nft.image.split('.').pop()
-        let contractId = this.nft.contract_id
-        if (fileExtension.split('//').length > 1 || this.nft.contract === 'nomdom') {
-          fileExtension = 'png'
-          if (this.nft.contract === 'nomdom') {
-            contractId = this.nft.image
-          }
+      let fileExtension = this.nft.image.split('.').pop()
+      let contractId = this.nft.contract_id
+      if (fileExtension.split('//').length > 1 || this.nft.contract === 'nomdom') {
+        fileExtension = 'png'
+        if (this.nft.contract === 'nomdom') {
+          contractId = this.nft.image
         }
-        const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
-        const imageURL = CDN_ROOT + contractName + `/${contractId}.${fileExtension}`
-        return imageURL
-      } else {
-        return null
       }
+      const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
+      const imageURL = CDN_ROOT + contractName + `/${contractId}.${fileExtension}`
+      return imageURL
     },
     async loadCDNImage() {
-      if (this.nft.contract !== 'nomstronaut' && this.nft.image) {
+      if (this.nft.image) {
         const imageURL = this.getCDNImageUrl()
         this.cdnImage = imageURL
         const img = new Image()

@@ -100,7 +100,9 @@ export default {
   methods: {
     initNotifications() {
       let count = 0
-      const list = this.notifications
+	  const list = [
+		...this.notifications
+	  ]
       list.forEach(info => {
         count += info.items.filter(item => !item.read).length
       })
@@ -158,7 +160,11 @@ export default {
       }
 	},
 	notificationImage(notification) {
-      return CDN_ROOT + notification.nftSymbol + `/${notification.tokenId}.png`
+    let contractId = notification.tokenId
+    if (notification.nftSymbol === 'nomdom') {
+      contractId = notification.image
+    }
+    return CDN_ROOT + notification.nftSymbol + `/${contractId}.png`
 	},
     notificationIcon(notification) {
       switch(notification.type) {
