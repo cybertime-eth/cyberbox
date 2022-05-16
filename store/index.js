@@ -1622,6 +1622,7 @@ export const actions = {
 
   async loadNotificationList({state, commit, getters}, owned) {
 	const today = new Date()
+	const notificationCount = 20
 	const timeBefore2Months = Math.floor(new Date(today.getFullYear(), today.getMonth() - 2, 1).getTime() / 1000)
 	const address = getters.storedAddress
 	let additonalQuery = ''
@@ -1641,7 +1642,7 @@ export const actions = {
 	`
 	if (owned) {
 	  additonalQuery = `
-		owned: notifications(first: 10 orderBy: updatedAt orderDirection: desc where: { fromAddress: "${address}" notify_type_not_in: [1, 6] updatedAt_gte: ${timeBefore2Months} }) {
+		owned: notifications(first: ${notificationCount} orderBy: updatedAt orderDirection: desc where: { fromAddress: "${address}" notify_type_not_in: [1, 6] updatedAt_gte: ${timeBefore2Months} }) {
 		  ${queryFields}
 		}
 	  `
@@ -1649,7 +1650,7 @@ export const actions = {
 
 	const query = gql`
       query Sample {
-        notifications(first: 10 orderBy: updatedAt orderDirection: desc where: { notify_type_not_in: [1, 6] updatedAt_gte: ${timeBefore2Months} }) {
+        notifications(first: ${notificationCount} orderBy: updatedAt orderDirection: desc where: { notify_type_not_in: [1, 6] updatedAt_gte: ${timeBefore2Months} }) {
 		  ${queryFields}
 		}
 		notificationInfos(first: 1) {
