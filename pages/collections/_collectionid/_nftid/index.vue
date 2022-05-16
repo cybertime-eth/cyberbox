@@ -397,7 +397,9 @@ export default {
       return this.nft.market_status === 'BOUGHT' && this.nft.seller === this.$store.state.fullAddress
     },
     collection() {
-      return this.$store.state.collectionList.find(item => item.route === this.$route.params.collectionid)
+      const collectionList = this.$store.state.collectionList || []
+      const foundCollection = collectionList.find(item => item.route === this.$route.params.collectionid) || {}
+      return foundCollection
     },
     pageTitle() {
       return `${this.collection.name} | Cyberbox ReFi NFT Marketplace`
