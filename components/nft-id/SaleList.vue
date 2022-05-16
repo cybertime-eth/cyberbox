@@ -133,7 +133,7 @@ export default {
     },
     successBuyToken() {
       if (this.$store.state.successBuyToken === true) {
-        this.showBuyModal = false
+        this.showBuyTokenModal = false
         this.deleteNftFromList()
       } else {
         this.closeModal()
@@ -206,7 +206,7 @@ export default {
       })
     },
     showBuyModal(nft) {
-      if (nft.buying) return
+      if (!nft || nft.buying) return
       this.$emit('onSale')
       this.currNft = nft
       this.$store.commit('setNewNft', nft)

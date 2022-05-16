@@ -240,7 +240,9 @@ export default {
       }
     },
     collection() {
-      return this.$store.state.collectionList.filter(item => item.route === this.$route.params.collectionid)[0]
+      const colletionList = this.$store.state.collectionList || []
+      const filteredList = colletionList.filter(item => item.route === this.$route.params.collectionid)
+      return filteredList.length > 0 ? filteredList[0] : {}
     },
     nftList() {
       return this.$store.state.nftList
@@ -254,7 +256,7 @@ export default {
     filtersCount() {
       let sectionCount = 0
       this.$store.state.traitFilters.forEach(item => {
-        const filteredValues = item.values.filter(filterItem => filterItem.checked)
+        const filteredValues = item.values ? item.values.filter(filterItem => filterItem.checked) : []
         if (filteredValues.length > 0) {
           sectionCount++
         }
