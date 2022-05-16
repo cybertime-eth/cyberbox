@@ -2,10 +2,6 @@
     <section id="notification">
         <div class="notification container-xl">
             <h1 class="notification__title">Notifications</h1>
-            <div class="notification__tab">
-                <p class="notification__tab-item" :class="{active: activeTab === 1}" @click="clickTab(1)">All</p>
-                <p class="notification__tab-item" :class="{active: activeTab === 2}" @click="clickTab(2)">My activities</p>
-            </div>
             <div class="notification__block" v-if="filteredList.length > 0">
                 <div class="notification__list-container">
                     <div class="notification__list" :key="idx" v-for="(info, idx) of filteredList" v-if="info.items.length > 0">
@@ -77,7 +73,6 @@ import { CDN_ROOT } from "@/config"
 export default {
   data() {
     return {
-      activeTab: 1,
       activeFilter: null,
 	  filteredList: [],
 	  loading: false
@@ -222,24 +217,15 @@ export default {
 	  this.filteredList = newList
 	  this.updateFooter()
 	},
-    async clickTab(tab) {
-	  if (this.activeTab !== tab) {
-		this.loading = true
-		this.filteredList = []
-		this.updateFooter()
-		this.activeFilter = null
-		this.activeTab = tab
-		await this.$store.dispatch('loadNotificationList', tab === 2)
-		this.loading = false
+    changeFilter(filter) {
+	  if (this.activeFilter !== filter) {
+		this.activeFilter = filter;
+		this.updateNotifications()
 	  } else {
-		this.activeFilter = ''
+		this.activeFilter = null
 		this.filteredList = JSON.parse(JSON.stringify(this.notifications))
 		this.updateFooter()
 	  }
-    },
-    changeFilter(filter) {
-      this.activeFilter = filter;
-	  this.updateNotifications()
     }
   }
 }
@@ -390,8 +376,8 @@ export default {
   &__filter {
     position: sticky;
     position: -webkit-sticky;
-    position: sticky;
     top: 1rem;
+	margin-top: 4.6rem;
     align-self: flex-start;
     &-title {
       padding-bottom: 1.6rem;
@@ -454,7 +440,7 @@ export default {
   }
 
   @media (max-width: 530px) {
-    padding-top: 2.5rem;
+    padding: 2.5rem 0;
     &__title {
       font-size: 1.8rem;
     }
@@ -463,13 +449,16 @@ export default {
       margin: 0;
     }
     &__block {
+	  height: calc(100vh - 14rem);
       padding-top: 2.4rem;
       flex-direction: column-reverse;
     }
     &__filter {
       position: static;
       top: 0;
-      padding-bottom: 3.5rem;
+	  margin: 0;
+      padding-bottom: 1.6rem;
+	  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05);
       &-title {
         padding: 0;
         font-size: 1.4rem;
@@ -485,7 +474,15 @@ export default {
       }
     }
 	&__list-container {
+	  flex: 1;
 	  min-width: auto;
+	  padding-right: 0;
+	  overflow-y: auto;
+	  -ms-overflow-style: none;
+	  scrollbar-width: none;
+	  &::-webkit-scrollbar {
+	    display: none;
+	  }
 	}
     &__list {
       &:first-child {
@@ -495,7 +492,7 @@ export default {
         font-size: 1.4rem;
       }
       &-item {
-        width: 100%;
+        width: calc(100% - 1.8rem);
         &-avatar {
           &-box {
             width: 4rem;

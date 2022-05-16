@@ -381,7 +381,14 @@ export const getters = {
     return condition
   },
   storedAddress(state) {
-	const address = state.fullAddress || localStorage.getItem('address') || ''
+	let address = state.fullAddress
+	if (!address) {
+	  if (process.browser) {
+		address = localStorage.getItem('address') || ''
+	  } else {
+		address = ''
+	  }
+	}
 	return address.toLowerCase()
   }
 }
@@ -1630,53 +1637,36 @@ export const actions = {
     return traitFilters
   },
 
-  async loadNotificationList({state, commit, getters}, owned) {
+  async loadNotificationList({commit, getters}) {
 	const today = new Date()
 	const notificationCount = 20
 	const timeBefore2Months = Math.floor(new Date(today.getFullYear(), today.getMonth() - 2, 1).getTime() / 1000)
 	const address = getters.storedAddress
-	let additonalQuery = ''
-	const queryFields = `
-	  id
-	  title
-	  image
-	  tokenId
-	  identify
-	  notify_type
-	  transaction
-	  fromAddress
-	  toAddress
-	  nftSymbol
-	  amount
-	  updatedAt
-	`
-	if (owned) {
-	  additonalQuery = `
-		owned: notifications(first: ${notificationCount} orderBy: updatedAt orderDirection: desc where: { fromAddress: "${address}" notify_type_not_in: [1, 6] updatedAt_gte: ${timeBefore2Months} }) {
-		  ${queryFields}
-		}
-	  `
-	}
-
 	const query = gql`
       query Sample {
-        notifications(first: ${notificationCount} orderBy: updatedAt orderDirection: desc where: { notify_type_not_in: [1, 6] updatedAt_gte: ${timeBefore2Months} }) {
-		  ${queryFields}
+        notifications(first: ${notificationCount} orderBy: updatedAt orderDirection: desc where: { fromAddress: "${address}" notify_type_not_in: [1, 6] updatedAt_gte: ${timeBefore2Months} }) {
+		  id
+		  title
+		  image
+		  tokenId
+		  identify
+		  notify_type
+		  transaction
+		  fromAddress
+		  toAddress
+		  nftSymbol
+		  amount
+		  updatedAt
 		}
 		notificationInfos(first: 1) {
 		  id
 		  total_count
 		}
-		${additonalQuery}
 	  }`
 	const data = await this.$graphql.default.request(query)
 	const maxId = parseInt(localStorage.getItem('notification_max_id') || '0')
 	const notificationList = []
-	let notifications = data.notifications
-	if (owned) {
-	  notifications = data.owned
-	}
-	notifications.forEach(item => {
+	data.notifications.forEach(item => {
 	  if (![KEY_TRANSACTION_TYPE.DELIST, KEY_TRANSACTION_TYPE.CHANGEPRICE].includes(item.notify_type)) {
 		const itemDate = new Date(item.updatedAt * 1000)
 		const updatedTime = new Date(itemDate.getFullYear(), itemDate.getMonth(), 1).getTime()
