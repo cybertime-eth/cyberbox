@@ -143,7 +143,7 @@ export default {
       item.volumeCelo = Math.round(item.sell_total_price / 1000)
       item.co2Celo = co2celoPrice > 1 ? Math.round(co2celoPrice) : co2celoPrice.toFixed(2)
       totalCO2Amount += co2celoPrice
-      item.name = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
+      item.name = (this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol) || {}).name
       item.image = `/${item.nftSymbol}.png`
       return item
     })

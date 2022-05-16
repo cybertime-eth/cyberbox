@@ -204,7 +204,7 @@ export default {
         let volume = 0;
         let price = resultCount[index] ? resultCount[index].price_total / 1000 : 0
         volume = volume + price
-        nftName = this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol).name
+        nftName = (this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol) || {}).name
         const mintCountDiff = Math.ceil(item.mint_count / 1000) - (item.mint_count / 1000)
         const co2Celo = (item.sell_refi_price / 1000) * (item.producerFee / 1000) * cmco2Price
         const co2CeloDiff = Math.ceil(co2Celo) - co2Celo

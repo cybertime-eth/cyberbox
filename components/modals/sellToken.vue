@@ -85,7 +85,8 @@ export default {
       }
     },
     collectionName() {
-      return this.$store.state.collectionList.find(item => item.route === this.nft.contract).name
+      const foundCollection = this.$store.state.collectionList.find(item => item.route === this.nft.contract || item.route === this.nft.nftSymbol)
+      return foundCollection?.name
     },
     sellDescription() {
       const nameSuffix = this.nft.contract !== 'nomdom' ? '' : '.nom'
