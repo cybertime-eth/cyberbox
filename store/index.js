@@ -1931,9 +1931,13 @@ export const mutations = {
   }
   },
   changeMyCollectionSort(state, option) {
-    let address = state.fullAddress || localStorage.getItem('address') || ''
-    if (!address && process.browser) {
-      address = localStorage.getItem('address')
+    let address = state.fullAddress
+    if (!address) {
+	  if (process.browser) {
+		address = localStorage.getItem('address') || ''
+	  } else {
+		address = ''
+	  }
 	}
 
 	const mintNumFilter = option && option.mintNum ? `mint_key_contains: "${option.mintNum}"` : ''
