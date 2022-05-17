@@ -20,9 +20,9 @@
       <img src="/loading-nft.gif" alt="load">
     </div>
     <div class="collection__item-info">
-      <h2 class="collection__item-info-name" :class="{multinft: multiNft}">{{ nftName }}</h2>
+      <h2 class="collection__item-info-name" :class="{multinft: multiNft, 'multi-collection': isMultiNftCollection}">{{ nftName }}</h2>
       <p class="collection__item-info-rank" v-if="nft.contract !== 'nomdom' && !multiNft">Rarity Rank {{ nft.rating_index }}</p>
-      <p class="collection__item-info-id" v-if="!multiNft">Token ID {{ nftID }}</p>
+      <p class="collection__item-info-id" :class="{'nomdom-nft': nft.contract === 'nomdom', 'nomdom-collection': $route.params.collectionid === 'nomdom'}" v-if="!multiNft">Token ID {{ nftID }}</p>
       <div class="collection__item-info-bottom">
         <p class="collection__item-info-type" :class="{multinft: multiNft}" v-if="sellInfo">Last sell</p>
         <p class="collection__item-info-type" :class="{multinft: multiNft}" v-else>Price</p>
@@ -59,6 +59,9 @@ export default {
     }
   },
   computed: {
+    isMultiNftCollection() {
+      return this.$store.state.multiNftSymbols.includes(this.$route.params.collectionid)
+    },
     sellInfo() {
       return this.filter === 'bought' || this.nft.seller === this.$store.state.fullAddress
     },
@@ -306,7 +309,10 @@ export default {
         font-family: OpenSans-SemiBold;
         &.multinft {
           border-bottom: .1rem solid $modalColor;
-          padding-bottom: 1.6rem;
+          padding-bottom: 5.9rem;
+          &.multi-collection {
+            padding-bottom: 1.6rem;
+          }
         }
       }
       &-rarity {
@@ -319,8 +325,14 @@ export default {
         color: $grayLight;
       }
       &-id {
-        border-bottom: .1rem solid $modalColor;
         padding-bottom: 1.3rem;
+        border-bottom: .1rem solid $modalColor;
+        &.nomdom-nft {
+          padding-bottom: 3.6rem;
+          &.nomdom-collection {
+            padding-bottom: 1.3rem;
+          }
+        }
       }
       &-bottom {
         flex: 1;
@@ -398,6 +410,11 @@ export default {
       }
       &-info {
         padding: .5rem 0.8rem 3.4rem;
+        &-name {
+          &.multinft {
+            padding-bottom: 5.4rem;
+          }
+        }
         &-details {
           margin-top: 1rem;
           width: 100%;
@@ -411,15 +428,25 @@ export default {
           }
           &-box, &-null {
             &.multinft {
-              display: block;
               .collection__item-info-price-quantity {
                 display: block;
               }
             }
           }
+          &-null {
+            &.multinft {
+              display: block;
+            }
+          }
         }
         &-id {
           padding-bottom: 1rem;
+          &.nomdom-nft {
+            padding-bottom: 3.2rem;
+            &.nomdom-collection {
+              padding-bottom: 1rem;
+            }
+          }
         }
       }
       &:hover {

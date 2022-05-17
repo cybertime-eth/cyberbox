@@ -102,7 +102,10 @@ export default {
 	  this.filteredList = list
 
       if (count > 0) {
-		let maxId = parseInt(localStorage.getItem('notification_max_id') || '0')
+		let maxId = 0;
+		if (process.browser) {
+		  maxId = parseInt(localStorage.getItem('notification_max_id') || '0')
+		}
         setTimeout(() => {
           list.map(info => {
 			info.items.map(item => {

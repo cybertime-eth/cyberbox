@@ -201,7 +201,7 @@ export default {
       }, 2000)
     },
     async reloadMyCollection() {
-      if (!localStorage.getItem('move_back')) {
+      if (process.browser && !localStorage.getItem('move_back')) {
 		this.$store.commit('setTraitFilters', [])
         await this.fetchMyCollection()
         this.loadNftCounts()

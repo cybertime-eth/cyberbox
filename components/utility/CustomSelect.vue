@@ -27,7 +27,6 @@ export default {
   },
   watch: {
     selected() {
-      console.log('0000', this.selected)
       this.updateCurrOption()
     }
   },
