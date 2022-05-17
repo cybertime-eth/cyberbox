@@ -379,7 +379,7 @@ export default {
           display: grid;
           grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
           grid-column-gap: 2.4rem;
-          height: 46rem;
+          height: 41rem;
         }
         .btn-navigate {
           position: absolute;
@@ -400,7 +400,7 @@ export default {
       }
     }
     &-collections {
-      padding-top: 9.2rem;
+      padding-top: 6rem;
       &-header {
         display: flex;
         align-items: center;
@@ -652,9 +652,9 @@ export default {
           &-slide {
             grid-template-columns: 1fr 1fr;
             grid-column-gap: 1.6rem;
-            height: 37rem;
+            height: 35rem;
             .collection__item {
-              height: 36rem;
+              height: 34rem;
               &-image {
                 max-width: 14.4rem;
               }

@@ -233,7 +233,7 @@ export default {
     display: flex;
     flex-direction: column;
     width: 20rem;
-    height: 45rem;
+    height: 40rem;
     border-radius: .4rem;
     box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
     transition: .3s;
@@ -376,7 +376,7 @@ export default {
       &-type {
         color: $border;
         font-size: 1.1rem;
-        padding-top: 2.4rem;
+        padding-top: 0.8rem;
         &.multinft {
           padding-top: 0.8rem;
         }
@@ -409,7 +409,7 @@ export default {
         height: 14.4rem;
       }
       &-info {
-        padding: .5rem 0.8rem 3.4rem;
+        padding: .5rem 0.8rem 0.8rem;
         &-name {
           &.multinft {
             padding-bottom: 5.4rem;
