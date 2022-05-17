@@ -95,15 +95,11 @@ export default {
   methods: {
     initNotifications() {
       let count = 0
-	  const list = [
-		...this.notifications
-	  ]
+	  const list = JSON.parse(JSON.stringify(this.notifications))
       list.forEach(info => {
         count += info.items.filter(item => !item.read).length
       })
-      this.filteredList = [
-        ...this.notifications
-	  ]
+	  this.filteredList = list
 
       if (count > 0) {
 		let maxId = parseInt(localStorage.getItem('notification_max_id') || '0')
