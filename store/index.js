@@ -783,7 +783,7 @@ export const actions = {
   async getLatestListings({dispatch}) {
     const query = gql`
       query Sample {
-        contractLists: contractLists(first: 12 orderBy: updatedAt, orderDirection: desc) {
+        contractLists: contractLists(first: 24 orderBy: updatedAt, orderDirection: desc) {
           id
           contract
           contract_id
@@ -809,12 +809,13 @@ export const actions = {
 		  list_max_price
 		}
       }`
-    const data = await this.$graphql.default.request(query)
-	let contractInfos = await dispatch('getRarirtyCollections', { contractInfos: data.contractLists })
-	contractInfos = await dispatch('replaceMultiNftCollections', {
-	  contractInfos,
+	const data = await this.$graphql.default.request(query)
+	let contractInfos = await dispatch('replaceMultiNftCollections', {
+	  contractInfos: data.contractLists,
 	  multiNFTs: data.multiNFTs
 	})
+	contractInfos = contractInfos.slice(0, 12)
+	contractInfos = await dispatch('getRarirtyCollections', { contractInfos })
     return contractInfos
   },
 
