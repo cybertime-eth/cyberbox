@@ -5,8 +5,8 @@
     <div class="refi__block">
       <div class="refi__block-info">
         <div class="refi__block-info-buttons">
-          <button class="refi__block-info-button explorer" @click="$router.push('/explorer')">Explorer NFT</button>
-          <button class="refi__block-info-button gradient-button ranking" @click="$router.push('/rankings')">Rankings</button>
+          <button class="refi__block-info-button explorer" @click="gotoExplorer('Top_button')">Explorer NFT</button>
+          <button class="refi__block-info-button gradient-button ranking" @click="gotoRankings('Top_button')">Rankings</button>
         </div>
         <img class="refi__block-info-picture" src="/earth.png" alt="earth">
         <div class="refi__block-info-live" v-if="totalCO2Amount > 0">
@@ -24,7 +24,7 @@
             <carousel :per-page="1" :navigate-to="listingPageNum" :mouse-drag="false" :paginationEnabled="false" :speed="1000">
               <slide :key="pageNum" v-for="pageNum of listingPageCount">
                 <div class="refi__block-listings-items-slide">
-                  <nft :nft="nft" :key="index"  v-for="(nft, index) in pageListings(pageNum)" :owner="nftOwned(nft)" :multiNft="isMultiNft(nft)" :route="nftRoute(nft)"/>
+                  <nft :nft="nft" :key="index"  v-for="(nft, index) in pageListings(pageNum)" :owner="nftOwned(nft)" :multiNft="isMultiNft(nft)" from="Main" :route="nftRoute(nft)"/>
                 </div>
               </slide>
             </carousel>
@@ -48,7 +48,7 @@
         <p class="refi__block-collections-description" v-if="collectionTab === 2">Amount of CO2 offseting through NFT trading</p>
         <div class="refi__block-collections-items" :class="{ carbon: collectionTab === 2 }">
           <div class="refi__block-collections-items-group" :key="idx" v-for="(group, idx) in hotCollections">
-            <div class="refi__block-collections-items-group-item" :key="collection.id" v-for="collection of group" @click="$router.push(`/collections/${collection.nftSymbol}`)">
+            <div class="refi__block-collections-items-group-item" :key="collection.id" v-for="collection of group" @click="gotoCollection(collection.nftSymbol)">
               <div class="refi__block-collections-items-group-item-info">
                 <p class="refi__block-collections-items-group-item-info-ranking">{{ collection.index }}</p>
                 <div class="refi__block-collections-items-group-item-info-icon">
@@ -67,7 +67,7 @@
         </div>
       </div>
       <div class="refi__block-footer">
-        <button class="refi__block-footer-button refi__block-info-button gradient-button ranking" @click="$router.push('/rankings')">Go to Rankings</button>
+        <button class="refi__block-footer-button refi__block-info-button gradient-button ranking" @click="gotoRankings('Bottom_button')">Go to Rankings</button>
         <h2 class="refi__block-footer-title">ReFi NFT Marketplace</h2>
         <div class="refi__block-footer-info">
           <div class="refi__block-footer-info-box">
@@ -92,7 +92,7 @@
             <p class="refi__block-footer-info-box-description">Flexible royalty system, ability to set % for Carbon offset, all the benefits of Celo chain, access to 200k of users via Valora app.</p>
           </div>
         </div>
-        <button class="refi__block-footer-button refi__block-info-button explorer" @click="$router.push('/explorer')">Explorer NFT</button>
+        <button class="refi__block-footer-button refi__block-info-button explorer" @click="gotoExplorer('Bottom_button')">Explorer NFT</button>
         <div class="refi__block-info-support">
           <h3 class="refi__block-info-support-title">Supported & Powered by</h3>
           <client-only>
@@ -150,7 +150,13 @@ export default {
     this.updateHotCollections()
 
     // Total CO2 Amount
-    this.totalCO2Amount = totalCO2Amount.toLocaleString('en-US')
+	this.totalCO2Amount = totalCO2Amount.toLocaleString('en-US')
+	
+	// Send visit event
+	this.sendEvent({
+	  category: 'Browse',
+	  eventName: 'site_visit'
+	})
   },
   computed: {
     pageSubTitle() {
@@ -245,7 +251,43 @@ export default {
         this.collectionTab = tab
         this.updateHotCollections()
       }
-    }
+    },
+    gotoCollection(symbol) {
+      this.sendEvent({
+        category: 'Collection',
+        eventName: 'collection_enter',
+        properties: {
+          collection_enter: 'Explorer'
+        }
+      })
+      this.$router.push(`/collections/${symbol}`)
+	},
+	sendBrowseEvent(eventInfo) {
+	  let eventName = ''
+	  let eventProperty = ''
+	  if (eventInfo.explorer) {
+		eventName = 'explorer_enter'
+		eventProperty = eventInfo.explorer
+	  } else if (eventInfo.rankings) {
+		eventName = 'rankings_enter'
+		eventProperty = eventInfo.rankings
+	  }
+	  this.sendEvent({
+		category: 'Browse',
+		eventName,
+		properties: {
+		  [eventName]: eventProperty
+	``	}
+	  })
+	},
+	gotoExplorer(from) {
+	  this.sendBrowseEvent({ explorer: from })
+	  this.$router.push('/explorer')
+	},
+	gotoRankings(from) {
+	  this.sendBrowseEvent({ rankings: from })
+	  this.$router.push('/rankings')
+	}
   }
 }
 </script>

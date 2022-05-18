@@ -39,7 +39,17 @@ export default {
     }
   },
   methods: {
+	sendConnectionEvent(type) {
+	  this.sendEvent({
+		category: 'Connect',
+		eventName: 'connect',
+		properties: {
+		  connect: type
+		}
+	  })
+	},
     async connectMetaTrust() {
+      this.sendConnectionEvent('Metamask')
       if (window.ethereum) {
         await this.$store.dispatch('connectMetaTrust')
       } else {
@@ -56,9 +66,11 @@ export default {
       }
     },
     connectValora() {
+	  this.sendConnectionEvent('Valora')
       this.$emit('showValora')
     },
     async connectWallet() {
+	  this.sendConnectionEvent('Walletconnect')
       await this.$store.dispatch('walletConnect', true)
     },
     closeModal() {

@@ -14,8 +14,8 @@
     </div>
     <div class="menu-mobile-list container-xl" @click="closeModal">
       <div class="menu-mobile-list-links">
-        <nuxt-link to="/explorer" active-class="gradient-text" class="menu-mobile-list-link">Explorer</nuxt-link>
-        <nuxt-link to="/rankings" active-class="gradient-text" class="menu-mobile-list-link">Rankings</nuxt-link>
+        <nuxt-link to="/explorer" active-class="gradient-text" class="menu-mobile-list-link" @click="sendExplorerEvent">Explorer</nuxt-link>
+        <nuxt-link to="/rankings" active-class="gradient-text" class="menu-mobile-list-link" @click="sendRankingEvent">Rankings</nuxt-link>
         <nuxt-link to="/loans" active-class="gradient-text" class="menu-mobile-list-link">NFT loans</nuxt-link>
       </div>
       <client-only>
@@ -47,6 +47,24 @@ export default {
   methods: {
     closeModal() {
       this.$emit('closeModal', false)
+	},
+	sendExplorerEvent() {
+	  this.sendEvent({
+		category: 'Browse',
+		eventName: 'explorer_enter',
+		properties: {
+		  explorer_enter: 'Menu'
+		}
+	  })
+	},
+    sendRankingEvent() {
+      this.sendEvent({
+		category: 'Browse',
+		eventName: 'rankings_enter',
+		properties: {
+		  rankings_enter: 'Menu'
+		}
+	  })
     }
   }
 }

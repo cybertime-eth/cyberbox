@@ -137,7 +137,7 @@ export default {
       }
     },
   },
-  props: ['nft', 'route', 'owner', 'seller', 'filter', 'multiNft'],
+  props: ['nft', 'route', 'owner', 'seller', 'filter', 'multiNft', 'from'],
   watch: {
     nft() {
       const cdnImageUrl = this.getCDNImageUrl()
@@ -217,6 +217,13 @@ export default {
       }
     },
     routeNft(payload) {
+	  this.sendEvent({
+		category: 'Browse',
+		eventName: 'nft_enter',
+		properties: {
+          nft_enter: this.from
+        }
+	  })
       if (!this.seller) {
         this.$router.push(this.route)
       }

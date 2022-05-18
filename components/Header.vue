@@ -11,10 +11,10 @@
       <nav class="header__navigation">
         <ul class="header__ul">
           <li class="header__list">
-            <nuxt-link class="header__link" to="/explorer" append active-class="gradient-text" exact>Explorer</nuxt-link>
+            <nuxt-link class="header__link" to="/explorer" append active-class="gradient-text" exact @click="sendExplorerEvent">Explorer</nuxt-link>
           </li>
           <li class="header__list">
-            <nuxt-link class="header__link" active-class="gradient-text" to="/rankings"  exact>Rankings</nuxt-link>
+            <nuxt-link class="header__link" active-class="gradient-text" to="/rankings" exact @click="sendRankingEvent">Rankings</nuxt-link>
           </li>
           <li class="header__list">
             <nuxt-link class="header__link" active-class="gradient-text" to="/loans"  exact>NFT loans</nuxt-link>
@@ -171,6 +171,24 @@ export default {
         footerEl.classList.remove('fixed')
         footerEl.classList.remove('sidemenu')
       }
+	},
+	sendExplorerEvent() {
+	  this.sendEvent({
+		category: 'Browse',
+		eventName: 'explorer_enter',
+		properties: {
+		  explorer_enter: 'Menu'
+		}
+	  })
+	},
+    sendRankingEvent() {
+      this.sendEvent({
+		category: 'Browse',
+		eventName: 'rankings_enter',
+		properties: {
+		  rankings_enter: 'Menu'
+		}
+	  })
     }
   }
 }
