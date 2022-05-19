@@ -31,7 +31,7 @@
                                         Transfered from <span class="notification__list-item-info-status-circle"/> <b>{{ item.owned ? 'You' : item.from }}</b> to <span class="notification__list-item-info-status-circle other"/> <b>{{ item.to }}</b>
                                     </p>
                                     <p class="notification__list-item-info-status" v-if="item.type === 'TRANSFERED'">
-                                        Transfered from <span class="notification__list-item-info-status-circle other"/> <b>{{ item.from }}</b> to <span class="notification__list-item-info-status-circle"/> <b>{{ item.owned ? 'You' : item.to }}</b>
+                                        Transfered from <span class="notification__list-item-info-status-circle other"/> <b>{{ item.to }}</b> to <span class="notification__list-item-info-status-circle"/> <b>{{ item.owned ? 'You' : item.from }}</b>
                                     </p>
                                     <p class="notification__list-item-info-time">{{ notificationTime(item) }} <img src="/share.svg" alt="share"></p>
                                 </div>
