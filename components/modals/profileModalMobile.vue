@@ -16,7 +16,7 @@
       <div class="menu-mobile-list-links">
         <nuxt-link to="/explorer" active-class="gradient-text" class="menu-mobile-list-link">Explorer</nuxt-link>
         <nuxt-link to="/rankings" active-class="gradient-text" class="menu-mobile-list-link">Rankings</nuxt-link>
-        <nuxt-link to="/loans" active-class="gradient-text" class="menu-mobile-list-link">NFT loans</nuxt-link>
+        <nuxt-link to="/carbon" active-class="gradient-text" class="menu-mobile-list-link">Carbon offset</nuxt-link>
       </div>
       <client-only>
         <profileModal :sideMenu="true" v-if="isMobile()"/>
