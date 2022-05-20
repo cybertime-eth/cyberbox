@@ -1120,7 +1120,7 @@ export const actions = {
   // GET INFORMATION USER
 
   async getBalance({state, getters}) {
-	if (!state.fullAddress) return 0
+	if (!state.fullAddress || state.chainId !== 42220) return 0
 	const web3 = new Web3(getters.provider)
 	const kit = ContractKit.newKitFromWeb3(web3)
 	const res = await kit.getTotalBalance(state.fullAddress)
