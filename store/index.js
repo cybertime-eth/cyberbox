@@ -1697,7 +1697,6 @@ export const actions = {
 			break
 		  case KEY_TRANSACTION_TYPE.TRANSFERED:
 			  notificationItem.type = 'TRANSFERED'
-			  item.owned = item.toAddress.toLowerCase() === address
 			break
 		  default:
 		  	notificationItem.type = 'UNKNOWN'
