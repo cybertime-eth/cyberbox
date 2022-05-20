@@ -1,6 +1,6 @@
 <template>
   <header>
-    <div class="header container-xl">
+    <div class="header container-xl" ref="header">
       <button class="header__back" v-if="nftId" @click="handleClickBack">
         <img src="/arrow-left.svg" alt="back" class="header__back-img">
       </button>
@@ -98,6 +98,13 @@ export default {
       if (this.address && this.chainId !== 42220) {
         this.showWrongNetworkModal = true
       }
+	},
+	$route() {
+      try {
+		this.$refs.header.classList.remove('fixed')
+	  } catch(e) {
+		console.log(e)
+	  }
     }
   },
   components: {
