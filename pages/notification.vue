@@ -2,7 +2,7 @@
     <section id="notification">
         <div class="notification container-xl">
             <h1 class="notification__title">Notifications</h1>
-            <div class="notification__block" v-if="filteredList.length > 0">
+            <div class="notification__block" :class="{ fixed: filterFixed }" v-if="filteredList.length > 0">
                 <div class="notification__list-container">
                     <div class="notification__list" :key="idx" v-for="(info, idx) of filteredList" v-if="info.items.length > 0">
                         <h2 class="notification__list-date">{{ notificationDate(info.date) }}</h2>
@@ -39,7 +39,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="notification__filter">
+                <div class="notification__filter" :class="{ fixed: filterFixed }" ref="filter">
                     <h2 class="notification__filter-title">Filters</h2>
                     <div class="notification__filter-list">
                         <div class="notification__filter-item listing" :class="{active: activeFilter === 'listing'}" @click="changeFilter('listing')">
@@ -75,13 +75,23 @@ export default {
     return {
       activeFilter: null,
 	  filteredList: [],
-	  loading: false
+	  loading: false,
+	  filterFixed: false,
+	  userScrolled: false
     }
   },
   computed: {
     notifications() {
       return this.$store.state.notificationList
     }
+  },
+  beforeMount() {
+	window.addEventListener('wheel', this.wheelWindow)
+	window.addEventListener('scroll', this.fixFilterBlock)
+  },
+  beforeDestroy() {
+	window.removeEventListener('wheel', this.wheelWindow)
+	window.removeEventListener('scroll', this.fixFilterBlock)
   },
   mounted() {
     document.body.style.overflow = 'visible'
@@ -194,6 +204,25 @@ export default {
       } else {
         return 'a few minutes ago'
       }
+	},
+	wheelWindow() {
+	  this.userScrolled = true
+	},
+	fixFilterBlock() {
+	  try {
+		if (!this.isMobile() || !this.userScrolled) return
+		this.userScrolled = false
+		const headerElement = document.getElementsByClassName('header')[0]
+		if (window.pageYOffset > this.$refs.filter.offsetTop) {
+		  this.filterFixed = true
+		  headerElement.classList.add('fixed')
+		} else {
+		  this.filterFixed = false
+		  headerElement.classList.remove('fixed')
+		}
+	  } catch(e) {
+		console.log(e)
+	  }
 	},
 	updateNotifications() {
 	  let newList = JSON.parse(JSON.stringify(this.notifications))
@@ -448,16 +477,26 @@ export default {
       margin: 0;
     }
     &__block {
-	  height: calc(100vh - 14rem);
+	  flex-direction: column-reverse;
       padding-top: 2.4rem;
-      flex-direction: column-reverse;
+      &.fixed {
+        padding-top: 10rem;
+      }
     }
     &__filter {
       position: static;
       top: 0;
 	  margin: 0;
       padding-bottom: 1.6rem;
-	  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.05);
+	  &.fixed {
+		position: fixed;
+		top: 0;
+		background: white;
+		padding: 8rem 0.8rem 1.6rem;
+		margin: 0 -0.8rem;
+		box-shadow: 0 5px 12px rgb(0 0 0 / 5%);
+		z-index: 1;
+	  }
       &-title {
         padding: 0;
         font-size: 1.4rem;

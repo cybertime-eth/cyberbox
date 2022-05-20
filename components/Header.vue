@@ -344,7 +344,15 @@ header {
     justify-content: space-between;
     height: 6.5rem;
     margin: 0 .8rem !important;
-    position: relative;
+	position: relative;
+	&.fixed {
+	  position: fixed;
+	  width: calc(100% - 1.6rem);
+	  margin: 0 !important;
+	  padding: 0 0.8rem;
+	  box-shadow: 0 4px 12px rgb(0 0 0 / 5%);
+	  z-index: 2;
+	}
     &__null {
       display: none;
     }
@@ -372,7 +380,8 @@ header {
       width: 2.4rem;
       height: 2.4rem;
       margin-left: 0;
-      margin-right: 1.9rem;
+	  margin-right: 1.9rem;
+	  transform: translateY(0.1rem);
       img {
         width: 0.9rem;
       }
