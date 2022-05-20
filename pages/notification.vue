@@ -211,6 +211,11 @@ export default {
 	fixFilterBlock() {
 	  try {
 		if (!this.isMobile() || !this.userScrolled) return
+		const isTest = this.$store.state.fullAddress === '0x438556154787f5037ea40e3368a8bdc1800d50c6'
+		if (isTest) {
+			alert(`11111: ${window.pageYOffset}`)
+			alert(`2222: ${this.$refs.filter.offsetTop}`)
+		}
 		this.userScrolled = false
 		const headerElement = document.getElementsByClassName('header')[0]
 		if (window.pageYOffset > this.$refs.filter.offsetTop) {
