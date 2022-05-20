@@ -277,7 +277,7 @@ export default {
 		eventName,
 		properties: {
 		  [eventName]: eventProperty
-	``	}
+		}
 	  })
 	},
 	gotoExplorer(from) {
