@@ -7,7 +7,7 @@ const startEditionFrom = 1; // Can start edition at whatever you want // start a
 const endEditionAt = 8640; // endEditionAt and edtionSize MUST be the SAME // start at 10 for testing purposes
 const editionSize = 8640; // this will print 100 copies : (use if you already have a 10k 1 1st edition) // erase the 100
 const CDN_ROOT = 'https://cdn.cyberbox.art/'
-const AMPLITUDE_API_KEY = '06a79e76e64715fc4c6577fa883553ea'
+const AMPLITUDE_API_KEY = 'a2ccaf05b6accc4819ef3ea8fd9fba80'
 
 const raceWeights = [
   {
