@@ -1,10 +1,7 @@
-// import Vue from 'vue'
-// import VueAmplitude from 'vue-amplitude'
-
-// Vue.use(VueAmplitude, { apiKey: 'a2ccaf05b6accc4819ef3ea8fd9fba80' })
+import { AMPLITUDE_API_KEY } from "@/config"
 export default() => {
 	const script = document.createElement('script')
-	script.innerHTML = `(function(e,t){var n=e.amplitude||{_q:[],_iq:{}};var r=t.createElement("script")
+	script.innerHTML = `(function(e,t){var n=e.amplitude||{_q:[],_iq:{}};var r=t.createElement("script");
         ;r.type="text/javascript"
         ;r.integrity="sha384-+EO59vL/X7v6VE2s6/F4HxfHlK0nDUVWKVg8K9oUlvffAeeaShVBmbORTC2D3UF+"
         ;r.crossOrigin="anonymous";r.async=true
@@ -27,7 +24,7 @@ export default() => {
         e=(!e||e.length===0?"$default_instance":e).toLowerCase()
         ;if(!Object.prototype.hasOwnProperty.call(n._iq,e)){n._iq[e]={_q:[]};v(n._iq[e])
         }return n._iq[e]};e.amplitude=n})(window,document);
-        amplitude.getInstance().init("a2ccaf05b6accc4819ef3ea8fd9fba80", null, {includeUtm: true, includeReferrer: true});
+        amplitude.getInstance().init('${AMPLITUDE_API_KEY}', null, {includeUtm: true, includeReferrer: true});
 	`
 	document.head.appendChild(script)
 }
