@@ -534,7 +534,7 @@ export default {
       this.refiCO2Price = refiPrice > 1 ? Math.round(refiPrice).toLocaleString('EN-US') : refiPrice.toFixed(3)
     }
 	this.loading = false
-	this.sendCollectionEvent({ render })
+	this.sendCollectionEvent({ render: true })
   },
   mounted() {
     if (this.isMobile()) {
