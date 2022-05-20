@@ -27,7 +27,7 @@ export default() => {
         e=(!e||e.length===0?"$default_instance":e).toLowerCase()
         ;if(!Object.prototype.hasOwnProperty.call(n._iq,e)){n._iq[e]={_q:[]};v(n._iq[e])
         }return n._iq[e]};e.amplitude=n})(window,document);
-        amplitude.getInstance().init("a2ccaf05b6accc4819ef3ea8fd9fba80");
+        amplitude.getInstance().init("a2ccaf05b6accc4819ef3ea8fd9fba80", null, {includeUtm: true, includeReferrer: true});
 	`
 	document.head.appendChild(script)
 }

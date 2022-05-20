@@ -161,6 +161,7 @@
             :balance="balance"
             :approved="nftApproved"
             :collection="collectionInfo.multiNftList"
+			:collectionName="collectionName"
             @onSale="multiNftSaling=true"
             @onComplete="multiNftSaling=false"
           />
@@ -397,8 +398,9 @@ export default {
       return this.nft.market_status === 'BOUGHT' && this.nft.seller === this.$store.state.fullAddress
     },
     collection() {
-      const collectionList = this.$store.state.collectionList || []
-      const foundCollection = collectionList.find(item => item.route === this.$route.params.collectionid) || {}
+	  if (!this.nft.contract) return {}
+	  const collectionList = this.$store.state.collectionList || []
+	  const foundCollection = collectionList.find(item => item.route === this.nft.contract) || {}
       return foundCollection
     },
     pageTitle() {
@@ -426,9 +428,7 @@ export default {
       return this.$store.state.cMCO2Price
     },
     collectionName() {
-      if (!this.nft.contract) return ''
-      const collection = this.$store.state.collectionList.find(item => item.route === this.nft.contract)
-      return collection?.name
+	  return this.collection.name
     }
   },
   head() {
@@ -594,6 +594,13 @@ export default {
       } else {
         if (!this.$store.state.wrongNetwork) {
           this.showBuyTokenModal = true
+          this.sendEvent({
+            category: 'Buy',
+            eventName: 'buy',
+            properties: {
+              buy: this.collectionName
+            }
+          })
         } else {
           this.showWrongNetworkModal = true
         }
@@ -601,7 +608,14 @@ export default {
     },
     handleClickSell() {
       if (!this.$store.state.wrongNetwork) {
-        this.showSellTokenModal = true
+		this.showSellTokenModal = true
+		this.sendEvent({
+		  category: 'Listing',
+		  eventName: 'listing',
+		  properties: {
+			listing: this.collection.name
+		  }
+		})
       } else {
         this.showWrongNetworkModal = true
       }

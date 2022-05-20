@@ -115,7 +115,7 @@
         </button>
         <button
           class="collection__sort-button"
-          @click="showTraitsFilter = true"
+          @click="clickTraitsButton"
           v-if="!isNomDomain"
         >
           <span class="collection__sort-button-title traits">Traits</span> <img src="/trait.svg" alt="trait" class="collection__sort-button-icon"> <span class="collection__sort-button-badge" v-if="filtersCount > 0">{{filtersCount}}</span>
@@ -145,7 +145,7 @@
         <img src="/loading-button.svg" alt="load">
       </div>
       <div class="collection__items" v-else-if="nftList.length && !loading">
-        <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :owner="nftOwned(nft)" :multiNft="isMultiNftCollection" :seller="false" :route="nftRoute(nft)"/>
+        <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :filter="filter" :owner="nftOwned(nft)" :multiNft="isMultiNftCollection" :seller="false" :route="nftRoute(nft)" from="Collection"/>
       </div>
       <p class="collection__empty-items" v-else-if="!loading">There are no results matching your selected criteria</p>
     </div>
@@ -330,16 +330,72 @@ export default {
     clearSearch() {
       this.searchName = ''
       this.fetchNftsBySearch()
-    },
+	},
+	sendCollectionEvent(eventInfo) {
+	  let eventName = ''
+	  let eventProperty = null
+	  if (eventInfo.render) {
+		eventName = 'collection'
+		eventProperty = this.collection.name
+	  } else if (eventInfo.filter) {
+		eventName = 'collection_tabs'
+		switch (eventInfo.filter) {
+		  case 'All': eventProperty = 'All'
+		    break
+		  case 'listed': eventProperty = 'Listing'
+		    break
+		  case 'bought': eventProperty = 'Sold'
+		    break
+		}
+	  } else if (eventInfo.sort) {
+		eventName = 'collection_filters'
+		switch (eventInfo.sort) {
+		  case 'mint-lowest': eventProperty = 'Low_ID'
+			break
+		  case 'mint-highest': eventProperty = 'High_ID'
+			break
+		  case 'sold-latest': eventProperty = 'Latest_Sold'
+		    break
+		  case 'price-lowest': eventProperty = 'Low_Price'
+			break
+		  case 'price-highest': eventProperty = 'High_Price'
+			break
+		  case 'rarity-rare': eventProperty = 'Rare_Rank'
+			break
+		  case 'rarity-common': eventProperty = 'Common_Rank'
+		  	break
+		}
+	  } else if (eventInfo.traits) {
+		eventName = 'collection_traits'
+	  } else if (eventInfo.scroll) {
+		eventName = 'collection_scroll'
+		eventProperty = eventInfo.scroll
+	  }
+
+	  let properties = null
+	  if (eventProperty) {
+		properties = {
+		  [eventName]: eventProperty
+		}
+	  }
+	  this.sendEvent({
+		category: 'Collection',
+		eventName,
+		properties
+	  })
+	},
     addCurrentPage() {
       const filteredTraits = this.$store.state.filteredTraits
       const count = this.$store.state.countPage
       const element = document.body
       if (element.scrollHeight <= window.pageYOffset + window.innerHeight && (!filteredTraits && count * 48 === this.nftList.length || filteredTraits) && this.nftList.length > 0) {
         this.$store.commit('changeCountPage', count + 1)
-        this.$store.commit('changeSortData', 'pagination')
+		this.$store.commit('changeSortData', 'pagination')
+		this.sendCollectionEvent({ scroll: `P${count + 1}` })
         this.$store.dispatch(this.activeRequest, filteredTraits)
-      }
+      } else {
+		this.sendCollectionEvent({ scroll: `P${count}` })
+	  }
     },
     async fetchNftList() {
       if (this.fetchEnabled) {
@@ -356,7 +412,8 @@ export default {
       })
     },
     async changeSort(id) {
-      this.sort = id
+	  this.sort = id
+	  this.sendCollectionEvent({ sort: id })
       if (this.isMultiNftCollection) return
       this.loading = true
       let sortPrefix = ''
@@ -400,26 +457,37 @@ export default {
       this.sort = '';
       this.$store.commit('setNewNftList', [])
       this.$store.commit('changeSortData', 'all')
-      let activeRequest = 'getGraphData'
+	  let activeRequest = 'getGraphData'
+	  let eventTab = ''
       switch (filter) {
-        case 'All': activeRequest = 'getGraphData'
+		case 'All': activeRequest = 'getGraphData'
+			eventTab = 'All'
           break;
-        case 'listed': activeRequest = 'getGraphDataListed'
+		case 'listed': activeRequest = 'getGraphDataListed'
+			eventTab = 'Listing'
           break;
-        case 'bought': activeRequest = 'getGraphDataSells'
-      }
+		case 'bought': activeRequest = 'getGraphDataSells'
+			eventTab = 'Sold'
+		  break;
+	  }
       this.activeRequest = activeRequest
       this.changeCollectionSetting({
         filter: this.filter,
         fetchRequest: activeRequest
-      })
+	  })
+	  this.sendCollectionEvent({ filter })
+
       if (this.myNft) {
         this.changeMyNftFilter()
       } else {
         this.$store.dispatch(activeRequest, this.traitFilters)
       }
       this.$store.commit('changeCountPage', 1)
-    },
+	},
+	clickTraitsButton() {
+	  this.showTraitsFilter = true
+	  this.sendCollectionEvent({ traits: true })
+	},
     async updateTraitFilter(filters, filteredCount) {
       this.loading = true
       this.initNftListSetting()
@@ -465,7 +533,8 @@ export default {
       const refiPrice = this.$store.state.cMCO2Price * this.collectionInfo.producerFee / 1000 * this.collectionInfo.sell_refi_price / 1000
       this.refiCO2Price = refiPrice > 1 ? Math.round(refiPrice).toLocaleString('EN-US') : refiPrice.toFixed(3)
     }
-    this.loading = false
+	this.loading = false
+	this.sendCollectionEvent({ render: true })
   },
   mounted() {
     if (this.isMobile()) {
