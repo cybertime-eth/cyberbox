@@ -88,11 +88,13 @@ export default {
   beforeMount() {
 	window.addEventListener('wheel', this.wheelWindow)
 	window.addEventListener('touchmove', this.wheelWindow)
+	window.addEventListener('touchend', this.wheelWindow)
 	window.addEventListener('scroll', this.fixFilterBlock)
   },
   beforeDestroy() {
 	window.removeEventListener('wheel', this.wheelWindow)
 	window.removeEventListener('touchmove', this.wheelWindow)
+	window.removeEventListener('touchend', this.wheelWindow)
 	window.removeEventListener('scroll', this.fixFilterBlock)
   },
   mounted() {
@@ -213,13 +215,13 @@ export default {
 	fixFilterBlock() {
 	  try {
 		if (!this.isMobile() || !this.userScrolled) return
-		this.userScrolled = false
 		const headerElement = document.getElementsByClassName('header')[0]
 		if (window.pageYOffset > this.$refs.filter.offsetTop) {
 		  if (!this.filterFixed) {
 			this.filterFixed = true
-		    headerElement.classList.add('fixed')
-		    window.scrollTo(0, 1)
+			headerElement.classList.add('fixed')
+			this.userScrolled = false
+			window.scrollTo(0, 1)
 		  }
 		} else {
 		  this.filterFixed = false
