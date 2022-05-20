@@ -100,7 +100,7 @@ export default {
   watch: {
     notifications() {
       this.initNotifications()
-    }
+	}
   },
   methods: {
     initNotifications() {
@@ -214,8 +214,11 @@ export default {
 		this.userScrolled = false
 		const headerElement = document.getElementsByClassName('header')[0]
 		if (window.pageYOffset > this.$refs.filter.offsetTop) {
-		  this.filterFixed = true
-		  headerElement.classList.add('fixed')
+		  if (!this.filterFixed) {
+			this.filterFixed = true
+		    headerElement.classList.add('fixed')
+		    window.scrollTo(0, 1)
+		  }
 		} else {
 		  this.filterFixed = false
 		  headerElement.classList.remove('fixed')
