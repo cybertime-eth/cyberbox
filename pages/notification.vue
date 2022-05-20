@@ -87,10 +87,12 @@ export default {
   },
   beforeMount() {
 	window.addEventListener('wheel', this.wheelWindow)
+	window.addEventListener('touchmove', this.wheelWindow)
 	window.addEventListener('scroll', this.fixFilterBlock)
   },
   beforeDestroy() {
 	window.removeEventListener('wheel', this.wheelWindow)
+	window.removeEventListener('touchmove', this.wheelWindow)
 	window.removeEventListener('scroll', this.fixFilterBlock)
   },
   mounted() {
