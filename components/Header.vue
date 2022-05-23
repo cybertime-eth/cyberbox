@@ -1,6 +1,6 @@
 <template>
   <header>
-    <div class="header container-xl">
+    <div class="header container-xl" ref="header">
       <button class="header__back" v-if="nftId" @click="handleClickBack">
         <img src="/arrow-left.svg" alt="back" class="header__back-img">
       </button>
@@ -11,10 +11,10 @@
       <nav class="header__navigation">
         <ul class="header__ul">
           <li class="header__list">
-            <nuxt-link class="header__link" to="/explorer" append active-class="gradient-text" exact>Explorer</nuxt-link>
+            <nuxt-link class="header__link" to="/explorer" append active-class="gradient-text" exact @click="sendExplorerEvent">Explorer</nuxt-link>
           </li>
           <li class="header__list">
-            <nuxt-link class="header__link" active-class="gradient-text" to="/rankings"  exact>Rankings</nuxt-link>
+            <nuxt-link class="header__link" active-class="gradient-text" to="/rankings" exact @click="sendRankingEvent">Rankings</nuxt-link>
           </li>
           <li class="header__list">
             <nuxt-link class="header__link" active-class="gradient-text" to="/carbon"  exact>Carbon tracker</nuxt-link>
@@ -98,6 +98,13 @@ export default {
       if (this.address && this.chainId !== 42220) {
         this.showWrongNetworkModal = true
       }
+	},
+	$route() {
+      try {
+		this.$refs.header.classList.remove('fixed')
+	  } catch(e) {
+		console.log(e)
+	  }
     }
   },
   components: {
@@ -171,6 +178,24 @@ export default {
         footerEl.classList.remove('fixed')
         footerEl.classList.remove('sidemenu')
       }
+	},
+	sendExplorerEvent() {
+	  this.sendEvent({
+		category: 'Browse',
+		eventName: 'explorer_enter',
+		properties: {
+		  explorer_enter: 'Menu'
+		}
+	  })
+	},
+    sendRankingEvent() {
+      this.sendEvent({
+		category: 'Browse',
+		eventName: 'rankings_enter',
+		properties: {
+		  rankings_enter: 'Menu'
+		}
+	  })
     }
   }
 }
@@ -326,7 +351,15 @@ header {
     justify-content: space-between;
     height: 6.5rem;
     margin: 0 .8rem !important;
-    position: relative;
+	position: relative;
+	&.fixed {
+	  position: fixed;
+	  width: calc(100% - 1.6rem);
+	  margin: 0 !important;
+	  padding: 0 0.8rem;
+	  box-shadow: 0 4px 12px rgb(0 0 0 / 5%);
+	  z-index: 2;
+	}
     &__null {
       display: none;
     }
@@ -354,7 +387,8 @@ header {
       width: 2.4rem;
       height: 2.4rem;
       margin-left: 0;
-      margin-right: 1.9rem;
+	  margin-right: 1.9rem;
+	  transform: translateY(0.1rem);
       img {
         width: 0.9rem;
       }

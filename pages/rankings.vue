@@ -33,7 +33,7 @@
         </div>
       </div>
       <div class="rankings__table-content">
-        <div class="rankings__table-content-item" :key="idx" v-for="(item, idx) in filteredList" @click="$router.push(`/collections/${item.route}`)">
+        <div class="rankings__table-content-item" :key="idx" v-for="(item, idx) in filteredList" @click="gotoCollection(item.route)">
           <div class="rankings__table-collection-group">
             <h3 class="rankings__table-content-item-number">{{ item.index }}</h3>
             <div class="rankings__table-content-item-collection">
@@ -134,7 +134,8 @@ export default {
     if (process.browser) {
       localStorage.removeItem('move_back')
     }
-    await this.renderlist();
+	await this.renderlist()
+	this.sendRankingsEvent()
   },
   methods: {
     nftMoreIcon(nftIndex) {
@@ -150,7 +151,16 @@ export default {
       } else {
         return 'Less';
       }
-    },
+	},
+	sendRankingsEvent(eventInfo) {
+	  this.sendEvent({
+		category: 'Browse',
+		eventName: 'rankings',
+		properties: {
+		  rankings: this.rankingTab === 1 ? 'Volume' : 'Carbon'
+		}
+	  })
+	},
     contractPercentInfo(percentVal) {
       if (percentVal !== 0 && percentVal !== -100) {
         return `${percentVal}%`
@@ -255,7 +265,8 @@ export default {
   },
   updateRankingsTab(tab) {
     if (this.rankingTab !== tab) {
-      this.rankingTab = tab
+	  this.rankingTab = tab
+	  this.sendRankingsEvent()
       this.updateRankingsList()
     }
   },
@@ -269,6 +280,16 @@ export default {
     updateFilter(filter) {
       this.dateFilter = filter
     }
+  },
+  gotoCollection(symbol) {
+    this.sendEvent({
+      category: 'Collection',
+      eventName: 'collection_enter',
+      properties: {
+        collection_enter: 'Rankings'
+      }
+    })
+    this.$router.push(`/collections/${symbol}`)
   }
 }
 </script>

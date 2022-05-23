@@ -981,7 +981,14 @@ export const actions = {
         const address = await provider.getSigner().getAddress();
         const chainId = await provider.getNetwork()
         commit('setChainId', chainId.chainId)
-        commit('setAddress', address)
+		commit('setAddress', address)
+		this._vm.sendEvent({
+		  category: 'Connect',
+		  eventName: 'connect_status',
+		  properties: {
+			connect_status: 'Success'
+		  }
+		})
       } else if (window.web3) {
         window.web3 = new ethers.providers.Web3Provider(
           window.web3.currentProvider
@@ -995,11 +1002,27 @@ export const actions = {
         alert("please use web3 enabled browser.");
       }
     } catch (error) {
+	  this._vm.sendEvent({
+		category: 'Connect',
+		eventName: 'connect_status',
+		properties: {
+		  connect_status: 'Error'
+		}
+	  })
       throw new Error(error);
     }
   },
-  addEventHandlerForWalletProvider({commit, dispatch}, provider) {
+  addEventHandlerForWalletProvider({state, commit, dispatch}, provider) {
     provider.on("accountsChanged", async (accounts) => {
+	  if (!state.address) {
+		this._vm.sendEvent({
+		  category: 'Connect',
+		  eventName: 'connect_status',
+		  properties: {
+		    connect_status: 'Success'
+		  }
+		})
+	  }
       await dispatch('handleAccountChanged', accounts[0])
       commit('setWalletConnected', true)
     });
@@ -1054,7 +1077,7 @@ export const actions = {
     walletProvider.isConnecting = false
   },
   async walletConnect({getters, dispatch}, isConnect) {
-    const provider = getters.walletConnectProvider
+	const provider = getters.walletConnectProvider
     try {
       dispatch('addEventHandlerForWalletProvider', provider)
 
@@ -1063,10 +1086,26 @@ export const actions = {
         provider.wc._handshakeTopic = ""
         await provider.enable();
       }
-      window.web3 = new Web3(provider);
+	  window.web3 = new Web3(provider);
+	  if (isConnect) {
+		this._vm.sendEvent({
+		  category: 'Connect',
+		  eventName: 'connect_status',
+		  properties: {
+		    connect_status: 'Success'
+		  }
+		})
+	  }
     } catch(e) {
       console.log(e)
-      dispatch('disconnectWallet', provider)
+	  dispatch('disconnectWallet', provider)
+	  this._vm.sendEvent({
+		category: 'Connect',
+		eventName: 'connect_status',
+		properties: {
+		  connect_status: 'Error'
+		}
+	  })
     }
   },
   async switchNetwork() {
@@ -1075,7 +1114,16 @@ export const actions = {
       return
     }
     try {
-      await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{"chainId": '0xa4ec'}] })
+	  const provider = new ethers.providers.Web3Provider(ethereum)
+	  const chain = await provider.getNetwork()
+	  await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{"chainId": '0xa4ec'}] })
+	  this._vm.sendEvent({
+		category: 'Connect',
+		eventName: 'switch_network',
+		properties: {
+		  switch_network: chain.name
+		}
+	  })
     } catch(e) {
       try {
         if (e.code === 4902) {
@@ -1120,7 +1168,7 @@ export const actions = {
   // GET INFORMATION USER
 
   async getBalance({state, getters}) {
-	if (!state.fullAddress) return 0
+	if (!state.fullAddress || state.chainId !== 42220) return 0
 	const web3 = new Web3(getters.provider)
 	const kit = ContractKit.newKitFromWeb3(web3)
 	const res = await kit.getTotalBalance(state.fullAddress)
@@ -1316,19 +1364,40 @@ export const actions = {
       const contract = new ethers.Contract(contractAddress, AbiNft, signer)
       const approvedForAll = await contract.isApprovedForAll(getters.storedAddress, resultAddress)
       if (!submitApprove) {
-        return approvedForAll
+		return approvedForAll
       } else {
         if (!approvedForAll) {
           await contract.setApprovalForAll(resultAddress, true, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
           contract.on("ApprovalForAll", () => {
-            commit('changeApproveToken', 'approve')
+			commit('changeApproveToken', 'approve')
+			this._vm.sendEvent({
+			  category: 'Listing',
+			  eventName: 'listing_approve_status',
+			  properties: {
+				listing_approve_status: 'Success'
+			  }
+			})
           });
         } else {
-          commit('changeApproveToken', 'approve')
+		  commit('changeApproveToken', 'approve')
         }
       }
     } catch (error) {
-      commit('changeApproveToken', 'error')
+	  commit('changeApproveToken', 'error')
+	  this._vm.sendEvent({
+		category: 'Listing',
+		eventName: 'listing_approve_status',
+		properties: {
+		  listing_approve_status: 'Error'
+		}
+	  })
+	  this._vm.sendEvent({
+		category: 'Listing',
+		eventName: 'listing_approve_error_type',
+		properties: {
+		  listing_approve_error_type: error
+		}
+	  })
     }
   },
   async listingNFT({commit, state, getters}, price) {
@@ -1349,13 +1418,42 @@ export const actions = {
         await contract.listToken(state.nft.name, web3.utils.toWei(String(price)), {
           gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
         })
-      }
+	  }
+	  const collection = (state.collectionList || []).find(item => item.route === state.nft.contract) || {}
       provider.once(contract, async () => {
-        commit('changelistToken', true)
+		commit('changelistToken', true)
+		this._vm.sendEvent({
+		  category: 'Listing',
+		  eventName: 'lisitng_success',
+		  properties: {
+		    lisitng_success: collection.name
+		  }
+		})
+		this._vm.sendEvent({
+		  category: 'Listing',
+		  eventName: 'listing_list_status',
+		  properties: {
+			listing_list_status: 'Success'
+		  }
+		})
       });
     } catch (error) {
       commit('changelistToken', false)
-      console.log(error)
+	  console.log(error)
+	  this._vm.sendEvent({
+		category: 'Listing',
+		eventName: 'listing_list_status',
+		properties: {
+		  listing_list_status: 'Error'
+		}
+	  })
+	  this._vm.sendEvent({
+		category: 'Listing',
+		eventName: 'listing_list_error_type',
+		properties: {
+		  listing_list_error_type: error
+		}
+	  })
     }
   },
   async changeNFTPrice({commit, state, getters}, price) {
@@ -1390,7 +1488,7 @@ export const actions = {
   // BUY NFT
 
   async checkBuyTokenApproved({getters, commit}, price) {
-    if (!price) return
+    if (!price || !state.fullAddress) return
     const ethereumProvider = getters.provider
     const web3 = new Web3(ethereumProvider)
     const accounts = await web3.eth.getAccounts()
@@ -1403,55 +1501,118 @@ export const actions = {
   },
 
   async approveBuyToken({state, commit, getters}, token) {
-  const ethereumProvider = getters.provider
-  const provider = new ethers.providers.Web3Provider(ethereumProvider)
-  const web3 = new Web3(ethereumProvider)
-  const accounts = await web3.eth.getAccounts()
-	const account = accounts[0]
-	const kit = ContractKit.newKitFromWeb3(web3)
-  const goldToken = await kit._web3Contracts.getGoldToken();
-  const minimumAmount = 100000
-  const allowanceAmount = token.price > minimumAmount ? token.price : minimumAmount
-  const parsePrice = ethers.utils.parseEther(String(allowanceAmount))
-  const result = await goldToken.methods.approve(account, parsePrice).send({
-    from: account,
-  })
-  provider.once(result, async () => {
-    commit('changeSuccessApproveBuyToken', true)
-  })
+	try {
+		const ethereumProvider = getters.provider
+		const provider = new ethers.providers.Web3Provider(ethereumProvider)
+		const web3 = new Web3(ethereumProvider)
+		const accounts = await web3.eth.getAccounts()
+		const account = accounts[0]
+		const kit = ContractKit.newKitFromWeb3(web3)
+		const goldToken = await kit._web3Contracts.getGoldToken();
+		const minimumAmount = 100000
+		const allowanceAmount = token.price > minimumAmount ? token.price : minimumAmount
+		const parsePrice = ethers.utils.parseEther(String(allowanceAmount))
+		const result = await goldToken.methods.approve(account, parsePrice).send({
+		  from: account,
+		})
+		provider.once(result, async () => {
+		  commit('changeSuccessApproveBuyToken', true)
+		  this._vm.sendEvent({
+			category: 'Buy',
+			eventName: 'buy_approve_status',
+			properties: {
+			  buy_approve_status: 'Success'
+			}
+		  })
+		})
+	} catch(error) {
+	  console.log(error)
+	  this._vm.sendEvent({
+		category: 'Buy',
+		eventName: 'buy_approve_status',
+		properties: {
+		  buy_approve_status: 'Error'
+		}
+	  })
+	  this._vm.sendEvent({
+		category: 'Buy',
+		eventName: 'buy_approve_error_type',
+		properties: {
+		  buy_approve_error_type: error
+		}
+	  })
+	}
   },
-  async buyNFT({commit, state, getters}, token) {
-    const ethereumProvider = getters.provider
-    const provider = new ethers.providers.Web3Provider(ethereumProvider)
-    const web3 = new Web3(ethereumProvider)
-    const accounts = await web3.eth.getAccounts()
-    const account = accounts[0]
-    const kit = ContractKit.newKitFromWeb3(web3)
-    let contract = null
-    if (state.nft.contract !== 'nomdom') {
-      contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
-    } else {
-      contract = new kit.web3.eth.Contract(nomABI, state.marketNom)
-    }
-    const parsePrice = ethers.utils.parseEther(String(token.price))
-    console.log(token.price)
-    let result = {}
-    if (state.nft.contract !== 'nomdom') {
-      result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
-        from: account,
-        value: parsePrice,
-        gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
-      })
-    } else {
-      result = await contract.methods.buyToken(state.nft.name, web3.utils.toWei(String(token.price))).send({
-        from: account,
-        value: parsePrice,
-        gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
-      })
-    }
-    provider.once(result, async () => {
-      commit('changeSuccessBuyToken', true)
-    });
+  async reportRevenue({state, dispatch}, collectionName) {
+	const price = await dispatch('getPriceToken')
+	this._vm.sendRevenueEvent(`${collectionName} - ${state.nft.contract_id}`, price.value * state.nft.price)
+  },
+  async buyNFT({commit, state, getters, dispatch}, token) {
+	try {
+		const ethereumProvider = getters.provider
+		const provider = new ethers.providers.Web3Provider(ethereumProvider)
+		const web3 = new Web3(ethereumProvider)
+		const accounts = await web3.eth.getAccounts()
+		const account = accounts[0]
+		const kit = ContractKit.newKitFromWeb3(web3)
+		let contract = null
+		if (state.nft.contract !== 'nomdom') {
+		  contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
+		} else {
+		  contract = new kit.web3.eth.Contract(nomABI, state.marketNom)
+		}
+		const parsePrice = ethers.utils.parseEther(String(token.price))
+		console.log(token.price)
+		let result = {}
+		if (state.nft.contract !== 'nomdom') {
+		  result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
+			from: account,
+			value: parsePrice,
+			gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
+		  })
+		} else {
+		  result = await contract.methods.buyToken(state.nft.name, web3.utils.toWei(String(token.price))).send({
+			from: account,
+			value: parsePrice,
+			gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
+		  })
+		}
+		const collectionList = state.collectionList || []
+		const currCollection = collectionList.find(item => item.route === state.nft.contract) || {}
+		provider.once(result, async () => {
+		  commit('changeSuccessBuyToken', true)
+		  this._vm.sendEvent({
+			category: 'Buy',
+			eventName: 'buy_status',
+			properties: {
+			  buy_status: 'Success'
+			}
+		  })
+		  this._vm.sendEvent({
+			category: 'Buy',
+			eventName: 'buy_success',
+			properties: {
+			  buy_success: currCollection.name
+			}
+		  })
+		  dispatch('reportRevenue', currCollection.name)
+		});
+	} catch(error) {
+	  this._vm.sendEvent({
+		category: 'Buy',
+		eventName: 'buy_status',
+		properties: {
+		  buy_status: 'Error'
+		}
+	  })
+	  this._vm.sendEvent({
+		category: 'Buy',
+		eventName: 'buy_error_type',
+		properties: {
+		  buy_error_type: error
+		}
+	  })
+	}
   },
 
   // Transfer NFT
@@ -1697,7 +1858,6 @@ export const actions = {
 			break
 		  case KEY_TRANSACTION_TYPE.TRANSFERED:
 			  notificationItem.type = 'TRANSFERED'
-			  item.owned = item.toAddress.toLowerCase() === address
 			break
 		  default:
 		  	notificationItem.type = 'UNKNOWN'

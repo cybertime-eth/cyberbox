@@ -89,7 +89,7 @@ import SellToken from '@/components/modals/sellToken'
 import BuyToken from '@/components/modals/buyToken';
 import ConfirmAlert from '@/components/modals/ConfirmAlert';
 export default {
-  props: ['nft', 'collection', 'celoPrice', 'approved', 'balance'],
+  props: ['nft', 'collection', 'collectionName', 'celoPrice', 'approved', 'balance'],
   data() {
     return {
       nftList: [],
@@ -203,7 +203,14 @@ export default {
         ...this.currNft,
         selling: true,
         showDropdown: false
-      })
+	  })
+	  this.sendEvent({
+		category: 'Listing',
+		eventName: 'listing',
+		properties: {
+		  listing: this.collectionName
+		}
+	  })
     },
     showBuyModal(nft) {
       if (!nft || nft.buying) return
@@ -214,6 +221,13 @@ export default {
       this.updateNftStatus({
         ...this.currNft,
         buying: true
+      })
+      this.sendEvent({
+        category: 'Buy',
+        eventName: 'buy',
+        properties: {
+          buy: this.collectionName
+        }
       })
     },
     updateNftStatus(newNft) {

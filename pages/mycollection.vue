@@ -59,7 +59,7 @@
     </div>
     <p class="my-collection-collection-filter" v-if="activeFilter !== 'all' && activeFilter !== 'sale'">{{ currCollectionFilter }}</p>
     <div class="my-collection__items">
-      <nft :nft="nft" :key="idx" :route="nftRoute(nft)" :seller="true" :multiNft="isMultiNft(nft)" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
+      <nft :nft="nft" :key="idx" :route="nftRoute(nft)" :seller="true" :multiNft="isMultiNft(nft)" from="MyNFT" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
     </div>
 	<TraitsFilterModal
       :show="showTraitsFilter"
@@ -115,7 +115,11 @@ export default {
       this.listNft = []
       this.filteredNft = false
       this.loading = false
-    }
+	}
+	this.sendEvent({
+	  category: 'Browse',
+	  eventName: 'mynft'
+	})
   },
   computed: {
     address() {
