@@ -24,9 +24,7 @@ Vue.mixin({
 	},
 	sendEvent(event) {
 		try {
-			let properties = {
-				category: event.category
-			}
+			let properties = {}
 			if (event.properties) {
 				properties = Object.assign({}, event.properties, properties);
 			}
