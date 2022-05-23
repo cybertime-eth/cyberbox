@@ -1545,7 +1545,7 @@ export const actions = {
   },
   async reportRevenue({state, dispatch}, collectionName) {
 	const price = await dispatch('getPriceToken')
-	this._vm.sendRevenueEvent(`${collectionName} - ${state.nft.contract_id}`, price.value * state.nft.price)
+	this._vm.sendRevenueEvent(`${collectionName} - ${state.nft.contract_id}`, price.value * state.nft.price, collectionName)
   },
   async buyNFT({commit, state, getters, dispatch}, token) {
 	try {
