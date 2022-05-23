@@ -1280,21 +1280,37 @@ export const actions = {
       }`;
     const data = await this.$graphql.default.request(query)
     let multiNftInfo = null
+    let multiNftCollection = null
     if (isMultiNft) {
       multiNftInfo = data.contractInfos[0]
       if (data.ownedListedInfos.length > 0) {
-        multiNftInfo = data.ownedListedInfos[0]
+        multiNftInfo = data.ownedListedInfos.find(item => {
+		  const nftId = item.image.split('//')[1].split('/')[1].split('.')[0]
+		  return nftId === token.id
+		})
       }
       else if (data.ownedContractInfos.length > 0) {
-        multiNftInfo = data.ownedContractInfos[0]
+        multiNftInfo = data.ownedContractInfos.find(item => {
+		  const nftId = item.image.split('//')[1].split('/')[1].split('.')[0]
+		  return nftId === token.id
+		})
       }
       else if (data.listedContractInfos.length > 0) {
-        multiNftInfo = data.listedContractInfos[0]
+		multiNftInfo = data.listedContractInfos.find(item => {
+		  const nftId = item.image.split('//')[1].split('/')[1].split('.')[0]
+		  return nftId === token.id
+		})
+      }
+      if (data.multiNFTs.length > 0) {
+        multiNftCollection = data.multiNFTs.find(item => {
+		  const nftId = item.id.split('/')[1].split('.')[0]
+		  return nftId === token.id
+		})
       }
     }
     const nftInfo = {
       ...(isMultiNft ? multiNftInfo : data.contractInfo),
-      multiNft: (isMultiNft && data.multiNFTs.length > 0 ? data.multiNFTs[0] : null),
+      multiNft: multiNftCollection,
       producerFee: data.contracts.length > 0 ? data.contracts[0].producerFee : 0
     }
     commit('setNewNft', nftInfo)
