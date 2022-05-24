@@ -1355,27 +1355,27 @@ export const actions = {
   async approveToken({commit, state, getters}, submitApprove = true) {
     const provider = new ethers.providers.Web3Provider(getters.provider)
     const signer = provider.getSigner()
-    let resultAddress = state.marketNom
-    if (state.nft.contract !== 'nomdom') {
-      const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
-      resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
-    }
-    let AbiNft = null
-    switch (state.nft.contract) {
-      case 'daos': AbiNft = daosABI
-        break;
-      case 'cpunk': AbiNft = punksABI
-        break;
-      case 'ctoadz': AbiNft = toadsABI
-        break;
-      case 'cshape': AbiNft = cshapeABI
-        break;
-      case 'pxa': AbiNft = pxaABI
-        break;
-      default: AbiNft = daosABI
-        break;
-    }
     try {
+	  let resultAddress = state.marketNom
+	  if (state.nft.contract !== 'nomdom') {
+	    const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
+	    resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
+	  }
+	  let AbiNft = null
+	  switch (state.nft.contract) {
+	    case 'daos': AbiNft = daosABI
+	  	  break;
+	    case 'cpunk': AbiNft = punksABI
+	  	  break;
+	    case 'ctoadz': AbiNft = toadsABI
+	  	  break;
+	    case 'cshape': AbiNft = cshapeABI
+	  	  break;
+	    case 'pxa': AbiNft = pxaABI
+	  	  break;
+	    default: AbiNft = daosABI
+	  	  break;
+	  }
       const contractAddress = state.nft.contract !== 'nomdom' ? state.nft.contract_address : state.nomContractAddress
       const contract = new ethers.Contract(contractAddress, AbiNft, signer)
       const approvedForAll = await contract.isApprovedForAll(getters.storedAddress, resultAddress)
@@ -1559,9 +1559,17 @@ export const actions = {
 	  })
 	}
   },
-  async reportRevenue({state, dispatch}, collectionName) {
+  async reportRevenue({state, dispatch}, collection) {
 	const price = await dispatch('getPriceToken')
-	this._vm.sendRevenueEvent(`${collectionName} - ${state.nft.contract_id}`, price.value * state.nft.price, collectionName)
+	const query = gql`
+      query Sample {
+        contracts(first: 1 where: { nftSymbol: "${collection.route}" }) {
+          sell_total_price
+        }
+      }`
+	let data = await this.$graphql.default.request(query)
+	const totalPrice = data.contracts.length > 0 ? (data.contracts[0].sell_total_price / 1000 * price.value) : 0;
+	this._vm.sendRevenueEvent(`${collection.name} - ${state.nft.contract_id}`, price.value * state.nft.price, totalPrice, collection.name)
   },
   async buyNFT({commit, state, getters, dispatch}, token) {
 	try {
@@ -1611,7 +1619,7 @@ export const actions = {
 			  buy_success: currCollection.name
 			}
 		  })
-		  dispatch('reportRevenue', currCollection.name)
+		  dispatch('reportRevenue', currCollection)
 		});
 	} catch(error) {
 	  this._vm.sendEvent({

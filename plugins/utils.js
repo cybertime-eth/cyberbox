@@ -46,10 +46,13 @@ Vue.mixin({
 			console.log(error)
 		}
 	},
-	sendRevenueEvent(productId, price, collection) {
+	sendRevenueEvent(productId, price, priceTotal, collection) {
 		try {
-			const revenue = new amplitude.Revenue().setProductId(productId).setPrice(price).setEventProperties({ collection })
+			const revenue = new amplitude.Revenue().setProductId(productId).setPrice(price)
 			amplitude.logRevenueV2(revenue)
+
+			const collectionRevenue = new amplitude.Revenue().setPrice(priceTotal).setEventProperties({ collection })
+			amplitude.logRevenueV2(collectionRevenue)
 		} catch(error) {
 			console.log(error)
 		}

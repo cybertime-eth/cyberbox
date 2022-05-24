@@ -25,7 +25,7 @@
                                         Sold to <span class="notification__list-item-info-status-circle other"/> <b>{{ item.to }}</b> for <b>{{ item.amount }} CELO</b>
                                     </p>
                                     <p class="notification__list-item-info-status" v-if="item.type === 'BOUGHT'">
-                                        Bought from <span class="notification__list-item-info-status-circle"/> <b>{{ item.from }}</b> for <b>{{ item.amount }} CELO</b>
+                                        Bought from <span class="notification__list-item-info-status-circle"/> <b>{{ item.to }}</b> for <b>{{ item.amount }} CELO</b>
                                     </p>
                                     <p class="notification__list-item-info-status" v-if="item.type === 'TRANSFER'">
                                         Transfered from <span class="notification__list-item-info-status-circle"/> <b>{{ item.owned ? 'You' : item.from }}</b> to <span class="notification__list-item-info-status-circle other"/> <b>{{ item.to }}</b>
