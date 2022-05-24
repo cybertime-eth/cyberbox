@@ -24,9 +24,7 @@ Vue.mixin({
 	},
 	sendEvent(event) {
 		try {
-			let properties = {
-				category: event.category
-			}
+			let properties = {}
 			if (event.properties) {
 				properties = Object.assign({}, event.properties, properties);
 			}
@@ -48,9 +46,9 @@ Vue.mixin({
 			console.log(error)
 		}
 	},
-	sendRevenueEvent(productId, price) {
+	sendRevenueEvent(productId, price, collection) {
 		try {
-			const revenue = new amplitude.Revenue().setProductId(productId).setPrice(price)
+			const revenue = new amplitude.Revenue().setProductId(productId).setPrice(price).setEventProperties({ collection })
 			amplitude.logRevenueV2(revenue)
 		} catch(error) {
 			console.log(error)
