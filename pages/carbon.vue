@@ -2,12 +2,16 @@
 	<section id="carbon">
 		<div class="carbon">
 			<div class="carbon__tracker">
-				<h2 class="carbon__tracker-title">Personal carbon offset tracker</h2>
+				<h2 class="carbon__title">Personal carbon offset tracker</h2>
 				<CustomSelect class="carbon__tracker-picker" :options="dateOptions" />
 				<div class="carbon__tracker-block">
 					<div class="carbon__tracker-block-status">
 						<div class="carbon__tracker-block-status-bg">
 							<img class="carbon__tracker-block-status-bg-img" src="/occupancy.svg">
+							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-tiny.svg">
+							<!-- <img class="carbon__tracker-block-status-bg-leaf" src="/leaf-small.svg">
+							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-medium.svg">
+							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-large.svg"> -->
 						</div>
 					</div>
 					<div class="carbon__tracker-block-info">
@@ -26,8 +30,23 @@
 							</div>
 						</div>
 						<div class="carbon__tracker-block-info-certificate">
+							<button class="carbon__tracker-block-info-certificate-button gradient-button">Offset Carbon certificates</button>
+							<img class="carbon__tracker-block-info-certificate-img" src="/gift.svg" alt="gift">
 						</div>
 					</div>
+				</div>
+			</div>
+			<div class="carbon__certificates">
+				<h2 class="carbon__title">NFT Carbon Offset Certificates</h2>
+				<div class="carbon__certificates-header">
+					<div class="carbon__certificates-header-tab">
+						<p class="carbon__certificates-header-tab-item" :class="{active: activeTab === 1}" @click="changeTab(1)">My certificates</p>
+						<p class="carbon__certificates-header-tab-item" :class="{active: activeTab === 2}"  @click="changeTab(2)">All certificates</p>
+					</div>
+					<CustomSelect class="carbon__certificates-header-picker" :options="certificateDateOptions" />
+				</div>
+				<div class="carbon__certificates-list">
+					<certificate :key="idx" v-for="idx of 12"/>
 				</div>
 			</div>
 		</div>
@@ -36,9 +55,16 @@
 
 <script>
 import CustomSelect from '@/components/utility/CustomSelect.vue'
+import certificate from '@/components/certificate.vue'
 export default {
   components: {
-	CustomSelect
+	CustomSelect,
+	certificate
+  },
+  data() {
+	return {
+	  activeTab: 2
+	}
   },
   computed: {
 	dateOptions() {
@@ -47,27 +73,36 @@ export default {
 		{ key: '2021', value: '2021' },
 		{ key: '2020', value: '2020' }
 	  ]
+	},
+	certificateDateOptions() {
+	  return [
+		{ key: '2022', value: '2022' },
+	  ]
+	}
+  },
+  methods: {
+	changeTab(tab) {
+	  if (this.activeTab !== tab) {
+		this.activeTab = tab
+	  }
 	}
   }
-//   mounted() {
-//     const footerEl = document.querySelector('.footer')
-//     footerEl.classList.add('fixed')
-//   }
 }
 </script>
 
 <style lang="scss" scoped>
 .carbon {
   padding-top: 4.2rem;
+  padding-bottom: 10.2rem;
+  &__title {
+	padding-bottom: 1rem;
+	font-family: Cabin-Medium;
+	font-weight: 500;
+	font-size: 3.2rem;
+	text-align: center;
+  }
   &__tracker {
 	box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
-	&-title {
-	  padding-bottom: 1rem;
-	  font-family: Cabin-Medium;
-	  font-weight: 500;
-	  font-size: 3.2rem;
-	  text-align: center;
-	}
 	&-picker {
 	  width: 8.2rem;
 	  margin: 0 auto;
@@ -77,6 +112,7 @@ export default {
 	  align-items: center;
 	  justify-content: center;
 	  padding-top: 6rem;
+	  padding-bottom: 7.8rem;
 	  &-status {
 		width: 40.2rem;
 		height: 34.9rem;
@@ -84,12 +120,23 @@ export default {
 		position: relative;
 		background: lightgreen;
 		&-bg {
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
 		  position: absolute;
 		  left: 50%;
 		  top: 50%;
+		  width: 27rem;
+		  height: 27rem;
 		  transform: translate(-50%, -50%);
 		  &-img {
-			width: 27rem;
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+		  }
+		  &-leaf {
+			position: relative;
 		  }
 		}
 	  }
@@ -110,20 +157,68 @@ export default {
 			}
 			&:last-child {
 			  margin: 0;
-			  color: $green;
-			}
-			&.total {
-			   &-name {
+			  padding-top: 1.3rem;
+			  * {
 				font-weight: 600;
 				color: $green;
 			  }
-			  &-content {
-				color: $green;
-			  }
+			  color: $green;
 			}
 		  }
 		}
+		&-certificate {
+		  display: flex;
+		  align-items: center;
+		  justify-content: space-between;
+		  width: 100%;
+		  margin-top: 2.8rem;
+		  &-button {
+			padding: 1.3rem 2.4rem;
+			border-radius: 2.3rem;
+			font-weight: 600;
+    		font-size: 1.6rem;
+    		color: $grayDark;
+			&::after {
+			  background: linear-gradient(to right, #365BE0, #D676CF, #FFE884);
+			}
+		  }
+		  &-img {
+			width: 3.4rem;
+		  }
+		}
 	  }
+	}
+  }
+  &__certificates {
+	padding: 5.8rem 6rem 0;
+	.carbon__title {
+	  padding-bottom: 5rem;
+	}
+	&-header {
+	  display: flex;
+      align-items: center;
+      justify-content: space-between;
+	  &-tab {
+		display: flex;
+		&-item {
+		  padding: 0.6rem 1.6rem;
+		  font-size: 1.4rem;
+		  cursor: pointer;
+		  &.active {
+			background: $lightGreen;
+		  }
+		}
+	  }
+	  &-picker {
+		width: 8.2rem;
+	  }
+	}
+	&-list {
+	  display: grid;
+	  grid-template-columns: repeat(6, 20rem);
+	  grid-column-gap: 2.4rem;
+	  grid-row-gap: 3.5rem;
+	  padding-top: 4.4rem;
 	}
   }
 }
