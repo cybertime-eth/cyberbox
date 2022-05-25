@@ -54,7 +54,7 @@ export default {
 	},
 	methods: {
 	  updateLayout() {
-			const nonFixedRoutes = ['index', 'explorer', 'carbon']
+			const nonFixedRoutes = ['index', 'explorer', 'carbon', 'certificate-certificateid']
 		if (nonFixedRoutes.includes(this.routeName) || (this.routeName !== 'index' && process.browser && window.innerWidth <= 460)) {
 		  this.footerFixed = false
 		}

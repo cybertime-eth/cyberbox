@@ -4,6 +4,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider"
 import { mobileLinkChoiceKey, setLocal, removeLocal } from "@walletconnect/utils"
 import ENS from "@ensdomains/ensjs"
 import MarketMainABI from '../abis/marketMain.json'
+import MarketCertificateABI from '../abis/marketCertificate.json'
 import API from '../api'
 import daosABI from '../abis/daos.json'
 import punksABI from '../abis/punks.json'
@@ -18,7 +19,8 @@ import filter from './../config.js'
 import redstone from 'redstone-api'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
-  marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A', 
+  marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
+  marketCertificate: '0x90d08011a4b348804f9b4a7Abcb2768C27e3AAa9',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   user: {},
   chainId: null,
@@ -1503,7 +1505,7 @@ export const actions = {
 
   // BUY NFT
 
-  async checkBuyTokenApproved({getters, commit}, price) {
+  async checkBuyTokenApproved({state, getters, commit}, price) {
     if (!price || !state.fullAddress) return
     const ethereumProvider = getters.provider
     const web3 = new Web3(ethereumProvider)
@@ -1512,7 +1514,7 @@ export const actions = {
     const kit = ContractKit.newKitFromWeb3(web3)
     const goldToken = await kit._web3Contracts.getGoldToken();
     const tokenPrice = web3.utils.toBN(web3.utils.toWei(String(price)))
-    const allowanceAmount = web3.utils.toBN(await goldToken.methods.allowance(account, account).call())
+	const allowanceAmount = web3.utils.toBN(await goldToken.methods.allowance(account, account).call())
     commit('changeBuyTokenApproved', allowanceAmount.gte(tokenPrice))
   },
 
@@ -1580,7 +1582,9 @@ export const actions = {
 		const account = accounts[0]
 		const kit = ContractKit.newKitFromWeb3(web3)
 		let contract = null
-		if (state.nft.contract !== 'nomdom') {
+		if (state.nft.contract === 'certificate') {
+		  contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
+		} else if (state.nft.contract !== 'nomdom') {
 		  contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
 		} else {
 		  contract = new kit.web3.eth.Contract(nomABI, state.marketNom)
@@ -1588,7 +1592,13 @@ export const actions = {
 		const parsePrice = ethers.utils.parseEther(String(token.price))
 		console.log(token.price)
 		let result = {}
-		if (state.nft.contract !== 'nomdom') {
+		if (state.nft.contract === 'certificate') {
+		  result = await contract.methods.mintMonthNFT().send({
+			from: account,
+			value: parsePrice,
+			gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
+		  })
+		} else if (state.nft.contract !== 'nomdom') {
 		  result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
 			from: account,
 			value: parsePrice,
@@ -1622,6 +1632,7 @@ export const actions = {
 		  dispatch('reportRevenue', currCollection)
 		});
 	} catch(error) {
+	  console.log(error)
 	  this._vm.sendEvent({
 		category: 'Buy',
 		eventName: 'buy_status',
@@ -1900,6 +1911,35 @@ export const actions = {
 	  }
 	})
 	commit('setNotificationList', notificationList)
+  },
+
+  // Certificate Methods
+  async getCurrentMonthNFTID({state, getters}) {
+	try {
+	  if (!state.fullAddress) return 0
+	  const web3 = new Web3(getters.provider)
+	  const kit = ContractKit.newKitFromWeb3(web3)
+	  const contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
+	  const result = await contract.methods.getCurrentMonthNFTID(state.fullAddress).call()
+	  return result
+	  return 0
+	} catch(e) {
+	  console.log(e)
+	  return 0
+	}
+  },
+
+  async getMonthNFTID({state, getters}, date) {
+	try {
+	  if (!state.fullAddress) return 0
+	  const web3 = new Web3(getters.provider)
+	  const kit = ContractKit.newKitFromWeb3(web3)
+	  const contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
+	  return await contract.methods.getMonthNFTID(state.fullAddress, date.year, date.month).call()
+	} catch(e) {
+	  console.log(e)
+	  return 0
+	}
   }
 }
 
@@ -1963,10 +2003,14 @@ export const mutations = {
     state.notificationList = list
   },
   setNewNft(state, nft) {
-    state.nft = {
-      ...nft,
-      price: nft.price / 1000
-    }
+	if (nft) {
+	  state.nft = {
+		...nft,
+		price: nft.price / 1000
+	  }
+	} else {
+	  state.nft = {}
+	}
   },
   setMyNftList(state, list) {
     state.myNftList = list

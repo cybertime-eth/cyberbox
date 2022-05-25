@@ -21,7 +21,7 @@
 		<div class="refi__block-carbon-info">
 			<h2 class="refi__block-carbon-info-title">Get your NFT Carbon Offset Certificate</h2>
 			<p class="refi__block-carbon-info-content">By purchasing a carbon certificate you are helping nature. You purchase a certificate once a month for 1 ton of CO2, thereby covering your carbon footprint. Money from the sale of certificates is used to maintain carbon farms.</p>
-			<button class="refi__block-carbon-info-buy" @click="$router.push('/carbon')">Buy Now</button>
+			<button class="refi__block-carbon-info-buy" @click="$router.push('/certificate/1')">Buy Now</button>
 		</div>
 		<img class="refi__block-carbon-picture" src="/carbon.svg">
 	  </div>
