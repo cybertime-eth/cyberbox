@@ -1503,7 +1503,7 @@ export const actions = {
 
   // BUY NFT
 
-  async checkBuyTokenApproved({getters, commit}, price) {
+  async checkBuyTokenApproved({state, getters, commit}, price) {
     if (!price || !state.fullAddress) return
     const ethereumProvider = getters.provider
     const web3 = new Web3(ethereumProvider)
