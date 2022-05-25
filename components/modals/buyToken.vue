@@ -2,7 +2,7 @@
   <div class="modal">
     <div class="modal__buy">
       <h1 class="modal__title gradient-text">Payment Confirmation</h1>
-      <p class="modal__subtitle">You are about to purchase a <span class="modal__subtitle-bold">{{ nft.name }}{{ nftNameSuffix }}</span></p>
+      <p class="modal__subtitle">You are about to purchase a <span class="modal__subtitle-bold">{{ nftName }}</span></p>
       <div class="modal__information">
         <h3 class="modal__information-title">You pay</h3>
         <div class="modal__information-price-box">
@@ -61,8 +61,8 @@
 export default {
   props: ['nft', 'priceToken', 'balance', 'multiNft'],
   computed: {
-    nftNameSuffix() {
-      return this.nft.contract !== 'nomdom' ? '' : '.nom'
+    nftName() {
+      return `${this.nft.name}${this.nft.contract !== 'nomdom' ? '' : '.nom'}`
     },
     collectionName() {
       return this.$route.params.collectionid

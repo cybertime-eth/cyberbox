@@ -17,6 +17,14 @@
           </div>
         </div>
       </div>
+	  <div class="refi__block-carbon">
+		<div class="refi__block-carbon-info">
+			<h2 class="refi__block-carbon-info-title">Get your NFT Carbon Offset Certificate</h2>
+			<p class="refi__block-carbon-info-content">By purchasing a carbon certificate you are helping nature. You purchase a certificate once a month for 1 ton of CO2, thereby covering your carbon footprint. Money from the sale of certificates is used to maintain carbon farms.</p>
+			<button class="refi__block-carbon-info-buy" @click="$router.push('/certificate/1')">Buy Now</button>
+		</div>
+		<img class="refi__block-carbon-picture" src="/carbon.svg">
+	  </div>
       <div class="refi__block-listings">
         <h3 class="refi__block-listings-title">Latest Listings <img src="/fire.svg" alt="fire"></h3>
         <div class="refi__block-listings-items">
@@ -367,7 +375,6 @@ export default {
       }
       &-live {
         padding-top: 11.4rem;
-        padding-bottom: 4.5rem;
         &-title {
           text-align: center;
           font-family: Cabin-Medium;
@@ -406,6 +413,43 @@ export default {
         }
       }
     }
+	&-carbon {
+	  display: flex;
+	  justify-content: center;
+	  background: linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
+	  padding: 2.4rem 0;
+	  margin-top: 11.1rem;
+	  margin-bottom: 10.7rem;
+	  border-radius: 8px;
+	  &-info {
+		width: 30.5rem;
+		margin-right: 11.2rem;
+		&-title {
+		  font-family: Cabin-Bold;
+		  line-height: 3.6rem;
+		  font-size: 3.2rem;
+		}
+		&-content {
+		  margin-top: 1.2rem;
+		  font-size: 1.4rem;
+		  color: $grayDark;
+		}
+		&-buy {
+		  width: 17.9rem;
+		  background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
+		  margin-top: 2.4rem;
+		  padding: 1.2rem 0;
+		  border-radius: 2.5rem;
+		  font-weight: 700;
+		  font-size: 1.6rem;
+		  color: $white;
+		}
+	  }
+	  &-picture {
+		width: 28rem;
+		border-radius: 5px;
+	  }
+	}
     &-listings {
       &-title {
         font-family: OpenSans-SemiBold;
@@ -657,7 +701,6 @@ export default {
         }
         &-live {
           padding-top: 7rem;
-          padding-bottom: 4.5rem;
           &-title {
             font-size: 1.6rem;
             span {
@@ -680,8 +723,32 @@ export default {
               }
             }
           }
-        }
-      }
+		}
+	  }
+	  &-carbon {
+		flex-direction: column-reverse;
+		padding: 2.4rem 0.8rem;
+		margin: 4rem -0.8rem 4.5rem;
+		border-radius: 0;
+		&-picture {
+		  width: 100%;
+		}
+		&-info {
+		  width: 100%;
+		  margin: 0;
+		  padding-top: 1.6rem;
+		  &-title {
+			font-family: OpenSans-SemiBold;
+			font-weight: 600;
+			font-size: 1.8rem;
+			line-height: 2.2rem;
+		  }
+		  &-buy {
+			display: block;
+			margin: 2.4rem auto 0;
+		  }
+		}
+	  }
       &-listings {
         &-title {
           font-size: 1.6rem;

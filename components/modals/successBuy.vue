@@ -6,20 +6,27 @@
       <h3 class="modal__success">You successfully purchased</h3>
       <h3 class="modal__name">{{ name }}</h3>
       <p class="modal__link">View on Celo Explorer <img src="/share.svg" alt="share"></p>
-      <button class="modal__button" @click="routeMyCollection">My collection</button>
-      <button class="modal__close-button" @click="closeModal">
-        <img src="/close-bold.svg" class="modal__close-button-icon">
-      </button>
+      <div class="modal__buy-footer">
+		<button class="modal__button modal__buy-footer-carbon" @click="routeCarbonTracker">Carbon tracker</button>
+		<button class="modal__button" @click="routeMyCollection">My collection</button>
+      </div>
+	  <button class="modal__close-button" @click="closeModal">
+		<img src="/close-bold.svg" class="modal__close-button-icon">
+	  </button>
     </div>
   </div>
 </template>
 <script>
 export default {
-  props: ['image', 'name'],
+  props: ['image', 'name', 'certificate'],
   methods: {
     closeModal() {
       this.$store.commit('changeSuccessBuyToken', false)
-    },
+	},
+	routeCarbonTracker() {
+	  this.$store.commit('changeSuccessBuyToken', false)
+      this.$router.push('/carbon')
+	},
     routeMyCollection() {
       this.$store.commit('changeSuccessBuyToken', false)
       this.$router.push('/mycollection')
@@ -69,14 +76,25 @@ export default {
       margin-left: 1.2rem;
     }
   }
-  &__button {
-    width: 100%;
-    height: 4.8rem;
-    border: .1rem solid $pink;
-    color: $pink;
-    background: $white;
-    margin-top: 2.8rem;
-    font-size: 1.6rem;
+  &__buy-footer {
+	display: flex;
+	width: 100%;
+	margin-top: 2.8rem;
+	.modal__button {
+	  flex: 1;
+	  height: 4.8rem;
+	  border: .1rem solid $pink;
+	  color: $pink;
+	  background: $white;
+	  font-size: 1.6rem;
+	}
+	&-carbon {
+	  &.modal__button {
+		margin-right: 0.8rem;
+		border-color: $border;
+		color: $textColor;
+	  }
+	}
   }
   &__close-button {
     position: absolute;
@@ -94,7 +112,20 @@ export default {
     }
     &__image {
       margin-top: 1.6rem;
-    }
+	}
+	&__buy {
+	  padding-left: 0.8rem;	
+	  padding-right: 0.8rem;
+	  .modal__name {
+		font-size: 1.7rem;
+	  }
+	  &-footer {
+		flex-direction: column-reverse;
+		&-carbon {
+		  margin-top: 0.8rem;
+		}
+	  }
+	}
   }
 }
 </style>
