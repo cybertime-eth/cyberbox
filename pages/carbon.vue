@@ -5,13 +5,14 @@
 				<h2 class="carbon__title">Personal carbon offset tracker</h2>
 				<CustomSelect class="carbon__tracker-picker" :options="dateOptions" />
 				<div class="carbon__tracker-block">
-					<div class="carbon__tracker-block-status">
+					<div class="carbon__tracker-block-status" ref="trackerProgress">
+						<circle-progress :size="progressSize" :progress="certificateOccupancy"/>
 						<div class="carbon__tracker-block-status-bg">
 							<img class="carbon__tracker-block-status-bg-img" src="/occupancy.svg">
-							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-tiny.svg">
-							<!-- <img class="carbon__tracker-block-status-bg-leaf" src="/leaf-small.svg">
-							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-medium.svg">
-							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-large.svg"> -->
+							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-tiny.svg" v-if="certificateOccupancy < 35">
+							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-large.svg" v-else-if="certificateOccupancy >= 100">
+							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-medium.svg" v-else-if="certificateOccupancy >= 65">
+							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-small.svg" v-else>
 						</div>
 					</div>
 					<div class="carbon__tracker-block-info">
@@ -55,16 +56,20 @@
 
 <script>
 import CustomSelect from '@/components/utility/CustomSelect.vue'
+import CircleProgress from '@/components/utility/CircleProgress.vue'
 import certificate from '@/components/certificate.vue'
 export default {
   components: {
 	CustomSelect,
+	CircleProgress,
 	certificate
   },
   data() {
 	return {
 	  activeTab: 2,
-	  certificateList: []
+	  certificateList: [],
+	  progressSize: 0,
+	  certificateOccupancy: 0
 	}
   },
   computed: {
@@ -82,7 +87,7 @@ export default {
 	},
 	address() {
 	  return this.$store.state.address
-	}
+	},
   },
   created() {
 	const dataList = []
@@ -99,9 +104,19 @@ export default {
 	  })
 	}
 	this.certificateList = dataList
+	if (process.broswer) {
+	  if (!this.isMobie()) {
+		this.progressSize = Math.round(0.6945 * document.body.offsetHeight / 1000)
+	  } else {
+		this.progressSize = Math.round(3.125 * document.body.offsetHeight / 1000)
+	  }
+	}
   },
   async mounted() {
 	this.updateCertificateList()
+	if (this.$refs.trackerProgress) {
+	  this.progressSize = this.$refs.trackerProgress.offsetWidth
+	}
   },
   watch: {
 	address() {
@@ -113,15 +128,18 @@ export default {
 	  if (this.$store.state.address) {
 		const newList = JSON.parse(JSON.stringify(this.certificateList))
 		const nftId = await this.$store.dispatch('getCurrentMonthNFTID')
+		let ownedCount = 0
 		if (nftId > 0) {
 		  const today = new Date()
 		  const currMonth = today.getMonth()
 		  const index = newList.findIndex(item => item.month === currMonth)
 		  if (index >= 0) {
 			newList[index].owner = this.$store.state.fullAddress
+			ownedCount++
 		  }
 		  this.certificateList = newList
 		}
+		this.certificateOccupancy = Math.round(ownedCount / this.certificateList.length * 100)
 	  }
 	},
 	changeTab(tab) {
@@ -158,10 +176,9 @@ export default {
 	  padding-bottom: 7.8rem;
 	  &-status {
 		width: 40.2rem;
-		height: 34.9rem;
+		height: 40.2rem;
 		margin-right: 14.6rem;
 		position: relative;
-		background: lightgreen;
 		&-bg {
 		  display: flex;
 		  align-items: center;
@@ -279,7 +296,7 @@ export default {
 		padding-bottom: 4.1rem;
 		&-status {
 		  width: 28.8rem;
-		  height: 24.8rem;
+		  height: 28.8rem;
 		  margin: 0 auto 4.3rem;
 		  &-bg {
 			width: 19.2rem;
