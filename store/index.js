@@ -721,7 +721,7 @@ export const actions = {
   },
 
   async getMultiNftCollection({state}) {
-    if (!state.fullAddress) return []
+    if (!state.fullAddress || !state.nft || !state.nft.contract) return []
     const query = gql`
       query Sample {
         sale: contractLists(first: 1000 orderBy: price where: { contract: "${state.nft.contract}" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
