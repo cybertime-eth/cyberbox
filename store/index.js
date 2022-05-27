@@ -33,6 +33,7 @@ export const state = () => ({
   myNftList: [],
   traitFilters: [],
   notificationList: [],
+  certificateList: [],
   filteredTraits: null,
   nft: {},
   approveToken: '',
@@ -936,8 +937,26 @@ export const actions = {
     state.pagination ? commit('addNftToList', contractSells) : commit('setNewNftList', contractSells)
   },
 
-  getNotifications() {
+  async getCertificates({getters, commit}) {
+	const address = getters.storedAddress
+	if (!address) return
 
+	const query = gql`
+      query Sample {
+        certifications(first: 48 orderBy: token_id where: { owner: "${address}" }) {
+		  id
+		  owner
+		  token_type
+		  token_id
+		  year
+		  month
+		  price
+		  co2
+		  image
+		}
+      }`
+	const data = await this.$graphql.default.request(query)
+	commit('setCertificateList', data.certifications)
   },
 
   // AUTHORIZATION
@@ -1914,6 +1933,7 @@ export const actions = {
   },
 
   // Certificate Methods
+
   async getCurrentMonthNFTID({state, getters}) {
 	try {
 	  if (!state.fullAddress) return 0
@@ -2001,6 +2021,9 @@ export const mutations = {
   },
   setNotificationList(state, list) {
     state.notificationList = list
+  },
+  setCertificateList(state, list) {
+    state.certificateList = list
   },
   setNewNft(state, nft) {
 	if (nft) {

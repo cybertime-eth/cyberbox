@@ -52,7 +52,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cyber-time-notification-four',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cyber-time-certification-two',
         options: {}
       },
       ubeswap: {

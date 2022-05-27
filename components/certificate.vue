@@ -1,21 +1,20 @@
 <template>
-    <div class="certificate__item collection__item" @click="routeCertificate">
+    <div class="certificate__item collection__item">
         <img src="/more.png" alt="more" class="collection__item-more" v-if="owner">
         <div class="collection__item-image">
             <img :src="certificate.image" alt="item">
         </div>
         <div class="collection__item-info">
-            <h2 class="collection__item-info-name">{{ certificate.name }}</h2>
+            <h2 class="collection__item-info-name">{{ certificateName }}</h2>
             <p class="collection__item-info-type">Price</p>
             <div class="collection__item-info-price" v-if="buyAvailable">
                 <img src="/celo.svg" alt="celo">
                 <h3 class="collection__item-info-price-text">{{ certificate.price }}</h3>
             </div>
-            <p class="certificate__item-description" :class="{ owned: owner }" v-else>{{ certificateDescription }}</p>
-            <!-- <h3 class="collection__item-info-price-null">Not for sale</h3> -->
-            <button class="collection__item-info-details" v-if="owner" @click="routeCertificate">Details</button>
+            <p class="certificate__item-description" :class="{ 'not-sale': owner || !saleAvailable }" v-else>{{ certificateDescription }}</p>
+            <button class="collection__item-info-details" @click="routeCertificate" v-if="owner">Details</button>
             <button class="collection__item-info-details buy" v-else-if="buyAvailable">Buy</button>
-            <button class="collection__item-info-details offset" :class="{ disabled: certificate.future }" v-else>Offset now</button>
+            <button class="collection__item-info-details offset" :class="{ disabled: certificate.future }" @click="routeCertificate" v-else-if="saleAvailable">Offset now</button>
         </div>
     </div>    
 </template>
@@ -24,20 +23,29 @@
 export default {
   props: ['certificate'],
   computed: {
+	certificateName() {
+	  return this.getCertificateName(this.certificate)
+	},
     owner() {
       return this.$store.state.fullAddress === this.certificate.owner
-    },
+	},
+	priceVisible() {
+      return this.certificate.price > 0
+	},
+	buyAvailable() {
+      return !this.owner && this.certificate.price > 0
+	},
+	saleAvailable() {
+	  return this.certificate.offset || this.certificate.future
+	},
     certificateDescription() {
-      return this.owner ? 'Not for sale' : '-'
-    },
-    buyAvailable() {
-      return !this.owner && this.certificate.market_status === 'LISTED'
+      return this.owner || !this.saleAvailable ? 'Not for sale' : '-'
     }
   },
   methods: {
     routeCertificate() {
-      if (this.certificate.future) return
-      this.$router.push('/certificate/1')
+      if (this.owner || this.certificate.future) return
+      this.$router.push('/lending')
     }
   }
 }
@@ -55,14 +63,16 @@ export default {
     align-items: center;
     justify-content: center;
     background: linear-gradient(0deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), linear-gradient(46.74deg, #365BE0 -17.17%, #D676CF 48.99%, #FFE884 113%);
-    max-width: 20rem;
+	max-width: 20rem;
+	border-radius: 0.4rem;
+	overflow: hidden;
     img {
       max-width: 100%;
     }
   }
   &-description {
     font-size: 1.4rem;
-    &.owned {
+    &.not-sale {
       color: $border;
     }
   }

@@ -22,6 +22,27 @@ Vue.mixin({
 			return false
 		}
 	},
+	getCertificatesOfYear(year) {
+		const today = new Date()
+		const dataList = []
+		const currYear = today.getFullYear()
+		const currMonth = today.getMonth() + 1
+		for (let i = 1; i <= 12; i++) {
+			dataList.push({
+				image: i <= currMonth ? '/carbon.svg' : '/question-mark.svg',
+				year,
+				month: i,
+				offset: year === currYear && i === currMonth,
+				future: year === currYear && i > currMonth
+			})
+		}
+		return dataList
+	},
+	getCertificateName(certificate) {
+		const date = new Date(certificate.year, certificate.month - 1, 1)
+		const month = date.toLocaleString('en-us', { month: 'long' })
+		return `${month} ${certificate.year}`
+	},
 	sendEvent(event) {
 		try {
 			let properties = {}

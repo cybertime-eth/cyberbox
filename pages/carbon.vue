@@ -31,7 +31,7 @@
 							</div>
 						</div>
 						<div class="carbon__tracker-block-info-certificate">
-							<button class="carbon__tracker-block-info-certificate-button gradient-button" @click="$router.push('/certificate/1')">Offset Carbon certificates</button>
+							<button class="carbon__tracker-block-info-certificate-button gradient-button" @click="$router.push('/lending')">Offset Carbon certificates</button>
 							<img class="carbon__tracker-block-info-certificate-img" src="/gift.svg" alt="gift">
 						</div>
 					</div>
@@ -47,7 +47,7 @@
 					<CustomSelect class="carbon__certificates-header-picker" :options="certificateDateOptions" />
 				</div>
 				<div class="carbon__certificates-list">
-					<certificate :certificate="certificate" :key="idx" v-for="(certificate, idx) of certificateList"/>
+					<certificate :certificate="certificate" :key="idx" v-for="(certificate, idx) of filteredCertificates"/>
 				</div>
 			</div>
 		</div>
@@ -68,6 +68,7 @@ export default {
 	return {
 	  activeTab: 2,
 	  certificateList: [],
+	  filteredCertificates: [],
 	  progressSize: 0,
 	  certificateOccupancy: 0
 	}
@@ -88,22 +89,12 @@ export default {
 	address() {
 	  return this.$store.state.address
 	},
+	ownedCertificates() {
+	  return this.$store.state.certificateList
+	}
   },
   created() {
-	const dataList = []
-	const today = new Date()
-	const currMonth = today.getMonth()
-	for (let i = 4; i < 12; i++) {
-	  const date = new Date(today.getFullYear(), i, 1)
-	  const month = date.toLocaleString('en-us', { month: 'long' })
-	  dataList.push({
-		name: `${month} ${date.getFullYear()}`,
-		image: i <= currMonth ? '/carbon.svg' : '/question-mark.svg',
-		future: i > currMonth,
-		month: i
-	  })
-	}
-	this.certificateList = dataList
+	this.certificateList = this.getCertificatesOfYear(new Date().getFullYear())
 	if (process.broswer) {
 	  if (!this.isMobie()) {
 		this.progressSize = Math.round(0.6945 * document.body.offsetHeight / 1000)
@@ -111,8 +102,13 @@ export default {
 		this.progressSize = Math.round(3.125 * document.body.offsetHeight / 1000)
 	  }
 	}
+	if (this.$route.query.tab) {
+	  this.activeTab = parseInt(this.$route.query.tab)
+	}
+
+	this.$store.dispatch('getCertificates')
   },
-  async mounted() {
+  mounted() {
 	this.updateCertificateList()
 	if (this.$refs.trackerProgress) {
 	  this.progressSize = this.$refs.trackerProgress.offsetWidth
@@ -120,31 +116,39 @@ export default {
   },
   watch: {
 	address() {
+	  if (this.filteredCertificates.length === 0) {
+		this.updateCertificateList()
+	  }
+	},
+	ownedCertificates() {
 	  this.updateCertificateList()
 	}
   },
   methods: {
-	async updateCertificateList() {
+	updateCertificateList() {
 	  if (this.$store.state.address) {
 		const newList = JSON.parse(JSON.stringify(this.certificateList))
-		const nftId = await this.$store.dispatch('getCurrentMonthNFTID')
 		let ownedCount = 0
-		if (nftId > 0) {
-		  const today = new Date()
-		  const currMonth = today.getMonth()
-		  const index = newList.findIndex(item => item.month === currMonth)
-		  if (index >= 0) {
-			newList[index].owner = this.$store.state.fullAddress
+		newList.forEach((item, index) => {
+		  const foundIndex = this.ownedCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month )
+		  if (foundIndex >= 0) {
+			newList[index] = this.ownedCertificates[foundIndex]
 			ownedCount++
 		  }
-		  this.certificateList = newList
-		}
+		})
+		this.certificateList = newList
 		this.certificateOccupancy = Math.round(ownedCount / this.certificateList.length * 100)
+		this.changeTab(this.activeTab)
 	  }
 	},
 	changeTab(tab) {
 	  if (this.activeTab !== tab) {
 		this.activeTab = tab
+	  }
+	  if (tab === 1) {
+		this.filteredCertificates = this.ownedCertificates
+	  } else {
+		this.filteredCertificates = this.certificateList
 	  }
 	}
   }

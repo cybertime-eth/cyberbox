@@ -25,7 +25,7 @@ export default {
 	},
 	routeCarbonTracker() {
 	  this.$store.commit('changeSuccessBuyToken', false)
-      this.$router.push('/carbon')
+      this.$router.push('/carbon?tab=1')
 	},
     routeMyCollection() {
       this.$store.commit('changeSuccessBuyToken', false)
