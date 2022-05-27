@@ -173,7 +173,7 @@ export default {
       name: `Carbon Offset Certificate ${month} ${today.getFullYear()}`,
       contract: 'certificate',
       image: '/carbon.svg',
-      price: 0.01,
+      price: 0.1,
       nftid: currMonth + 1,
       refiOffset: 0.01 * 25 / 1000 * this.$store.state.cMCO2Price
     }
