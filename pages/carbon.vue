@@ -32,7 +32,7 @@
 						</div>
 						<div class="carbon__tracker-block-info-certificate">
 							<button class="carbon__tracker-block-info-certificate-button gradient-button" @click="$router.push('/lending')">Offset Carbon certificates</button>
-							<img class="carbon__tracker-block-info-certificate-img" src="/gift.svg" alt="gift">
+							<a class="carbon__tracker-block-info-certificate-bonus" @click="showExchangeBonus=true"><img class="carbon__tracker-block-info-certificate-img" src="/gift.svg" alt="bonus"></a>
 						</div>
 					</div>
 				</div>
@@ -50,6 +50,7 @@
 					<certificate :certificate="certificate" :key="idx" v-for="(certificate, idx) of filteredCertificates"/>
 				</div>
 			</div>
+			<ExchangeBonus @closeModal="showExchangeBonus = false" :bonusAvailable="ownedCertCount === 12" v-if="showExchangeBonus"/>
 		</div>
 	</section>
 </template>
@@ -57,11 +58,13 @@
 <script>
 import CustomSelect from '@/components/utility/CustomSelect.vue'
 import CircleProgress from '@/components/utility/CircleProgress.vue'
+import ExchangeBonus from '@/components/modals/exchangeBonus.vue'
 import certificate from '@/components/certificate.vue'
 export default {
   components: {
 	CustomSelect,
 	CircleProgress,
+	ExchangeBonus,
 	certificate
   },
   data() {
@@ -70,7 +73,9 @@ export default {
 	  certificateList: [],
 	  filteredCertificates: [],
 	  progressSize: 0,
-	  certificateOccupancy: 0
+	  certificateOccupancy: 0,
+		ownedCertCount: 0,
+	  showExchangeBonus: false
 	}
   },
   computed: {
@@ -128,14 +133,20 @@ export default {
 	updateCertificateList() {
 	  if (this.$store.state.address) {
 		const newList = JSON.parse(JSON.stringify(this.certificateList))
+		const currYear = new Date().getFullYear()
 		let ownedCount = 0
+		let currYearCertCount = 0
 		newList.forEach((item, index) => {
 		  const foundIndex = this.ownedCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month )
 		  if (foundIndex >= 0) {
 			newList[index] = this.ownedCertificates[foundIndex]
+			if (this.ownedCertificates[foundIndex].year === currYear) {
+			  currYearCertCount++
+			}
 			ownedCount++
 		  }
 		})
+		this.ownedCertCount = currYearCertCount
 		this.certificateList = newList
 		this.certificateOccupancy = Math.round(ownedCount / this.certificateList.length * 100)
 		this.changeTab(this.activeTab)
@@ -245,6 +256,10 @@ export default {
 			&::after {
 			  background: linear-gradient(to right, #365BE0, #D676CF, #FFE884);
 			}
+		  }
+		  &-bonus {
+			display: flex;
+			cursor: pointer;
 		  }
 		  &-img {
 			width: 3.4rem;

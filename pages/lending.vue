@@ -89,22 +89,15 @@
             <div class="lending__faq">
                 <h2 class="lending__title">FAQ</h2>
                 <div class="lending__faq-list">
-                    <div class="lending__faq-item">
-                        <div class="lending__faq-item-info">
-                            <h3 class="lending__faq-item-info-title">How i can buy by credit card?</h3>
-                            <p class="lending__faq-item-info-description">By recording all data and transactions on the blockchain, we achieve a level of transparency never before seen in the forestation industry.</p>
+                    <div class="lending__faq-item" :key="idx" v-for="(faqInfo, idx) of faqList">
+                        <div class="lending__faq-item-header">
+                            <h3 class="lending__faq-item-header-title">{{ faqInfo.title }}</h3>
+                            <button class="lending__faq-item-header-dropdown" @click="showFAQDetail(idx)">
+                              <img src="/attr-array-inversed.svg" alt="down" v-if="faqInfo.expanded">
+							  <img src="/attr-array.svg" alt="down" v-else>
+                          </button>
                         </div>
-                        <button class="lending__faq-item-dropdown">
-                            <img src="/attr-array.svg" alt="down">
-                        </button>
-                    </div>
-                    <div class="lending__faq-item">
-                        <div class="lending__faq-item-info">
-                            <h3 class="lending__faq-item-info-title">How i can buy by credit card?</h3>
-                        </div>
-                        <button class="lending__faq-item-dropdown">
-                            <img src="/attr-array.svg" alt="down">
-                        </button>
+                        <p class="lending__faq-item-description" v-if="faqInfo.expanded">{{ faqInfo.description }}</p>
                     </div>
                 </div>
             </div>
@@ -140,7 +133,8 @@ export default {
   },
   data() {
     return {
-      certificateList: [],
+	  certificateList: [],
+	  faqList: [],
       showBuyToken: false,
       certificate: {},
       balance: 0,
@@ -178,7 +172,15 @@ export default {
       refiOffset: 0.01 * 25 / 1000 * this.$store.state.cMCO2Price
     }
     this.certificateList = this.getCertificatesOfYear(new Date().getFullYear())
-    this.loadMyCertificates()
+	this.loadMyCertificates()
+	this.faqList = [{
+	  title: 'How i can buy by credit card?',
+	  description: 'By recording all data and transactions on the blockchain, we achieve a level of transparency never before seen in the forestation industry.',
+	  expanded: true
+	}, {
+	  title: 'How i can buy by credit card?',
+	  description: 'By recording all data and transactions on the blockchain, we achieve a level of transparency never before seen in the forestation industry.',
+	}]
   },
   async mounted() {
     this.updateCertificateList()
@@ -229,9 +231,8 @@ export default {
       this.$store.dispatch('getCertificates')
     },
     updateCertificateList() {
-      if (!this.address) return
       const today = new Date()
-      const newList = JSON.parse(JSON.stringify(this.certificateList))
+	  const newList = JSON.parse(JSON.stringify(this.certificateList))
       newList.forEach((item, index) => {
         const foundIndex = this.ownedCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month )
         if (foundIndex >= 0) {
@@ -243,7 +244,12 @@ export default {
         }
       })
       this.certificateList = newList
-    },
+	},
+	showFAQDetail(index) {
+	  const newFaqList = JSON.parse(JSON.stringify(this.faqList))
+	  newFaqList[index].expanded = !newFaqList[index].expanded
+	  this.faqList = newFaqList
+	},
     clickBuyToken() {
       this.showBuyToken = true
       this.$store.commit('setNewNft', {
@@ -458,33 +464,33 @@ export default {
       }
     }
     &-item {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
       width: 61.8rem;
       padding: 1.6rem;
       margin-top: 1.6rem;
       border: 1px solid $modalColor;
       border-radius: 4px 4px 0px 0px;
-      &-info {
-        margin-right: 2rem;
+      &-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         &-title {
           font-weight: 600;
           font-size: 2rem;
         }
-        &-description {
-          margin-top: 0.8rem;
-          font-size: 1.6rem;
-          color: $grayDark;
+        &-dropdown {
+		  display: flex;
+          background: transparent;
+          border: 0;
+          img {
+            width: 1.2rem;
+          }
         }
       }
-      &-dropdown {
-        background: transparent;
-        border: 0;
-        img {
-          width: 1.2rem;
-        }
-      }
+      &-description {
+		margin-top: 0.8rem;
+		font-size: 1.6rem;
+		color: $grayDark;
+	  }
     }
   }
   &__buy {
@@ -671,8 +677,7 @@ export default {
         width: calc(100% - 1.6rem);
         padding: 1.6rem 0.8rem;
         margin-top: 0.8rem;
-        &-info {
-          margin-right: 1rem;
+        &-header {
           &-title {
             font-size: 1.6rem;
           }
