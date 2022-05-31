@@ -1960,6 +1960,23 @@ export const actions = {
 	  console.log(e)
 	  return 0
 	}
+  },
+
+  async exchangeBonusNFT({state, getters, commit}, year) {
+	try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+      const signer = provider.getSigner()
+      const contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
+	  await contract.exchangeMonthNFTToBonus(year).send({
+	    gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
+	  })
+	  provider.once(contract, async () => {
+	    commit('changeSuccessBuyToken', true)
+	  })
+	} catch(error) {
+	  console.log(error)
+	  commit('changeSuccessBuyToken', 'error')
+    }
   }
 }
 

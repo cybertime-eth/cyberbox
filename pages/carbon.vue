@@ -50,7 +50,9 @@
 					<certificate :certificate="certificate" :key="idx" v-for="(certificate, idx) of filteredCertificates"/>
 				</div>
 			</div>
-			<ExchangeBonus @closeModal="showExchangeBonus = false" :bonusAvailable="ownedCertCount === 12" v-if="showExchangeBonus"/>
+			<ExchangeBonus @closeModal="showExchangeBonus = false" :bonusAvailable="currYearCertCount === 12" @onExchange="showExchangeTokenModal" v-if="showExchangeBonus"/>
+			<ExchangeToken @closeModal="showExchangeToken = false" v-if="showExchangeToken"/>
+			<SuccessfullBuy v-if="showSuccessModal" :image="certificateImage" :name="certificateName" :certificate="true"/>
 		</div>
 	</section>
 </template>
@@ -58,14 +60,19 @@
 <script>
 import CustomSelect from '@/components/utility/CustomSelect.vue'
 import CircleProgress from '@/components/utility/CircleProgress.vue'
-import ExchangeBonus from '@/components/modals/exchangeBonus.vue'
 import certificate from '@/components/certificate.vue'
+import ExchangeBonus from '@/components/modals/exchangeBonus.vue'
+import ExchangeToken from '@/components/modals/exchangeToken.vue'
+import SuccessfullBuy from '@/components/modals/successBuy'
+
 export default {
   components: {
 	CustomSelect,
 	CircleProgress,
+	certificate,
 	ExchangeBonus,
-	certificate
+	ExchangeToken,
+	SuccessfullBuy
   },
   data() {
 	return {
@@ -75,7 +82,8 @@ export default {
 	  progressSize: 0,
 	  certificateOccupancy: 0,
 		ownedCertCount: 0,
-	  showExchangeBonus: false
+	  showExchangeBonus: false,
+		showExchangeToken: false
 	}
   },
   computed: {
@@ -96,6 +104,15 @@ export default {
 	},
 	ownedCertificates() {
 	  return this.$store.state.certificateList
+	},
+	showSuccessModal() {
+      return this.$store.state.successBuyToken
+	},
+	certificateImage() {
+	 return '/super-certificate.svg'
+	},
+	certificateName() {
+	  return 'Carbon Super Rare Offset Certificate #1'
 	}
   },
   created() {
@@ -121,8 +138,11 @@ export default {
   },
   watch: {
 	address() {
-	  if (this.filteredCertificates.length === 0) {
-		this.updateCertificateList()
+	  if (this.$store.state.address) {
+		this.$store.dispatch('checkBuyTokenApproved', 1.0)
+		if (this.filteredCertificates.length === 0) {
+		  this.updateCertificateList()
+		}
 	  }
 	},
 	ownedCertificates() {
@@ -161,6 +181,10 @@ export default {
 	  } else {
 		this.filteredCertificates = this.certificateList
 	  }
+	},
+	showExchangeTokenModal() {
+	  this.showExchangeBonus = false
+	  this.showExchangeToken = true
 	}
   }
 }

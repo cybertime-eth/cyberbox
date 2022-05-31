@@ -12,7 +12,7 @@
 						<img class="exchange__bonus-picture-img" src="/question-mark.svg" alt="unknown">
 					</div>
                 </div>
-                <button class="exchange__bonus-get" :class="{disabled: !bonusAvailable}">Get a bouns</button>
+                <button class="exchange__bonus-get" :class="{disabled: !bonusAvailable}" @click="$emit('onExchange')">Get a bouns</button>
                 <p class="exchange__bonus-guide-tip">You exchange your 12 certificates irrevocably.</p>
                 <p class="exchange__bonus-guide-footprint">If you missed a month, you can buy a certificate on the secondary market, but this certificate will no longer cover your carbon footprint</p>
             </div>
