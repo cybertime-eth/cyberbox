@@ -16,13 +16,13 @@
 				<img class="modal__wallet-buttons-button-image" src="/auth/wallet-connect.svg" alt="wallet">
 				<p class="modal__wallet-buttons-button-name">WalletConnect</p>
 			</button>
-			<button	class="modal__wallet-buttons-button" @click="showValoraModal=true">
+			<button	class="modal__wallet-buttons-button" @click="connectValora">
 				<img class="modal__wallet-buttons-button-image" src="/auth/valora.svg" alt="valora">
 				<p class="modal__wallet-buttons-button-name">Valora</p>
 			</button>
 		</client-only>
 		<client-only v-else>
-			<button	class="modal__wallet-buttons-button" @click="showValoraModal=true">
+			<button	class="modal__wallet-buttons-button" @click="connectValora">
 				<img class="modal__wallet-buttons-button-image" src="/auth/valora.svg" alt="valora">
 				<p class="modal__wallet-buttons-button-name">Valora</p>
 			</button>
@@ -32,21 +32,11 @@
 			</button>
 		</client-only>
 	  </div>
-      <valoraConnect v-if="showValoraModal"  @closeModal="showValoraModal=false"/>
     </div>
   </div>  
 </template>
 <script>
-import valoraConnect from '@/components/modals/valoraConnect'
 export default {
-  components: {
-	valoraConnect
-  },
-  data() {
-	return {
-	  showValoraModal: false
-	}
-  },
   computed: {
     walletUri() {
       return this.$store.state.walletUri
@@ -94,17 +84,14 @@ export default {
         location.href = `https://metamask.app.link/wc?uri=${encodeURIComponent(this.walletUri)}`
       }
     },
-    connectValora() {
-	  this.sendConnectionEvent('Valora')
-      this.showValoraModal = true
-    },
     async connectWallet() {
 	  this.sendConnectionEvent('Walletconnect')
       await this.$store.dispatch('walletConnect', true)
 	},
-	connectWithEmail() {
-	  this.$emit('showEmail')
-	},
+	connectValora() {
+	  this.sendConnectionEvent('Valora')
+      this.$emit('showValora')
+    },
 	showConnectModal() {
 	  this.$emit('showConnect')
 	},
