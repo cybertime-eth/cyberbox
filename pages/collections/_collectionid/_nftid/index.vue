@@ -168,7 +168,8 @@
         </div>
       </div>
     </div>
-  <connect v-if="showConnectModal" @closeModal="closeModal"/>
+  <connect @showWallet="openWalletModal" @showEmail="openEmailModal" @closeModal="closeModal" v-if="showConnectModal"/>
+  <walletConnect @showConnect="openConnectModal" @closeModal="closeModal" v-if="showWalletModal"/>
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
   <Transfer :nft="nft" @done="closeAndReload" @closeModal="showTransferModal=false"  v-if="showTransferModal" />
   <SellToken :nft="nft" :celoPrice="celoPrice" :approved="nftApproved" @done="closeAndReload" @closeModal="closeSellModal" v-if="showSellTokenModal" />
@@ -185,6 +186,7 @@ import Approve from '@/components/sale-nft/Approve';
 import Sign from '@/components/sale-nft/Sign';
 import Successful from '@/components/sale-nft/Successful';
 import connect from '@/components/modals/connect'
+import walletConnect from '@/components/modals/walletConnect'
 import WrongNetwork from '@/components/modals/wrongNetwork'
 import Transfer from '@/components/modals/transfer'
 import SellToken from '@/components/modals/sellToken'
@@ -195,7 +197,9 @@ export default {
   data() {
     return {
       attributes: [],
-      showConnectModal: false,
+	  showConnectModal: false,
+	  showWalletModal: false,
+	  showEmailModal: false,
       showWrongNetworkModal: false,
       showTransferModal: false,
       showSellTokenModal: false,
@@ -263,7 +267,8 @@ export default {
     Approve,
     Sign,
     Successful,
-    connect,
+	connect,
+	walletConnect,
     WrongNetwork,
     Transfer,
     SellToken,
@@ -534,6 +539,19 @@ export default {
       if (!this.nftApproved && approved) {
         this.nftApproved = true
       }
+	},
+	openConnectModal() {
+	  this.showWalletModal = false
+	  this.showEmailModal = false
+	  this.showConnectModal = true
+	},
+    openWalletModal() {
+      this.showWalletModal = true
+      this.showConnectModal = false
+	},
+	openEmailModal() {
+      this.showEmailModal = true
+      this.showConnectModal = false
     },
     closeModal(payload) {
       this.showConnectModal = payload
