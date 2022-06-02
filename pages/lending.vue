@@ -118,14 +118,15 @@
             </div>
         </div>
         <BuyToken v-if="showBuyToken" :nft="certificate" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
-        <SuccessfullBuy v-if="showSuccessModal" :image="certificate.image" :name="certificate.name" :certificate="true"/>
+        <SuccessfullBuy v-if="showSuccessModal===true" :image="certificate.image" :name="certificate.name" :certificate="true"/>
     </section>
 </template>
 
 <script>
 import BuyToken from '@/components/modals/buyToken'
 import SuccessfullBuy from '@/components/modals/successBuy'
-import { mont } from 'bn.js';
+const CERTIFICATE_MINT_PRICE = 0.1
+
 export default {
   components: {
     BuyToken,
@@ -146,7 +147,7 @@ export default {
   computed: {
     address() {
       return this.$store.state.address
-    },
+	},
     currentDate() {
       const today = new Date()
       const month = today.toLocaleString('en-us', { month: 'long' })
@@ -165,11 +166,11 @@ export default {
     const month = today.toLocaleString('en-us', { month: 'long' })
     this.certificate = {
       name: `Carbon Offset Certificate ${month} ${today.getFullYear()}`,
-      contract: 'certificate',
+      contract: 'monthnft',
       image: '/carbon.svg',
-      price: 0.1,
+      price: CERTIFICATE_MINT_PRICE,
       nftid: currMonth + 1,
-      refiOffset: 0.01 * 25 / 1000 * this.$store.state.cMCO2Price
+      refiOffset: CERTIFICATE_MINT_PRICE * 25 / 1000 * this.$store.state.cMCO2Price
     }
     this.certificateList = this.getCertificatesOfYear(new Date().getFullYear())
 	this.loadMyCertificates()
@@ -181,6 +182,7 @@ export default {
 	  title: 'How i can buy by credit card?',
 	  description: 'By recording all data and transactions on the blockchain, we achieve a level of transparency never before seen in the forestation industry.',
 	}]
+	this.$store.commit('changeSuccessBuyToken', false)
   },
   async mounted() {
     this.updateCertificateList()
