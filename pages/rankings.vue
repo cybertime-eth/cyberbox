@@ -279,18 +279,18 @@ export default {
     },
     updateFilter(filter) {
       this.dateFilter = filter
-    }
+	},
+	gotoCollection(symbol) {
+	  this.sendEvent({
+		category: 'Collection',
+		eventName: 'collection_enter',
+		properties: {
+		  collection_enter: 'Rankings'
+		}
+	  })
+	  this.$router.push(`/collections/${symbol}`)
+	}
   },
-  gotoCollection(symbol) {
-    this.sendEvent({
-      category: 'Collection',
-      eventName: 'collection_enter',
-      properties: {
-        collection_enter: 'Rankings'
-      }
-    })
-    this.$router.push(`/collections/${symbol}`)
-  }
 }
 </script>
 <style lang="scss">
