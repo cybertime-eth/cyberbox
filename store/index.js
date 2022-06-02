@@ -21,7 +21,7 @@ import { Magic } from 'magic-sdk'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
-  marketCertificate: '0x90d08011a4b348804f9b4a7Abcb2768C27e3AAa9',
+  marketCertificate: '0x0980468994F7c9aEB79932D76aE46fA02DaE0FCD',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   user: {},
   chainId: null,
@@ -1476,17 +1476,19 @@ export const actions = {
     const provider = new ethers.providers.Web3Provider(getters.provider)
     const signer = provider.getSigner()
     let contract = null;
-    if (state.nft.contract !== 'nomdom') {
-      contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
-    } else {
-      contract = new ethers.Contract(state.marketNom, nomABI, signer)
-	}
     try {
-      if (state.nft.contract !== 'nomdom') {
+	  if (state.nft.contract === 'certificate') {
+		contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
+		await contract.listToken(state.nft.contract_id, web3.utils.toWei(String(price)), {
+		  gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+		})
+      } else if (state.nft.contract !== 'nomdom') {
+		contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
         await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(price)), {
           gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
         })
       } else {
+		contract = new ethers.Contract(state.marketNom, nomABI, signer)	
         await contract.listToken(state.nft.name, web3.utils.toWei(String(price)), {
           gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
         })
@@ -1636,29 +1638,25 @@ export const actions = {
 		const account = accounts[0]
 		const kit = ContractKit.newKitFromWeb3(web3)
 		let contract = null
-		if (state.nft.contract === 'certificate') {
-		  contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
-		} else if (state.nft.contract !== 'nomdom') {
-		  contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
-		} else {
-		  contract = new kit.web3.eth.Contract(nomABI, state.marketNom)
-		}
 		const parsePrice = ethers.utils.parseEther(String(token.price))
 		console.log(token.price)
 		let result = {}
 		if (state.nft.contract === 'certificate') {
-		  result = await contract.methods.mintMonthNFT().send({
-			from: account,
-			value: parsePrice,
-			gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
-		  })
+			contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
+			result = await contract.methods.buyToken(token.id, web3.utils.toWei(String(token.price))).send({
+				from: account,
+				value: parsePrice,
+				gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
+			})
 		} else if (state.nft.contract !== 'nomdom') {
+		  contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
 		  result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
 			from: account,
 			value: parsePrice,
 			gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
 		  })
 		} else {
+		  contract = new kit.web3.eth.Contract(nomABI, state.marketNom)
 		  result = await contract.methods.buyToken(state.nft.name, web3.utils.toWei(String(token.price))).send({
 			from: account,
 			value: parsePrice,
@@ -1826,14 +1824,19 @@ export const actions = {
     const signer = provider.getSigner()
     let contract = null
     if (payloadNft.contract !== 'nomdom') {
-      contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
+      
     } else {
-      contract = new ethers.Contract(state.marketNom, nomABI, signer)
+      
     }
     try {
-      if (payloadNft.contract !== 'nomdom') {
+	  if (payloadNft.contract === 'certificate') {
+		contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
+		await contract.delistToken(payloadNft.contract_id, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
+      } else if (payloadNft.contract !== 'nomdom') {
+		contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
         await contract.delistToken(payloadNft.contract_address , payloadNft.contract_id, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
       } else {
+		contract = new ethers.Contract(state.marketNom, nomABI, signer)
         await contract.delistToken(payloadNft.name , { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
       }
       provider.once(contract, async () => {
@@ -1968,6 +1971,31 @@ export const actions = {
   },
 
   // Certificate Methods
+
+  async mintCertificate({state, getters, commit}, price) {
+	try {
+	  const ethereumProvider = getters.provider
+	  const provider = new ethers.providers.Web3Provider(ethereumProvider)
+	  const web3 = new Web3(ethereumProvider)
+	  const accounts = await web3.eth.getAccounts()
+	  const account = accounts[0]
+	  const kit = ContractKit.newKitFromWeb3(web3)
+	  const contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
+	  const parsePrice = ethers.utils.parseEther(String(price))
+	  const result = await contract.methods.mintMonthNFT().send({
+	    from: account,
+	    value: parsePrice,
+	    gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+	  })
+
+	  provider.once(result, async () => {
+	    commit('changeSuccessBuyToken', true)
+	  })
+	} catch (e) {
+	  console.log(e)
+	  commit('changeSuccessBuyToken', 'error')
+	}
+  },
 
   async getCurrentMonthNFTID({state, getters}) {
 	try {

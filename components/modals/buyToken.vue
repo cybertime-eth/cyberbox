@@ -107,10 +107,14 @@ export default {
     async buyToken() {
       this.pending = true
       try {
-        await this.$store.dispatch('buyNFT', {
-          id: !this.multiNft ? this.$route.params.nftid : this.nft.contract_id,
-          price: this.nft.price
-        })
+        if (this.nft.contract !== 'monthnft') {
+		  await this.$store.dispatch('buyNFT', {
+			id: !this.multiNft ? this.$route.params.nftid : this.nft.contract_id,
+			price: this.nft.price
+		  })
+		} else {
+		  await this.$store.dispatch('mintCertificate', this.nft.price)
+		}
       } catch (error) {
         this.closeModal()
       }
