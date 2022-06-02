@@ -61,7 +61,8 @@
       </div>
     </div>
     <connect @showWallet="openWalletModal" @showEmail="openEmailModal" @closeModal="closeModal" v-if="showConnectModal && !address"/>
-	<walletConnect @showConnect="openConnectModal" @closeModal="closeModal" v-if="showWalletModal"/>
+	<walletConnect @showConnect="openConnectModal" @showValora="openValoraModal" @closeModal="closeModal" v-if="showWalletModal"/>
+	<valoraConnect @closeModal="closeModal" v-if="showValoraModal"/>
 	<socialConnect @showConnect="openConnectModal" @closeModal="closeModal" v-if="showEmailModal"/>
     <wrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
     <profileModal v-show="showProfileMenu" @closeModal="closeModal"/>
@@ -72,6 +73,7 @@
 <script>
 import connect from '@/components/modals/connect'
 import walletConnect from '@/components/modals/walletConnect'
+import valoraConnect from '@/components/modals/valoraConnect'
 import socialConnect from '@/components/modals/socialConnect'
 import profileModal from '@/components/modals/profileModal'
 import profileModalMobile from '@/components/modals/profileModalMobile'
@@ -83,7 +85,8 @@ export default {
     return {
       image: false,
       showConnectModal: false,
-      showWalletModal: false,
+	  showWalletModal: false,
+	  showValoraModal: false,
       showEmailModal: false,
       showProfileMenu: false,
       showProfileMenuMobile: false,
@@ -113,6 +116,7 @@ export default {
   components: {
     connect,
 	walletConnect,
+	valoraConnect,
 	socialConnect,
     wrongNetwork,
     profileModal,
@@ -178,6 +182,10 @@ export default {
       this.showWalletModal = true
       this.showConnectModal = false
 	},
+	openValoraModal() {
+      this.showValoraModal = true
+      this.showWalletModal = false
+	},
 	openEmailModal() {
       this.showEmailModal = true
       this.showConnectModal = false
@@ -185,6 +193,7 @@ export default {
     closeModal(payload) {
 	  this.showConnectModal = payload
 	  this.showWalletModal = payload
+	  this.showValoraModal = payload
 	  this.showEmailModal = payload
       this.showProfileMenu = payload
       this.showProfileMenuMobile = payload
