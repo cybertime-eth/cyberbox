@@ -60,8 +60,9 @@
         <p class="header__error-network-text">You are on the wrong network</p>
       </div>
     </div>
-    <connect v-if="showConnectModal && !address" @showValora="openValoraModal" @closeModal="closeModal"/>
-    <valoraConnect v-if="showValoraModal"  @closeModal="showValoraModal = false" />
+    <connect @showWallet="openWalletModal" @showEmail="openEmailModal" @closeModal="closeModal" v-if="showConnectModal && !address"/>
+	<walletConnect @showConnect="openConnectModal" @closeModal="closeModal" v-if="showWalletModal"/>
+	<socialConnect @showConnect="openConnectModal" @closeModal="closeModal" v-if="showEmailModal"/>
     <wrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
     <profileModal v-show="showProfileMenu" @closeModal="closeModal"/>
     <profileModalMobile v-show="showProfileMenuMobile" @closeModal="closeModal"/>
@@ -70,7 +71,8 @@
 </template>
 <script>
 import connect from '@/components/modals/connect'
-import valoraConnect from '@/components/modals/valoraConnect'
+import walletConnect from '@/components/modals/walletConnect'
+import socialConnect from '@/components/modals/socialConnect'
 import profileModal from '@/components/modals/profileModal'
 import profileModalMobile from '@/components/modals/profileModalMobile'
 import wrongNetwork from '@/components/modals/wrongNetwork'
@@ -81,7 +83,8 @@ export default {
     return {
       image: false,
       showConnectModal: false,
-      showValoraModal: false,
+      showWalletModal: false,
+      showEmailModal: false,
       showProfileMenu: false,
       showProfileMenuMobile: false,
       showWrongNetwork: false,
@@ -109,7 +112,8 @@ export default {
   },
   components: {
     connect,
-    valoraConnect,
+	walletConnect,
+	socialConnect,
     wrongNetwork,
     profileModal,
     profileModalMobile,
@@ -164,13 +168,24 @@ export default {
       const footerEl = document.querySelector('.footer')
       footerEl.classList.add('fixed')
       footerEl.classList.add('sidemenu')
-    },
-    openValoraModal() {
-      this.showValoraModal = true
+	},
+	openConnectModal() {
+	  this.showWalletModal = false
+	  this.showEmailModal = false
+	  this.showConnectModal = true
+	},
+    openWalletModal() {
+      this.showWalletModal = true
+      this.showConnectModal = false
+	},
+	openEmailModal() {
+      this.showEmailModal = true
       this.showConnectModal = false
     },
     closeModal(payload) {
-      this.showConnectModal = payload
+	  this.showConnectModal = payload
+	  this.showWalletModal = payload
+	  this.showEmailModal = payload
       this.showProfileMenu = payload
       this.showProfileMenuMobile = payload
       if (this.isMobile()) {

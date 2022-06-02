@@ -17,6 +17,7 @@ import {gql} from "nuxt-graphql-request";
 const ContractKit = require('@celo/contractkit')
 import filter from './../config.js'
 import redstone from 'redstone-api'
+import { Magic } from 'magic-sdk'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
@@ -28,6 +29,7 @@ export const state = () => ({
   walletUri: null,
   walletConnected: false,
   wrongNetwork: false,
+  magicConnected: false,
   fullAddress: null,
   nftList: [],
   myNftList: [],
@@ -349,6 +351,8 @@ const KEY_TRANSACTION_TYPE = {
   TRANSFERED: 5,
   CHANGEPRICE: 6,
 }
+const MAGIC_API_KEY = 'pk_live_B95E7FCF317028DC'
+let magic = null
 
 export const getters = {
   walletConnectProvider() {
@@ -393,6 +397,18 @@ export const getters = {
 	  }
 	}
 	return address.toLowerCase()
+  },
+  magicLib() {
+	if (process.browser) {
+		if (!magic) {
+			magic = new Magic('pk_live_07BFC52E326230D5', {
+				network: {
+					rpcUrl: '"https://forno.celo.org"'
+				}
+			})
+		}
+	}
+	return magic
   }
 }
 export const actions = {
@@ -1089,6 +1105,21 @@ export const actions = {
     provider.start()
     provider.subscribeWalletConnector()
   },
+  async connectWithEmail({getters, commit}, email) {
+	try {
+	  const magicLib = getters.magicLib
+	  const isLoggedIn = await magicLib.user.isLoggedIn()
+	  if (!isLoggedIn) {
+		await magicLib.auth.loginWithMagicLink({ email })
+		commit('setMagicConnected', true)  
+	  }
+	  const { publicAddress } = await magicLib.user.getMetadata()
+	  commit('setAddress', publicAddress)
+	  commit('setChainId', 42220)
+	} catch (e) {
+	  console.log(e)
+	}
+  },
   disconnectWallet({ getters }, provider) {
     let walletProvider = provider
     if (!walletProvider) {
@@ -1173,12 +1204,16 @@ export const actions = {
       }
     }
   },
-  async logout({commit}) {
+  async logout({state, commit}) {
     try {
       commit('setAddress', '')
       commit('setWalletConnected', false)
       localStorage.removeItem('walletconnect')
-      localStorage.removeItem('address')
+	  localStorage.removeItem('address')
+	  if (state.magicConnected) {
+		await magicLib.user.logout()
+		commit('setMagicConnected', false)
+	  }
       window.location.reload();
     } catch (error) {
       console.log(error);
@@ -2000,6 +2035,9 @@ export const mutations = {
   },
   setWalletConnected(state, connected) {
     state.walletConnected = connected
+  },
+  setMagicConnected(state, connected) {
+    state.magicConnected = connected
   },
   setCMCO2TokenPrice(state, celoPrice) {
     state.cMCO2Price = celoPrice;
