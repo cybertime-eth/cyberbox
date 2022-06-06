@@ -248,6 +248,37 @@ ul {
   }
 }
 
+.dropdown {
+  display: flex;
+  position: relative;
+  .dropdown-toggle {
+    cursor: pointer;
+  }
+  .dropdown-menu {
+    position: absolute;
+	top: calc(100% + 2.4rem);
+	background: $white;
+	box-shadow: 0px 1.5rem 3rem rgba(0, 0, 0, 0.1);
+	border-radius: 0.4rem;
+	&.right {
+	  right: 0;
+	}
+    .dropdown-item {
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	  padding: 2rem 2.2rem 2rem 1.6rem;
+	  font-size: 1.6rem;
+	  @media (max-width: 460px) {
+		font-size: 1.4rem;
+	  }
+    }
+  }
+  .dropdown-menu-right {
+	right: 0;
+  }
+}
+
 //FONTS
 
 @font-face {
