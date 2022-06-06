@@ -9,19 +9,6 @@
         <img src="/array-right.svg" alt="array">
       </nuxt-link>
     </li> -->
-    <li class="profile__menu-list">
-      <a
-        href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438"
-        class="profile__menu-link"
-        target="_blank"
-      >
-        <div class="profile__menu-link-info">
-          <img src="/celo.svg" alt="celo" class="profile__menu-link-info-icon-savenft">
-          Buy CELO
-        </div>
-        <img src="/array-right.svg" alt="array">
-      </a>
-    </li>
     <li class="profile__menu-list" @click="logout">
       <div class="profile__menu-link">
         <div class="profile__menu-link-info">
@@ -57,15 +44,13 @@ export default {
   right: 5.5rem;
   top: 9.6rem;
   background: $white;
-  width: 29.8rem;
+  width: 12.1rem;
   box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1);
   border-radius: .4rem;
   animation: showModal .5s;
+  padding: 2rem 1.6rem;
   z-index: 2;
   &-list {
-    padding-left: 1.3rem;
-    padding-right: 1.9rem;
-    height: 7.2rem;
     &:hover {
       box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
     }

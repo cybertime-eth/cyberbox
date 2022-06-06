@@ -17,7 +17,7 @@
 			<img src="/array-right.svg" alt="arrow" class="modal__connect-button-detail">
 		  </a>
         </button>
-        <button class="modal__connect-button" @click="connectEmail">
+        <!-- <button class="modal__connect-button" @click="connectEmail">
           Email or Social Media
 		  <a class="modal__connect-button-nav">
 			<span class="modal__connect-button-nav-icons">
@@ -31,7 +31,7 @@
 			</span>
 			<img src="/array-right.svg" alt="arrow" class="modal__connect-button-detail">
 		  </a>
-        </button>
+        </button> -->
       </div>
       <img src="/close.svg" alt="close" class="modal__close" @click="closeModal">
     </div>

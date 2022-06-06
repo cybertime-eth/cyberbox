@@ -26,6 +26,7 @@ export const state = () => ({
   user: {},
   chainId: null,
   address: null,
+  balance: 0,
   walletUri: null,
   walletConnected: false,
   wrongNetwork: false,
@@ -1005,12 +1006,13 @@ export const actions = {
 		
 		commit('setAddress', address)
 		commit('setChainId', chain.chainId)
+		dispatch('getBalance')
       } catch (error) {
         console.log(error)
       }
 	}
   },
-  async connectMetaTrust({commit}) {
+  async connectMetaTrust({commit, dispatch}) {
 	try {
       if (window.ethereum) {
         await window.ethereum.request({ method: 'eth_requestAccounts' })
@@ -1019,6 +1021,7 @@ export const actions = {
         const chainId = await provider.getNetwork()
         commit('setChainId', chainId.chainId)
 		commit('setAddress', address)
+		dispatch('getBalance')
 		this._vm.sendEvent({
 		  category: 'Connect',
 		  eventName: 'connect_status',
@@ -1034,7 +1037,8 @@ export const actions = {
         const address = await provider.getSigner().getAddress();
         const chainId = await provider.getNetwork()
         commit('setChainId', chainId.chainId)
-        commit('setAddress', address)
+		commit('setAddress', address)
+		dispatch('getBalance')
       } else {
         alert("please use web3 enabled browser.");
       }
@@ -1105,7 +1109,7 @@ export const actions = {
     provider.start()
     provider.subscribeWalletConnector()
   },
-  async connectWithEmail({getters, commit}, email) {
+  async connectWithEmail({getters, commit, dispatch}, email) {
 	try {
 	  const magicLib = getters.magicLib
 	  const isLoggedIn = await magicLib.user.isLoggedIn()
@@ -1116,6 +1120,7 @@ export const actions = {
 	  const { publicAddress } = await magicLib.user.getMetadata()
 	  commit('setAddress', publicAddress)
 	  commit('setChainId', 42220)
+	  dispatch('getBalance')
 	} catch (e) {
 	  console.log(e)
 	}
@@ -1223,12 +1228,15 @@ export const actions = {
 
   // GET INFORMATION USER
 
-  async getBalance({state, getters}) {
-	if (!state.fullAddress || state.chainId !== 42220) return 0
+  async getBalance({state, getters, commit}) {
+	const address = getters.storedAddress
+	if (!address || state.chainId !== 42220) return 0
 	const web3 = new Web3(getters.provider)
 	const kit = ContractKit.newKitFromWeb3(web3)
-	const res = await kit.getTotalBalance(state.fullAddress)
-	return res.CELO.c[0] / 10000
+	const res = await kit.getTotalBalance(address)
+	const balance = res.CELO.c[0] / 10000
+	commit('setBalance', balance)
+	return balance
   },
   async getPriceToken() {
 	return await redstone.getPrice('CELO')
@@ -2050,13 +2058,17 @@ export const mutations = {
   setAddress(state,address) {
     localStorage.setItem('address', address)
     state.fullAddress = address.toLowerCase()
-    const startID = address.split("").slice(0, 6);
+	// const startID = address.split("").slice(0, 6);
+	const startID = ['0', 'x']
     const endID = address.split("").slice(-4);
     const dotArr = [".", ".", "."];
     state.address = startID
       .concat(dotArr)
       .concat(endID)
-      .join("");
+	  .join("");
+  },
+  setBalance(state, balance) {
+	state.balance = balance;
   },
   setAddressByNom(state, nomAddress) {
     state.address = `${nomAddress}.nom`

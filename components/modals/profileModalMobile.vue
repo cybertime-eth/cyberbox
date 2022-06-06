@@ -4,10 +4,13 @@
       <img src="/logo.svg" alt="logo" class="menu-mobile-header-logo">
       <div class="menu-mobile-header-walletbox">
         <div class="header__wallet" ref="wallet" v-if="address">
-          <h3 class="header__wallet-address">{{ address }}</h3>
-          <div class="header__wallet-avatar gradient-button">
-            <img src="/celo.svg" alt="avatar">
-          </div>
+          <h3 class="header__wallet-balance">{{ balance }} CELO</h3>
+		  <h3 class="header__wallet-address">{{ address }}</h3>
+		  <div class="header__wallet-avatar-box">
+			<div class="header__wallet-avatar gradient-button">
+				<img src="/celo.svg" alt="avatar">
+			</div>
+		  </div>
         </div>
         <img :src="closeIcon" alt="close" class="menu-mobile-header-close" @click="closeModal">
       </div>
@@ -29,6 +32,7 @@
 import profileModal from '@/components/modals/profileModal'
 
 export default {
+  props: ['balance'],
   components: {
     profileModal
   },
@@ -117,7 +121,16 @@ export default {
   @media (max-width: 460px) {
     &-header-close {
       width: 1.8rem;
-    }    
+	}
+	&-header {
+	  width: calc(100% - 1rem);
+	  padding: 1.6rem 1rem 1.6rem 0;
+	  margin: 0;
+      box-shadow: 0px 2px 4px rgb(0 0 0 / 5%);
+	}
+	&-list {
+	  padding-top: 3.4rem;
+	}
   }
 }
 </style>
