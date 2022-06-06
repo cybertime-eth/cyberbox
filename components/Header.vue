@@ -350,7 +350,7 @@ header {
   &__celo {
 	margin-left: 2.4rem;
 	.dropdown-menu {
-	  width: 43.4rem;
+	  width: 25rem;
 	}
 	.dropdown-item {
 	  cursor: pointer;

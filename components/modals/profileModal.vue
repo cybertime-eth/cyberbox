@@ -50,11 +50,6 @@ export default {
   animation: showModal .5s;
   padding: 2rem 1.6rem;
   z-index: 2;
-  &-list {
-    &:hover {
-      box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
-    }
-  }
   &-link {
     display: flex;
     align-items: center;
