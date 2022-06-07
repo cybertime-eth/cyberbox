@@ -19,11 +19,24 @@
       </div>
 	  <div class="refi__block-carbon">
 		<div class="refi__block-carbon-info">
-			<h2 class="refi__block-carbon-info-title">Get your NFT Carbon Offset Certificate</h2>
-			<p class="refi__block-carbon-info-content">By purchasing a carbon certificate you are helping nature. You purchase a certificate once a month for 1 ton of CO2, thereby covering your carbon footprint. Money from the sale of certificates is used to maintain carbon farms.</p>
-			<button class="refi__block-carbon-info-buy" @click="$router.push('/lending')">Buy Now</button>
+			<h2 class="refi__block-carbon-info-title">NFT Carbon Offset Certificate</h2>
+			<p class="refi__block-carbon-info-content">Buy a personal NFT certificate to become carbon neutral</p>
+			<ul class="refi__block-carbon-info-list features-list">
+				<li class="features-list-item">Unique NFT certificate every month</li>
+				<li class="features-list-item">1 NFT = 1 ton CO2 offset</li>
+				<li class="features-list-item">Collect or sell on the marketplace</li>
+			</ul>
+			<button class="refi__block-carbon-info-buy" @click="$router.push('/lending')">Buy & Offset Now</button>
 		</div>
-		<img class="refi__block-carbon-picture" src="/carbon.svg">
+		<div class="refi__block-carbon-certificate" ref="certificate">
+			<div class="refi__block-carbon-certificate-item" :class="{current: certificate.current }" :key="idx" v-for="(certificate, idx) of certificates">
+				<h3 class="refi__block-carbon-certificate-item-name">{{ certificate.name }}</h3>
+				<div class="refi__block-carbon-certificate-item-box">
+					<img class="refi__block-carbon-certificate-item-box-image" :src="certificate.image">
+				</div>
+				<p class="refi__block-carbon-certificate-item-status">{{ certificate.status }}</p>
+			</div>
+		</div>
 	  </div>
       <div class="refi__block-listings">
         <h3 class="refi__block-listings-title">Latest Listings <img src="/fire.svg" alt="fire"></h3>
@@ -113,6 +126,7 @@
 </template>
 <script>
 import nft from '@/components/nft.vue'
+import { currencies } from 'country-data';
 export default {
   components: {
     nft
@@ -166,6 +180,11 @@ export default {
 	  eventName: 'site_visit'
 	})
   },
+  mounted() {
+	if (this.$refs.certificate && this.isMobile()) {
+	  this.$refs.certificate.scrollLeft = Math.ceil(this.$refs.certificate.offsetWidth * 0.56)
+	}
+  },
   computed: {
     pageSubTitle() {
       if (!this.isMobile()) {
@@ -196,7 +215,32 @@ export default {
     },
     footerTitleSeparator() {
       return !this.isMobile() ? '<br/>' : ' '
-    }
+	},
+	certificates() {
+	  const date = new Date()
+	  const currMonth = date.getMonth() + 1
+	  const list = []
+	  for (let i = (currMonth - 1); i <= currMonth + 1; i++) {
+		date.setMonth(i - 1)
+		const month = date.toLocaleString('en-us', { month: 'long' })
+		let status = ''
+		switch (i) {
+		  case (currMonth - 1): status = 'Last'
+		  	break
+		  case currMonth: status = 'Available'
+			break
+		  case (currMonth + 1): status = 'Next'
+		  	break
+		}
+		list.push({
+		  name: `${month} ${date.getFullYear().toString().substr(2, 3)}`,
+		  image: `/certificates/${i}.png`,
+		  status,
+		  current: i === currMonth
+		})
+	  }
+	  return list
+	}
   },
   methods: {
     nftOwned(nft) {
@@ -415,20 +459,21 @@ export default {
     }
 	&-carbon {
 	  display: flex;
-      justify-content: center;
-      width: 74.5rem;
-      background: linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
-      padding: 2.4rem;
-      margin: 11.1rem auto 10.7rem;
+      align-items: center;
+	  justify-content: space-between;
+	  background: $white2;
+      padding: 6.7rem 11.1rem 7.2rem;
+      margin: 10.2rem auto 9.8rem;
 	  border-radius: 8px;
 	  &-info {
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-end;
-		width: 30.5rem;
+		width: 28.3rem;
     	margin-right: 11.2rem;
 		&-title {
-		  font-family: Cabin-Bold;
+		  font-family: Cabin-Medium;
+		  font-weight: 500;
 		  line-height: 3.6rem;
 		  font-size: 3.2rem;
 		}
@@ -436,6 +481,9 @@ export default {
 		  margin-top: 1.2rem;
 		  font-size: 1.4rem;
 		  color: $grayDark;
+		}
+		&-list {
+		  margin-top: 2.4rem;
 		}
 		&-buy {
 		  width: 17.9rem;
@@ -446,6 +494,57 @@ export default {
 		  font-weight: 700;
 		  font-size: 1.6rem;
 		  color: $white;
+		}
+	  }
+	  &-certificate {
+		display: flex;
+		align-items: center;
+		&-item {
+		  margin-right: 2rem;
+		  &:last-child {
+			margin: 0;
+		  }
+		  &-name {
+			text-align: center;
+			font-weight: 600;
+			font-size: 1.6rem;
+			color: $border;
+		  }
+		  &-box {
+			margin-top: 1.6rem;
+			border-radius: 0.4rem;
+			&-image {
+			  width: 20rem;
+			  height: 20rem;
+			  border-radius: 0.4rem;
+			  opacity: 0.7;
+			}
+		  }
+		  &-status {
+			margin-top: 2rem;
+			text-align: center;
+			font-weight: 600;
+			font-size: 1.2rem;
+			color: $border;
+		  }
+		  &.current {
+			.refi__block-carbon-certificate-item-name {
+			  color: $textColor;
+			}
+			.refi__block-carbon-certificate-item-box {
+			  &-image {
+				width: 22.4rem;
+				height: 22.4rem;
+				border: 4px solid $green;
+				border-radius: 0.6rem;
+				object-fit: cover;
+				opacity: 1;
+			  }
+			}
+			.refi__block-carbon-certificate-item-status {
+			  color: $green;
+			}
+		  }
 		}
 	  }
 	  &-picture {
@@ -736,18 +835,37 @@ export default {
 		padding: 2.4rem 0.8rem;
 		margin: 4rem -0.8rem 4.5rem;
 		border-radius: 0;
-		&-picture {
+		&-certificate {
 		  width: 100%;
+		  overflow-x: auto;
+		  -ms-overflow-style: none;
+		  scrollbar-width: none;
+		  &::-webkit-scrollbar {
+			display: none;
+		  }
+		  &-item {
+			&.current {
+			  .refi__block-carbon-certificate-item-box {
+				&-image {
+				  width: 20rem;
+				  height: 20rem;
+				}
+			  }
+			}
+		  }
 		}
 		&-info {
 		  width: 100%;
 		  margin: 0;
-		  padding-top: 1.6rem;
+		  padding-top: 2.8rem;
 		  &-title {
 			font-family: OpenSans-SemiBold;
 			font-weight: 600;
 			font-size: 1.8rem;
 			line-height: 2.2rem;
+		  }
+		  &-list {
+			margin-top: 1.6rem;
 		  }
 		  &-buy {
 			display: block;

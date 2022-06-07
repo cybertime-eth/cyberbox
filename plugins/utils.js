@@ -41,7 +41,7 @@ Vue.mixin({
 	getCertificateName(certificate) {
 		const date = new Date(certificate.year, certificate.month - 1, 1)
 		const month = date.toLocaleString('en-us', { month: 'long' })
-		return `${month} ${certificate.year}`
+		return `${month} ${certificate.year.toString().substr(2, 3)}`
 	},
 	sendEvent(event) {
 		try {

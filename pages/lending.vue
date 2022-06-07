@@ -19,10 +19,12 @@
                             <p class="lending__block-info-name-value">NFT Carbon Offset Certificate</p>
                         </div>
                     </client-only>
-                    <p class="lending__block-info-description">The NFT certificate confirms your contribution the regeneration of nature you carbon negative status</p>
-                    <client-only>
-                        <p class="lending__block-info-refi" v-if="!isMobile()">NFT = 1 ton of CO2 offsetting</p>
-                    </client-only>
+                    <p class="lending__block-info-description">Buy a personal NFT certificate to become carbon neutral</p>
+					<ul class="lending__block-info-features features-list">
+						<li class="features-list-item">Unique NFT certificate every month</li>
+						<li class="features-list-item">1 NFT = 1 ton CO2 offset</li>
+						<li class="features-list-item">Collect or sell on the marketplace</li>
+					</ul>
                     <div class="lending__block-info-price">
                         <div class="lending__block-info-price-detail">
                             <div class="lending__block-info-price-detail-celo">
@@ -37,56 +39,77 @@
             </div>
             <div class="lending__list">
                 <div class="lending__collection">
-                    <h2 class="lending__title">Collect the  entire  collection  in a  year and get a bonus NFT</h2>
-                    <h2 class="lending__collection-description">Participate every  month or buy a certificate once at the end of the year</h2>
+                    <h2 class="lending__title">Collect the  entire  collection for 2022</h2>
+                    <h2 class="lending__collection-description">Save for the future, sell on our marketplace or exchange 12 NFTs for 1 exclusive NFT</h2>
                     <div class="lending__collection-list">
                         <div class="lending__collection-item" :key="idx" v-for="(certificate, idx) of certificateList">
                             <p class="lending__collection-item-date">{{ certificateName(certificate) }}</p>
                             <div class="lending__collection-item-box" :class="{owned: certificate.owner || (!certificate.offset && !certificate.future)}">
-                                <img class="lending__collection-item-box-img" :src="certificate.image" alt="certificate">
+                                <img class="lending__collection-item-box-img" :class="{current: certificate.offset}" :src="certificate.image" alt="certificate">
                                 <img class="lending__collection-item-box-checked" src="/checked-circle.svg" alt="checkmark" v-if="certificateOwner(certificate)">
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="lending__market">
-                    <h2 class="lending__title">NFT Carbon Offset certificate can be gifted or sold on the secondary market</h2>
-                    <div class="lending__market-items">
-                        <div class="lending__market-items-item">
-                            <div class="lending__market-items-item-img-box">
-                                <img class="lending__market-items-item-img" src="/carbon-substract.svg" alt="substract">
-                            </div>
-                            <p class="lending__market-items-item-description">100% verification of your carbon negative status</p>
-                        </div>
-                        <div class="lending__market-items-item">
-                            <div class="lending__market-items-item-img-box">
-                                <img class="lending__market-items-item-img" src="/carbon-unique.svg" alt="unique">
-                            </div>
-                            <p class="lending__market-items-item-description">Unique art that changes every month</p>
-                        </div>
-                        <div class="lending__market-items-item">
-                            <div class="lending__market-items-item-img-box">
-                                <img class="lending__market-items-item-img" src="/carbon-coffee.svg" alt="coffee">
-                            </div>
-                            <p class="lending__market-items-item-description">The price of an NFT certificate is like a few cups of coffee</p>
-                        </div>
-                        <div class="lending__market-items-item">
-                            <div class="lending__market-items-item-img-box">
-                                <img class="lending__market-items-item-img" src="/carbon-valora.svg" alt="valora">
-                            </div>
-                            <p class="lending__market-items-item-description">Can be purchased with a credit card the Valora app</p>
-                        </div>
-                    </div>
-                </div>
             </div>
+			<div class="lending__reason lending__guide">
+				<h2 class="lending__title">Why buy NFT and offset carbon?</h2>
+				<p class="lending__guide-description">Every day the inhabitants of the earth leave their carbon footprint. With our NFT certificates you can make your carbon footprint neutral or even negative</p>
+				<div class="lending__reason-info">
+					<div class="lending__reason-info-item">
+						<h3 class="lending__reason-info-item-title">Carbon Positive <img src="/sad-face.svg" alt="sad"></h3>
+						<client-only>
+							<img class="lending__reason-info-item-diagram" src="/carbon-positive.svg" alt="diagram" v-if="!isMobile()">
+							<img class="lending__reason-info-item-diagram" src="/carbon-positive-mobile.svg" alt="diagram" v-else>
+						</client-only>
+					</div>
+					<div class="lending__reason-info-item">
+						<h3 class="lending__reason-info-item-title">Carbon Neutral <img src="/happy-face.svg" alt="happy"></h3>
+						<client-only>
+							<img class="lending__reason-info-item-diagram" src="/carbon-neutral.svg" alt="diagram" v-if="!isMobile()">
+							<img class="lending__reason-info-item-diagram" src="/carbon-neutral-mobile.svg" alt="diagram" v-else>
+						</client-only>
+					</div>
+				</div>
+			</div>
+			<div class="lending__market">
+				<h2 class="lending__title">NFT Carbon Offset certificate can be gifted or sold on the secondary market</h2>
+				<div class="lending__market-items">
+					<div class="lending__market-items-item">
+						<div class="lending__market-items-item-img-box">
+							<img class="lending__market-items-item-img" src="/carbon-substract.svg" alt="substract">
+						</div>
+						<p class="lending__market-items-item-description">100% verification of your carbon negative status</p>
+					</div>
+					<div class="lending__market-items-item">
+						<div class="lending__market-items-item-img-box">
+							<img class="lending__market-items-item-img" src="/carbon-unique.svg" alt="unique">
+						</div>
+						<p class="lending__market-items-item-description">Unique art that changes every month</p>
+					</div>
+					<div class="lending__market-items-item">
+						<div class="lending__market-items-item-img-box">
+							<img class="lending__market-items-item-img" src="/carbon-coffee.svg" alt="coffee">
+						</div>
+						<p class="lending__market-items-item-description">The price of an NFT certificate is like a few cups of coffee</p>
+					</div>
+					<div class="lending__market-items-item">
+						<div class="lending__market-items-item-img-box">
+							<img class="lending__market-items-item-img" src="/carbon-valora.svg" alt="valora">
+						</div>
+						<p class="lending__market-items-item-description">Can be purchased with a credit card the Valora app</p>
+					</div>
+				</div>
+			</div>
             <div class="lending__guide">
                 <h2 class="lending__title">How it’s works?</h2>
+				<p class="lending__guide-description">No complicated logic and calculations. Buying one unique NFT you offset 1 ton CO2. Everything is simple!</p>
                 <client-only>
-                    <img src="/carbon-diagram.svg" alt="diagram" v-if="!isMobile()">
-                    <img src="/carbon-diagram-mobile.svg" alt="diagram" v-else>
+                    <img class="lending__guide-diagram" src="/carbon-diagram.svg" alt="diagram" v-if="!isMobile()">
+                    <img class="lending__guide-diagram" src="/carbon-diagram-mobile.svg" alt="diagram" v-else>
                 </client-only>
             </div>
-            <div class="lending__faq">
+            <!-- <div class="lending__faq">
                 <h2 class="lending__title">FAQ</h2>
                 <div class="lending__faq-list">
                     <div class="lending__faq-item" :key="idx" v-for="(faqInfo, idx) of faqList">
@@ -100,20 +123,12 @@
                         <p class="lending__faq-item-description" v-if="faqInfo.expanded">{{ faqInfo.description }}</p>
                     </div>
                 </div>
-            </div>
-            <div class="lending__buy">
-                <client-only>
-                    <img class="lending__buy-bg" src="/certificate-offset-bg.png" alt="background" v-if="!isMobile()">
-                    <img class="lending__buy-bg" src="/certificate-offset-mobile-bg.png" alt="background" v-else>
-                </client-only>
-                <h2 class="lending__title">Get your NFT Carbon Offset Certificate</h2>
-                <button class="lending__buy-btn" :class="{disabled: bought}" @click="clickBuyToken">Buy Now</button>
-            </div>
+            </div> -->
             <div class="lending__footer">
                 <p class="lending__footer-description">Supported & Powered by</p>
                 <client-only>
-                    <img src="/certificate-support.svg" alt="support" v-if="!isMobile()">
-                    <img src="/certificate-support-mobile.svg" alt="support" v-else>
+                    <img src="/investors.png" alt="support" v-if="!isMobile()">
+                    <img src="/investors-mobile.png" alt="support" v-else>
                 </client-only>
             </div>
         </div>
@@ -304,12 +319,10 @@ export default {
       }
       &-description {
         font-size: 1.4rem;
-      }
-      &-refi {
-        margin-top: 3.2rem;
-        font-weight: 600;
-        font-size: 1.6rem;
-      }
+	  }
+	  &-features {
+		margin-top: 2rem;
+	  }
       &-price {
         display: flex;
         align-items: center;
@@ -361,9 +374,9 @@ export default {
   }
   &__collection {
     padding-top: 8.2rem;
-    padding-bottom: 15.2rem;
+    padding-bottom: 6.6rem;
     &-description {
-      max-width: 30rem;
+      max-width: 36.7rem;
       margin: 1rem auto 0;
       font-weight: 400;
       font-size: 1.4rem;
@@ -392,14 +405,18 @@ export default {
         width: 20rem;
         height: 20.2rem;
         background: linear-gradient(0deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), linear-gradient(46.74deg, #365BE0 -17.17%, #D676CF 48.99%, #FFE884 113%);
-        border-radius: 4px;
-        overflow: hidden;
         position: relative;
         &.owned {
           background: none;
         }
         &-img {
-          max-width: 100%;
+		  max-width: 100%;
+		  border-radius: 0.4rem;
+		  object-fit: cover;
+		  &.current {
+			border-radius: 0.8rem;
+			border: 4px solid $green;
+		  }
         }
         &-checked {
           position: absolute;
@@ -413,7 +430,7 @@ export default {
     }
   }
   &__market {
-    padding-bottom: 14rem;
+	padding: 14rem 6rem;
     .lending__title {
       max-width: 62rem;
       padding-bottom: 12.9rem;
@@ -443,15 +460,45 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(0deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
+    background: $white2;
     padding-top: 8.2rem;
-    padding-bottom: 7.6rem;
-    .lending__title {
-      margin-bottom: 7.3rem;
+    padding-bottom: 5.8rem;
+	&-description {
+	  max-width: 47.3rem;
+	  margin-top: 1.6rem;
+	  text-align: center;
+	  font-weight: 400;
+	  font-size: 1.6rem;
+	}
+    &-diagram {
+	  max-width: 57.5rem;
+	  margin-top: 8.5rem;
     }
-    img {
-      max-width: 57.5rem;
-    }
+  }
+  &__reason {
+	padding-bottom: 10.2rem;
+	&-info {
+	  margin-top: 9.6rem;
+	  &-item {
+		padding-top: 9.4rem;
+		&:first-child {
+		  padding: 0;
+		}
+		&-title {
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
+		  font-weight: 600;
+		  font-size: 2rem;
+		  img {
+			margin-left: 0.8rem;
+		  }
+		  }
+		  &-diagram {
+			margin-top: 5.4rem;
+		  }
+	  }
+	}
   }
   &__faq {
     padding-top: 8rem;
@@ -493,41 +540,6 @@ export default {
 		font-size: 1.6rem;
 		color: $grayDark;
 	  }
-    }
-  }
-  &__buy {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 7.3rem;
-    padding-bottom: 8.4rem;
-    position: relative;
-    &-bg {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      height: 30.4rem;
-    }
-    .lending__title, &-btn {
-      position: relative;
-    }
-    &-btn {
-      width: 42.4rem;
-      height: 4.8rem;
-      background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
-      border-radius: 2.5rem;
-      margin-top: 6.3rem;
-      font-weight: 700;
-      font-size: 1.6rem;
-      color: $white;
-      &.disabled {
-        background: $white;
-        pointer-events: none;
-        border: 1px solid $modalColor;
-        color: $border2;
-      }
     }
   }
   &__footer {
