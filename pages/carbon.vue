@@ -31,7 +31,7 @@
 							</div>
 						</div>
 						<div class="carbon__tracker-block-info-certificate">
-							<button class="carbon__tracker-block-info-certificate-button gradient-button" @click="$router.push('/lending')">Offset Carbon certificates</button>
+							<button class="carbon__tracker-block-info-certificate-button gradient-button" @click="$router.push('/lending')">Buy & Offset Certificate</button>
 							<a class="carbon__tracker-block-info-certificate-bonus" @click="showExchangeBonus=true"><img class="carbon__tracker-block-info-certificate-img" src="/gift.svg" alt="bonus"></a>
 						</div>
 					</div>
@@ -40,11 +40,7 @@
 			<div class="carbon__certificates">
 				<h2 class="carbon__title">NFT Carbon Offset Certificates</h2>
 				<div class="carbon__certificates-header">
-					<div class="carbon__certificates-header-tab">
-						<p class="carbon__certificates-header-tab-item" :class="{active: activeTab === 1}" @click="changeTab(1)">My certificates</p>
-						<p class="carbon__certificates-header-tab-item" :class="{active: activeTab === 2}"  @click="changeTab(2)">All certificates</p>
-					</div>
-					<CustomSelect class="carbon__certificates-header-picker" :options="certificateDateOptions" />
+					<CustomSwitch class="carbon__certificates-header-switch" label="My Certificates" :value="myCertificate" @onChange="changeMyCertificateStatus"/>
 				</div>
 				<div class="carbon__certificates-list">
 					<certificate :certificate="certificate" :key="idx" v-for="(certificate, idx) of filteredCertificates"/>
@@ -59,6 +55,7 @@
 
 <script>
 import CustomSelect from '@/components/utility/CustomSelect.vue'
+import CustomSwitch from '@/components/utility/CustomSwitch.vue'
 import CircleProgress from '@/components/utility/CircleProgress.vue'
 import certificate from '@/components/certificate.vue'
 import ExchangeBonus from '@/components/modals/exchangeBonus.vue'
@@ -68,6 +65,7 @@ import SuccessfullBuy from '@/components/modals/successBuy'
 export default {
   components: {
 	CustomSelect,
+	CustomSwitch,
 	CircleProgress,
 	certificate,
 	ExchangeBonus,
@@ -76,7 +74,7 @@ export default {
   },
   data() {
 	return {
-	  activeTab: 2,
+	  myCertificate: false,
 	  certificateList: [],
 	  filteredCertificates: [],
 	  progressSize: 0,
@@ -124,8 +122,8 @@ export default {
 		this.progressSize = Math.round(3.125 * document.body.offsetHeight / 1000)
 	  }
 	}
-	if (this.$route.query.tab) {
-	  this.activeTab = parseInt(this.$route.query.tab)
+	if (this.$route.query.mycert) {
+	  this.myCertificate = true
 	}
 
 	this.$store.dispatch('getCertificates')
@@ -169,18 +167,19 @@ export default {
 		this.ownedCertCount = currYearCertCount
 		this.certificateList = newList
 		this.certificateOccupancy = Math.round(ownedCount / this.certificateList.length * 100)
-		this.changeTab(this.activeTab)
+		this.changeFilter()
 	  }
 	},
-	changeTab(tab) {
-	  if (this.activeTab !== tab) {
-		this.activeTab = tab
-	  }
-	  if (tab === 1) {
+	changeFilter() {
+	  if (this.myCertificate) {
 		this.filteredCertificates = this.ownedCertificates
 	  } else {
 		this.filteredCertificates = this.certificateList
 	  }
+	},
+	changeMyCertificateStatus() {
+	  this.myCertificate = !this.myCertificate
+	  this.changeFilter()
 	},
 	showExchangeTokenModal() {
 	  this.showExchangeBonus = false
@@ -299,21 +298,11 @@ export default {
 	}
 	&-header {
 	  display: flex;
-      align-items: center;
-      justify-content: space-between;
-	  &-tab {
-		display: flex;
-		&-item {
-		  padding: 0.6rem 1.6rem;
-		  font-size: 1.4rem;
-		  cursor: pointer;
-		  &.active {
-			background: $lightGreen;
-		  }
+	  justify-content: flex-end;
+	  &-switch {
+		::v-deep .custom-switch-text {
+		  font-weight: 400;
 		}
-	  }
-	  &-picker {
-		width: 8.2rem;
 	  }
 	}
 	&-list {
@@ -374,12 +363,6 @@ export default {
 	  .carbon__title {
 		padding-bottom: 4rem;
 		font-size: 1.6rem;
-	  }
-	  &-header {
-		display: block;
-		&-picker {
-		  margin: 1.6rem auto 0;
-		}
 	  }
 	  &-list {
 		grid-template-columns: repeat(2, 14.4rem);

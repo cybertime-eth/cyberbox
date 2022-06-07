@@ -279,6 +279,24 @@ ul {
   }
 }
 
+.features-list {
+  list-style: none;
+  &-item {
+	padding-bottom: 0.8rem;
+	font-size: 1.4rem;
+	color: $grayDark;
+	&::before {
+	  content: "\2022";
+	  display: inline-block;
+	  color: $green;
+	  font-weight: bold;
+	  width: 1em;
+	}
+	&:last-child {
+	  padding: 0;
+	}
+  }
+}
 //FONTS
 
 @font-face {

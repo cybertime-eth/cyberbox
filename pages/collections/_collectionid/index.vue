@@ -133,12 +133,7 @@
             <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
             <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
           </div>
-          <div  class="collection__info-nft-filter" @click="changeMyNftStatus">
-            <h3 class="collection__info-nft-text">My NFTs</h3>
-            <div class="collection__info-nft-switcher" :class="{'collection__info-nft-switcher-active': myNft}">
-              <div class="collection__info-nft-switcher-element" :class="{'collection__info-nft-switcher-element-active': myNft}"></div>
-            </div>
-          </div>
+		  <CustomSwitch label="My NFTs" :value="myNft" @onChange="changeMyNftStatus"/>
         </div>
       </div>
       <div class="collection__loading" v-if="nftLoading">
@@ -164,6 +159,7 @@ import _ from 'lodash'
 import nft from '@/components/nft.vue'
 import attributesFilter from '@/components/modals/attributesFilter'
 import TraitsFilterModal from '@/components/modals/traitsFilterModal'
+import CustomSwitch from '@/components/utility/CustomSwitch'
 import {BigNumber} from 'ethers'
 export default {
   data() {
@@ -196,7 +192,8 @@ export default {
   components: {
     nft,
     attributesFilter,
-    TraitsFilterModal
+	TraitsFilterModal,
+	CustomSwitch
   },
   computed: {
     pageTitle() {
@@ -448,7 +445,7 @@ export default {
     },
     changeMyNftStatus() {
       this.myNft = !this.myNft
-      if (!this.isMultiNftCollection) return
+      if (this.isMultiNftCollection) return
       this.changeMyNftFilter()
       this.changeCollectionSetting({ myNft: this.myNft })
     },
