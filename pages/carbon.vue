@@ -3,7 +3,7 @@
 		<div class="carbon">
 			<div class="carbon__tracker">
 				<h2 class="carbon__title">Personal carbon offset tracker</h2>
-				<CustomSelect class="carbon__tracker-picker" :options="dateOptions" />
+				<CustomSelect class="carbon__tracker-picker" :options="dateOptions" @change="filterByYear"/>
 				<div class="carbon__tracker-block">
 					<div class="carbon__tracker-block-status" ref="trackerProgress">
 						<circle-progress :size="progressSize" :progress="certificateOccupancy"/>
@@ -19,15 +19,15 @@
 						<div class="carbon__tracker-block-info-summary">
 							<div class="carbon__tracker-block-info-summary-item">
 								<span class="carbon__tracker-block-info-summary-item-name">NFT Carbon certificates</span>
-								<span class="carbon__tracker-block-info-summary-item-conent">4.3 ton CO2</span>
+								<span class="carbon__tracker-block-info-summary-item-conent">{{ certificateOffset }} ton CO2</span>
 							</div>
 							<div class="carbon__tracker-block-info-summary-item">
 								<span class="carbon__tracker-block-info-summary-item-name">NFT Traiding CO2 offset</span>
-								<span class="carbon__tracker-block-info-summary-item-conent">3.3 ton CO2</span>
+								<span class="carbon__tracker-block-info-summary-item-conent">{{ formatCO2(totalTradingCO2) }} ton CO2</span>
 							</div>
 							<div class="carbon__tracker-block-info-summary-item total">
 								<span class="carbon__tracker-block-info-summary-item-name">Total CO2 offset</span>
-								<span class="carbon__tracker-block-info-summary-item-conent">5.8 ton CO2</span>
+								<span class="carbon__tracker-block-info-summary-item-conent">{{ formatCO2(totalCarbonCO2) }} ton CO2</span>
 							</div>
 						</div>
 						<div class="carbon__tracker-block-info-certificate">
@@ -77,11 +77,15 @@ export default {
 	  myCertificate: false,
 	  certificateList: [],
 	  filteredCertificates: [],
+	  yearFilter: 2022,
 	  progressSize: 0,
 	  certificateOccupancy: 0,
-		ownedCertCount: 0,
+	  totalCarbonCelo: 0,
+	  totalTradingCO2: 0,
+	  totalCarbonCO2: 0,
+	  ownedCertCount: 0,
 	  showExchangeBonus: false,
-		showExchangeToken: false
+	  showExchangeToken: false
 	}
   },
   computed: {
@@ -111,10 +115,18 @@ export default {
 	},
 	certificateName() {
 	  return 'Carbon Super Rare Offset Certificate #1'
+	},
+	refiPrice() {
+	  return this.$store.state.cMCO2Price
+	},
+	certificateOffset() {
+	  const offset = this.totalCarbonCelo * 0.025 * this.refiPrice
+	  return offset > 0 ? offset.toFixed(2) : 0
 	}
   },
-  created() {
-	this.certificateList = this.getCertificatesOfYear(new Date().getFullYear())
+  async created() {
+	this.yearFilter = new Date().getFullYear()
+	this.certificateList = this.getCertificatesOfYear(this.yearFilter)
 	if (process.broswer) {
 	  if (!this.isMobie()) {
 		this.progressSize = Math.round(0.6945 * document.body.offsetHeight / 1000)
@@ -126,6 +138,11 @@ export default {
 	  this.myCertificate = true
 	}
 
+	const trackingInfo = await this.$store.dispatch('getCarbonData')
+	this.totalCarbonCelo = trackingInfo.total_celo
+	this.totalTradingCO2 = trackingInfo.trading_co2
+	this.totalCarbonCO2 = trackingInfo.total_co2
+	this.certificateOccupancy = trackingInfo.total_co2 > 0 ? Math.round(trackingInfo.trading_co2 / trackingInfo.total_co2 * 100) : 0
 	this.$store.dispatch('getCertificates')
   },
   mounted() {
@@ -148,6 +165,9 @@ export default {
 	}
   },
   methods: {
+	formatCO2(value) {
+	  return value > 0 ? value.toFixed(2) : 0
+	},
 	updateCertificateList() {
 	  if (this.$store.state.address) {
 		const newList = JSON.parse(JSON.stringify(this.certificateList))
@@ -166,13 +186,12 @@ export default {
 		})
 		this.ownedCertCount = currYearCertCount
 		this.certificateList = newList
-		this.certificateOccupancy = Math.round(ownedCount / this.certificateList.length * 100)
 		this.changeFilter()
 	  }
 	},
 	changeFilter() {
 	  if (this.myCertificate) {
-		this.filteredCertificates = this.ownedCertificates
+		this.filteredCertificates = this.ownedCertificates.filter(item => item.year === this.yearFilter)
 	  } else {
 		this.filteredCertificates = this.certificateList
 	  }
@@ -184,6 +203,13 @@ export default {
 	showExchangeTokenModal() {
 	  this.showExchangeBonus = false
 	  this.showExchangeToken = true
+	},
+	filterByYear(yearStr) {
+	  let newCertifictes = []
+	  const year = parseInt(yearStr)
+	  this.yearFilter = year
+	  this.certificateList = this.getCertificatesOfYear(year)
+	  this.changeFilter()
 	}
   }
 }

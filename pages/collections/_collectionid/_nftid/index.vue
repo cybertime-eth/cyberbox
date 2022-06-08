@@ -21,7 +21,7 @@
             <div v-if="!nftReloading">
               <div class="nft__block-info-collection">
                 <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
-                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName }}</h2>
+                <h2 class="nft__block-info-collection-name" @click="gotoCollection">{{ collectionName }}</h2>
               </div>
               <h1 class="nft__block-info-name">{{ nftName }}</h1>
   <!--            <p class="nft__block-info-date" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/time.svg" alt="time"> Sale ends in-->
@@ -57,7 +57,7 @@
                 <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }} ton CO2</span>
               </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
-              <Attributes :item="attributes" :info="nft" v-if="!isMultiNft"/>
+              <Attributes :item="attributes" :info="nft" v-if="!isMultiNft && !isCertificateNft"/>
               <div class="nft__block-info-address" v-else-if="nft.contract_address">
                 <h3 class="nft__block-info-address-title">Contract Address</h3>
                 <a
@@ -81,7 +81,7 @@
             <div v-if="!nftReloading">
               <div class="nft__block-info-collection">
                 <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
-                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName }}</h2>
+                <h2 class="nft__block-info-collection-name" @click="gotoCollection">{{ collectionName }}</h2>
               </div>
               <h1 class="nft__block-info-name">{{ nftName }}</h1>
   <!--            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in-->
@@ -131,7 +131,7 @@
                 <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }} ton CO2</span>
               </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
-              <Attributes :item="attributes" :info="nft" v-if="!isMultiNft"/>
+              <Attributes :item="attributes" :info="nft" v-if="!isMultiNft && !isCertificateNft"/>
               <div class="nft__block-info-address" v-else-if="nft.contract_address">
                 <h3 class="nft__block-info-address-title">Contract Address</h3>
                 <a
@@ -326,9 +326,14 @@ export default {
     },
     isMultiNft() {
       return this.$store.state.multiNftSymbols.includes(this.$route.params.collectionid)
+	},
+	isCertificateNft() {
+      return this.nft.contract === 'CBCN'
     },
     nftName() {
-      if (!this.isMultiNft) {
+	  if (this.isCertificateNft) {
+		return this.getCertificateName(this.nft)
+      } else if (!this.isMultiNft) {
         if (!this.nft.name) {
           return ''
         } else {
@@ -339,7 +344,7 @@ export default {
       }
     },
     cutContractAddress() {
-      const address = this.nft.contract_address
+      const address = !this.isCertificateNft ? this.nft.contract_address : this.$store.state.certContractAddress
       if (address) {
         const startID = address.split("").slice(0, 6);
         const endID = address.split("").slice(-4);
@@ -616,7 +621,14 @@ export default {
         })
       }
       this.attributes = attributes
-    },
+	},
+	gotoCollection() {
+	  if (!this.isCertificateNft) {
+		this.$router.push(`/collections/${this.$route.params.collectionid}`)
+	  } else {
+		this.$router.push('/carbon')
+	  }
+	},
     handleClickBuyNow() {
       if (!this.address) {
         this.showConnectModal = true

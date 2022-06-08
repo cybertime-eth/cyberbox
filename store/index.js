@@ -15,14 +15,15 @@ import nomABI from '../abis/nomMarket.json'
 import { uuid } from "@walletconnect/utils"
 import {gql} from "nuxt-graphql-request";
 const ContractKit = require('@celo/contractkit')
-import filter from './../config.js'
+import { CERTIFICATE_TOKEN_TYPE }  from '@/config'
 import redstone from 'redstone-api'
 import { Magic } from 'magic-sdk'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
-  marketCertificate: '0x0980468994F7c9aEB79932D76aE46fA02DaE0FCD',
+  marketCertificate: '0xeD66415354B3fF11E1B875ef47B6cF05d3Cbb930',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
+  certContractAddress: '0x34Ea9B587Dd98B7f84541A55c27b5A6cba6b815c',
   user: {},
   chainId: null,
   address: null,
@@ -43,7 +44,6 @@ export const state = () => ({
   listToken: '',
   countPage: 1,
   cMCO2Price: 0, // CELO price for cMCO2
-  filter: filter.races.DAOS.layers,
   mintNumFilter: null,
   nomNameFilter: null,
   successApproveBuyToken: false,
@@ -327,6 +327,13 @@ export const state = () => ({
 	  telegram: 'https://t.me/celoerectus',
 	  description: 'New creative NFT Collection on the Celo blockchain!'
 	},
+	{
+		id: 22,
+		name: 'NFT Carbon Offset Certificate',
+		route: 'CBCN',
+		image: '/CBCN.png',
+		description: 'Buy a personal NFT certificate to become carbon neutral'
+	},
     // {
     //   id: 14,
     //   name: 'PixelAva',
@@ -575,6 +582,11 @@ export const actions = {
 			updatedAt
 			dna
 			trait
+			tag_element0
+			tag_element1
+			tag_element2
+			tag_element3
+			tag_element4
 			listData {
 			id
 			owner
@@ -812,7 +824,12 @@ export const actions = {
           price
           image
           owner
-          updatedAt
+		  updatedAt
+		  tag_element0
+		  tag_element1
+		  tag_element2
+		  tag_element3
+		  tag_element4
 		}
 		multiNFTs: multiNFTs(firt: 48) {
 		  id
@@ -857,7 +874,12 @@ export const actions = {
         price
         image
         contract_name
-        owner
+		owner
+		tag_element0
+		tag_element1
+		tag_element2
+		tag_element3
+		tag_element4
       }
     `
     if (traitFilters && traitFilters.length > 0) {
@@ -916,7 +938,12 @@ export const actions = {
         image
         contract_name
         seller
-        updatedAt
+		updatedAt
+		tag_element0
+		tag_element1
+		tag_element2
+		tag_element3
+		tag_element4
       }
     `
     if (traitFilters && traitFilters.length > 0) {
@@ -954,26 +981,75 @@ export const actions = {
     state.pagination ? commit('addNftToList', contractSells) : commit('setNewNftList', contractSells)
   },
 
+  async getCarbonData({getters}) {
+	const address = getters.storedAddress
+	if (!address) {
+	  return {
+		total_celo: 0,
+		trading_co2: 0,
+		total_co2: 0
+	  }
+	}
+
+	const query = gql`
+      query Sample {
+        co2Owners(first: 1 where: { owner: "${address}" }) {
+		  id
+		  owner
+		  mint_count
+		  total_celo
+		  total_co2
+		}
+		contracts(first: 1 where: { nftSymbol: "CBCN" }) {
+		  mint_count
+		  total_co2
+		}
+	  }`
+	const data = await this.$graphql.default.request(query)
+	const ownerCo2Info = data.co2Owners.length > 0 ? data.co2Owners[0] : {}
+	const carbonInfo = data.contracts[0]
+	return {
+	  total_celo: ownerCo2Info.total_celo / 1000 || 0,
+	  trading_co2: ownerCo2Info.total_co2 / 1000 || 0,
+	  total_co2: carbonInfo.total_co2 / 1000 || 0
+	}
+  },
+
   async getCertificates({getters, commit}) {
 	const address = getters.storedAddress
 	if (!address) return
 
 	const query = gql`
       query Sample {
-        certifications(first: 48 orderBy: token_id where: { owner: "${address}" }) {
+        contractInfos(first: 48 orderBy: contract_id where: { contract: "CBCN" owner: "${address}" }) {
 		  id
+		  contract
+		  contract_id
+		  seller
 		  owner
-		  token_type
-		  token_id
-		  year
-		  month
-		  price
-		  co2
+		  market_status
+		  contract_address
 		  image
+		  description
+		  updatedAt
+		  tag_element0
+		  tag_element1
+		  tag_element2
+		  tag_element3
+		  tag_element4
 		}
       }`
 	const data = await this.$graphql.default.request(query)
-	commit('setCertificateList', data.certifications)
+	const certificates = data.contractInfos.map(item => {
+	  item.token_type = parseInt(item.tag_element0)
+	  item.year = parseInt(item.tag_element1)
+	  item.month = parseInt(item.tag_element2)
+	  item.price = parseFloat(item.tag_element3) / 1000
+	  item.co2 = parseFloat(item.tag_element4) / 1000
+	  return item
+	})
+	const yearlyCertificates = certificates.filter(item => item.token_type === CERTIFICATE_TOKEN_TYPE.YEAR || item.token_type === CERTIFICATE_TOKEN_TYPE.BONUS)
+    commit('setCertificateList', yearlyCertificates.length === 0 ? certificates : yearlyCertificates)
   },
 
   // AUTHORIZATION
@@ -1296,7 +1372,12 @@ export const actions = {
         price_total
         price_value
         price_fee
-      }
+	  }
+	  tag_element0
+	  tag_element1
+	  tag_element2
+	  tag_element3
+	  tag_element4
     `
     if (!isMultiNft) {
       nftQuery = `
@@ -1421,7 +1502,9 @@ export const actions = {
     const signer = provider.getSigner()
     try {
 	  let resultAddress = state.marketNom
-	  if (state.nft.contract !== 'nomdom') {
+	  if (state.nft.contract === 'CBCN') {
+		resultAddress = state.marketCertificate
+	  } else if (state.nft.contract !== 'nomdom') {
 	    const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
 	    resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
 	  }
@@ -1440,7 +1523,12 @@ export const actions = {
 	    default: AbiNft = daosABI
 	  	  break;
 	  }
-      const contractAddress = state.nft.contract !== 'nomdom' ? state.nft.contract_address : state.nomContractAddress
+	  let contractAddress = state.nft.contract_address
+	  if (state.nft.contract === 'nomdom') {
+		contractAddress = state.nomContractAddress
+	  } else if (state.nft.contract === 'CBCN') {
+		contractAddress = state.certContractAddress
+	  }
       const contract = new ethers.Contract(contractAddress, AbiNft, signer)
       const approvedForAll = await contract.isApprovedForAll(getters.storedAddress, resultAddress)
       if (!submitApprove) {
@@ -1478,6 +1566,7 @@ export const actions = {
 		  listing_approve_error_type: error
 		}
 	  })
+	  console.log(error)
     }
   },
   async listingNFT({commit, state, getters}, price) {
@@ -1485,7 +1574,7 @@ export const actions = {
     const signer = provider.getSigner()
     let contract = null;
     try {
-	  if (state.nft.contract === 'certificate') {
+	  if (state.nft.contract === 'CBCN') {
 		contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
 		await contract.listToken(state.nft.contract_id, web3.utils.toWei(String(price)), {
 		  gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
@@ -1542,18 +1631,20 @@ export const actions = {
     const provider = new ethers.providers.Web3Provider(getters.provider)
     const signer = provider.getSigner()
     let contract = null
-    if (state.nft.contract !== 'nomdom') {
-      contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
-    } else {
-      contract = new ethers.Contract(state.marketNom, nomABI, signer)
-    }
 
     try {
-      if (state.nft.contract !== 'nomdom') {
-        await contract.changePrice(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(price)), {
-          gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
-        })
+	  if (state.nft.contract === 'CBCN' || state.nft.contract !== 'nomdom') {
+		const contractAddress = state.nft.contract === 'CBCN' ? state.certContractAddress : state.nft.contract_address
+		if (state.nft.contract === 'CBCN') {
+		  contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
+		} else {
+		  contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
+		}
+		await contract.changePrice(contractAddress, state.nft.contract_id, web3.utils.toWei(String(price)), {
+		  gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+		})
       } else {
+		contract = new ethers.Contract(state.marketNom, nomABI, signer)
         await contract.changePrice(state.nft.name, web3.utils.toWei(String(price)), {
           gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
         })
@@ -1649,7 +1740,7 @@ export const actions = {
 		const parsePrice = ethers.utils.parseEther(String(token.price))
 		console.log(token.price)
 		let result = {}
-		if (state.nft.contract === 'certificate') {
+		if (state.nft.contract === 'CBCN') {
 			contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
 			result = await contract.methods.buyToken(token.id, web3.utils.toWei(String(token.price))).send({
 				from: account,
@@ -1716,18 +1807,20 @@ export const actions = {
     const provider = new ethers.providers.Web3Provider(getters.provider)
     const signer = provider.getSigner()
     let contract = null
-    if (params.nft.contract !== 'nomdom') {
-      contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
-    } else {
-      contract = new ethers.Contract(state.marketNom, nomABI, signer)
-    }
     
     try {
-      if (params.nft.contract !== 'nomdom') {
+	  if (params.nft.contract === 'CBCN') {
+		contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
+		await contract.transfer(params.toAddress, params.nft.contract_id, {
+		  gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+		})
+      } else if (params.nft.contract !== 'nomdom') {
+		contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
         await contract.transfer(params.nft.contract_address, params.toAddress, params.nft.contract_id, {
           gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
         })
       } else {
+		contract = new ethers.Contract(state.marketNom, nomABI, signer)
         await contract.transferNom(params.toAddress, params.nft.name, {
           gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
         })
@@ -1837,7 +1930,7 @@ export const actions = {
       
     }
     try {
-	  if (payloadNft.contract === 'certificate') {
+	  if (payloadNft.contract === 'CBCN') {
 		contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
 		await contract.delistToken(payloadNft.contract_id, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
       } else if (payloadNft.contract !== 'nomdom') {
