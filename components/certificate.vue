@@ -44,8 +44,12 @@ export default {
   },
   methods: {
     routeCertificate() {
-      if (this.owner || this.certificate.future) return
-      this.$router.push('/lending')
+	  if (this.certificate.future) return
+	  if (this.certificate.current) {
+		this.$router.push('/lending')
+	  } else {
+		this.$router.push(`/collections/CBCN/${this.certificate.contract_id}`)
+	  }
     }
   }
 }

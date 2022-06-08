@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { CDN_ROOT } from "@/config"
+import { CDN_ROOT, CERTIFICATE_TOKEN_TYPE } from "@/config"
 
 Vue.mixin({
   methods: {
@@ -29,7 +29,7 @@ Vue.mixin({
 		const currMonth = today.getMonth() + 1
 		for (let i = 1; i <= 12; i++) {
 			dataList.push({
-				image: i <= currMonth ? '/carbon.svg' : '/question-mark.svg',
+				image: (year !== currYear || year === currYear && i <= currMonth) ? '/carbon.svg' : '/question-mark.svg',
 				year,
 				month: i,
 				offset: year === currYear && i === currMonth,
@@ -39,9 +39,24 @@ Vue.mixin({
 		return dataList
 	},
 	getCertificateName(certificate) {
-		const date = new Date(certificate.year, certificate.month - 1, 1)
-		const month = date.toLocaleString('en-us', { month: 'long' })
-		return `${month} ${certificate.year.toString().substr(2, 3)}`
+		let fullYear = false
+		if (!certificate.token_type && certificate.tag_element0) {
+			certificate.token_type = parseInt(certificate.tag_element0)
+			certificate.year = parseInt(certificate.tag_element1)
+			certificate.month = parseInt(certificate.tag_element2)
+			fullYear = true
+		}
+		if (certificate.token_type === CERTIFICATE_TOKEN_TYPE.YEAR || certificate.token_type === CERTIFICATE_TOKEN_TYPE.BONUS) {
+            return 'Carbon Super Rare Offset Certificate #1'
+        } else {
+			const date = new Date(certificate.year, certificate.month - 1, 1)
+			const month = date.toLocaleString('en-us', { month: 'long' })
+			if (fullYear) {
+				return `${month} ${certificate.year}`
+			} else {
+				return `${month} ${certificate.year.toString().substr(2, 3)}`
+			}
+        }
 	},
 	sendEvent(event) {
 		try {
