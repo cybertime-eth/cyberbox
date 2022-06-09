@@ -19,7 +19,7 @@
 						<div class="carbon__tracker-block-info-summary">
 							<div class="carbon__tracker-block-info-summary-item">
 								<span class="carbon__tracker-block-info-summary-item-name">NFT Carbon certificates</span>
-								<span class="carbon__tracker-block-info-summary-item-conent">{{ certificateOffset }} ton CO2</span>
+								<span class="carbon__tracker-block-info-summary-item-conent">{{ totalCertCO2 }} ton CO2</span>
 							</div>
 							<div class="carbon__tracker-block-info-summary-item">
 								<span class="carbon__tracker-block-info-summary-item-name">NFT Traiding CO2 offset</span>
@@ -27,7 +27,7 @@
 							</div>
 							<div class="carbon__tracker-block-info-summary-item total">
 								<span class="carbon__tracker-block-info-summary-item-name">Total CO2 offset</span>
-								<span class="carbon__tracker-block-info-summary-item-conent">{{ formatCO2(totalCarbonCO2) }} ton CO2</span>
+								<span class="carbon__tracker-block-info-summary-item-conent">{{ formatCO2(totalCO2Offset) }} ton CO2</span>
 							</div>
 						</div>
 						<div class="carbon__tracker-block-info-certificate">
@@ -62,6 +62,8 @@ import ExchangeBonus from '@/components/modals/exchangeBonus.vue'
 import ExchangeToken from '@/components/modals/exchangeToken.vue'
 import SuccessfullBuy from '@/components/modals/successBuy'
 
+const MAX_TON_AMOUNT = 20
+
 export default {
   components: {
 	CustomSelect,
@@ -80,9 +82,9 @@ export default {
 	  yearFilter: 2022,
 	  progressSize: 0,
 	  certificateOccupancy: 0,
-	  totalCarbonCelo: 0,
+	  totalCertCO2: 0,
 	  totalTradingCO2: 0,
-	  totalCarbonCO2: 0,
+	  totalCO2Offset: 0,
 	  ownedCertCount: 0,
 	  showExchangeBonus: false,
 	  showExchangeToken: false
@@ -118,10 +120,6 @@ export default {
 	},
 	refiPrice() {
 	  return this.$store.state.cMCO2Price
-	},
-	certificateOffset() {
-	  const offset = this.totalCarbonCelo * 0.025 * this.refiPrice
-	  return offset > 0 ? offset.toFixed(2) : 0
 	}
   },
   async created() {
@@ -139,10 +137,10 @@ export default {
 	}
 
 	const trackingInfo = await this.$store.dispatch('getCarbonData')
-	this.totalCarbonCelo = trackingInfo.total_celo
-	this.totalTradingCO2 = trackingInfo.trading_co2
-	this.totalCarbonCO2 = trackingInfo.total_co2
-	this.certificateOccupancy = trackingInfo.total_co2 > 0 ? Math.round(trackingInfo.trading_co2 / trackingInfo.total_co2 * 100) : 0
+	this.totalCertCO2 = trackingInfo.mint_count
+	this.totalTradingCO2 = trackingInfo.trading_co2 / 2
+	this.totalCO2Offset = this.totalCertCO2 + this.totalTradingCO2
+	this.certificateOccupancy = Math.round(this.totalCO2Offset / MAX_TON_AMOUNT * 100)
 	this.$store.dispatch('getCertificates')
   },
   mounted() {
