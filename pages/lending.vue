@@ -2,30 +2,30 @@
     <section id="lending">
         <div class="lending">
             <div class="lending__block">
-                <client-only>
-                    <div class="lending__block-info-name" v-if="isMobile()">
-                        <img src="/plant.svg" alt="plant">
-                        <p class="lending__block-info-name-value">NFT Carbon Offset Certificate</p>
-                    </div>
-                </client-only>
+				<client-only>
+					<div v-if="isMobile()">
+						<p class="lending__block-info-name">NFT Carbon Offset Certificate</p>
+						<p class="lending__block-info-description">Buy a personal NFT certificate to become carbon neutral</p>
+					</div>
+				</client-only>
                 <div class="lending__block-summary">
                     <p class="lending__block-summary-date">{{ currentDate }}</p>
                     <img class="lending__block-summary-img" src="/carbon.svg" alt="certificate">
                 </div>
                 <div class="lending__block-info">
                     <client-only>
-                        <div class="lending__block-info-name" v-if="!isMobile()">
-                            <img src="/plant.svg" alt="plant">
-                            <p class="lending__block-info-name-value">NFT Carbon Offset Certificate</p>
-                        </div>
+						<div v-if="!isMobile()">
+							<p class="lending__block-info-name">NFT Carbon Offset Certificate</p>
+							<p class="lending__block-info-description">Buy a personal NFT certificate to become carbon neutral</p>
+						</div>
+						<p class="lending__block-info-detail" v-else>The NFT certificate confirms your contribution the regeneration of nature you carbon negative status</p>
                     </client-only>
-                    <p class="lending__block-info-description">Buy a personal NFT certificate to become carbon neutral</p>
 					<ul class="lending__block-info-features features-list">
 						<li class="features-list-item">Unique NFT certificate every month</li>
 						<li class="features-list-item">1 NFT = 1 ton CO2 offset</li>
 						<li class="features-list-item">Collect or sell on the marketplace</li>
 					</ul>
-                    <div class="lending__block-info-price">
+                    <div class="lending__block-info-price" v-if="!bought">
                         <div class="lending__block-info-price-detail">
                             <div class="lending__block-info-price-detail-celo">
                                 <img src="/celo.svg" alt="celo">
@@ -33,8 +33,23 @@
                             </div>
                             <p class="lending__block-info-price-detail-value">Price (${{ priceToken }})</p>
                         </div>
-                        <button class="lending__block-info-price-buy" @click="clickBuyToken" v-if="!bought">Buy Now</button>
+                        <button class="lending__block-info-price-buy" @click="clickBuyToken">Buy Now</button>
                     </div>
+					<div class="lending__block-info-minted" v-else>
+						<p class="lending__block-info-minted-description">Congratulations!<br/>You have already bought an NFT Carbon Offset Certificate this month.</p>
+					</div>
+					<div class="lending__block-info-minted-next" v-if="nextMintVisible">
+						<p class="lending__block-info-minted-next-name">Mint the next NFT in:</p>
+						<div class="lending__block-info-minted-next-timer">
+							<p class="lending__block-info-minted-next-timer-clock">{{ formatClockTime(nextMintDay) }}</p>
+							<p class="lending__block-info-minted-next-timer-separator">:</p>
+							<p class="lending__block-info-minted-next-timer-clock">{{ formatClockTime(nextMintHour) }}</p>
+							<p class="lending__block-info-minted-next-timer-separator">:</p>
+							<p class="lending__block-info-minted-next-timer-clock">{{ formatClockTime(nextMintMinute) }}</p>
+							<p class="lending__block-info-minted-next-timer-separator">:</p>
+							<p class="lending__block-info-minted-next-timer-clock">{{ formatClockTime(nextMintSecond) }}</p>
+						</div>
+					</div>
                 </div>
             </div>
             <div class="lending__list">
@@ -45,7 +60,7 @@
                         <div class="lending__collection-item" :key="idx" v-for="(certificate, idx) of certificateList">
                             <p class="lending__collection-item-date">{{ certificateName(certificate) }}</p>
                             <div class="lending__collection-item-box" :class="{owned: certificate.owner || (!certificate.offset && !certificate.future)}">
-                                <img class="lending__collection-item-box-img" :class="{current: certificate.offset}" :src="certificate.image" alt="certificate">
+                                <img class="lending__collection-item-box-img" :class="{current: certificate.offset, future: certificate.future}" :src="certificate.image" alt="certificate">
                                 <img class="lending__collection-item-box-checked" src="/checked-circle.svg" alt="checkmark" v-if="certificateOwner(certificate)">
                             </div>
                         </div>
@@ -138,6 +153,7 @@
 </template>
 
 <script>
+import { CERTIFICATE_TOKEN_TYPE } from '@/config'
 import BuyToken from '@/components/modals/buyToken'
 import SuccessfullBuy from '@/components/modals/successBuy'
 const CERTIFICATE_MINT_PRICE = 0.1
@@ -156,7 +172,14 @@ export default {
       balance: 0,
       celoPrice: 0,
       priceToken: 0,
-      bought: false
+	  bought: false,
+	  nextMintTimer: null,
+	  nextMintVisible: false,
+	  leftMintTime: 0,
+	  nextMintDay: 0,
+	  nextMintHour: 0,
+	  nextMintMinute: 0,
+	  nextMintSecond: 0,
     }
   },
   computed: {
@@ -174,6 +197,11 @@ export default {
     showSuccessModal() {
       return this.$store.state.successBuyToken
     }
+  },
+  beforeDestroy() {
+	if (this.nextMintTimer) {
+	  clearInterval(this.nextMintTimer)
+	}
   },
   created() {
     const today = new Date()
@@ -248,19 +276,48 @@ export default {
       this.$store.dispatch('getCertificates')
     },
     updateCertificateList() {
-      const today = new Date()
+	  const today = new Date()
+	  const currYear = today.getFullYear()
 	  const newList = JSON.parse(JSON.stringify(this.certificateList))
       newList.forEach((item, index) => {
-        const foundIndex = this.ownedCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month )
+        const foundIndex = this.ownedCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month)
         if (foundIndex >= 0) {
           const newItem = this.ownedCertificates[foundIndex]
           newList[index] = newItem
           if (newItem.year === today.getFullYear() && newItem.month === today.getMonth() + 1) {
-            this.bought = true
-          }
-        }
-      })
-      this.certificateList = newList
+			this.bought = true
+		  }
+		}
+	  })
+	  this.certificateList = newList
+
+	  const ownedCount = this.ownedCertificates.filter(item => item.year === currYear && item.token_type === CERTIFICATE_TOKEN_TYPE.MONTH).length
+	  const bonusNft = this.ownedCertificates.find(item => item.year === currYear && item.token_type === CERTIFICATE_TOKEN_TYPE.BONUS)
+	  this.nextMintVisible = ownedCount < 12 && !bonusNft
+	  if (this.nextMintVisible && !this.nextMintTimer) {
+		const currTime = today.getTime()
+		const nextMintTime = new Date(today.getFullYear(), today.getMonth() + 1, 1).getTime()
+		this.leftMintTime = nextMintTime - currTime
+		this.countNextMintTime()
+		this.nextMintTimer = setInterval(this.countNextMintTime, 1000)
+	  }
+	},
+	countNextMintTime() {
+	  let difference = this.leftMintTime
+	  this.nextMintDay = Math.floor(difference/1000/60/60/24)
+      difference -= this.nextMintDay*1000*60*60*24
+
+      this.nextMintHour = Math.floor(difference/1000/60/60)
+      difference -= this.nextMintHour*1000*60*60
+
+      this.nextMintMinute = Math.floor(difference/1000/60)
+      difference -= this.nextMintMinute*1000*60
+
+	  this.nextMintSecond = Math.floor(difference/1000)
+	  this.leftMintTime = this.leftMintTime - 1000
+	},
+	formatClockTime(time) {
+	  return time < 10 ?  `0${time}` : time
 	},
 	showFAQDetail(index) {
 	  const newFaqList = JSON.parse(JSON.stringify(this.faqList))
@@ -305,19 +362,12 @@ export default {
       width: 53.5rem;
       margin-top: 2.2rem;
       &-name {
-        display: flex;
-        align-items: center;
-        img {
-          width: 2.6rem;
-          margin-right: 1.6rem;
-        }
-        &-value {
-          font-family: Cabin-Regular;
-          font-weight: 500;
-          font-size: 3.2rem;
-        }
-      }
+		font-family: Cabin-Regular;
+		font-weight: 500;
+		font-size: 3.2rem;
+	  }
       &-description {
+		padding-top: 0.8rem;
         font-size: 1.4rem;
 	  }
 	  &-features {
@@ -358,7 +408,46 @@ export default {
           font-size: 1.6rem;
           color: $white;
         }
-      }
+	  }
+	  &-minted {
+		&-description {
+		  padding-top: 4.8rem;
+		  line-height: 2rem;
+		  font-weight: 600;
+		  font-size: 1.4rem;
+		  color: $green;
+		}
+		&-next {
+		  padding-top: 4.8rem;
+		  &-name {
+			font-weight: 400;
+			font-size: 1.4rem;
+			color: $border;
+		  }
+		  &-timer {
+			display: flex;
+			align-items: center;
+			padding-top: 1.4rem;
+			&-clock, &-separator {
+			  font-weight: 600;
+			  font-size: 2rem;
+			}
+			&-clock {
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			  width: 4.4rem;
+			  height: 4.4rem;
+			  background: $white;
+			  border: 2px solid $modalColor;
+			  border-radius: 0.4rem;
+			}
+			&-separator {
+			  padding: 0 0.5rem;
+			}
+		  }
+		}
+	  }
     }
   }
   &__title {
@@ -413,9 +502,13 @@ export default {
 		  max-width: 100%;
 		  border-radius: 0.4rem;
 		  object-fit: cover;
+		  opacity: 0.7;
 		  &.current {
 			border-radius: 0.8rem;
 			border: 4px solid $green;
+		  }
+		  &.current, &.future {
+			opacity: 1;
 		  }
         }
         &-checked {
@@ -561,7 +654,7 @@ export default {
   @media (max-width: 460px) {
     &__block {
       display: block;
-      padding: 2.4rem 0.9rem 3.8rem;
+      padding: 2.4rem 0.9rem 4.4rem;
       &-summary {
         margin: 0;
         &-date {
@@ -576,21 +669,27 @@ export default {
         width: auto;
         margin: 0;
         &-name {
-          padding-bottom: 2.4rem;
-          img {
-            width: 1.7rem;
-            margin-right: 0.8rem;
-          }
-          &-value {
-            font-family: OpenSans-Bold;
-            font-size: 1.75rem;
-          }
+		  text-align: center;
+		  font-family: OpenSans-Bold;
+		  font-size: 1.75rem;
         }
         &-description {
-          padding-top: 1.8rem;
-        }
+		  max-width: 75%;
+    	  margin: 0 auto;
+		  padding-bottom: 2.4rem;
+		  text-align: center;
+		}
+		&-detail {
+		  margin-top: 1.6rem;
+		  font-weight: 400;
+		  font-size: 1.4rem;
+		  color: $grayDark;
+		}
+		&-features {
+		  margin-top: 1.6rem;
+		}
         &-price {
-          margin-top: 1.8rem;
+          margin-top: 3rem;
           padding: 1.8rem 0.8rem;
           &-detail {
             &-celo {
@@ -606,7 +705,12 @@ export default {
               margin-top: 1rem;
             }
           }
-        }
+		}
+		&-minted {
+		  &-next {
+			padding-top: 3rem;
+		  }
+		}
       }
     }
     &__list {
@@ -620,8 +724,8 @@ export default {
       text-align: left;
     }
     &__collection {
-      padding-top: 4.2rem;
-      padding-bottom: 8.7rem;
+      padding-top: 3.2rem;
+      padding-bottom: 4.4rem;
       &-description {
         margin-top: 0.8rem;
         text-align: left;
@@ -647,16 +751,17 @@ export default {
       }
     }
     &__market {
-      padding-bottom: 8.2rem;
+      padding: 3.2rem 0.8rem 4.5rem;
       .lending__title {
         max-width: 100%;
-        padding-bottom: 3.8rem;
+        padding-bottom: 3rem;
       }
       &-items {
         grid-template-columns: repeat(2, 1fr);
         grid-column-gap: 2.4rem;
         grid-row-gap: 4.7rem;
         &-item {
+		  align-items: flex-start;
           &-img-box {
             height: 4.8rem;
           }
@@ -665,23 +770,49 @@ export default {
             max-height: 4.8rem;
           }
           &-description {
-            margin-top: 0.8rem;
+			margin-top: 0.8rem;
+			text-align: left;
             font-size: 1.2rem;
           }
         }
       }
     }
     &__guide {
-      padding-top: 3.8rem;
-      padding-bottom: 4.7rem;
+      padding: 3.8rem 0.8rem 4rem;
       .lending__title {
-        margin-bottom: 3.9rem;
+		width: 100%;
+        margin: 0;
         text-align: left;
+	  }
+	  &-description {
+		max-width: 100%;
+		margin-top: 0.8rem;
+		text-align: left;
+		font-size: 1.4rem;
+	  }
+      &-diagram {
+		margin-top: 4.6rem;
+        max-width: 27.8rem;
       }
-      img {
-        max-width: 29.3rem;
-      }
-    }
+	}
+	&__reason {
+	  padding-bottom: 4.6rem;
+	  &-info {
+		margin-top: 3.2rem;
+		&-item {
+		  padding-top: 4rem;
+		  &-title {
+			font-size: 1.4rem;
+			img {
+			  max-width: 1.5rem;
+			}
+		  }
+		  &-diagram {
+			margin-top: 2.4rem;
+		  }
+		}
+	  }
+	}
     &__faq {
       padding: 3.8rem 0.8rem;
       &-list {
@@ -704,22 +835,9 @@ export default {
         }
       }
     }
-    &__buy {
-      padding: 4.4rem 1.6rem 5.4rem;
-      .lending__title {
-        text-align: center;
-      }
-      &-bg {
-        height: 21.4rem;
-      }
-      &-btn {
-        width: 14.8rem;
-        margin-top: 2.4rem;
-      }
-    }
     &__footer {
-      padding-top: 5rem;
-      padding-bottom: 13.4rem;
+      padding-top: 3.6rem;
+      padding-bottom: 16rem;
       &-description {
         padding-bottom: 2rem;
         font-size: 1.2rem;

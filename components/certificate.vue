@@ -13,7 +13,7 @@
             </div>
             <p class="certificate__item-description" :class="{ 'not-sale': owner || !saleAvailable }" v-else>{{ certificateDescription }}</p>
             <button class="collection__item-info-details" @click="routeCertificate" v-if="owner">Details</button>
-            <button class="collection__item-info-details buy" v-else-if="buyAvailable">Buy</button>
+            <button class="collection__item-info-details buy" @click="routeCertificate" v-else-if="buyAvailable">Buy</button>
             <button class="collection__item-info-details offset" :class="{ disabled: certificate.future }" @click="routeCertificate" v-else-if="saleAvailable">Offset now</button>
         </div>
     </div>    

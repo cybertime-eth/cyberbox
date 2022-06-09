@@ -32,7 +32,7 @@
 						</div>
 						<div class="carbon__tracker-block-info-certificate">
 							<button class="carbon__tracker-block-info-certificate-button gradient-button" @click="$router.push('/lending')">Buy & Offset Certificate</button>
-							<a class="carbon__tracker-block-info-certificate-bonus" @click="showExchangeBonus=true"><img class="carbon__tracker-block-info-certificate-img" src="/gift.svg" alt="bonus"></a>
+							<a class="carbon__tracker-block-info-certificate-bonus" @click="showExchangeBonus=true" v-if="!bonusPurchased"><img class="carbon__tracker-block-info-certificate-img" src="/gift.svg" alt="bonus"></a>
 						</div>
 					</div>
 				</div>
@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import { CERTIFICATE_TOKEN_TYPE } from '@/config'
 import CustomSelect from '@/components/utility/CustomSelect.vue'
 import CustomSwitch from '@/components/utility/CustomSwitch.vue'
 import CircleProgress from '@/components/utility/CircleProgress.vue'
@@ -87,7 +88,8 @@ export default {
 	  totalCO2Offset: 0,
 	  ownedCertCount: 0,
 	  showExchangeBonus: false,
-	  showExchangeToken: false
+	  showExchangeToken: false,
+	  bonusPurchased: false
 	}
   },
   computed: {
@@ -108,6 +110,9 @@ export default {
 	},
 	ownedCertificates() {
 	  return this.$store.state.certificateList
+	},
+	saleCertificates() {
+	  return this.$store.state.certificateSaleList
 	},
 	showSuccessModal() {
       return this.$store.state.successBuyToken
@@ -169,9 +174,13 @@ export default {
 	updateCertificateList() {
 	  if (this.$store.state.address) {
 		const newList = JSON.parse(JSON.stringify(this.certificateList))
-		const currYear = new Date().getFullYear()
+		const date = new Date()
+		const currYear = date.getFullYear()
+		const currMonth = date.getMonth() + 1
 		let ownedCount = 0
 		let currYearCertCount = 0
+		const bonusNft = this.ownedCertificates.find(item => item.year === currYear && item.token_type === CERTIFICATE_TOKEN_TYPE.BONUS)
+		this.bonusPurchased = !!bonusNft
 		newList.forEach((item, index) => {
 		  const foundIndex = this.ownedCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month )
 		  if (foundIndex >= 0) {
@@ -180,6 +189,13 @@ export default {
 			  currYearCertCount++
 			}
 			ownedCount++
+		  } else {
+		 	const foundSaleIndex = this.saleCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month && oItem.year === currYear && oItem.month !== currMonth)
+		  	if (foundSaleIndex >= 0) {
+			  newList[index].current = false
+			  newList[index].contract_id = this.saleCertificates[foundSaleIndex].contract_id
+			  newList[index].price = this.saleCertificates[foundSaleIndex].price
+		  	}
 		  }
 		})
 		this.ownedCertCount = currYearCertCount

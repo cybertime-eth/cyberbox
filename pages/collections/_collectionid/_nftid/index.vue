@@ -623,11 +623,7 @@ export default {
       this.attributes = attributes
 	},
 	gotoCollection() {
-	  if (!this.isCertificateNft) {
-		this.$router.push(`/collections/${this.$route.params.collectionid}`)
-	  } else {
-		this.$router.push('/carbon')
-	  }
+	  this.$router.push(`/collections/${this.$route.params.collectionid}`)
 	},
     handleClickBuyNow() {
       if (!this.address) {
