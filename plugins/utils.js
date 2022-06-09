@@ -64,39 +64,39 @@ Vue.mixin({
         }
 	},
 	sendEvent(event) {
-		// try {
-		// 	let properties = {}
-		// 	if (event.properties) {
-		// 		properties = Object.assign({}, event.properties, properties);
-		// 	}
-		// 	const identify = new amplitude.Identify()
-		// 	let userProperties = {}
-		// 	if (!this.isMobile()) {
-		// 		userProperties = {
-		// 			utm_campaign: 'cyberbox_analytics',
-		// 			referring_domain: 'cyberbox.vercel.app'
-		// 		}
-		// 	}
-		// 	if (event.eventName === 'connect') {
-		// 		userProperties.auth_type = properties.connect
-		// 	}
-		// 	amplitude.setUserProperties(userProperties)
-		// 	amplitude.identify(identify)
-		// 	amplitude.logEvent(event.eventName, properties)
-		// } catch(error) {
-		// 	console.log(error)
-		// }
+		try {
+			let properties = {}
+			if (event.properties) {
+				properties = Object.assign({}, event.properties, properties);
+			}
+			const identify = new amplitude.Identify()
+			let userProperties = {}
+			if (!this.isMobile()) {
+				userProperties = {
+					utm_campaign: 'cyberbox_analytics',
+					referring_domain: 'cyberbox.vercel.app'
+				}
+			}
+			if (event.eventName === 'connect') {
+				userProperties.auth_type = properties.connect
+			}
+			amplitude.setUserProperties(userProperties)
+			amplitude.identify(identify)
+			amplitude.logEvent(event.eventName, properties)
+		} catch(error) {
+			console.log(error)
+		}
 	},
 	sendRevenueEvent(productId, price, priceTotal, collection) {
-		// try {
-		// 	const revenue = new amplitude.Revenue().setProductId(productId).setPrice(price)
-		// 	amplitude.logRevenueV2(revenue)
+		try {
+			const revenue = new amplitude.Revenue().setProductId(productId).setPrice(price)
+			amplitude.logRevenueV2(revenue)
 
-		// 	const collectionRevenue = new amplitude.Revenue().setPrice(priceTotal).setEventProperties({ collection })
-		// 	amplitude.logRevenueV2(collectionRevenue)
-		// } catch(error) {
-		// 	console.log(error)
-		// }
+			const collectionRevenue = new amplitude.Revenue().setPrice(priceTotal).setEventProperties({ collection })
+			amplitude.logRevenueV2(collectionRevenue)
+		} catch(error) {
+			console.log(error)
+		}
 	}
   }
 })

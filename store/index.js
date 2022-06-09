@@ -15,7 +15,6 @@ import nomABI from '../abis/nomMarket.json'
 import { uuid } from "@walletconnect/utils"
 import {gql} from "nuxt-graphql-request";
 const ContractKit = require('@celo/contractkit')
-import { CERTIFICATE_TOKEN_TYPE }  from '@/config'
 import redstone from 'redstone-api'
 import { Magic } from 'magic-sdk'
 export const state = () => ({
@@ -38,6 +37,7 @@ export const state = () => ({
   traitFilters: [],
   notificationList: [],
   certificateList: [],
+  certificateSaleList: [],
   filteredTraits: null,
   nft: {},
   approveToken: '',
@@ -1045,6 +1045,21 @@ export const actions = {
 		  tag_element3
 		  tag_element4
 		}
+		saleCertificates: contractLists(first: 48 orderBy: tag_element3 where: { contract: "CBCN" owner_not: "${address}" }) {
+		  id
+		  contract
+		  contract_id
+		  contract_name
+		  price
+		  image
+		  owner
+		  updatedAt
+		  tag_element0
+		  tag_element1
+		  tag_element2
+		  tag_element3
+		  tag_element4
+		}
       }`
 	const data = await this.$graphql.default.request(query)
 	const certificates = data.contractInfos.map(item => {
@@ -1055,6 +1070,14 @@ export const actions = {
 	  item.co2 = parseFloat(item.tag_element4) / 1000
 	  return item
 	})
+	const saleCertificates = data.saleCertificates.map(item => {
+	  item.token_type = parseInt(item.tag_element0)
+	  item.year = parseInt(item.tag_element1)
+	  item.month = parseInt(item.tag_element2)
+	  item.price = item.price / 1000
+	  return item
+	})
+	commit('setCertificateSaleList', saleCertificates)
     commit('setCertificateList', certificates)
   },
 
@@ -2215,6 +2238,9 @@ export const mutations = {
   },
   setNotificationList(state, list) {
     state.notificationList = list
+  },
+  setCertificateSaleList(state, list) {
+    state.certificateSaleList = list
   },
   setCertificateList(state, list) {
     state.certificateList = list
