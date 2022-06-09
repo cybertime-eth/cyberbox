@@ -56,7 +56,7 @@
           Sold
         </button>
       </div>
-      <div class="collection__sort" v-if="!isMultiNftCollection">
+      <div class="collection__sort" v-if="!isMultiNftCollection && !isCertificateCollection">
         <button
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'mint-lowest'}"
@@ -128,7 +128,7 @@
       <div class="collection__info" v-else>
         <h3 class="collection__info-items">{{ countItems }} items</h3>
         <div class="collection__info-nft">
-          <div class="collection__info-nft-search search-box" v-if="!isMultiNftCollection">
+          <div class="collection__info-nft-search search-box" v-if="!isMultiNftCollection && !isCertificateCollection">
             <input class="search-box-input" :type="!isNomDomain ? 'number' : 'text'" min="1" :placeholder="fitlerPlaceholder" v-model="searchName" @input="searchNft">
             <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
             <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
@@ -218,6 +218,9 @@ export default {
     },
     isMultiNftCollection() {
       return this.$store.state.multiNftSymbols.includes(this.$route.params.collectionid)
+	},
+	isCertificateCollection() {
+      return this.$route.params.collectionid === 'CBCN'
     },
     isNomDomain() {
       return this.$route.params.collectionid === 'nomdom'
@@ -411,7 +414,7 @@ export default {
     async changeSort(id) {
 	  this.sort = id
 	  this.sendCollectionEvent({ sort: id })
-      if (this.isMultiNftCollection) return
+      if (this.isMultiNftCollection || this.isCertificateCollection) return
       this.loading = true
       let sortPrefix = ''
       if (this.myNft) {

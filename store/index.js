@@ -331,7 +331,13 @@ export const state = () => ({
 		id: 22,
 		name: 'NFT Carbon Offset Certificate',
 		route: 'CBCN',
-		image: '/CBCN.png',
+		image: '/collections/daopolis.jpg',
+		banner: '/collections/daopolis-banner.jpg',
+		logo: '/collections/daopolis-logo.png',
+		website: '/lending',
+		twitter: 'https://twitter.com/cybertime_eth',
+		discord: 'https://discord.gg/cKcWfCux4s',
+		telegram: 'https://t.me/cybertime_eth',
 		description: 'Buy a personal NFT certificate to become carbon neutral'
 	},
     // {
@@ -1009,6 +1015,7 @@ export const actions = {
 	const ownerCo2Info = data.co2Owners.length > 0 ? data.co2Owners[0] : {}
 	const carbonInfo = data.contracts[0]
 	return {
+	  mint_count: ownerCo2Info.mint_count || 0,
 	  total_celo: ownerCo2Info.total_celo / 1000 || 0,
 	  trading_co2: ownerCo2Info.total_co2 / 1000 || 0,
 	  total_co2: carbonInfo.total_co2 / 1000 || 0
@@ -1048,8 +1055,7 @@ export const actions = {
 	  item.co2 = parseFloat(item.tag_element4) / 1000
 	  return item
 	})
-	const yearlyCertificates = certificates.filter(item => item.token_type === CERTIFICATE_TOKEN_TYPE.YEAR || item.token_type === CERTIFICATE_TOKEN_TYPE.BONUS)
-    commit('setCertificateList', yearlyCertificates.length === 0 ? certificates : yearlyCertificates)
+    commit('setCertificateList', certificates)
   },
 
   // AUTHORIZATION
