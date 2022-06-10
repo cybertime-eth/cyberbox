@@ -648,7 +648,7 @@ export default {
       color: $grayLight;
     }
     img {
-      max-width: 36.6rem;
+      max-width: 64.4rem;
     }
   }
   @media (max-width: 460px) {
@@ -843,7 +843,7 @@ export default {
         font-size: 1.2rem;
       }
       img {
-        max-width: 30.3rem;
+        max-width: 30.4rem;
       }
     }
   }

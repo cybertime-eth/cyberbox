@@ -52,7 +52,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cyber-box-certification-three',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cyber-box-certification-four',
         options: {}
       },
       ubeswap: {
