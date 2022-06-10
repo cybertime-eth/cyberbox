@@ -3,7 +3,8 @@
 		<div class="carbon">
 			<div class="carbon__tracker">
 				<h2 class="carbon__title">Personal carbon offset tracker</h2>
-				<CustomSelect class="carbon__tracker-picker" :options="dateOptions" @change="filterByYear"/>
+				<!-- <CustomSelect class="carbon__tracker-picker" :options="dateOptions" @change="filterByYear"/> -->
+				<p class="carbon__tracker-year">2022</p>
 				<div class="carbon__tracker-block">
 					<div class="carbon__tracker-block-status" ref="trackerProgress">
 						<circle-progress :size="progressSize" :progress="certificateOccupancy"/>
@@ -31,7 +32,7 @@
 							</div>
 						</div>
 						<div class="carbon__tracker-block-info-certificate">
-							<button class="carbon__tracker-block-info-certificate-button gradient-button" @click="$router.push('/lending')">Buy & Offset Certificate</button>
+							<button class="carbon__tracker-block-info-certificate-button gradient-button" @click="$router.push('/lending')">Buy NFT Certificate</button>
 							<a class="carbon__tracker-block-info-certificate-bonus" @click="showExchangeBonus=true" v-if="!bonusPurchased"><img class="carbon__tracker-block-info-certificate-img" src="/gift.svg" alt="bonus"></a>
 						</div>
 					</div>
@@ -39,9 +40,9 @@
 			</div>
 			<div class="carbon__certificates">
 				<h2 class="carbon__title">NFT Carbon Offset Certificates</h2>
-				<div class="carbon__certificates-header">
+				<!-- <div class="carbon__certificates-header">
 					<CustomSwitch class="carbon__certificates-header-switch" label="My Certificates" :value="myCertificate" @onChange="changeMyCertificateStatus"/>
-				</div>
+				</div> -->
 				<div class="carbon__certificates-list">
 					<certificate :certificate="certificate" :key="idx" v-for="(certificate, idx) of filteredCertificates"/>
 				</div>
@@ -56,7 +57,6 @@
 <script>
 import { CERTIFICATE_TOKEN_TYPE } from '@/config'
 import CustomSelect from '@/components/utility/CustomSelect.vue'
-import CustomSwitch from '@/components/utility/CustomSwitch.vue'
 import CircleProgress from '@/components/utility/CircleProgress.vue'
 import certificate from '@/components/certificate.vue'
 import ExchangeBonus from '@/components/modals/exchangeBonus.vue'
@@ -68,7 +68,6 @@ const MAX_TON_AMOUNT = 20
 export default {
   components: {
 	CustomSelect,
-	CustomSwitch,
 	CircleProgress,
 	certificate,
 	ExchangeBonus,
@@ -141,7 +140,7 @@ export default {
 
 	const trackingInfo = await this.$store.dispatch('getCarbonData')
 	this.totalCertCO2 = trackingInfo.mint_count
-	this.totalTradingCO2 = trackingInfo.trading_co2 / 2
+	this.totalTradingCO2 = trackingInfo.trading_co2
 	this.totalCO2Offset = this.totalCertCO2 + this.totalTradingCO2
 	this.certificateOccupancy = Math.round(this.totalCO2Offset / MAX_TON_AMOUNT * 100)
 	this.$store.dispatch('getCertificates')
@@ -190,7 +189,7 @@ export default {
 		  } else {
 		 	const foundSaleIndex = this.saleCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month && oItem.year === currYear && oItem.month !== currMonth)
 		  	if (foundSaleIndex >= 0) {
-			  newList[index].current = false
+			  newList[index].offset = false
 			  newList[index].contract_id = this.saleCertificates[foundSaleIndex].contract_id
 			  newList[index].price = this.saleCertificates[foundSaleIndex].price
 		  	}
@@ -238,8 +237,18 @@ export default {
 	font-size: 3.2rem;
 	text-align: center;
   }
+  &__year {
+	
+  }
   &__tracker {
 	box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+	&-year {
+	  margin: 0 auto;
+	  text-align: center;
+	  font-weight: 600;
+	  font-size: 1.6rem;
+	  color: $grayDark;
+	}
 	&-picker {
 	  width: 8.2rem;
 	  margin: 0 auto;
@@ -294,6 +303,7 @@ export default {
 			&:last-child {
 			  margin: 0;
 			  padding-top: 1.3rem;
+			  border-top: 1px solid #F3F4F6;
 			  * {
 				font-weight: 600;
 				color: $green;
@@ -332,7 +342,7 @@ export default {
   &__certificates {
 	padding: 5.8rem 6rem 0;
 	.carbon__title {
-	  padding-bottom: 5rem;
+	  padding-bottom: 0;
 	}
 	&-header {
 	  display: flex;
@@ -348,7 +358,7 @@ export default {
 	  grid-template-columns: repeat(6, 20rem);
 	  grid-column-gap: 2.4rem;
 	  grid-row-gap: 3.5rem;
-	  padding-top: 4.4rem;
+	  padding-top: 5.4rem;
 	}
   }
   @media (max-width: 460px) {

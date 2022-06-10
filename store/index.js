@@ -1034,6 +1034,7 @@ export const actions = {
 		  contract_id
 		  seller
 		  owner
+		  price
 		  market_status
 		  contract_address
 		  image
@@ -1066,7 +1067,11 @@ export const actions = {
 	  item.token_type = parseInt(item.tag_element0)
 	  item.year = parseInt(item.tag_element1)
 	  item.month = parseInt(item.tag_element2)
-	  item.price = parseFloat(item.tag_element3) / 1000
+	  if (item.market_status === 'LISTED') {
+		item.price = item.price / 1000
+	  } else {
+		item.price = null
+	  }
 	  item.co2 = parseFloat(item.tag_element4) / 1000
 	  return item
 	})
@@ -1888,7 +1893,8 @@ export const actions = {
           ownerCount
           createrFee
           producerFee
-          marketFee
+		  marketFee
+		  total_co2
         }
       }`;
     let data = await this.$graphql.default.request(query)
