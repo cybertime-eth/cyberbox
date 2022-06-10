@@ -33,7 +33,7 @@
                             </div>
                             <p class="lending__block-info-price-detail-value">Price (${{ priceToken }})</p>
                         </div>
-                        <button class="lending__block-info-price-buy" @click="clickBuyToken">Buy Now</button>
+                        <button class="lending__block-info-price-buy" @click="clickBuyToken">Buy & Offset now</button>
                     </div>
 					<div class="lending__block-info-minted" v-else>
 						<p class="lending__block-info-minted-description">Congratulations!<br/>You have already bought an NFT Carbon Offset Certificate this month.</p>
@@ -57,10 +57,10 @@
                     <h2 class="lending__title">Collect the  entire  collection for 2022</h2>
                     <h2 class="lending__collection-description">Save for the future, sell on our marketplace or exchange 12 NFTs for 1 exclusive NFT</h2>
                     <div class="lending__collection-list">
-                        <div class="lending__collection-item" :key="idx" v-for="(certificate, idx) of certificateList">
+                        <div class="lending__collection-item" :class="{available: certificateBuyAvailable(certificate), last: !certificateOwner(certificate) && !certificate.offset}" :key="idx" v-for="(certificate, idx) of certificateList">
                             <p class="lending__collection-item-date">{{ certificateName(certificate) }}</p>
-                            <div class="lending__collection-item-box" :class="{owned: certificate.owner || (!certificate.offset && !certificate.future)}">
-                                <img class="lending__collection-item-box-img" :class="{current: certificate.offset, future: certificate.future}" :src="certificate.image" alt="certificate">
+                            <div class="lending__collection-item-box" :class="{'no-bg': certificateOwner(certificate) || !certificate.offset}">
+                                <img class="lending__collection-item-box-img" :src="certificate.image" alt="certificate">
                                 <img class="lending__collection-item-box-checked" src="/checked-circle.svg" alt="checkmark" v-if="certificateOwner(certificate)">
                             </div>
                         </div>
@@ -72,14 +72,14 @@
 				<p class="lending__guide-description">Every day the inhabitants of the earth leave their carbon footprint. With our NFT certificates you can make your carbon footprint neutral or even negative</p>
 				<div class="lending__reason-info">
 					<div class="lending__reason-info-item">
-						<h3 class="lending__reason-info-item-title">Carbon Positive <img src="/sad-face.svg" alt="sad"></h3>
+						<h3 class="lending__reason-info-item-title">Footprint without carbon offset <img src="/sad-face.svg" alt="sad"></h3>
 						<client-only>
 							<img class="lending__reason-info-item-diagram" src="/carbon-positive.svg" alt="diagram" v-if="!isMobile()">
 							<img class="lending__reason-info-item-diagram" src="/carbon-positive-mobile.svg" alt="diagram" v-else>
 						</client-only>
 					</div>
 					<div class="lending__reason-info-item">
-						<h3 class="lending__reason-info-item-title">Carbon Neutral <img src="/happy-face.svg" alt="happy"></h3>
+						<h3 class="lending__reason-info-item-title">Footprint with carbon offset <img src="/happy-face.svg" alt="happy"></h3>
 						<client-only>
 							<img class="lending__reason-info-item-diagram" src="/carbon-neutral.svg" alt="diagram" v-if="!isMobile()">
 							<img class="lending__reason-info-item-diagram" src="/carbon-neutral-mobile.svg" alt="diagram" v-else>
@@ -194,6 +194,9 @@ export default {
     ownedCertificates() {
 	  return this.$store.state.certificateList
 	},
+	saleCertificates() {
+	  return this.$store.state.certificateSaleList
+	},
     showSuccessModal() {
       return this.$store.state.successBuyToken
     }
@@ -259,10 +262,13 @@ export default {
   },
   methods: {
     certificateName(certificate) {
-      return this.getCertificateName(certificate)
+      return this.getCertificateName(certificate, false)
     },
     certificateOwner(certificate) {
       return certificate.owner === this.$store.state.fullAddress
+	},
+	certificateBuyAvailable(certificate) {
+	  return !this.certificateOwner(certificate) && (certificate.offset || certificate.price)
     },
     async loadBalance() {
       if (this.$store.state.address) {
@@ -278,6 +284,7 @@ export default {
     updateCertificateList() {
 	  const today = new Date()
 	  const currYear = today.getFullYear()
+	  const currMonth = today.getMonth() + 1
 	  const newList = JSON.parse(JSON.stringify(this.certificateList))
       newList.forEach((item, index) => {
         const foundIndex = this.ownedCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month)
@@ -286,6 +293,13 @@ export default {
           newList[index] = newItem
           if (newItem.year === today.getFullYear() && newItem.month === today.getMonth() + 1) {
 			this.bought = true
+		  }
+		} else {
+		  const foundSaleIndex = this.saleCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month && oItem.year === currYear && oItem.month !== currMonth)
+		  if (foundSaleIndex >= 0) {
+			newList[index].offset = false
+			newList[index].contract_id = this.saleCertificates[foundSaleIndex].contract_id
+			newList[index].price = this.saleCertificates[foundSaleIndex].price
 		  }
 		}
 	  })
@@ -401,7 +415,7 @@ export default {
           }
         }
         &-buy {
-          width: 14.8rem;
+          width: 16.8rem;
           height: 4.8rem;
           background: linear-gradient(to right, #365BE0, #D676CF, #FFE884);
           font-weight: 700;
@@ -495,20 +509,15 @@ export default {
         height: 20.2rem;
         background: linear-gradient(0deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), linear-gradient(46.74deg, #365BE0 -17.17%, #D676CF 48.99%, #FFE884 113%);
         position: relative;
-        &.owned {
+        &.no-bg {
           background: none;
         }
         &-img {
 		  max-width: 100%;
 		  border-radius: 0.4rem;
 		  object-fit: cover;
-		  opacity: 0.7;
-		  &.current {
-			border-radius: 0.8rem;
-			border: 4px solid $green;
-		  }
-		  &.current, &.future {
-			opacity: 1;
+		  &.last {
+			opacity: 0.7;
 		  }
         }
         &-checked {
@@ -519,7 +528,24 @@ export default {
           height: 2.5rem;
           opacity: 0.9;
         }
-      }      
+	  }
+	  &.available {
+		.lending__collection-item-date {
+		  color: $green;
+		}
+		.lending__collection-item-box-img {
+		  border-radius: 0.8rem;
+		  border: 4px solid $green;
+		}
+	  }
+	  &.last {
+		.lending__collection-item-date {
+		  color: $border;
+		}
+		.lending__collection-item-box-img {
+		  opacity: 0.7;
+		}
+	  }
     }
   }
   &__market {
@@ -573,6 +599,9 @@ export default {
 	&-info {
 	  margin-top: 9.6rem;
 	  &-item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 		padding-top: 9.4rem;
 		&:first-child {
 		  padding: 0;
