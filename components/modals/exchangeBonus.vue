@@ -4,17 +4,16 @@
             <a class="exchange__bonus-close" @click="$emit('closeModal')">
                 <img class="exchange__bonus-close-icon" src="/close.svg" alt="close">
             </a>
-			<h2 class="exchange__bonus-guide-title">Get an exclusive NFT for the entire 2022 collection</h2>
+			<h2 class="exchange__bonus-guide-title">Get a Carbon Super<br/>Rare bonus!</h2>
             <div class="exchange__bonus-guide">
                 <div class="exchange__bonus-guide-header">
 					<p class="exchange__bonus-guide-description">Collect all 12 carbon certificates in a year and exchange them for a secret super rare unique NFT.</p>
-					<p class="exchange__bonus-guide-sub-description">Exclusive NFT gives you a chance to get into the closed ReFi DAO club</p>
                     <div class="exchange__bonus-picture">
 						<img class="exchange__bonus-picture-img" src="/question-mark.svg" alt="unknown">
 					</div>
                 </div>
                 <button class="exchange__bonus-get" :class="{disabled: !bonusAvailable}" @click="$emit('onExchange')">Get a bouns</button>
-                <p class="exchange__bonus-guide-tip"><span>Attention!</span> To get 1 exclusive NFT you need to burn a collection of 12 monthly NFTs</p>
+                <p class="exchange__bonus-guide-tip">You exchange your 12 certificates irrevocably.</p>
                 <p class="exchange__bonus-guide-footprint">If you missed a month, you can buy a certificate on the secondary market, but this certificate will no longer cover your carbon footprint</p>
             </div>
         </div>
@@ -41,33 +40,23 @@ export default {
     top: 2.9rem;
     right: 2.9rem;
   }
+  &-title {
+	font-family: Cabin-Bold;
+	font-size: 3.2rem;
+  }
   &-guide {
     flex: 1;
-	max-width: 30.2rem;
-	&-title {
-	  max-width: 30.2rem;
-	  font-family: Cabin-Bold;
-	  font-size: 3.2rem;
-      line-height: 3.6rem;
-	}
-    &-description, &-sub-description {
+    max-width: 30.2rem;
+    &-description {
       margin-top: 1.2rem;
       font-weight: 600;
       font-size: 1.4rem;
       color: $grayDark;
-	}
-	&-sub-description {
-	  background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
-	  -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-	}
+    }
     &-tip {
-      font-weight: 400;
-	  font-size: 1.4rem;
-	  color: $textColor;
-      span {
-		color: $pink;
-	  }
+      font-weight: 600;
+      font-size: 1.4rem;
+      color: $pink;
     }
     &-footprint {
       margin-top: 1.6rem;
@@ -113,14 +102,11 @@ export default {
     display: block;
     width: 100%;
 	margin: 0 0.8rem;
+	&-title {
+	  font-size: 2.2rem;
+	}
     &-guide {
-	  max-width: 100%;
-	  &-title {
-		max-width: 22rem;
-		font-family: OpenSans-SemiBold;
-		font-size: 2.2rem;
-		line-height: 2.4rem;
-	  }
+      max-width: 100%;
 	}
 	&-picture {
 	  position: static;

@@ -27,22 +27,24 @@ Vue.mixin({
 		const dataList = []
 		const currYear = today.getFullYear()
 		const currMonth = today.getMonth() + 1
-		const startMonth = year === 2022 ? 6 : 1
-		for (let i = startMonth; i <= currMonth; i++) {
+		for (let i = 1; i <= 12; i++) {
 			dataList.push({
 				image: (year !== currYear || year === currYear && i <= currMonth) ? '/carbon.svg' : '/question-mark.svg',
 				year,
 				month: i,
-				offset: year === currYear && i === currMonth
+				offset: year === currYear && i === currMonth,
+				future: year === currYear && i > currMonth
 			})
 		}
 		return dataList
 	},
-	getCertificateName(certificate, fullYear = true) {
+	getCertificateName(certificate) {
+		let fullYear = false
 		if (!certificate.token_type && certificate.tag_element0) {
 			certificate.token_type = parseInt(certificate.tag_element0)
 			certificate.year = parseInt(certificate.tag_element1)
 			certificate.month = parseInt(certificate.tag_element2)
+			fullYear = true
 		}
 		if (certificate.token_type === CERTIFICATE_TOKEN_TYPE.YEAR || certificate.token_type === CERTIFICATE_TOKEN_TYPE.BONUS) {
             return 'Carbon Super Rare Offset Certificate #1'

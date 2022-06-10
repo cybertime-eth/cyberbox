@@ -7,14 +7,14 @@
         <div class="collection__item-info">
             <h2 class="collection__item-info-name">{{ certificateName }}</h2>
             <p class="collection__item-info-type">Price</p>
-            <div class="collection__item-info-price" v-if="certificate.price">
+            <div class="collection__item-info-price" v-if="buyAvailable">
                 <img src="/celo.svg" alt="celo">
                 <h3 class="collection__item-info-price-text">{{ certificate.price }}</h3>
             </div>
             <p class="certificate__item-description" :class="{ 'not-sale': owner || !saleAvailable }" v-else>{{ certificateDescription }}</p>
             <button class="collection__item-info-details" @click="routeCertificate" v-if="owner">Details</button>
             <button class="collection__item-info-details buy" @click="routeCertificate" v-else-if="buyAvailable">Buy</button>
-            <button class="collection__item-info-details offset" @click="routeCertificate" v-else-if="saleAvailable">Offset now</button>
+            <button class="collection__item-info-details offset" :class="{ disabled: certificate.future }" @click="routeCertificate" v-else-if="saleAvailable">Offset now</button>
         </div>
     </div>    
 </template>
@@ -24,7 +24,7 @@ export default {
   props: ['certificate'],
   computed: {
 	certificateName() {
-	  return this.getCertificateName(this.certificate, false)
+	  return this.getCertificateName(this.certificate)
 	},
     owner() {
       return this.$store.state.fullAddress === this.certificate.owner
@@ -36,7 +36,7 @@ export default {
       return !this.owner && this.certificate.price > 0
 	},
 	saleAvailable() {
-	  return this.certificate.offset
+	  return this.certificate.offset || this.certificate.future
 	},
     certificateDescription() {
       return this.owner || !this.saleAvailable ? 'Not for sale' : '-'
@@ -44,7 +44,8 @@ export default {
   },
   methods: {
     routeCertificate() {
-	  if (this.certificate.offset) {
+	  if (this.certificate.future) return
+	  if (this.certificate.current) {
 		this.$router.push('/lending')
 	  } else {
 		this.$router.push(`/collections/CBCN/${this.certificate.contract_id}`)
@@ -58,13 +59,8 @@ export default {
 .certificate__item {
   height: 39.7rem;
   .collection__item-info-name {
-	font-size: 1.8rem;
     padding-bottom: 4rem;
     border-bottom: .1rem solid $modalColor;
-  }
-  .collection__item-info-type {
-	padding-top: 1.2rem;
-	font-size: 1.2rem;
   }
   .collection__item-image {
     display: flex;
@@ -79,14 +75,12 @@ export default {
     }
   }
   &-description {
-	padding-top: 0.4rem;
     font-size: 1.4rem;
     &.not-sale {
       color: $border;
     }
   }
   .collection__item-info-details {
-	margin-top: 1.6rem;
     &.buy {
       background: $white;
       border: 1px solid $modalColor;
@@ -101,14 +95,6 @@ export default {
         color: $border2;
       }
     }
-  }
-
-  @media (max-width: 460px) {
-	height: 28.8rem;
-	.collection__item-info-name {
-	  padding-bottom: 3.2rem;
-	  font-size: 1.4rem;
-	}
   }
 }
 </style>

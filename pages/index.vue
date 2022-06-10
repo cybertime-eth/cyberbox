@@ -165,10 +165,7 @@ export default {
 	  const co2CeloDiff = Math.ceil(co2celoPrice) - co2celoPrice
       item.volumeCelo = Math.round(item.sell_total_price / 1000)
       item.co2Celo = co2celoPrice !== 0 ? co2celoPrice.toFixed(co2CeloDiff === 0 ? 0 : 2) : 0,
-	  totalCO2Amount += co2celoPrice
-	  if (item.nftSymbol === 'CBCN') {
-		totalCO2Amount += item.total_co2 / 1000
-	  }
+      totalCO2Amount += co2celoPrice
       item.name = (this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol) || {}).name
       item.image = `/${item.nftSymbol}.png`
       return item
@@ -237,7 +234,7 @@ export default {
 		  	break
 		}
 		list.push({
-		  name: `${month} ${date.getFullYear().toString()}`,
+		  name: `${month} ${date.getFullYear().toString().substr(2, 3)}`,
 		  image: `/certificates/${i}.png`,
 		  status,
 		  current: i === currMonth
