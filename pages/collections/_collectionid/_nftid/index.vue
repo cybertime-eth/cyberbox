@@ -168,8 +168,8 @@
         </div>
       </div>
     </div>
-  <connect @showWallet="openWalletModal" @showEmail="openEmailModal" @closeModal="closeModal" v-if="showConnectModal"/>
-  <walletConnect @showConnect="openConnectModal" @closeModal="closeModal" v-if="showWalletModal"/>
+  <!-- <connect @showWallet="openWalletModal" @showEmail="openEmailModal" @closeModal="closeModal" v-if="showConnectModal"/> -->
+  <walletConnect @showConnect="openConnectModal" @closeModal="closeModal" v-if="showConnectModal"/>
   <valoraConnect @closeModal="closeModal" v-if="showValoraModal"/>
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
   <Transfer :nft="nft" @done="closeAndReload" @closeModal="showTransferModal=false"  v-if="showTransferModal" />

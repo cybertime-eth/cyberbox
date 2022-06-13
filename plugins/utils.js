@@ -22,18 +22,20 @@ Vue.mixin({
 			return false
 		}
 	},
-	getCertificatesOfYear(year) {
+	getCertificatesOfYear(year, all = false) {
 		const today = new Date()
 		const dataList = []
 		const currYear = today.getFullYear()
 		const currMonth = today.getMonth() + 1
-		const startMonth = year === 2022 ? 6 : 1
-		for (let i = startMonth; i <= currMonth; i++) {
+		const endMonth = all ? 12 : currMonth
+		const startMonth = (year === 2022 && all || year !== 2022) ? 1 : 6
+		for (let i = startMonth; i <= endMonth; i++) {
 			dataList.push({
 				image: (year !== currYear || year === currYear && i <= currMonth) ? '/carbon.svg' : '/question-mark.svg',
 				year,
 				month: i,
-				offset: year === currYear && i === currMonth
+				offset: year === currYear && i === currMonth,
+				future: year === currYear && i > currMonth
 			})
 		}
 		return dataList

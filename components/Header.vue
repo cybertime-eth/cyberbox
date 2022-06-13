@@ -89,8 +89,8 @@
         <p class="header__error-network-text">You are on the wrong network</p>
       </div>
     </div>
-    <connect @showWallet="openWalletModal" @showEmail="openEmailModal" @closeModal="closeModal" v-if="showConnectModal && !address"/>
-	<walletConnect @showConnect="openConnectModal" @showValora="openValoraModal" @closeModal="closeModal" v-if="showWalletModal"/>
+    <!-- <connect @showWallet="openWalletModal" @showEmail="openEmailModal" @closeModal="closeModal" v-if="showConnectModal && !address"/> -->
+	<walletConnect @showConnect="openConnectModal" @showValora="openValoraModal" @closeModal="closeModal" v-if="showConnectModal && !address"/>
 	<valoraConnect @closeModal="closeModal" v-if="showValoraModal"/>
 	<socialConnect @showConnect="openConnectModal" @closeModal="closeModal" v-if="showEmailModal"/>
     <wrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>

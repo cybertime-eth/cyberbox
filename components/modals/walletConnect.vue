@@ -2,7 +2,7 @@
   <div class="modal">
     <div class="modal__wallet">
 	  <div class="modal__wallet-header">
-		<img class="modal__wallet-header-back" src="/arrow-left-black.svg" alt="back" @click="showConnectModal">
+		<!-- <img class="modal__wallet-header-back" src="/arrow-left-black.svg" alt="back" @click="showConnectModal"> -->
       	<h2 class="modal__wallet-header-title">Connect Wallet</h2>
 		<img class="modal__wallet-header-close" src="/close.svg" alt="close" @click="closeModal">
 	  </div>
@@ -111,11 +111,19 @@ export default {
 	  display: flex;
 	  align-items: center;
 	  justify-content: space-between;
-	  margin: 0 0.4rem;
+	  position: relative;
 	  &-title {
+		flex: 1;
+		text-align: center;
 		font-weight: 600;
 		font-size: 2rem;
 		color: $titleColor;
+	  }
+	  &-close {
+		position: absolute;
+		top: 0.2rem;
+		right: 0.4rem;
+		cursor: pointer;
 	  }
 	}
 	&-buttons {
@@ -151,7 +159,6 @@ export default {
 	  width: 100%;
 	  padding: 3.4rem 0.8rem 2.4rem;
 	  &-header {
-		margin: 0 0.8rem;
 		&-title {
 		  font-size: 1.8rem;
 		}

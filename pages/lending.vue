@@ -57,9 +57,9 @@
                     <h2 class="lending__title">Collect the  entire  collection for 2022</h2>
                     <h2 class="lending__collection-description">Save for the future, sell on our marketplace or exchange 12 NFTs for 1 exclusive NFT</h2>
                     <div class="lending__collection-list">
-                        <div class="lending__collection-item" :class="{available: certificateBuyAvailable(certificate), last: !certificateOwner(certificate) && !certificate.offset}" :key="idx" v-for="(certificate, idx) of certificateList">
+                        <div class="lending__collection-item" :class="{available: certificateBuyAvailable(certificate), last: !certificateOwner(certificate) && !certificate.offset && !certificate.future}" :key="idx" v-for="(certificate, idx) of certificateList">
                             <p class="lending__collection-item-date">{{ certificateName(certificate) }}</p>
-                            <div class="lending__collection-item-box" :class="{'no-bg': certificateOwner(certificate) || !certificate.offset}">
+                            <div class="lending__collection-item-box" :class="{'no-bg': certificateOwner(certificate) || (!certificate.offset && !certificate.future)}">
                                 <img class="lending__collection-item-box-img" :src="certificate.image" alt="certificate">
                                 <img class="lending__collection-item-box-checked" src="/checked-circle.svg" alt="checkmark" v-if="certificateOwner(certificate)">
                             </div>
@@ -218,7 +218,7 @@ export default {
       nftid: currMonth + 1,
       refiOffset: CERTIFICATE_MINT_PRICE * 25 / 1000 * this.$store.state.cMCO2Price
     }
-    this.certificateList = this.getCertificatesOfYear(new Date().getFullYear())
+    this.certificateList = this.getCertificatesOfYear(new Date().getFullYear(), true)
 	this.loadMyCertificates()
 	this.faqList = [{
 	  title: 'How i can buy by credit card?',
@@ -508,6 +508,7 @@ export default {
         width: 20rem;
         height: 20.2rem;
         background: linear-gradient(0deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), linear-gradient(46.74deg, #365BE0 -17.17%, #D676CF 48.99%, #FFE884 113%);
+		border-radius: 0.4rem;
         position: relative;
         &.no-bg {
           background: none;
