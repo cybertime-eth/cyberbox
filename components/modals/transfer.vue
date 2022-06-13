@@ -52,8 +52,12 @@ export default {
       return foundCollection?.name
     },
     transferDescription() {
-      const nameSuffix = this.nft.contract !== 'nomdom' ? '' : '.nom'
-      return `${this.nft.name}${nameSuffix}`
+      if (this.nft.contract !== 'CBCN') {
+		const nameSuffix = this.nft.contract !== 'nomdom' ? '' : '.nom'
+      	return `${this.nft.name}${nameSuffix}`
+	  } else {
+		return this.getCertificateName(this.nft)
+	  }
     },
     transferFormName() {
       if (!this.successTransferToken) {

@@ -223,8 +223,10 @@ export default {
 	certificates() {
 	  const date = new Date()
 	  const currMonth = date.getMonth() + 1
+    const startMonth = currMonth > 0 ? currMonth - 1 : currMonth
+    const endMonth = currMonth < 12 ? currMonth + 1 : 12
 	  const list = []
-	  for (let i = (currMonth - 1); i <= currMonth + 1; i++) {
+	  for (let i = startMonth; i <= endMonth + 1; i++) {
 		date.setMonth(i - 1)
 		const month = date.toLocaleString('en-us', { month: 'long' })
 		let status = ''

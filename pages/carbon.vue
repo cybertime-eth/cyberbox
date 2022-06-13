@@ -85,7 +85,6 @@ export default {
 	  totalCertCO2: 0,
 	  totalTradingCO2: 0,
 	  totalCO2Offset: 0,
-	  ownedCertCount: 0,
 	  showExchangeBonus: false,
 	  showExchangeToken: false,
 	  bonusPurchased: false
@@ -171,6 +170,7 @@ export default {
 	updateCertificateList() {
 	  if (this.$store.state.address) {
 		const newList = JSON.parse(JSON.stringify(this.certificateList))
+		const additionalList = []
 		const date = new Date()
 		const currYear = date.getFullYear()
 		const currMonth = date.getMonth() + 1
@@ -187,15 +187,25 @@ export default {
 			}
 			ownedCount++
 		  } else {
-		 	const foundSaleIndex = this.saleCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month && oItem.year === currYear && oItem.month !== currMonth)
-		  	if (foundSaleIndex >= 0) {
-			  newList[index].offset = false
-			  newList[index].contract_id = this.saleCertificates[foundSaleIndex].contract_id
-			  newList[index].price = this.saleCertificates[foundSaleIndex].price
-		  	}
+			if (newList[index].year === currYear && newList[index].month < currMonth) {
+			  const foundSaleIndex = this.saleCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month && oItem.year === currYear && oItem.month !== currMonth)
+			  if (foundSaleIndex >= 0) {
+				newList[index].offset = false
+				newList[index].contract_id = this.saleCertificates[foundSaleIndex].contract_id
+				newList[index].price = this.saleCertificates[foundSaleIndex].price
+			  }
+			}
 		  }
 		})
-		this.ownedCertCount = currYearCertCount
+		if (currMonth < 12) {
+		  for (let i = currMonth + 1; i <= 12; i++) {
+			const foundIndex = this.ownedCertificates.findIndex(oItem => oItem.year === currYear && oItem.month === i)
+			if (foundIndex >= 0) {
+			  newList.push(this.ownedCertificates[foundIndex])
+			}
+		  }
+		}
+
 		this.certificateList = newList
 		this.changeFilter()
 	  }
