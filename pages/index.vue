@@ -223,8 +223,8 @@ export default {
 	certificates() {
 	  const date = new Date()
 	  const currMonth = date.getMonth() + 1
-    const startMonth = currMonth > 0 ? currMonth - 1 : currMonth
-    const endMonth = currMonth < 12 ? currMonth + 1 : 12
+      const startMonth = currMonth > 0 ? currMonth - 1 : currMonth
+      const endMonth = currMonth < 12 ? currMonth + 1 : 12
 	  const list = []
 	  for (let i = startMonth; i <= endMonth; i++) {
 		date.setMonth(i - 1)
