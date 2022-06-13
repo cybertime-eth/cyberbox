@@ -226,7 +226,7 @@ export default {
     const startMonth = currMonth > 0 ? currMonth - 1 : currMonth
     const endMonth = currMonth < 12 ? currMonth + 1 : 12
 	  const list = []
-	  for (let i = startMonth; i <= endMonth + 1; i++) {
+	  for (let i = startMonth; i <= endMonth; i++) {
 		date.setMonth(i - 1)
 		const month = date.toLocaleString('en-us', { month: 'long' })
 		let status = ''
