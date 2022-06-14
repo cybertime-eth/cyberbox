@@ -238,8 +238,6 @@ export default {
 
 <style lang="scss" scoped>
 .carbon {
-  padding-top: 4.2rem;
-  padding-bottom: 10.2rem;
   &__title {
 	padding-bottom: 1rem;
 	font-family: Cabin-Medium;
@@ -251,6 +249,8 @@ export default {
 	
   }
   &__tracker {
+	padding-top: 4.2rem;
+  	padding-bottom: 10.2rem;
 	box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
 	&-year {
 	  margin: 0 auto;
@@ -372,7 +372,6 @@ export default {
 	}
   }
   @media (max-width: 460px) {
-	padding-top: 2.5rem;
 	&__title {
 	  padding-bottom: 2.5rem;
 	  font-family: OpenSans-SemiBold;
@@ -380,6 +379,7 @@ export default {
 	  font-size: 1.8rem;
 	}
 	&__tracker {
+	  padding-top: 2.5rem;
 	  &-block {
 		display: block;
 		padding-top: 4.4rem;
