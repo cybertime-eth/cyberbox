@@ -68,7 +68,11 @@ export default {
       // https://go.nuxtjs.dev/axios
       '@nuxtjs/axios',
       '@nuxtjs/proxy',
-      'nuxt-logrocket'
+      'nuxt-logrocket',
+      ['nuxt-bugsnag', {
+        apiKey: 'cef8153f64709623f660870486f23999',
+        publishRelease: true
+      }]
     ],
 
     axios: {
