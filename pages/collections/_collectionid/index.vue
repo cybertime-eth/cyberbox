@@ -531,7 +531,8 @@ export default {
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
     if (this.$store.state.cMCO2Price > 0 && this.collectionInfo.producerFee > 0 && this.collectionInfo.sell_refi_price > 0) {
       const refiPrice = this.$store.state.cMCO2Price * this.collectionInfo.producerFee / 1000 * this.collectionInfo.sell_refi_price / 1000
-      this.refiCO2Price = refiPrice > 1 ? Math.round(refiPrice).toLocaleString('EN-US') : refiPrice.toFixed(3)
+      const refiPriceDiff = Math.ceil(refiPrice) - refiPrice
+      this.refiCO2Price = refiPrice !== 0 ? refiPrice.toFixed(refiPriceDiff === 0 ? 0 : 2) : 0
     }
 	this.loading = false
 	this.sendCollectionEvent({ render: true })
