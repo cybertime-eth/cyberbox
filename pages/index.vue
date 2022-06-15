@@ -164,7 +164,7 @@ export default {
 	  const co2celoPrice = item.sell_refi_price / 1000 * item.producerFee / 1000 * cmco2Price
 	  const co2CeloDiff = Math.ceil(co2celoPrice) - co2celoPrice
       item.volumeCelo = Math.round(item.sell_total_price / 1000)
-      item.co2Celo = co2celoPrice !== 0 ? co2celoPrice.toFixed(co2CeloDiff === 0 ? 0 : 2) : 0,
+      item.co2Celo = co2celoPrice !== 0 ? co2celoPrice.toFixed(co2CeloDiff === 0 ? 0 : 2) : 0
 	  totalCO2Amount += co2celoPrice
 	  if (item.nftSymbol === 'CBCN') {
 		totalCO2Amount += item.total_co2 / 1000
