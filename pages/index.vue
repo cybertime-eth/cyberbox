@@ -31,8 +31,9 @@
 		<div class="refi__block-carbon-certificate" ref="certificate">
 			<div class="refi__block-carbon-certificate-item" :class="{current: certificate.current }" :key="idx" v-for="(certificate, idx) of certificates">
 				<h3 class="refi__block-carbon-certificate-item-name">{{ certificate.name }}</h3>
-				<div class="refi__block-carbon-certificate-item-box">
-					<img class="refi__block-carbon-certificate-item-box-image" :src="certificate.image">
+				<div class="refi__block-carbon-certificate-item-box" :class="{unknown: !certificate.image}">
+					<img class="refi__block-carbon-certificate-item-box-image" :src="certificate.image" v-if="certificate.image">
+					<img class="refi__block-carbon-certificate-item-box-image-unknown" src="/question-mark.svg" v-else>
 				</div>
 				<p class="refi__block-carbon-certificate-item-status">{{ certificate.status }}</p>
 			</div>
@@ -222,6 +223,7 @@ export default {
 	},
 	certificates() {
 	  const date = new Date()
+	  const currYear = date.getFullYear()
 	  const currMonth = date.getMonth() + 1
       const startMonth = currMonth > 0 ? currMonth - 1 : currMonth
       const endMonth = currMonth < 12 ? currMonth + 1 : 12
@@ -239,9 +241,10 @@ export default {
 		  case (currMonth + 1): status = 'Next'
 		  	break
 		}
+		const imageVisible = currYear !== 2022 || (currYear === 2022 && i > 5)
 		list.push({
-		  name: `${month} ${date.getFullYear().toString()}`,
-		  image: `/certificates/${i}.png`,
+		  name: `${month} ${currYear}`,
+		  image: imageVisible ? `/certificates/${currYear}/${i}.jpg` : null,
 		  status,
 		  current: i === currMonth
 		})
@@ -526,6 +529,14 @@ export default {
 			  height: 20rem;
 			  border-radius: 0.4rem;
 			  opacity: 0.7;
+			}
+			&.unknown {
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			  width: 20rem;
+			  height: 20rem;
+			  background: linear-gradient(0deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), linear-gradient(46.74deg, #365BE0 -17.17%, #D676CF 48.99%, #FFE884 113%);
 			}
 		  }
 		  &-status {

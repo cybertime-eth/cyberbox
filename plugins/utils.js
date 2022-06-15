@@ -30,8 +30,9 @@ Vue.mixin({
 		const endMonth = all ? 12 : currMonth
 		const startMonth = (year === 2022 && all || year !== 2022) ? 1 : 6
 		for (let i = startMonth; i <= endMonth; i++) {
+			const hasImage = year !== 2022 || (year === 2022 && i > 5 && i <= currMonth)
 			dataList.push({
-				image: (year !== currYear || year === currYear && i <= currMonth) ? '/carbon.svg' : '/question-mark.svg',
+				image: hasImage ? `/certificates/${currYear}/${i}.jpg` : '/question-mark.svg',
 				year,
 				month: i,
 				offset: year === currYear && i === currMonth,

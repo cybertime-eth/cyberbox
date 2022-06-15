@@ -10,7 +10,7 @@
 				</client-only>
                 <div class="lending__block-summary">
                     <p class="lending__block-summary-date">{{ currentDate }}</p>
-                    <img class="lending__block-summary-img" src="/carbon.svg" alt="certificate">
+                    <img class="lending__block-summary-img" :src="currentCertificateImage" alt="certificate">
                 </div>
                 <div class="lending__block-info">
                     <client-only>
@@ -59,7 +59,7 @@
                     <div class="lending__collection-list">
                         <div class="lending__collection-item" :class="{available: certificateBuyAvailable(certificate), last: !certificateOwner(certificate) && !certificate.offset && !certificate.future}" :key="idx" v-for="(certificate, idx) of certificateList">
                             <p class="lending__collection-item-date">{{ certificateName(certificate) }}</p>
-                            <div class="lending__collection-item-box" :class="{'no-bg': certificateOwner(certificate) || (!certificate.offset && !certificate.future)}">
+                            <div class="lending__collection-item-box" :class="{'no-bg': certificateOwner(certificate) || (!certificate.offset && !certificate.future && certificate.hasImage)}">
                                 <img class="lending__collection-item-box-img" :src="certificate.image" alt="certificate">
                                 <img class="lending__collection-item-box-checked" src="/checked-circle.svg" alt="checkmark" v-if="certificateOwner(certificate)">
                             </div>
@@ -191,6 +191,13 @@ export default {
       const month = today.toLocaleString('en-us', { month: 'long' })
       return `${month} ${today.getFullYear()}`
     },
+	currentCertificateImage() {
+	  const date = new Date()
+      const currYear = date.getFullYear()
+	  const currMonth = date.getMonth() + 1
+	  const imageVisible = currYear !== 2022 || (currYear === 2022 && currMonth > 5)
+	  return imageVisible ? `/certificates/${currYear}/${currMonth}.jpg` : null
+	},
     ownedCertificates() {
 	  return this.$store.state.certificateList
 	},
@@ -213,7 +220,7 @@ export default {
     this.certificate = {
       name: `Carbon Offset Certificate ${month} ${today.getFullYear()}`,
       contract: 'monthnft',
-      image: '/carbon.svg',
+      image: this.currentCertificateImage,
       price: CERTIFICATE_MINT_PRICE,
       nftid: currMonth + 1,
       refiOffset: CERTIFICATE_MINT_PRICE * 25 / 1000 * this.$store.state.cMCO2Price
@@ -370,6 +377,7 @@ export default {
         width: 42.8rem;
         height: 42.8rem;
         margin-top: 1.8rem;
+		border-radius: 0.4rem;
       }
     }
     &-info {

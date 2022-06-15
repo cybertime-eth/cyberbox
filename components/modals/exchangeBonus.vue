@@ -10,7 +10,7 @@
 					<p class="exchange__bonus-guide-description">Collect all 12 carbon certificates in a year and exchange them for a secret super rare unique NFT.</p>
 					<p class="exchange__bonus-guide-sub-description">Exclusive NFT gives you a chance to get into the closed ReFi DAO club</p>
                     <div class="exchange__bonus-picture">
-						<img class="exchange__bonus-picture-img" src="/question-mark.svg" alt="unknown">
+						<img class="exchange__bonus-picture-img" :src="bonunsImage" alt="unknown">
 					</div>
                 </div>
                 <button class="exchange__bonus-get" :class="{disabled: !bonusAvailable}" @click="$emit('onExchange')">Get a bouns</button>
@@ -23,7 +23,13 @@
 
 <script>
 export default {
-  props: ['bonusAvailable']
+  props: ['bonusAvailable'],
+  computed: {
+	bonunsImage() {
+	  const date = new Date()
+	  return `/certificates/${date.getFullYear()}/rare.jpg`
+	}
+  }
 }
 </script>
 
@@ -104,8 +110,10 @@ export default {
     height: 26.3rem;
     background: linear-gradient(0deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), linear-gradient(46.74deg, #365BE0 -17.17%, #D676CF 48.99%, #FFE884 113%);
     border-radius: 0.4rem;
+	overflow: hidden;
     &-img {
-      width: 3.9rem;
+      width: 100%;
+	  height: 100%;
     }
   }
 

@@ -49,7 +49,7 @@
 			</div>
 			<ExchangeBonus @closeModal="showExchangeBonus = false" :bonusAvailable="currYearCertCount === 12" @onExchange="showExchangeTokenModal" v-if="showExchangeBonus"/>
 			<ExchangeToken @closeModal="showExchangeToken = false" v-if="showExchangeToken"/>
-			<SuccessfullBuy v-if="showSuccessModal" :image="certificateImage" :name="certificateName" :certificate="true"/>
+			<SuccessfullBuy v-if="showSuccessModal" :image="bonusImage" :name="certificateName" :certificate="true"/>
 		</div>
 	</section>
 </template>
@@ -113,8 +113,9 @@ export default {
 	showSuccessModal() {
       return this.$store.state.successBuyToken
 	},
-	certificateImage() {
-	 return '/super-certificate.svg'
+	bonusImage() {
+	  const date = new Date()
+	  return `/certificates/${date.getFullYear()}/rare.jpg`
 	},
 	certificateName() {
 	  return 'Carbon Super Rare Offset Certificate #1'
