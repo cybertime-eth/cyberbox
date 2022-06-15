@@ -57,6 +57,7 @@
                 <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }} ton CO2</span>
               </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
+			  <p class="nft__block-info-description" v-else-if="isCertificateNft">Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands.</p>
               <Attributes :item="attributes" :info="nft" v-if="!isMultiNft && !isCertificateNft"/>
               <div class="nft__block-info-address" v-else-if="nft.contract_address">
                 <h3 class="nft__block-info-address-title">Contract Address</h3>
@@ -131,6 +132,7 @@
                 <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }} ton CO2</span>
               </p>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
+			  <p class="nft__block-info-description" v-else-if="isCertificateNft">Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands.</p>
               <Attributes :item="attributes" :info="nft" v-if="!isMultiNft && !isCertificateNft"/>
               <div class="nft__block-info-address" v-else-if="nft.contract_address">
                 <h3 class="nft__block-info-address-title">Contract Address</h3>

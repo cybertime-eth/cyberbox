@@ -48,7 +48,7 @@ Vue.mixin({
 			certificate.month = parseInt(certificate.tag_element2)
 		}
 		if (certificate.token_type === CERTIFICATE_TOKEN_TYPE.YEAR || certificate.token_type === CERTIFICATE_TOKEN_TYPE.BONUS) {
-            return 'Carbon Super Rare Offset Certificate #1'
+            return 'Rare 2022'
         } else {
 			try {
 				const date = new Date(certificate.year, certificate.month - 1, 1)

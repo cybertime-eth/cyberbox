@@ -338,7 +338,7 @@ export const state = () => ({
 		twitter: 'https://twitter.com/cybertime_eth',
 		discord: 'https://discord.gg/cKcWfCux4s',
 		telegram: 'https://t.me/cybertime_eth',
-		description: 'Buy a personal NFT certificate to become carbon neutral'
+		description: "Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands."
 	},
     // {
     //   id: 14,

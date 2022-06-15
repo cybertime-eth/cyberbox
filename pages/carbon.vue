@@ -118,7 +118,7 @@ export default {
 	  return `/certificates/${date.getFullYear()}/rare.jpg`
 	},
 	certificateName() {
-	  return 'Carbon Super Rare Offset Certificate #1'
+	  return 'Rare 2022'
 	},
 	refiPrice() {
 	  return this.$store.state.cMCO2Price
