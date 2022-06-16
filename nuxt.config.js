@@ -52,7 +52,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cyber-box-certification-four',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cyber-box-certification-five',
         options: {}
       },
       ubeswap: {
@@ -71,7 +71,11 @@ export default {
       'nuxt-logrocket',
       ['nuxt-bugsnag', {
         apiKey: 'cef8153f64709623f660870486f23999',
-        publishRelease: true
+        publishRelease: true,
+        reporterOptions: {
+          appVersion: 'v1.0.0',
+          autoAssignRelease: true
+        }
       }]
     ],
 
