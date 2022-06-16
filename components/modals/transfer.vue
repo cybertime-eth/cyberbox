@@ -16,7 +16,7 @@
             </div>
             <div class="modal__transfer-form">
               <p class="modal__transfer-form-name">Enter CELO wallet or <img class="nom-icon" src="/icon-nomdom.svg" alt="nom"> Nom domain</p>
-              <input class="modal__transfer-form-input" :readonly="successTransferToken" :placeholder="inputHint" v-model="receiver">
+              <input class="modal__transfer-form-input" ref="receiverInput" :readonly="successTransferToken" :placeholder="inputHint" v-model="receiver">
               <p class="modal__transfer-form-description">You won’t be able to take back the NFT after the transaction.</p>
             </div>
           </div>
@@ -27,10 +27,27 @@
           </div>
           <div class="modal__transfer-buttons">
             <button class="modal__transfer-buttons-button modal__transfer-buttons-button-done" @click="closeSuccessModal" v-if="successTransferToken">Done</button>
-            <button class="modal__transfer-buttons-button modal__transfer-buttons-button-confirm gradient-button" v-else-if="pending">
-              Pending confirmation <img src="/loading-button.svg" alt="load">
-            </button>
-            <button class="modal__transfer-buttons-button gradient-button" :class="{ disabled: !receiver }" @click="transferToken" v-else>Transfer</button>
+			<div class="modal__transfer-buttons-box" v-else>
+				<button class="modal__transfer-buttons-button approve" :class="{ disabled: !receiver || tokenApproved }" @click="submitApproveToken" v-if="!nftApproved">
+					Approve
+					<img class="modal__sell-buttons-button-loading" src="/loading-button.svg" alt="loading" v-if="!tokenApproved && pending">
+				</button>
+            	<button class="modal__transfer-buttons-button" :class="{ disabled: !receiver || !tokenApproved }" @click="transferToken">
+					Transfer
+					<img class="modal__sell-buttons-button-loading" src="/loading-button.svg" alt="loading" v-if="!tokenApproved && pending">
+				</button>
+			</div>
+          </div>
+		  <div class="modal__step" v-if="!nftApproved && !successTransferToken">
+            <span class="modal__step-status" :class="{ active: receiver, approved: tokenApproved }">
+              <span v-if="!tokenApproved">1</span>
+              <img src="/check-circle.svg" alt="check" v-else>
+            </span>
+            <span class="modal__step-line" :class="{ active: tokenApproved }"></span>
+            <span class="modal__step-status" :class="{ active: tokenApproved, approved: successTransferToken }">
+              <span v-if="!successTransferToken">2</span>
+              <img src="/check-circle.svg" alt="check" v-else>
+            </span>
           </div>
         </div>
     </div>
@@ -39,7 +56,7 @@
 <script>
 
 export default {
-  props: ['nft'],
+  props: ['nft', 'approved'],
   computed: {
     successTransferToken() {
       return this.$store.state.successTransferToken
@@ -68,20 +85,39 @@ export default {
     },
     inputHint() {
       return this.isMobile() && process.browser && window.innerWidth < 767 ? 'Hold to paste' : '0x'
-    }
+    },
+	approveToken() {
+      return this.$store.state.approveToken
+    },
+    tokenApproved() {
+      return this.nftApproved || this.approveToken === 'approve'
+    },
   },
   data() {
     return {
       receiver: '',
+	  nftApproved: false,
       pending: false
     }
   },
   watch: {
-    successTransfer() {
-      if (this.$store.state.successTransferToken) {
+	approveToken() {
+      if (this.$store.state.approveToken === 'approve') {
         this.pending = false
+      } else {
+        this.closeModal()
       }
+    },
+    successTransfer() {
+	  this.pending = false
     }
+  },
+  async created() {
+	if (this.approved === undefined) {
+	  this.nftApproved = await this.$store.dispatch('approveToken', false)
+	} else  {
+	  this.nftApproved = this.approved
+	}
   },
   mounted() {
     this.$store.commit('changeSuccessTransferToken', false)
@@ -95,6 +131,15 @@ export default {
       this.$emit('done')
       this.$store.commit('changeSuccessTransferToken', false)
     },
+	submitApproveToken() {
+	  if (this.pending) return
+      if (this.receiver) {
+        this.pending = true
+        this.$store.dispatch('approveToken')
+      } else {
+        this.$refs.receiverInput.focus()
+      }
+	},
     transferToken() {
       if (this.receiver.length === 42) {
         this.pending = true
@@ -245,13 +290,23 @@ export default {
     &-buttons {
       display: flex;
       justify-content: flex-end;
+	  &-box {
+		display: flex;
+		width: 100%;
+		.modal__transfer-buttons-button {
+		  flex: 1;
+		}
+	  }
       &-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
         width: 100%;
         background: $pink;
         padding: 1rem;
         margin-right: 1.6rem;
         border: 1px solid $pink;
-        border-radius: 25px;
+		border-radius: 2.5rem;
         text-align: center;
         font-size: 1.6rem;
         color: $white;
@@ -271,6 +326,9 @@ export default {
         &:last-child {
           margin: 0;
         }
+		&.approve {
+		  margin-right: 1.6rem;
+		}
         &.disabled {
           background: $white;
           pointer-events: none;
