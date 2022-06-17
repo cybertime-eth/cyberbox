@@ -6,6 +6,7 @@
       <h3 class="modal__success">You successfully purchased</h3>
       <h3 class="modal__name">{{ name }}</h3>
       <p class="modal__link">View on Celo Explorer <img src="/share.svg" alt="share"></p>
+	  <p class="modal__carbon" v-if="refiOffset"><img class="modal__carbon-img" src="/plant.svg" alt="plant">We added <span class="modal__carbon-amount">{{ refiOffset }} ton co2</span> offset to your <img class="modal__carbon-tracker" src="/carbon-tracker.svg" alt="tracker"> Offset Tracker</p>
       <div class="modal__buy-footer">
 		<button class="modal__button modal__buy-footer-carbon" @click="routeCarbonTracker">Carbon tracker</button>
 		<button class="modal__button" @click="routeMyCollection">My collection</button>
@@ -18,7 +19,8 @@
 </template>
 <script>
 export default {
-  props: ['image', 'name', 'certificate'],
+  props: ['image', 'name', 'certificate', 'refiOffset'],
+
   methods: {
     closeModal() {
       this.$store.commit('changeSuccessBuyToken', false)
@@ -76,10 +78,30 @@ export default {
       margin-left: 1.2rem;
     }
   }
+  &__carbon {
+	width: calc(100% - 1.8rem);
+	margin-top: 2.2rem;
+	padding: 0.9rem;
+	border: 1px solid $modalColor;
+	font-size: 1.2rem;
+	color: $textColor;
+	img {
+	  width: 1.4rem;
+	  transform: translateY(0.2rem);
+	}
+	&-img {
+	  margin-right: 0.9rem;
+	}
+	&-amount {
+	  font-weight: 700;
+	  font-size: 1.3rem;
+	  color: $green3;
+	}
+  }
   &__buy-footer {
 	display: flex;
 	width: 100%;
-	margin-top: 2.8rem;
+	margin-top: 3.4rem;
 	.modal__button {
 	  flex: 1;
 	  height: 4.8rem;
@@ -120,6 +142,7 @@ export default {
 		font-size: 1.7rem;
 	  }
 	  &-footer {
+		margin-top: 2.2rem;
 		flex-direction: column-reverse;
 		&-carbon {
 		  margin-top: 0.8rem;

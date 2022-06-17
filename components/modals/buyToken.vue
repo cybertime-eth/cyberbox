@@ -2,7 +2,7 @@
   <div class="modal">
     <div class="modal__buy">
       <h1 class="modal__title gradient-text">Payment Confirmation</h1>
-      <p class="modal__subtitle">You are about to purchase a <span class="modal__subtitle-bold">{{ nftName }}</span></p>
+      <p class="modal__subtitle">You are about to purchase a <b>{{ nftName }}</b></p>
       <div class="modal__information">
         <h3 class="modal__information-title">You pay</h3>
         <div class="modal__information-price-box">
@@ -19,7 +19,7 @@
       </div>
       <div class="modal__refi">
         <p class="modal__refi-info">
-          <img src="/plant.svg" alt="plant" class="modal__refi-info-img"> Successful NFT sale offset<span class="modal__refi-info-amount">{{ refiOffset }} ton CO2</span>
+          <img src="/plant.svg" alt="plant" class="modal__refi-info-img">We will add<span class="modal__refi-info-amount">{{ refiOffset }} ton CO2</span>offset to your<img src="/carbon-tracker.svg" alt="tracker" class="modal__refi-info-carbon">Offset Tracker
         </p>
       </div>
       <div class="modal__buttons">
@@ -142,7 +142,7 @@ export default {
   }
   &__subtitle {
     padding-top: 2.4rem;
-    &-bold {
+    b {
       font-weight: 600;
       font-size: 1.4rem;
     }
@@ -207,21 +207,24 @@ export default {
     &-info {
       display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 0.8rem 0;
+      padding: 0.9rem 0.4rem;
       border: 1px solid $modalColor;
-      text-align: center;
+      border-radius: 0.4rem;
+      white-space: nowrap;
       font-size: 1.2rem;
       color: $black;
-      img {
+      &-img {
         width: 1.4rem;
         margin-right: 0.9rem;
       }
       &-amount {
-        margin-left: 1rem;
+        margin: 0 0.4rem;
         font-weight: 600;
-        font-size: 1.3rem;
         color: #63A60D;
+      }
+      &-carbon {
+        width: 1.8rem;
+        margin: 0 0.4rem;
       }
     }
   }
@@ -314,6 +317,16 @@ export default {
     &__information {
       padding-top: 3.2rem;
       padding-bottom: 2.2rem;
+    }
+    &__refi {
+      &-info {
+        flex-wrap: wrap;
+        padding: 0.9rem 0.6rem;
+        line-height: 1.6;
+        &-carbon {
+          margin-left: 0;
+        }
+      }
     }
     &__balance {
       padding-top: 1.8rem;
