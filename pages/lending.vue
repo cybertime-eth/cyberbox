@@ -59,7 +59,7 @@
                     <div class="lending__collection-list">
                         <div class="lending__collection-item" :class="{available: certificateBuyAvailable(certificate), last: !certificateOwner(certificate) && !certificate.offset && !certificate.future}" :key="idx" v-for="(certificate, idx) of certificateList">
                             <p class="lending__collection-item-date">{{ certificateName(certificate) }}</p>
-                            <div class="lending__collection-item-box" :class="{'no-bg': certificateOwner(certificate) || (!certificate.offset && !certificate.future && certificate.hasImage)}">
+                            <div class="lending__collection-item-box no-bg">
                                 <img class="lending__collection-item-box-img" :src="certificate.image" alt="certificate">
                                 <img class="lending__collection-item-box-checked" src="/checked-circle.svg" alt="checkmark" v-if="certificateOwner(certificate)">
                             </div>
