@@ -1,6 +1,6 @@
 <template>
     <section id="sale-list">
-        <div class="listing" v-if="nftList && nftList.length > 0">
+        <div class="listing" v-if="nftList && nftList.length > 0 && contentVisible" :class="{mobile: !contentVisible}">
             <div class="listing__table">
                 <div class="listing__table-header">
                     <h3>Quantitity</h3>
@@ -108,6 +108,9 @@ export default {
     this.updateNftList()
   },
   computed: {
+    contentVisible() {
+      return !this.isMobile() || (this.isMobile() && !this.showSellTokenModal)
+    },
     successRemoveNft() {
       return this.$store.state.successRemoveToken
     },
@@ -500,6 +503,9 @@ export default {
         }
       }
     }
+  }
+  &.mobile {
+	padding-top: 2.5rem;
   }
 }
 </style>

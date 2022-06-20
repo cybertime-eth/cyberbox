@@ -1,6 +1,6 @@
 <template>
-  <section id="nft">
-    <div class="nft">
+  <section id="nft" :class="{ mobile: !contentVisible }">
+    <div class="nft" v-if="contentVisible">
       <div>
         <a class="nft__crumbs" @click="handleClickBack">
           Back
@@ -327,7 +327,10 @@ export default {
   computed: {
     address() {
       return this.$store.state.address
-    },
+	},
+	contentVisible() {
+	  return !this.isMobile() || (this.isMobile() && !this.showSellTokenModal)
+	},
     isMultiNft() {
       return this.$store.state.multiNftSymbols.includes(this.$route.params.collectionid)
 	},
@@ -679,6 +682,10 @@ export default {
   padding-top: 2.5rem;
   width: 109.6rem;
   margin: 0 auto;
+  &.mobile {
+	padding-bottom: 0;
+	margin: 0;
+  }
 }
 .nft {
   padding-bottom: 3rem;

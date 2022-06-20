@@ -83,6 +83,7 @@
         <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
         <img src="/search-mobile.svg" alt="search" class="header__mobile-search" @click="showSearchView = true">
         <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showMobileMenu">
+		<img src="/close.svg" alt="close" class="header__mobile-close" @click="closeSellModal">
       </div>
       <div class="header__error-network" v-if="showWrongNetwork">
         <img src="/pulse.svg" alt="pulse">
@@ -205,6 +206,10 @@ export default {
       const footerEl = document.querySelector('.footer')
       footerEl.classList.add('fixed')
       footerEl.classList.add('sidemenu')
+	},
+	closeSellModal() {
+	  this.$store.commit('changeSellTokenClosed', true)
+	  this.$refs.header.classList.remove('buy')
 	},
 	openConnectModal() {
 	  this.showWalletModal = false
@@ -427,15 +432,17 @@ header {
   }
   &__mobile {
     display: none;
-    &-search {
+    &-search, &-menu, &-connect, &-close {
       display: none;
     }
-    &-menu {
-      display: none;
-    }
-    &-connect {
-      display: none;
-    }
+  }
+  &.buy {
+	.header__back-img, .header__mobile-search, .header__mobile-menu {
+	  display: none;
+  	}
+	.header__mobile-close {
+	  display: block;
+	}
   }
 }
 @media screen and (max-width: 460px) {
@@ -534,6 +541,7 @@ header {
 		top: 7rem !important;
 		left: 0.8rem;
 		right: 0.8rem !important;
+		z-index: 3;
     	width: auto;
 	  }
 	  .dropdown-item {

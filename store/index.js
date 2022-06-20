@@ -50,7 +50,8 @@ export const state = () => ({
   buyTokenApproved: false,
   successBuyToken: false,
   successRemoveToken: false,
-  successTransferToken: false,
+	successTransferToken: false,
+	sellTokenClosed: false,
   message: '',
   sort: `orderBy: contract_id`,
   raritySort: null,
@@ -2339,7 +2340,10 @@ export const mutations = {
   },
   changeSuccessTransferToken(state, status) {
     state.successTransferToken = status
-  },
+	},
+	changeSellTokenClosed(state, status) {
+    state.sellTokenClosed = status
+	},
   setChainId(state, chain) {
     state.chainId = chain
     state.wrongNetwork = chain !== 42220

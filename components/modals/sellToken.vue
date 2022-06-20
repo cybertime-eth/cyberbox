@@ -1,5 +1,5 @@
 <template>
-  <div class="modal">
+  <div class="modal" :class="{mobile: mobileVersion}">
     <div class="modal__block sell" :class="{ success: showSuccessModal }">
         <div class="modal__sell-header">
           <button class="modal__sell-header-button" @click="closeModal"><img src="/close.svg" alt="close"></button>
@@ -69,6 +69,9 @@
 export default {
   props: ['nft', 'celoPrice', 'approved'],
   computed: {
+    mobileVersion() {
+      return this.isMobile()
+    },
     approveToken() {
       return this.$store.state.approveToken
     },
@@ -80,7 +83,10 @@ export default {
     },
     successSellToken() {
       return this.listToken === true
-    },
+	},
+	sellTokenClosed() {
+	  return this.$store.state.sellTokenClosed
+	},
     modalTitle() {
       if (!this.showSuccessModal) {
         return this.nft.market_status !== 'LISTED' ? 'Sell your NFT' : 'Change sell price'
@@ -129,26 +135,41 @@ export default {
       } else {
         this.closeModal()
       }
-    }
+	},
+	sellTokenClosed() {
+	  if (this.$store.state.sellTokenClosed) {
+		this.closeModal()
+	  }
+	}
   },
   async mounted() {
+	if (process.browser) {
+	  this.$store.commit('changeSellTokenClosed', false)
+	  const header = document.querySelector('.header')
+	  if (this.isMobile()) {
+		header.classList.add('buy')
+	  } else {
+		header.classList.remove('buy')
+	  }
+	}
     this.$store.commit('changelistToken', '')
     const collectionInfo = await this.$store.dispatch('getCollectionInfo')
     this.nftServiceFee = collectionInfo.marketFee / 10
     this.nftRoyalty = collectionInfo.createrFee / 10
-    this.nftProducerFee = collectionInfo.producerFee / 10
+	this.nftProducerFee = collectionInfo.producerFee / 10
     if (this.nft.market_status === 'LISTED') {
       this.nftPrice = this.nft.price
-    }
+	}
   },
   methods: {
     closeModal() {
       this.$emit('closeModal', this.tokenApproved)
-      this.$store.commit('changelistToken', '')
+	  this.$store.commit('changelistToken', '')
+	  this.$store.commit('changeSellTokenClosed', false)
     },
     closeSuccessModal() {
       this.$emit('done', this.nftPrice ? parseFloat(this.nftPrice) : 0)
-      this.$store.commit('changelistToken', '')
+	  this.$store.commit('changelistToken', '')
     },
     submitApproveToken() {
       if (this.pending) return
@@ -422,6 +443,20 @@ export default {
       }
     }
   }
+  &.mobile {
+	position: static;
+	margin: 0;
+	z-index: 0;
+	.modal__block {
+	  margin: 0;
+	  border-radius: 0;
+	}
+	.modal__sell {
+	  &-header {
+		display: none;
+	  }
+	}
+  }
 }
 @media screen and (max-width: 460px) {
   .modal {
@@ -523,14 +558,7 @@ export default {
   }
 }
 @mixin block-overflow {
-  max-height: 65vh;
-  overflow-x: hidden;
-  overflow-y: auto;
   padding-right: 0.2rem;
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
 }
 @media screen and (max-height: 750px) {
   .modal {
@@ -548,9 +576,6 @@ export default {
     &__sell {
       &-block {
         @include block-overflow;
-        &.not-approved {
-          max-height: 60vh;
-        }
       }
     }
   }
