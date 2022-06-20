@@ -195,8 +195,7 @@ export default {
 	  const date = new Date()
       const currYear = date.getFullYear()
 	  const currMonth = date.getMonth() + 1
-	  const imageVisible = currYear !== 2022 || (currYear === 2022 && currMonth > 5)
-	  return imageVisible ? `/certificates/${currYear}/${currMonth}.jpg` : null
+	  return `/certificates/${currYear}/${currMonth}.jpg`
 	},
     ownedCertificates() {
 	  return this.$store.state.certificateList

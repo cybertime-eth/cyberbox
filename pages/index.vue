@@ -241,10 +241,9 @@ export default {
 		  case (currMonth + 1): status = 'Next'
 		  	break
 		}
-		const imageVisible = currYear !== 2022 || (currYear === 2022 && i > 5)
 		list.push({
 		  name: `${month} ${currYear}`,
-		  image: imageVisible ? `/certificates/${currYear}/${i}.jpg` : null,
+		  image: `/certificates/${currYear}/${i}.jpg`,
 		  status,
 		  current: i === currMonth
 		})
