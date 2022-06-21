@@ -142,7 +142,7 @@ export default {
 	this.totalCertCO2 = trackingInfo.mint_count
 	this.totalTradingCO2 = trackingInfo.trading_co2
 	this.totalCO2Offset = this.totalCertCO2 + this.totalTradingCO2
-	this.certificateOccupancy = Math.round(this.totalCO2Offset / MAX_TON_AMOUNT * 100)
+	this.certificateOccupancy = Math.round(this.totalCertCO2 / MAX_TON_AMOUNT * 100)
 	this.$store.dispatch('getCertificates')
   },
   mounted() {
