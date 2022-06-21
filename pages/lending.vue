@@ -156,7 +156,7 @@
 import { CERTIFICATE_TOKEN_TYPE } from '@/config'
 import BuyToken from '@/components/modals/buyToken'
 import SuccessfullBuy from '@/components/modals/successBuy'
-const CERTIFICATE_MINT_PRICE = 0.1
+const CERTIFICATE_MINT_PRICE = 1.0
 
 export default {
   components: {
@@ -249,9 +249,6 @@ export default {
         
         if (!this.balance) {
           this.loadBalance()
-          if (!this.$store.state.buyTokenApproved) {
-            this.$store.dispatch('checkBuyTokenApproved', this.certificate.price)
-          }
         }
       }
     },
@@ -345,7 +342,8 @@ export default {
 	  this.faqList = newFaqList
 	},
     clickBuyToken() {
-      this.showBuyToken = true
+	  this.showBuyToken = true
+	  this.$store.dispatch('checkBuyTokenApproved', this.certificate.price)
       this.$store.commit('setNewNft', {
         ...this.certificate,
         price: this.certificate.price * 1000

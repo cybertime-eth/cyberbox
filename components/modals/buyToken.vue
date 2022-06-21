@@ -74,7 +74,11 @@ export default {
       return this.$store.state.successApproveBuyToken || this.buyTokenApproved
     },
     refiOffset() {
-      return this.nft.refiOffset > 0 ? parseFloat(this.nft.refiOffset).toFixed(3) : 0
+      if (!this.nft.contract === 'CBCN') {
+        return this.nft.refiOffset > 0 ? parseFloat(this.nft.refiOffset).toFixed(3) : 0
+      } else {
+        return '1'
+      }
     }
   },
   data() {

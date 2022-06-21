@@ -20,7 +20,7 @@ import { Magic } from 'magic-sdk'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
-  marketCertificate: '0x9bec9208f1250F9d13c7423C25cF47dd5BC06196',
+  marketCertificate: '0x23DD9C2c60Ff4f0f13E5bff0340dC812fcC83C89',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   certContractAddress: '0xd05b54F478a3e33b3573B24f3264391A4a9c1299',
   user: {},
