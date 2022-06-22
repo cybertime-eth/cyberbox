@@ -1038,8 +1038,8 @@ export const actions = {
 	return {
 	  mint_count: ownerCo2Info.mint_count || 0,
 	  total_celo: ownerCo2Info.total_celo / 1000 || 0,
-	  trading_co2: ownerCo2Info.total_co2 / 1000 || 0,
-	  total_co2: carbonInfo.total_co2 / 1000 || 0
+	  trading_co2: ownerCo2Info.total_co2 / 1000000 || 0,
+	  total_co2: carbonInfo.total_co2 / 1000000 || 0
 	}
   },
 

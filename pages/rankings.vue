@@ -236,7 +236,7 @@ export default {
           shortenedItems: `${parseFloat((item.mint_count / 1000).toString()).toFixed(mintCountDiff === 0 ? 1 : 2)}K`,
           percentPer24h: 0,
           percentPer7d: 0,
-          route: item.title
+          route: item.nftSymbol
         })
         this.loadNftDetail(item, itemNum)
         this.filteredList = JSON.parse(JSON.stringify(this.list))
