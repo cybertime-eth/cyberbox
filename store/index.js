@@ -67,6 +67,19 @@ export const state = () => ({
 
   collectionList: [
 	{
+	  id: 22,
+	  name: 'NFT Carbon Offset Certificate',
+	  route: 'CBCN',
+	  image: '/collections/CBCN.png',
+	  banner: '/collections/CBCN-banner.jpg',
+	  logo: '/collections/CBCN-logo.png',
+	  website: '/lending',
+	  twitter: 'https://twitter.com/cybertime_eth',
+	  discord: 'https://discord.gg/cKcWfCux4s',
+	  telegram: 'https://t.me/cybertime_eth',
+	  description: "Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands."
+	},
+	{
 	  id: 20,
 	  name: 'KnoxerDAO',
 	  route: 'knoxnft',
@@ -327,19 +340,6 @@ export const state = () => ({
 	  discord: 'https://discord.gg/eEPJCfeYf7',
 	  telegram: 'https://t.me/celoerectus',
 	  description: 'New creative NFT Collection on the Celo blockchain!'
-	},
-	{
-		id: 22,
-		name: 'NFT Carbon Offset Certificate',
-		route: 'CBCN',
-		image: '/collections/daopolis.jpg',
-		banner: '/collections/daopolis-banner.jpg',
-		logo: '/collections/daopolis-logo.png',
-		website: '/lending',
-		twitter: 'https://twitter.com/cybertime_eth',
-		discord: 'https://discord.gg/cKcWfCux4s',
-		telegram: 'https://t.me/cybertime_eth',
-		description: "Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands."
 	},
     // {
     //   id: 14,
