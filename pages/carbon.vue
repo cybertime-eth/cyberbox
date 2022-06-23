@@ -139,8 +139,8 @@ export default {
 	}
 
 	const trackingInfo = await this.$store.dispatch('getCarbonData')
-	this.totalCertCO2 = trackingInfo.mint_count
-	this.totalTradingCO2 = trackingInfo.trading_co2
+	this.totalCertCO2 = trackingInfo.totalCount
+	this.totalTradingCO2 = trackingInfo.totalTradingCelo * trackingInfo.producerFee / 1000 * this.refiPrice
 	this.totalCO2Offset = this.totalCertCO2 + this.totalTradingCO2
 	this.certificateOccupancy = Math.round(this.totalCertCO2 / MAX_TON_AMOUNT * 100)
 	this.$store.dispatch('getCertificates')

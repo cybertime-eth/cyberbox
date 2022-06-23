@@ -1010,36 +1010,39 @@ export const actions = {
 
   async getCarbonData({getters}) {
 	const address = getters.storedAddress
+	const initialCarbonInfo = {
+	  totalCount: 0,
+	  totalTradingCelo: 0,
+	  producerFee: 0
+	}
 	if (!address) {
-	  return {
-		total_celo: 0,
-		trading_co2: 0,
-		total_co2: 0
-	  }
+	  return initialCarbonInfo
 	}
 
 	const query = gql`
       query Sample {
-        co2Owners(first: 1 where: { owner: "${address}" }) {
-		  id
-		  owner
-		  mint_count
-		  total_celo
-		  total_co2
+		contracts: (first: 1 where: { nftSymbol: "CBCN" }) {
+		  producerFee
 		}
-		contracts(first: 1 where: { nftSymbol: "CBCN" }) {
-		  mint_count
-		  total_co2
+        ownerTrackers(first: 1 where: { address: "${address}" }) {
+		  id
+		  sellCount
+		  buyCount
+		  totalSell
+		  totalBuy
 		}
 	  }`
 	const data = await this.$graphql.default.request(query)
-	const ownerCo2Info = data.co2Owners.length > 0 ? data.co2Owners[0] : {}
-	const carbonInfo = data.contracts[0]
-	return {
-	  mint_count: ownerCo2Info.mint_count || 0,
-	  total_celo: ownerCo2Info.total_celo / 1000 || 0,
-	  trading_co2: ownerCo2Info.total_co2 / 1000000 || 0,
-	  total_co2: carbonInfo.total_co2 / 1000000 || 0
+	if (data.ownerTrackers.length > 0) {
+	  const ownerTrackerInfo = data.ownerTrackers.length > 0 ? data.ownerTrackers[0] : {}
+	  const producerFee = data.contracts.length > 0 ? data.contracts[0].producerFee : 0
+	  return {
+		totalCount: ownerTrackerInfo.sellCount + ownerTrackerInfo.buyCount,
+		totalTradingCelo: (ownerTrackerInfo.totalSell + ownerTrackerInfo.totalBuy) / 1000 / 2,
+		producerFee
+	  }
+	} else {
+	  return initialCarbonInfo
 	}
   },
 
@@ -1777,14 +1780,29 @@ export const actions = {
   },
   async reportRevenue({state, dispatch}, collection) {
 	const price = await dispatch('getPriceToken')
+	const start = new Date()
+	const startTime = Math.round(start.setHours(0, 0, 0, 0) / 1000)
+	const end = new Date()
+    const endTime = Math.round(end.setHours(23, 59, 59, 999) / 1000)
 	const query = gql`
       query Sample {
-        contracts(first: 1 where: { nftSymbol: "${collection.route}" }) {
-          sell_total_price
-        }
+		contractSells(first: 1000 where: { contract: "${collection.route}" updatedAt_gte: ${startTime} updatedAt_lte: ${endTime} }) {
+		  id
+		  contract
+		  contract_id
+		  mint_key
+		  price_total
+		}
       }`
 	let data = await this.$graphql.default.request(query)
-	const totalPrice = data.contracts.length > 0 ? (data.contracts[0].sell_total_price / 1000 * price.value) : 0;
+	let totalSold = 0
+	const contractSells = data.contractSells
+	contractSells.forEach(item => totalSold += item.price_total / 1000)
+	const itemExist = contractSells.find(item => item.contract_id === state.nft.contract_id)
+	if (!itemExist) {
+	  totalSold += state.nft.price
+	}
+	const totalPrice = totalSold * price.value
 	this._vm.sendRevenueEvent(`${collection.name} - ${state.nft.contract_id}`, price.value * state.nft.price, totalPrice, collection.name)
   },
   async buyNFT({commit, state, getters, dispatch}, token) {
@@ -1937,21 +1955,21 @@ export const actions = {
     const time24hNftsQuery = gql`
       query Sample {
         contractSells(where: { contract: "${contract}" updatedAt_gte: ${timeBeforeOneDay} }) {
-          price_value
+          price_total
         }
       }`;
     const time48hNftsQuery = gql`
       query Sample {
         contractSells(where: { contract: "${contract}" updatedAt_gte: ${timeBeforeTwoDays} updatedAt_lt: ${timeBeforeOneDay} }) {
-          price_value
+		  price_total
         }
       }`;
     const data1 = await this.$graphql.default.request(time24hNftsQuery)
     const data2 = await this.$graphql.default.request(time48hNftsQuery)
     let ts1 = 0
     let ts2 = 0
-    data1.contractSells.forEach(item => ts1 += item.price_value)
-    data2.contractSells.forEach(item => ts2 += item.price_value)
+    data1.contractSells.forEach(item => ts1 += item.price_total)
+    data2.contractSells.forEach(item => ts2 += item.price_total)
     const tsOffset = ts1 - ts2;
     return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
   },
@@ -1962,21 +1980,21 @@ export const actions = {
     const time7dNftsQuery = gql`
       query Sample {
         contractSells(where: { contract: "${contract}" updatedAt_gte: ${timeBefore7Days} }) {
-          price_value
+		  price_total
         }
       }`;
     const time14dNftsQuery = gql`
       query Sample {
         contractSells(where: { contract: "${contract}" updatedAt_gte: ${timeBefore14Days} updatedAt_lt: ${timeBefore7Days} }) {
-          price_value
+		  price_total
         }
       }`;
     const data1 = await this.$graphql.default.request(time7dNftsQuery)
     const data2 = await this.$graphql.default.request(time14dNftsQuery)
     let ts1 = 0
     let ts2 = 0
-    data1.contractSells.forEach(item => ts1 += item.price_value)
-    data2.contractSells.forEach(item => ts2 += item.price_value)
+    data1.contractSells.forEach(item => ts1 += item.price_total)
+    data2.contractSells.forEach(item => ts2 += item.price_total)
     const tsOffset = ts1 - ts2;
     return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
   },
@@ -2221,6 +2239,7 @@ export const mutations = {
     state.user = user
   },
   setAddress(state,address) {
+	if (!address) return
 	if (process.browser) {
 	  localStorage.setItem('address', address)
 	}
