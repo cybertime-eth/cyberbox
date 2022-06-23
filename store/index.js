@@ -1021,8 +1021,11 @@ export const actions = {
 
 	const query = gql`
       query Sample {
-		contracts: (first: 1 where: { nftSymbol: "CBCN" }) {
+		contracts(first: 1 where: { nftSymbol: "CBCN" }) {
 		  producerFee
+		}
+		co2Owners(first: 1 where: { owner: "${address}" }) {
+		  mint_count
 		}
         ownerTrackers(first: 1 where: { address: "${address}" }) {
 		  id
@@ -1034,10 +1037,11 @@ export const actions = {
 	  }`
 	const data = await this.$graphql.default.request(query)
 	if (data.ownerTrackers.length > 0) {
-	  const ownerTrackerInfo = data.ownerTrackers.length > 0 ? data.ownerTrackers[0] : {}
 	  const producerFee = data.contracts.length > 0 ? data.contracts[0].producerFee : 0
+	  const certificateInfo = data.co2Owners.length > 0 ? data.co2Owners[0] : {}
+	  const ownerTrackerInfo = data.ownerTrackers.length > 0 ? data.ownerTrackers[0] : {}
 	  return {
-		totalCount: ownerTrackerInfo.sellCount + ownerTrackerInfo.buyCount,
+		totalCount: certificateInfo.mint_count,
 		totalTradingCelo: (ownerTrackerInfo.totalSell + ownerTrackerInfo.totalBuy) / 1000 / 2,
 		producerFee
 	  }

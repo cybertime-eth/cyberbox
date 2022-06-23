@@ -522,9 +522,6 @@ export default {
 		  max-width: 100%;
 		  border-radius: 0.4rem;
 		  object-fit: cover;
-		  &.last {
-			opacity: 0.7;
-		  }
         }
         &-checked {
           position: absolute;
@@ -547,9 +544,6 @@ export default {
 	  &.last {
 		.lending__collection-item-date {
 		  color: $border;
-		}
-		.lending__collection-item-box-img {
-		  opacity: 0.7;
 		}
 	  }
     }
