@@ -156,7 +156,7 @@
 import { CERTIFICATE_TOKEN_TYPE } from '@/config'
 import BuyToken from '@/components/modals/buyToken'
 import SuccessfullBuy from '@/components/modals/successBuy'
-const CERTIFICATE_MINT_PRICE = 1.0
+const CERTIFICATE_MINT_PRICE = 15
 
 export default {
   components: {
