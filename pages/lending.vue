@@ -18,7 +18,7 @@
 							<p class="lending__block-info-name">NFT Carbon Offset Certificate</p>
 							<p class="lending__block-info-description">Buy a personal NFT certificate to become carbon neutral</p>
 						</div>
-						<p class="lending__block-info-detail" v-else>The NFT certificate confirms your contribution the regeneration of nature you carbon negative status</p>
+						<p class="lending__block-info-detail" v-else>This NFT Certificate confirms your contribution to the regeneration of nature and to your carbon negativity status</p>
                     </client-only>
 					<ul class="lending__block-info-features features-list">
 						<li class="features-list-item">Unique NFT certificate every month</li>
