@@ -5,7 +5,6 @@
                 :size="size"
                 :progress="acutalProgress"
                 animation="default 0 0"
-                :angle="140"
                 :thickness="18"
                 :emptyThickness="18"
                 :color="backgroundColor"

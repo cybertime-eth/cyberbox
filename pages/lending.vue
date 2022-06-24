@@ -295,7 +295,7 @@ export default {
           const newItem = this.ownedCertificates[foundIndex]
 		  newList[index] = {
 			...newItem,
-			image: this.getCertificateImage(newImage)
+			image: this.getCertificateImage(newItem)
 		  }
           if (newItem.year === today.getFullYear() && newItem.month === today.getMonth() + 1) {
 			this.bought = true

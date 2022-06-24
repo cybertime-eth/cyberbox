@@ -142,8 +142,9 @@ export default {
   props: ['nft', 'route', 'owner', 'seller', 'filter', 'multiNft', 'from'],
   watch: {
     nft() {
-      const cdnImageUrl = this.getCDNImageUrl()
+	  const cdnImageUrl = this.getCDNImageUrl()
       if (this.cdnImage !== cdnImageUrl) {
+		this.nftImageLoaded = false
         this.loadCDNImage()
       }
     }
@@ -161,20 +162,24 @@ export default {
   },
   methods: {
     getCDNImageUrl() {
-      let fileExtension = this.nft.image.split('.').pop()
-      let contractId = this.nft.contract_id
-      if (fileExtension.split('//').length > 1 || this.nft.contract === 'nomdom') {
-        fileExtension = 'png'
-        if (this.nft.contract === 'nomdom') {
-          contractId = this.nft.image
-        }
-      }
-      const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
-      const imageURL = CDN_ROOT + contractName + `/${contractId}.${fileExtension}`
-      return imageURL
+	  if (this.nft.contract !== 'CBCN') {
+		let fileExtension = this.nft.image.split('.').pop()
+		let contractId = this.nft.contract_id
+		if (fileExtension.split('//').length > 1 || this.nft.contract === 'nomdom') {
+		  fileExtension = 'png'
+		  if (this.nft.contract === 'nomdom') {
+			contractId = this.nft.image
+		  }
+		}
+		const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
+		const imageURL = CDN_ROOT + contractName + `/${contractId}.${fileExtension}`
+		return imageURL
+	  } else {
+		return this.getCertificateImage(this.nft)
+	  }
     },
     async loadCDNImage() {
-      if (this.nft.image) {
+      if (this.nft.image || this.nft.contract === 'CBCN') {
         const imageURL = this.getCDNImageUrl()
         this.cdnImage = imageURL
         const img = new Image()
