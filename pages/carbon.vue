@@ -23,7 +23,7 @@
 								<span class="carbon__tracker-block-info-summary-item-conent">{{ totalCertCO2 }} ton CO2</span>
 							</div>
 							<div class="carbon__tracker-block-info-summary-item">
-								<span class="carbon__tracker-block-info-summary-item-name">NFT Traiding CO2 offset</span>
+								<span class="carbon__tracker-block-info-summary-item-name">NFT Trading CO2 offset</span>
 								<span class="carbon__tracker-block-info-summary-item-conent">{{ formatCO2(totalTradingCO2) }} ton CO2</span>
 							</div>
 							<div class="carbon__tracker-block-info-summary-item total">
