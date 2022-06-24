@@ -3,7 +3,7 @@
         <client-only>
             <vue-ellipse-progress
                 :size="size"
-                :progress="acutalProgress"
+                :progress="progress"
                 animation="default 0 0"
                 :thickness="18"
                 :emptyThickness="18"
@@ -44,9 +44,6 @@ export default {
         border: '1px solid #E39BB6',
         boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.05)'
       }
-    },
-    acutalProgress() {
-      return Math.round(this.progress * 0.72)
     }
   }
 }
