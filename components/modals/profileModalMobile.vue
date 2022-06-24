@@ -1,7 +1,7 @@
 <template>
   <div class="menu-mobile">
     <div class="menu-mobile-header container-xl">
-      <img src="/logo.svg" alt="logo" class="menu-mobile-header-logo">
+      <img src="/logo.svg" alt="logo" class="menu-mobile-header-logo" @click="gotoHome">
       <div class="menu-mobile-header-walletbox">
         <div class="header__wallet" ref="wallet" v-if="address">
           <h3 class="header__wallet-balance">{{ balance }} CELO</h3>
@@ -51,6 +51,10 @@ export default {
   methods: {
     closeModal() {
       this.$emit('closeModal', false)
+	},
+	gotoHome() {
+	  this.closeModal()
+	  this.$router.push('/')
 	},
 	sendExplorerEvent() {
 	  this.sendEvent({

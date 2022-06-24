@@ -107,7 +107,13 @@ export default {
       &-info {
         padding-top: 1.5rem;
         &-name {
+		  width: calc(100% - 1.6rem);
+		  padding: 0 0.8rem;
           font-size: 1.4rem;
+		  white-space: nowrap;
+		  overflow: hidden;
+		  text-overflow: ellipsis;
+		  text-align: center;
         }
         &-button {
           display: none;

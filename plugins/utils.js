@@ -69,7 +69,7 @@ Vue.mixin({
 	},
 	getCertificateImage(certificate, detail = false) {
 	  const folderName = detail ? 'detail' : 'thumb'
-	  return CDN_ROOT + certificate.contract + `/${folderName}/${certificate.contract_id}.png`
+	  return CDN_ROOT + certificate.contract + `/${folderName}/${certificate.month}.png`
 	},
 	sendEvent(event) {
 		try {

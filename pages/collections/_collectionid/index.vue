@@ -1,11 +1,11 @@
 <template>
   <section class="collection">
-    <img :src="collection.banner" alt="banner" class="collection__banner">
+    <img :src="collectionBanner" alt="banner" class="collection__banner">
     <div class="collection__content container-xl">
       <div class="collection__header">
         <img :src="collection.logo" alt="avatar" class="collection__header-avatar">
-        <h1 class="collection__header-title" ><span>{{ collection.name }}</span> <img src="/confirmed.svg" alt="confirm"></h1>
-        <div class="collection__header-socials">
+        <h1 class="collection__header-title"><span :class="{certificate: isCertificateCollection}">{{ collection.name }}</span> <img src="/confirmed.svg" alt="confirm"></h1>
+        <div class="collection__header-socials" :class="{certificate: isCertificateCollection}">
           <a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
           <a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
           <a :href="collection.twitter" target="_blank" v-if="collection.twitter"><img src="/socials/twitter.svg" alt="social"></a>
@@ -243,7 +243,14 @@ export default {
       const colletionList = this.$store.state.collectionList || []
       const filteredList = colletionList.filter(item => item.route === this.$route.params.collectionid)
       return filteredList.length > 0 ? filteredList[0] : {}
-    },
+	},
+	collectionBanner() {
+	  if (this.collection.route !== 'CBCN' || !this.isMobile()) {
+		return this.collection.banner
+	  } else {
+		return this.collection.mobileBanner
+	  }
+	},
     nftList() {
       return this.$store.state.nftList
     },
@@ -806,6 +813,10 @@ export default {
       }
       &-title {
         padding-top: 1rem;
+		span.certificate {
+		  white-space: normal;
+		  text-align: center;
+		}
       }
       &-subtitle {
         padding-top: .5rem;
@@ -815,6 +826,9 @@ export default {
         left: auto;
         right: auto;
         width: 15rem;
+		&.certificate {
+		  top: 21rem;
+		}
       }
       &-info {
         width: 100%;

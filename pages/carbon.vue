@@ -249,9 +249,6 @@ export default {
 	font-size: 3.2rem;
 	text-align: center;
   }
-  &__year {
-	
-  }
   &__tracker {
 	padding-top: 4.2rem;
   	padding-bottom: 10.2rem;
@@ -373,6 +370,7 @@ export default {
 	  grid-column-gap: 2.4rem;
 	  grid-row-gap: 3.5rem;
 	  padding-top: 5.4rem;
+	  padding-bottom: 2.4rem;
 	}
   }
   @media (max-width: 460px) {

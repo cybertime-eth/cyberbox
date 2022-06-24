@@ -72,6 +72,7 @@ export const state = () => ({
 	  route: 'CBCN',
 	  image: '/collections/CBCN.png',
 	  banner: '/collections/CBCN-banner.png',
+	  mobileBanner: '/collections/CBCN-banner-mobile.png',
 	  logo: '/collections/CBCN-logo.png',
 	  website: '/lending',
 	  twitter: 'https://twitter.com/cybertime_eth',
