@@ -399,7 +399,7 @@ export default {
     },
     async fetchNftList() {
       if (this.fetchEnabled) {
-        await this.$store.dispatch(this.activeRequest)
+        await this.$store.dispatch(this.activeRequest, this.$store.state.filteredTraits)
       } else {
         this.$store.commit('setNewNftList', [])
       }

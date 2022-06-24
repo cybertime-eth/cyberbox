@@ -71,7 +71,7 @@ export const state = () => ({
 	  name: 'NFT Carbon Offset Certificate',
 	  route: 'CBCN',
 	  image: '/collections/CBCN.png',
-	  banner: '/collections/CBCN-banner.jpg',
+	  banner: '/collections/CBCN-banner.png',
 	  logo: '/collections/CBCN-logo.png',
 	  website: '/lending',
 	  twitter: 'https://twitter.com/cybertime_eth',
@@ -1972,9 +1972,9 @@ export const actions = {
     const data2 = await this.$graphql.default.request(time48hNftsQuery)
     let ts1 = 0
     let ts2 = 0
-    data1.contractSells.forEach(item => ts1 += item.price_total)
-    data2.contractSells.forEach(item => ts2 += item.price_total)
-    const tsOffset = ts1 - ts2;
+    data1.contractSells.forEach(item => ts1 += item.price_total / 1000)
+    data2.contractSells.forEach(item => ts2 += item.price_total / 1000)
+	const tsOffset = ts1 - ts2;
     return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
   },
   async getContractInfoWeekPercent({commit, state}, contract) {
@@ -1997,9 +1997,9 @@ export const actions = {
     const data2 = await this.$graphql.default.request(time14dNftsQuery)
     let ts1 = 0
     let ts2 = 0
-    data1.contractSells.forEach(item => ts1 += item.price_total)
-    data2.contractSells.forEach(item => ts2 += item.price_total)
-    const tsOffset = ts1 - ts2;
+    data1.contractSells.forEach(item => ts1 += item.price_total / 1000)
+    data2.contractSells.forEach(item => ts2 += item.price_total / 1000)
+	const tsOffset = ts1 - ts2;
     return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
   },
 
