@@ -3,12 +3,16 @@ import { CDN_ROOT, CERTIFICATE_TOKEN_TYPE } from "@/config"
 
 Vue.mixin({
   methods: {
-	getNFTImage(nft) {
+	getNFTImage(nft, detail = false) {
 		if (nft.contract !== 'nomdom') {
-			if (nft.image && nft.image.split('ipfs://').length > 1) {
+			if (nft.contract !== 'CBCN') {
+			  if (nft.image && nft.image.split('ipfs://').length > 1) {
 				return 'https://ipfs.io/ipfs/' + nft.image.split('ipfs://')[1]
+			  }
+			  return nft.image
+			} else {
+			  return this.getCertificateImage(nft, detail)
 			}
-			return nft.image
 		} else {
 			return CDN_ROOT + nft.contract + `/${nft.image}.png`
 		}
@@ -62,6 +66,10 @@ Vue.mixin({
 			}
 			
         }
+	},
+	getCertificateImage(certificate, detail = false) {
+	  const folderName = detail ? 'detail' : 'thumb'
+	  return CDN_ROOT + certificate.contract + `/${folderName}/${certificate.contract_id}.png`
 	},
 	sendEvent(event) {
 		try {

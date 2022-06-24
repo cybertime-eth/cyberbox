@@ -182,7 +182,10 @@ export default {
 		newList.forEach((item, index) => {
 		  const foundIndex = this.ownedCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month )
 		  if (foundIndex >= 0) {
-			newList[index] = this.ownedCertificates[foundIndex]
+			newList[index] = {
+			  ...this.ownedCertificates[foundIndex],
+			  image: this.getCertificateImage(newList[index])
+			}
 			if (this.ownedCertificates[foundIndex].year === currYear) {
 			  currYearCertCount++
 			}

@@ -10,7 +10,7 @@
 
 
         <div class="nft__block">
-          <img :src="getNFTImage(nft)" alt="item" class="nft__block-image" v-if="nft.image && nftImageLoaded">
+          <img :src="getNFTImage(nft, true)" alt="item" class="nft__block-image" v-if="nftImageLoaded">
           <div class="nft__block-image-loading" v-else>
             <img src="/loading-nft.gif" alt="load">
           </div>
@@ -179,7 +179,7 @@
   <Transfer :nft="nft" @done="closeAndReload" :approved="nftApproved" @closeModal="showTransferModal=false"  v-if="showTransferModal" />
   <SellToken :nft="nft" :celoPrice="celoPrice" :approved="nftApproved" @done="closeAndReload" @closeModal="closeSellModal" v-if="showSellTokenModal" />
   <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" :multiNft="isMultiNft" @closeModal="closeModal"/>
-  <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nftName" :refiOffset="refiOffset"/>
+  <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft, true)" :name="nftName" :refiOffset="refiOffset"/>
   </section>
 </template>
 <script>
@@ -213,7 +213,7 @@ export default {
       nftReloading: false,
       oldNftStatus: null,
       oldNftPrice: null,
-      nftImageLoaded: true,
+      nftImageLoaded: false,
       nft: {
         price: 0
       },
@@ -291,7 +291,8 @@ export default {
       footerEl.classList.add('fixed')
     }
 
-    const imageURL = this.getNFTImage(this.nft)
+	await this.loadNft()
+	const imageURL = this.getNFTImage(this.nft, true)
     if (imageURL && !this.nftImageLoaded) {
       const img = new Image(imageURL)
       if (img.complete) {
@@ -301,9 +302,8 @@ export default {
           this.nftImageLoaded = true
         }
       }
-    }
+	}
 
-    await this.loadNft()
     await this.loadBalance()
     await this.getAttributes()
     setInterval(() => {
