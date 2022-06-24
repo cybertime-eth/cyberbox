@@ -1,14 +1,18 @@
 import Vue from 'vue'
-import { CDN_ROOT } from "@/config"
+import { CDN_ROOT, CERTIFICATE_TOKEN_TYPE } from "@/config"
 
 Vue.mixin({
   methods: {
-	getNFTImage(nft) {
+	getNFTImage(nft, detail = false) {
 		if (nft.contract !== 'nomdom') {
-			if (nft.image && nft.image.split('ipfs://').length > 1) {
+			if (nft.contract !== 'CBCN') {
+			  if (nft.image && nft.image.split('ipfs://').length > 1) {
 				return 'https://ipfs.io/ipfs/' + nft.image.split('ipfs://')[1]
+			  }
+			  return nft.image
+			} else {
+			  return this.getCertificateImage(nft, detail)
 			}
-			return nft.image
 		} else {
 			return CDN_ROOT + nft.contract + `/${nft.image}.png`
 		}
@@ -21,6 +25,51 @@ Vue.mixin({
 		} else {
 			return false
 		}
+	},
+	getCertificatesOfYear(year, all = false) {
+		const today = new Date()
+		const dataList = []
+		const currYear = today.getFullYear()
+		const currMonth = today.getMonth() + 1
+		const endMonth = all ? 12 : currMonth
+		const startMonth = (year === 2022 && all || year !== 2022) ? 1 : 6
+		for (let i = startMonth; i <= endMonth; i++) {
+			dataList.push({
+				image: `/certificates/${currYear}/${i}.jpg`,
+				year,
+				month: i,
+				offset: year === currYear && i === currMonth,
+				future: year === currYear && i > currMonth,
+			})
+		}
+		return dataList
+	},
+	getCertificateName(certificate, fullYear = true) {
+		if (!certificate.token_type && certificate.tag_element0) {
+			certificate.token_type = parseInt(certificate.tag_element0)
+			certificate.year = parseInt(certificate.tag_element1)
+			certificate.month = parseInt(certificate.tag_element2)
+		}
+		if (certificate.token_type === CERTIFICATE_TOKEN_TYPE.YEAR || certificate.token_type === CERTIFICATE_TOKEN_TYPE.BONUS) {
+            return 'Rare 2022'
+        } else {
+			try {
+				const date = new Date(certificate.year, certificate.month - 1, 1)
+				const month = date.toLocaleString('en-us', { month: 'long' })
+				if (fullYear) {
+					return `${month} ${certificate.year}`
+				} else {
+					return `${month} ${certificate.year.toString().substr(2, 3)}`
+				}
+			} catch {
+				return 'Unknown'
+			}
+			
+        }
+	},
+	getCertificateImage(certificate, detail = false) {
+	  const folderName = detail ? 'detail' : 'thumb'
+	  return CDN_ROOT + certificate.contract + `/${folderName}/${certificate.month}.png`
 	},
 	sendEvent(event) {
 		try {

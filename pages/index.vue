@@ -17,6 +17,28 @@
           </div>
         </div>
       </div>
+	  <div class="refi__block-carbon">
+		<div class="refi__block-carbon-info">
+			<h2 class="refi__block-carbon-info-title">NFT Carbon Offset Certificate</h2>
+			<p class="refi__block-carbon-info-content">Buy a personal NFT certificate to become carbon neutral</p>
+			<ul class="refi__block-carbon-info-list features-list">
+				<li class="features-list-item">Unique NFT certificate every month</li>
+				<li class="features-list-item">1 NFT = 1 ton CO2 offset</li>
+				<li class="features-list-item">Collect or sell on the marketplace</li>
+			</ul>
+			<button class="refi__block-carbon-info-buy" @click="$router.push('/lending')">Buy & Offset Now</button>
+		</div>
+		<div class="refi__block-carbon-certificate" ref="certificate">
+			<div class="refi__block-carbon-certificate-item" :class="{current: certificate.current }" :key="idx" v-for="(certificate, idx) of certificates">
+				<h3 class="refi__block-carbon-certificate-item-name">{{ certificate.name }}</h3>
+				<div class="refi__block-carbon-certificate-item-box" :class="{unknown: !certificate.image}">
+					<img class="refi__block-carbon-certificate-item-box-image" :src="certificate.image" v-if="certificate.image">
+					<img class="refi__block-carbon-certificate-item-box-image-unknown" src="/question-mark.svg" v-else>
+				</div>
+				<p class="refi__block-carbon-certificate-item-status">{{ certificate.status }}</p>
+			</div>
+		</div>
+	  </div>
       <div class="refi__block-listings">
         <h3 class="refi__block-listings-title">Latest Listings <img src="/fire.svg" alt="fire"></h3>
         <div class="refi__block-listings-items">
@@ -105,6 +127,7 @@
 </template>
 <script>
 import nft from '@/components/nft.vue'
+import { currencies } from 'country-data';
 export default {
   components: {
     nft
@@ -139,11 +162,14 @@ export default {
     const invisibleTokens = ['cconnectpunks']
     let totalCO2Amount = 0
     this.collectionList = collections.filter(item => !invisibleTokens.includes(item.nftSymbol)).map(item => {
-      const co2celoPrice = item.sell_refi_price / 1000 * item.producerFee / 1000 * cmco2Price
+	  const co2celoPrice = item.sell_refi_price / 1000 * item.producerFee / 1000 * cmco2Price
 	  const co2CeloDiff = Math.ceil(co2celoPrice) - co2celoPrice
       item.volumeCelo = Math.round(item.sell_total_price / 1000)
-	  item.co2Celo = co2celoPrice !== 0 ? co2celoPrice.toFixed(co2CeloDiff === 0 ? 0 : 2) : 0
-      totalCO2Amount += co2celoPrice
+      item.co2Celo = co2celoPrice !== 0 ? co2celoPrice.toFixed(co2CeloDiff === 0 ? 0 : 2) : 0
+	  totalCO2Amount += co2celoPrice
+	  if (item.nftSymbol === 'CBCN') {
+		totalCO2Amount += item.sell_total_price / 1000 * item.producerFee / 1000 * cmco2Price
+	  }
       item.name = (this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol) || {}).name
       item.image = `/${item.nftSymbol}.png`
       return item
@@ -158,6 +184,11 @@ export default {
 	  category: 'Browse',
 	  eventName: 'site_visit'
 	})
+  },
+  mounted() {
+	if (this.$refs.certificate && this.isMobile()) {
+	  this.$refs.certificate.scrollLeft = Math.ceil(this.$refs.certificate.offsetWidth * 0.56)
+	}
   },
   computed: {
     pageSubTitle() {
@@ -189,7 +220,37 @@ export default {
     },
     footerTitleSeparator() {
       return !this.isMobile() ? '<br/>' : ' '
-    }
+	},
+	certificates() {
+	  const date = new Date()
+	  const currYear = date.getFullYear()
+	  const currMonth = date.getMonth() + 1
+      const startMonth = currMonth > 0 ? currMonth - 1 : currMonth
+      const endMonth = currMonth < 12 ? currMonth + 1 : 12
+	  const list = []
+
+	  for (let i = startMonth; i <= endMonth; i++) {
+		date.setMonth(i - 1)
+		const month = date.toLocaleString('en-us', { month: 'long' })
+		let status = ''
+		switch (i) {
+		  case (currMonth - 1): status = 'Last'
+		  	break
+		  case currMonth: status = 'Available'
+			break
+		  case (currMonth + 1): status = 'Next'
+		  	break
+		}
+		list.push({
+		  name: `${month} ${currYear}`,
+		  image: `/certificates/${currYear}/${i}.jpg`,
+		  status,
+		  current: i === currMonth
+		})
+	  }
+
+	  return list
+	}
   },
   methods: {
     nftOwned(nft) {
@@ -314,7 +375,7 @@ export default {
     font-size: 4.8rem;
   }
   &__subtitle {
-    padding-top: 4rem;
+    padding-top: 1.6rem;
     text-align: center;
     font-weight: 500;
     font-size: 1.8rem;
@@ -362,13 +423,12 @@ export default {
           color: $grayLight;
         }
         &-investors {
-          width: 92rem;
+          width: 64.4rem;
           margin-top: 2.1rem;
         }
       }
       &-live {
         padding-top: 11.4rem;
-        padding-bottom: 4.5rem;
         &-title {
           text-align: center;
           font-family: Cabin-Medium;
@@ -407,6 +467,109 @@ export default {
         }
       }
     }
+	&-carbon {
+	  display: flex;
+      align-items: center;
+	  justify-content: space-between;
+	  background: $white2;
+      padding: 6.7rem 11.1rem 7.2rem;
+      margin: 10.2rem auto 9.8rem;
+	  border-radius: 8px;
+	  &-info {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		width: 28.3rem;
+    	margin-right: 11.2rem;
+		&-title {
+		  font-family: Cabin-Medium;
+		  font-weight: 500;
+		  line-height: 3.6rem;
+		  font-size: 3.2rem;
+		}
+		&-content {
+		  margin-top: 1.2rem;
+		  font-size: 1.4rem;
+		  color: $grayDark;
+		}
+		&-list {
+		  margin-top: 2.4rem;
+		}
+		&-buy {
+		  width: 17.9rem;
+		  background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
+		  margin-top: 2.4rem;
+		  padding: 1.2rem 0;
+		  border-radius: 2.5rem;
+		  font-weight: 700;
+		  font-size: 1.6rem;
+		  color: $white;
+		}
+	  }
+	  &-certificate {
+		display: flex;
+		align-items: center;
+		&-item {
+		  margin-right: 2rem;
+		  &:last-child {
+			margin: 0;
+		  }
+		  &-name {
+			text-align: center;
+			font-weight: 600;
+			font-size: 1.6rem;
+			color: $border;
+		  }
+		  &-box {
+			margin-top: 1.6rem;
+			border-radius: 0.4rem;
+			&-image {
+			  width: 20rem;
+			  height: 20rem;
+			  border-radius: 0.4rem;
+			  opacity: 0.7;
+			}
+			&.unknown {
+			  display: flex;
+			  align-items: center;
+			  justify-content: center;
+			  width: 20rem;
+			  height: 20rem;
+			  background: linear-gradient(0deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), linear-gradient(46.74deg, #365BE0 -17.17%, #D676CF 48.99%, #FFE884 113%);
+			}
+		  }
+		  &-status {
+			margin-top: 2rem;
+			text-align: center;
+			font-weight: 600;
+			font-size: 1.2rem;
+			color: $border;
+		  }
+		  &.current {
+			.refi__block-carbon-certificate-item-name {
+			  color: $textColor;
+			}
+			.refi__block-carbon-certificate-item-box {
+			  &-image {
+				width: 22.4rem;
+				height: 22.4rem;
+				border: 4px solid $green;
+				border-radius: 0.6rem;
+				object-fit: cover;
+				opacity: 1;
+			  }
+			}
+			.refi__block-carbon-certificate-item-status {
+			  color: $green;
+			}
+		  }
+		}
+	  }
+	  &-picture {
+		width: 28rem;
+		border-radius: 5px;
+	  }
+	}
     &-listings {
       &-title {
         font-family: OpenSans-SemiBold;
@@ -593,9 +756,11 @@ export default {
           box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
           &-header {
             display: flex;
-            align-items: center;
+			align-items: center;
+			height: 5.2rem;
             &-icon {
-              width: 5.2rem;
+			  width: 5.2rem;
+			  height: 5.2rem;
               margin-right: 2.4rem;
             }
             &-title {
@@ -658,7 +823,6 @@ export default {
         }
         &-live {
           padding-top: 7rem;
-          padding-bottom: 4.5rem;
           &-title {
             font-size: 1.6rem;
             span {
@@ -681,8 +845,52 @@ export default {
               }
             }
           }
-        }
-      }
+		}
+	  }
+	  &-carbon {
+		width: 100%;
+		flex-direction: column-reverse;
+		padding: 2.4rem 0.8rem;
+		margin: 4rem -0.8rem 4.5rem;
+		border-radius: 0;
+		&-certificate {
+		  width: 100%;
+		  overflow-x: auto;
+		  -ms-overflow-style: none;
+		  scrollbar-width: none;
+		  &::-webkit-scrollbar {
+			display: none;
+		  }
+		  &-item {
+			&.current {
+			  .refi__block-carbon-certificate-item-box {
+				&-image {
+				  width: 20rem;
+				  height: 20rem;
+				}
+			  }
+			}
+		  }
+		}
+		&-info {
+		  width: 100%;
+		  margin: 0;
+		  padding-top: 2.8rem;
+		  &-title {
+			font-family: OpenSans-SemiBold;
+			font-weight: 600;
+			font-size: 1.8rem;
+			line-height: 2.2rem;
+		  }
+		  &-list {
+			margin-top: 1.6rem;
+		  }
+		  &-buy {
+			display: block;
+			margin: 2.4rem auto 0;
+		  }
+		}
+	  }
       &-listings {
         &-title {
           font-size: 1.6rem;
@@ -827,9 +1035,11 @@ export default {
             padding: 1.6rem 1.6rem 2.2rem;
             margin-bottom: 2rem;
             &-header {
-              display: block;
+			  display: block;
+			  height: auto;
               &-icon {
-                width: 4.8rem;
+				width: 4.8rem;
+				height: 4.8rem;
                 margin-bottom: 1.6rem;
               }
               &-title {

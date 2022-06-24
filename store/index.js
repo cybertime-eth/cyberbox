@@ -4,6 +4,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider"
 import { mobileLinkChoiceKey, setLocal, removeLocal } from "@walletconnect/utils"
 import ENS from "@ensdomains/ensjs"
 import MarketMainABI from '../abis/marketMain.json'
+import MarketCertificateABI from '../abis/marketCertificate.json'
 import API from '../api'
 import daosABI from '../abis/daos.json'
 import punksABI from '../abis/punks.json'
@@ -14,37 +15,43 @@ import nomABI from '../abis/nomMarket.json'
 import { uuid } from "@walletconnect/utils"
 import {gql} from "nuxt-graphql-request";
 const ContractKit = require('@celo/contractkit')
-import filter from './../config.js'
 import redstone from 'redstone-api'
+import { Magic } from 'magic-sdk'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
-  marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A', 
+  marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
+  marketCertificate: '0xFEabeFDf5823f36D3918a753aa5962c96E275126',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
+  certContractAddress: '0xA4A8E345E1a88EFc9164014BB2CeBd4C2F98E986',
   user: {},
   chainId: null,
   address: null,
+  balance: 0,
   walletUri: null,
   walletConnected: false,
   wrongNetwork: false,
+  magicConnected: false,
   fullAddress: null,
   nftList: [],
   myNftList: [],
   traitFilters: [],
   notificationList: [],
+  certificateList: [],
+  certificateSaleList: [],
   filteredTraits: null,
   nft: {},
   approveToken: '',
   listToken: '',
   countPage: 1,
   cMCO2Price: 0, // CELO price for cMCO2
-  filter: filter.races.DAOS.layers,
   mintNumFilter: null,
   nomNameFilter: null,
   successApproveBuyToken: false,
   buyTokenApproved: false,
   successBuyToken: false,
   successRemoveToken: false,
-  successTransferToken: false,
+	successTransferToken: false,
+	sellTokenClosed: false,
   message: '',
   sort: `orderBy: contract_id`,
   raritySort: null,
@@ -59,6 +66,20 @@ export const state = () => ({
   ],
 
   collectionList: [
+	{
+	  id: 22,
+	  name: 'NFT Carbon Offset Certificate',
+	  route: 'CBCN',
+	  image: '/collections/CBCN.png',
+	  banner: '/collections/CBCN-banner.png',
+	  mobileBanner: '/collections/CBCN-banner-mobile.png',
+	  logo: '/collections/CBCN-logo.png',
+	  website: '/lending',
+	  twitter: 'https://twitter.com/cybertime_eth',
+	  discord: 'https://discord.gg/cKcWfCux4s',
+	  telegram: 'https://t.me/cybertime_eth',
+	  description: "Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands."
+	},
 	{
 	  id: 20,
 	  name: 'KnoxerDAO',
@@ -346,6 +367,8 @@ const KEY_TRANSACTION_TYPE = {
   TRANSFERED: 5,
   CHANGEPRICE: 6,
 }
+const MAGIC_API_KEY = 'pk_live_B95E7FCF317028DC'
+let magic = null
 
 export const getters = {
   walletConnectProvider() {
@@ -390,6 +413,18 @@ export const getters = {
 	  }
 	}
 	return address.toLowerCase()
+  },
+  magicLib() {
+	if (process.browser) {
+		if (!magic) {
+			magic = new Magic('pk_live_07BFC52E326230D5', {
+				network: {
+					rpcUrl: '"https://forno.celo.org"'
+				}
+			})
+		}
+	}
+	return magic
   }
 }
 export const actions = {
@@ -400,8 +435,8 @@ export const actions = {
 		page: state.countPage,
 		direction: state.sort.includes('asc') ? 'asc' : 'desc'
 	  }
-      const raritiyNfts = await API.getRarityNfts(apiPrams)
-      return raritiyNfts
+	  const raritiyNfts = await API.getRarityNfts(apiPrams)
+	  return raritiyNfts
 	} catch {
 	  return []
 	}
@@ -517,9 +552,9 @@ export const actions = {
 	  const data = await this.$graphql.default.request(query)
 	  const orderedSymbols = ['COMMON', 'RARE', 'SUPER-RARE', 'LEGENDARY']
 	  let contractInfos = data.multiNFTs.sort((a, b) => {
-	  	const idA = a.id.replace('.png', '').split('/')[1]
-	  	const idB = b.id.replace('.png', '').split('/')[1]
-	  	return orderedSymbols.indexOf(idA) - orderedSymbols.indexOf(idB)
+		const idA = a.id.replace('.png', '').split('/')[1]
+		const idB = b.id.replace('.png', '').split('/')[1]
+		return orderedSymbols.indexOf(idA) - orderedSymbols.indexOf(idB)
 	  })
 	  contractInfos = await dispatch('getMultiNftPriceData', contractInfos)
 	  commit('setNewNftList', contractInfos)
@@ -543,67 +578,72 @@ export const actions = {
 	  let queryTables = ''
 	  let traitFilterList = null
 	  if (traitFilters) {
-	    traitFilterList = traitFilters.length > 0 ? traitFilters : traitFilters.traitFilters
+		traitFilterList = traitFilters.length > 0 ? traitFilters : traitFilters.traitFilters
 	  }
 	  const queryFormat = `
-	  	contractInfos: contractInfos(sort first: 48 condition) {
-	  	  id
-	  	  contract
-	  	  contract_id
-	  	  mint_key
-	  	  price
-	  	  seller
-	  	  owner
-	  	  attributes
-	  	  rarity_rank
-	  	  contract_address
-	  	  market_status
-	  	  name
-	  	  image
-	  	  description
-	  	  updatedAt
-	  	  dna
-	  	  trait
-	  	  listData {
-	  	    id
-	  	    owner
-	  	    price
-	  	  }
-	  	  bidData {
-	  	    id
-	  	    owner
-	  	    bidder
-	  	    price_total
-	  		price_value
-	  	  	price_fee
-	  	  }
-	  	  selled {
-	  	    id
-	  	    seller
-	  	    buyer
-	  	    price_total
-	  	    price_value
-	  	    price_fee
-	  	  }
-		 }
-	  	 multiNFTs: multiNFTs(firt: 48) {
-	  	   id
-	  	   nftSymbol
-	  	   keySting
-	  	   image
-	  	   mint_count
-	  	   list_count
-	  	   sell_count
-	  	   sell_max_price
-	  	   sell_min_price
-	  	   sell_total_price
-	  	   list_min_price
-	  	   list_max_price
-	  	}
+		contractInfos: contractInfos(sort first: 48 condition) {
+		  id
+		  contract
+		  contract_id
+		  mint_key
+		  price
+		  seller
+		  owner
+		  attributes
+		  rarity_rank
+		  contract_address
+		  market_status
+		  name
+		  image
+		  description
+		  updatedAt
+		  dna
+		  trait
+		  tag_element0
+		  tag_element1
+		  tag_element2
+		  tag_element3
+		  tag_element4
+		  listData {
+		    id
+		    owner
+		    price
+		  }
+		  bidData {
+		    id
+		    owner
+		    bidder
+		    price_total
+		    price_value
+		    price_fee
+		  }
+		  selled {
+		    id
+		    seller
+		    buyer
+		    price_total
+		    price_value
+		    price_fee
+		  }
+		}
+		multiNFTs: multiNFTs(firt: 48) {
+		  id
+		  nftSymbol
+		  keySting
+		  image
+		  mint_count
+		  list_count
+		  sell_count
+		  sell_max_price
+		  sell_min_price
+		  sell_total_price
+		  list_min_price
+		  list_max_price
+		}
 	  `
 	  if (traitFilterList && traitFilterList.length > 0) {
-	    const isMyCollection = !$nuxt.$route.params.collectionid
-	    traitFilterList.forEach((item, index) => {
+		const isMyCollection = !$nuxt.$route.params.collectionid
+		traitFilterList.forEach((item, index) => {
 		  let traitSort = sort
 		  if (!isMyCollection) {
 			condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] ${collectionFilterCondition} }`
@@ -614,44 +654,44 @@ export const actions = {
 		  queryTables += queryFormat.replace('contractInfos:', `contractInfos${index}:`).replace('sort', traitSort).replace('condition', condition)
 		})
 	  } else {
-	    if (state.raritySort && !state.sort.includes('owner') && $nuxt.$route.params.collectionid) {
-	  	  rarityNfts = await dispatch('getRarityNfts')
-	  	  condition = `where: { contract: "${$nuxt.$route.params.collectionid}" contract_id_in: [${rarityNfts.map(item => item.contract_id)}] ${collectionFilterCondition} }`
-	  	  sort = ''
-	    }
-	    queryTables = queryFormat.replace('sort', sort).replace('condition', condition)
+		if (state.raritySort && !state.sort.includes('owner') && $nuxt.$route.params.collectionid) {
+		  rarityNfts = await dispatch('getRarityNfts')
+		  condition = `where: { contract: "${$nuxt.$route.params.collectionid}" contract_id_in: [${rarityNfts.map(item => item.contract_id)}] ${collectionFilterCondition} }`
+		  sort = ''
+		}
+		queryTables = queryFormat.replace('sort', sort).replace('condition', condition)
 	  }
 	  const query = gql`
-	    query Sample {
-	  	  ${queryTables}
-	    }`;
+		query Sample {
+		  ${queryTables}
+		}`;
 	  const data = await this.$graphql.default.request(query)
 	  let contractInfos = data.contractInfos || []
 	  if (traitFilterList && traitFilterList.length > 0) {
-	    let contractIds = []
-	    traitFilterList.forEach((item, index) => {
-	  	  const newContractInfos = data[`contractInfos${index}`].filter(dItem => !contractIds.includes(dItem.contract_id))
-	  	  contractInfos = [
-	  	    ...contractInfos,
-	  	    ...newContractInfos
-	  	  ]
-	  	  contractIds = contractInfos.map(cItem => cItem.contract_id)
-	    })
-	    if (traitFilters.length > 0) {
-	  	  contractInfos = contractInfos.sort((a, b) => a.contract_id - b.contract_id)
-	    }
-	    commit('setFilteredTraits', traitFilterList)
+		let contractIds = []
+		traitFilterList.forEach((item, index) => {
+		  const newContractInfos = data[`contractInfos${index}`].filter(dItem => !contractIds.includes(dItem.contract_id))
+		  contractInfos = [
+			...contractInfos,
+			...newContractInfos
+		  ]
+		  contractIds = contractInfos.map(cItem => cItem.contract_id)
+		})
+		if (traitFilters.length > 0) {
+		  contractInfos = contractInfos.sort((a, b) => a.contract_id - b.contract_id)
+		}
+		commit('setFilteredTraits', traitFilterList)
 	  } else {
-	    commit('setFilteredTraits', null)
+		commit('setFilteredTraits', null)
 	  }
 	  if ($nuxt.$route.params.collectionid !== 'nomdom') {
 	    contractInfos = await dispatch('getRarirtyCollections', { contractInfos: contractInfos, rarityNfts })
 	  }
 	  if ($nuxt.$route.name === 'mycollection') {
-	    contractInfos = await dispatch('replaceMultiNftCollections', {
-	  	  contractInfos,
-	  	  multiNFTs: data.multiNFTs
-	    })
+		contractInfos = await dispatch('replaceMultiNftCollections', {
+		  contractInfos,
+		  multiNFTs: data.multiNFTs
+		})
 	  }
 	  state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
 	  return contractInfos
@@ -804,7 +844,12 @@ export const actions = {
           price
           image
           owner
-          updatedAt
+		  updatedAt
+		  tag_element0
+		  tag_element1
+		  tag_element2
+		  tag_element3
+		  tag_element4
 		}
 		multiNFTs: multiNFTs(firt: 48) {
 		  id
@@ -834,58 +879,63 @@ export const actions = {
   async getGraphDataListed({state, commit, getters, dispatch}, traitFilters) {
 	try {
 	  if (state.multiNftSymbols.includes($nuxt.$route.params.collectionid)) {
-        return await dispatch('getMultiNftGraphData', 'listed')
-      }
-      const sort = getters.paginationSort
-      const collectionFilterCondition = getters.collectionFilterCondition
-      const fetchCount = state.raritySort ? 1000 : 48
-      let condition = `where: { contract: "${$nuxt.$route.params.collectionid}" ${collectionFilterCondition} }`
-      let queryTables = ''
-      const queryFormat = `
-        contractLists(${sort} first: ${fetchCount} condition) {
-          id
-          contract
-          contract_id
-          mint_key
-          price
-          image
-          contract_name
-          owner
-        }
-      `
-      if (traitFilters && traitFilters.length > 0) {
-        traitFilters.forEach((item, index) => {
-          condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] ${collectionFilterCondition} }`
-          queryTables += `contractLists${index}:` + queryFormat.replace('condition', condition).replace('sort', sort)
-        })
-      } else {
-        queryTables = queryFormat.replace('condition', condition)
-      }
-      const query = gql`
-        query Sample {
-          ${queryTables}
-        }`;
-      const data = await this.$graphql.default.request(query)
-      let contractLists = data.contractLists || []
-      if (traitFilters && traitFilters.length > 0) {
-        let contractIds = []
-        traitFilters.forEach((item, index) => {
-          const newContractLists = data[`contractLists${index}`].filter(dItem => !contractIds.includes(dItem.contract_id))
-          contractLists = [
-            ...contractLists,
-            ...newContractLists
-          ]
-          contractIds = contractLists.map(cItem => cItem.contract_id)
-        })
-        contractLists = contractLists.sort((a, b) => a.contract_id - b.contract_id)
-        commit('setFilteredTraits', traitFilters)
-      } else {
-        commit('setFilteredTraits', null)
-      }
-      if ($nuxt.$route.params.collectionid !== 'nomdom') {
-        contractLists = await dispatch('getRarirtyCollections', { contractInfos: contractLists })
-      }
-      state.pagination ? commit('addNftToList', contractLists) : commit('setNewNftList', contractLists)
+		return await dispatch('getMultiNftGraphData', 'listed')
+	  }
+	  const sort = getters.paginationSort
+	  const collectionFilterCondition = getters.collectionFilterCondition
+	  const fetchCount = state.raritySort ? 1000 : 48
+	  let condition = `where: { contract: "${$nuxt.$route.params.collectionid}" ${collectionFilterCondition} }`
+	  let queryTables = ''
+	  const queryFormat = `
+		contractLists(${sort} first: ${fetchCount} condition) {
+		  id
+		  contract
+		  contract_id
+		  mint_key
+		  price
+		  image
+		  contract_name
+		  owner
+		  tag_element0
+		  tag_element1
+		  tag_element2
+		  tag_element3
+		  tag_element4
+		}
+	  `
+	  if (traitFilters && traitFilters.length > 0) {
+		traitFilters.forEach((item, index) => {
+		  condition = `where: { contract: "${$nuxt.$route.params.collectionid}" tag_element${item.traitIndex}_in: [${item.values.map(filter => `"${filter.traitValue}"`)}] ${collectionFilterCondition} }`
+		  queryTables += `contractLists${index}:` + queryFormat.replace('condition', condition).replace('sort', sort)
+		})
+	  } else {
+		queryTables = queryFormat.replace('condition', condition)
+	  }
+	  const query = gql`
+		query Sample {
+		  ${queryTables}
+		}`;
+	  const data = await this.$graphql.default.request(query)
+	  let contractLists = data.contractLists || []
+	  if (traitFilters && traitFilters.length > 0) {
+		let contractIds = []
+		traitFilters.forEach((item, index) => {
+		  const newContractLists = data[`contractLists${index}`].filter(dItem => !contractIds.includes(dItem.contract_id))
+		  contractLists = [
+			...contractLists,
+			...newContractLists
+		  ]
+		  contractIds = contractLists.map(cItem => cItem.contract_id)
+		})
+		contractLists = contractLists.sort((a, b) => a.contract_id - b.contract_id)
+		commit('setFilteredTraits', traitFilters)
+	  } else {
+		commit('setFilteredTraits', null)
+	  }
+	  if ($nuxt.$route.params.collectionid !== 'nomdom') {
+		contractLists = await dispatch('getRarirtyCollections', { contractInfos: contractLists })
+	  }
+	  state.pagination ? commit('addNftToList', contractLists) : commit('setNewNftList', contractLists)
 	} catch(e) {
 	  console.log(e)
 	}
@@ -903,17 +953,22 @@ export const actions = {
 	  let queryTables = ''
 	  const queryFormat = `
 		contractSells(${sort} first: ${fetchCount} condition) {
-			id
-			contract
-			contract_id
-			mint_key
-			price_total
-			price_value
-			price_fee
-			image
-			contract_name
-			seller
-			updatedAt
+		  id
+		  contract
+		  contract_id
+		  mint_key
+		  price_total
+		  price_value
+		  price_fee
+		  image
+		  contract_name
+		  seller
+		  updatedAt
+		  tag_element0
+		  tag_element1
+		  tag_element2
+		  tag_element3
+		  tag_element4
 		}
 	  `
 	  if (traitFilters && traitFilters.length > 0) {
@@ -946,7 +1001,7 @@ export const actions = {
 		commit('setFilteredTraits', null)
 	  }
 	  if ($nuxt.$route.params.collectionid !== 'nomdom') {
-	    contractSells = await dispatch('getRarirtyCollections', { contractInfos: contractSells, sold: true })
+		contractSells = await dispatch('getRarirtyCollections', { contractInfos: contractSells, sold: true })
 	  }
 	  state.pagination ? commit('addNftToList', contractSells) : commit('setNewNftList', contractSells)
 	} catch(e) {
@@ -954,19 +1009,123 @@ export const actions = {
 	}
   },
 
-  getNotifications() {
+  async getCarbonData({getters}) {
+	const address = getters.storedAddress
+	const initialCarbonInfo = {
+	  totalCount: 0,
+	  totalTradingCelo: 0,
+	  producerFee: 0
+	}
+	if (!address) {
+	  return initialCarbonInfo
+	}
 
+	const query = gql`
+      query Sample {
+		contracts(first: 1 where: { nftSymbol: "CBCN" }) {
+		  producerFee
+		}
+		co2Owners(first: 1 where: { owner: "${address}" }) {
+		  mint_count
+		}
+        ownerTrackers(first: 1 where: { address: "${address}" }) {
+		  id
+		  sellCount
+		  buyCount
+		  totalSell
+		  totalBuy
+		}
+	  }`
+	const data = await this.$graphql.default.request(query)
+	if (data.ownerTrackers.length > 0) {
+	  const producerFee = data.contracts.length > 0 ? data.contracts[0].producerFee : 0
+	  const certificateInfo = data.co2Owners.length > 0 ? data.co2Owners[0] : {}
+	  const ownerTrackerInfo = data.ownerTrackers.length > 0 ? data.ownerTrackers[0] : {}
+	  return {
+		totalCount: certificateInfo.mint_count || 0,
+		totalTradingCelo: (ownerTrackerInfo.totalSell + ownerTrackerInfo.totalBuy) / 1000 / 2,
+		producerFee
+	  }
+	} else {
+	  return initialCarbonInfo
+	}
+  },
+
+  async getCertificates({getters, commit}) {
+	const address = getters.storedAddress
+	if (!address) return
+
+	const query = gql`
+      query Sample {
+        contractInfos(first: 48 orderBy: contract_id where: { contract: "CBCN" owner: "${address}" }) {
+		  id
+		  contract
+		  contract_id
+		  seller
+		  owner
+		  price
+		  market_status
+		  contract_address
+		  image
+		  description
+		  updatedAt
+		  tag_element0
+		  tag_element1
+		  tag_element2
+		  tag_element3
+		  tag_element4
+		}
+		saleCertificates: contractLists(first: 48 orderBy: tag_element3 where: { contract: "CBCN" owner_not: "${address}" }) {
+		  id
+		  contract
+		  contract_id
+		  contract_name
+		  price
+		  image
+		  owner
+		  updatedAt
+		  tag_element0
+		  tag_element1
+		  tag_element2
+		  tag_element3
+		  tag_element4
+		}
+      }`
+	const data = await this.$graphql.default.request(query)
+	const certificates = data.contractInfos.map(item => {
+	  item.token_type = parseInt(item.tag_element0)
+	  item.year = parseInt(item.tag_element1)
+	  item.month = parseInt(item.tag_element2)
+	  if (item.market_status === 'LISTED') {
+		item.price = item.price / 1000
+	  } else {
+		item.price = null
+	  }
+	  item.co2 = parseFloat(item.tag_element4) / 1000
+	  return item
+	})
+	const saleCertificates = data.saleCertificates.map(item => {
+	  item.token_type = parseInt(item.tag_element0)
+	  item.year = parseInt(item.tag_element1)
+	  item.month = parseInt(item.tag_element2)
+	  item.price = item.price / 1000
+	  return item
+	})
+	commit('setCertificateSaleList', saleCertificates)
+    commit('setCertificateList', certificates)
   },
 
   // AUTHORIZATION
 
   async handleAccountChanged({commit, dispatch}, account) {
-	if (process.browser) {
+	try {
 	  const oldAddress = localStorage.getItem('address')
-      commit('setAddress', account)
+	  commit('setAddress', account)
 	  if (account !== oldAddress) {
 		location.reload()
 	  }
+	} catch (e) {
+	  console.log(e)
 	}
   },
 
@@ -990,12 +1149,13 @@ export const actions = {
 		
 		commit('setAddress', address)
 		commit('setChainId', chain.chainId)
+		dispatch('getBalance')
       } catch (error) {
         console.log(error)
       }
 	}
   },
-  async connectMetaTrust({commit}) {
+  async connectMetaTrust({commit, dispatch}) {
 	try {
       if (window.ethereum) {
         await window.ethereum.request({ method: 'eth_requestAccounts' })
@@ -1004,6 +1164,7 @@ export const actions = {
         const chainId = await provider.getNetwork()
         commit('setChainId', chainId.chainId)
 		commit('setAddress', address)
+		dispatch('getBalance')
 		this._vm.sendEvent({
 		  category: 'Connect',
 		  eventName: 'connect_status',
@@ -1019,7 +1180,8 @@ export const actions = {
         const address = await provider.getSigner().getAddress();
         const chainId = await provider.getNetwork()
         commit('setChainId', chainId.chainId)
-        commit('setAddress', address)
+		commit('setAddress', address)
+		dispatch('getBalance')
       } else {
         alert("please use web3 enabled browser.");
       }
@@ -1089,6 +1251,22 @@ export const actions = {
 
     provider.start()
     provider.subscribeWalletConnector()
+  },
+  async connectWithEmail({getters, commit, dispatch}, email) {
+	try {
+	  const magicLib = getters.magicLib
+	  const isLoggedIn = await magicLib.user.isLoggedIn()
+	  if (!isLoggedIn) {
+		await magicLib.auth.loginWithMagicLink({ email })
+		commit('setMagicConnected', true)  
+	  }
+	  const { publicAddress } = await magicLib.user.getMetadata()
+	  commit('setAddress', publicAddress)
+	  commit('setChainId', 42220)
+	  dispatch('getBalance')
+	} catch (e) {
+	  console.log(e)
+	}
   },
   disconnectWallet({ getters }, provider) {
     let walletProvider = provider
@@ -1174,12 +1352,16 @@ export const actions = {
       }
     }
   },
-  async logout({commit}) {
+  async logout({state, commit}) {
     try {
       commit('setAddress', '')
       commit('setWalletConnected', false)
       localStorage.removeItem('walletconnect')
-      localStorage.removeItem('address')
+	  localStorage.removeItem('address')
+	  if (state.magicConnected) {
+		await magicLib.user.logout()
+		commit('setMagicConnected', false)
+	  }
       window.location.reload();
     } catch (error) {
       console.log(error);
@@ -1189,12 +1371,15 @@ export const actions = {
 
   // GET INFORMATION USER
 
-  async getBalance({state, getters}) {
-	if (!state.fullAddress || state.chainId !== 42220) return 0
+  async getBalance({state, getters, commit}) {
+	const address = getters.storedAddress
+	if (!address || state.chainId !== 42220) return 0
 	const web3 = new Web3(getters.provider)
 	const kit = ContractKit.newKitFromWeb3(web3)
-	const res = await kit.getTotalBalance(state.fullAddress)
-	return res.CELO.c[0] / 10000
+	const res = await kit.getTotalBalance(address)
+	const balance = res.CELO.c[0] / 10000
+	commit('setBalance', balance)
+	return balance
   },
   async getPriceToken() {
 	return await redstone.getPrice('CELO')
@@ -1254,7 +1439,12 @@ export const actions = {
         price_total
         price_value
         price_fee
-      }
+	  }
+	  tag_element0
+	  tag_element1
+	  tag_element2
+	  tag_element3
+	  tag_element4
     `
     if (!isMultiNft) {
       nftQuery = `
@@ -1379,7 +1569,9 @@ export const actions = {
     const signer = provider.getSigner()
     try {
 	  let resultAddress = state.marketNom
-	  if (state.nft.contract !== 'nomdom') {
+	  if (state.nft.contract === 'CBCN') {
+		resultAddress = state.marketCertificate
+	  } else if (state.nft.contract !== 'nomdom') {
 	    const getSupportMarketPlace = new ethers.Contract(state.marketMain, MarketMainABI, signer)
 	    resultAddress = await getSupportMarketPlace.getSupportMarketPlaceToken(state.nft.contract_address)
 	  }
@@ -1398,7 +1590,12 @@ export const actions = {
 	    default: AbiNft = daosABI
 	  	  break;
 	  }
-      const contractAddress = state.nft.contract !== 'nomdom' ? state.nft.contract_address : state.nomContractAddress
+	  let contractAddress = state.nft.contract_address
+	  if (state.nft.contract === 'nomdom') {
+		contractAddress = state.nomContractAddress
+	  } else if (state.nft.contract === 'CBCN') {
+		contractAddress = state.certContractAddress
+	  }
       const contract = new ethers.Contract(contractAddress, AbiNft, signer)
       const approvedForAll = await contract.isApprovedForAll(getters.storedAddress, resultAddress)
       if (!submitApprove) {
@@ -1436,23 +1633,26 @@ export const actions = {
 		  listing_approve_error_type: error
 		}
 	  })
+	  console.log(error)
     }
   },
   async listingNFT({commit, state, getters}, price) {
     const provider = new ethers.providers.Web3Provider(getters.provider)
     const signer = provider.getSigner()
     let contract = null;
-    if (state.nft.contract !== 'nomdom') {
-      contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
-    } else {
-      contract = new ethers.Contract(state.marketNom, nomABI, signer)
-	}
     try {
-      if (state.nft.contract !== 'nomdom') {
+	  if (state.nft.contract === 'CBCN') {
+		contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
+		await contract.listToken(state.nft.contract_id, web3.utils.toWei(String(price)), {
+		  gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+		})
+      } else if (state.nft.contract !== 'nomdom') {
+		contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
         await contract.listToken(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(price)), {
           gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
         })
       } else {
+		contract = new ethers.Contract(state.marketNom, nomABI, signer)	
         await contract.listToken(state.nft.name, web3.utils.toWei(String(price)), {
           gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
         })
@@ -1498,18 +1698,20 @@ export const actions = {
     const provider = new ethers.providers.Web3Provider(getters.provider)
     const signer = provider.getSigner()
     let contract = null
-    if (state.nft.contract !== 'nomdom') {
-      contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
-    } else {
-      contract = new ethers.Contract(state.marketNom, nomABI, signer)
-    }
 
     try {
-      if (state.nft.contract !== 'nomdom') {
-        await contract.changePrice(state.nft.contract_address, state.nft.contract_id, web3.utils.toWei(String(price)), {
-          gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
-        })
+	  if (state.nft.contract === 'CBCN' || state.nft.contract !== 'nomdom') {
+		const contractAddress = state.nft.contract === 'CBCN' ? state.certContractAddress : state.nft.contract_address
+		if (state.nft.contract === 'CBCN') {
+		  contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
+		} else {
+		  contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
+		}
+		await contract.changePrice(contractAddress, state.nft.contract_id, web3.utils.toWei(String(price)), {
+		  gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+		})
       } else {
+		contract = new ethers.Contract(state.marketNom, nomABI, signer)
         await contract.changePrice(state.nft.name, web3.utils.toWei(String(price)), {
           gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
         })
@@ -1534,7 +1736,7 @@ export const actions = {
     const kit = ContractKit.newKitFromWeb3(web3)
     const goldToken = await kit._web3Contracts.getGoldToken();
     const tokenPrice = web3.utils.toBN(web3.utils.toWei(String(price)))
-    const allowanceAmount = web3.utils.toBN(await goldToken.methods.allowance(account, account).call())
+	const allowanceAmount = web3.utils.toBN(await goldToken.methods.allowance(account, account).call())
     commit('changeBuyTokenApproved', allowanceAmount.gte(tokenPrice))
   },
 
@@ -1583,14 +1785,29 @@ export const actions = {
   },
   async reportRevenue({state, dispatch}, collection) {
 	const price = await dispatch('getPriceToken')
+	const start = new Date()
+	const startTime = Math.round(start.setHours(0, 0, 0, 0) / 1000)
+	const end = new Date()
+    const endTime = Math.round(end.setHours(23, 59, 59, 999) / 1000)
 	const query = gql`
       query Sample {
-        contracts(first: 1 where: { nftSymbol: "${collection.route}" }) {
-          sell_total_price
-        }
+		contractSells(first: 1000 where: { contract: "${collection.route}" updatedAt_gte: ${startTime} updatedAt_lte: ${endTime} }) {
+		  id
+		  contract
+		  contract_id
+		  mint_key
+		  price_total
+		}
       }`
 	let data = await this.$graphql.default.request(query)
-	const totalPrice = data.contracts.length > 0 ? (data.contracts[0].sell_total_price / 1000 * price.value) : 0;
+	let totalSold = 0
+	const contractSells = data.contractSells
+	contractSells.forEach(item => totalSold += item.price_total / 1000)
+	const itemExist = contractSells.find(item => item.contract_id === state.nft.contract_id)
+	if (!itemExist) {
+	  totalSold += state.nft.price
+	}
+	const totalPrice = totalSold * price.value
 	this._vm.sendRevenueEvent(`${collection.name} - ${state.nft.contract_id}`, price.value * state.nft.price, totalPrice, collection.name)
   },
   async buyNFT({commit, state, getters, dispatch}, token) {
@@ -1602,21 +1819,25 @@ export const actions = {
 		const account = accounts[0]
 		const kit = ContractKit.newKitFromWeb3(web3)
 		let contract = null
-		if (state.nft.contract !== 'nomdom') {
-		  contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
-		} else {
-		  contract = new kit.web3.eth.Contract(nomABI, state.marketNom)
-		}
 		const parsePrice = ethers.utils.parseEther(String(token.price))
 		console.log(token.price)
 		let result = {}
-		if (state.nft.contract !== 'nomdom') {
+		if (state.nft.contract === 'CBCN') {
+			contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
+			result = await contract.methods.buyToken(token.id, web3.utils.toWei(String(token.price))).send({
+				from: account,
+				value: parsePrice,
+				gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
+			})
+		} else if (state.nft.contract !== 'nomdom') {
+		  contract = new kit.web3.eth.Contract(MarketMainABI, state.marketMain)
 		  result = await contract.methods.buyToken(state.nft.contract_address, token.id, web3.utils.toWei(String(token.price))).send({
 			from: account,
 			value: parsePrice,
 			gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
 		  })
 		} else {
+		  contract = new kit.web3.eth.Contract(nomABI, state.marketNom)
 		  result = await contract.methods.buyToken(state.nft.name, web3.utils.toWei(String(token.price))).send({
 			from: account,
 			value: parsePrice,
@@ -1644,6 +1865,7 @@ export const actions = {
 		  dispatch('reportRevenue', currCollection)
 		});
 	} catch(error) {
+	  console.log(error)
 	  this._vm.sendEvent({
 		category: 'Buy',
 		eventName: 'buy_status',
@@ -1667,18 +1889,20 @@ export const actions = {
     const provider = new ethers.providers.Web3Provider(getters.provider)
     const signer = provider.getSigner()
     let contract = null
-    if (params.nft.contract !== 'nomdom') {
-      contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
-    } else {
-      contract = new ethers.Contract(state.marketNom, nomABI, signer)
-    }
     
     try {
-      if (params.nft.contract !== 'nomdom') {
+	  if (params.nft.contract === 'CBCN') {
+		contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
+		await contract.transfer(params.toAddress, params.nft.contract_id, {
+		  gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+		})
+      } else if (params.nft.contract !== 'nomdom') {
+		contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
         await contract.transfer(params.nft.contract_address, params.toAddress, params.nft.contract_id, {
           gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
         })
       } else {
+		contract = new ethers.Contract(state.marketNom, nomABI, signer)
         await contract.transferNom(params.toAddress, params.nft.name, {
           gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
         })
@@ -1697,32 +1921,33 @@ export const actions = {
   async getCollectionInfo({commit, state}, isArray) {
 	try {
 	  const collectionId = $nuxt.$route.params.collectionid
-      const allArray = `orderBy: sell_total_price, orderDirection: desc where: { mint_count_gt: 0 }`
-      const firstObject = collectionId === 'nomstronaut' ? `where: { id: "0x8237f38694211f25b4c872f147f027044466fa80" }` : `where: { nftSymbol: "${$nuxt.$route.params.collectionid}"}`
-      const query = gql`
-        query Sample {
-          contracts(${isArray ? allArray : firstObject}) {
-            id
-            title
-            mint_count
-            bid_count
-            sell_count
-            sell_max_price
-            sell_min_price
-            sell_total_price
-            sell_refi_price
-            list_count
-            dna_count
-            nftName
-            nftSymbol
-            ownerCount
-            createrFee
-            producerFee
-            marketFee
-          }
-        }`;
-      let data = await this.$graphql.default.request(query)
-      return isArray ? data.contracts : data.contracts[0]
+	  const allArray = `orderBy: sell_total_price, orderDirection: desc where: { mint_count_gt: 0 }`
+	  const firstObject = collectionId === 'nomstronaut' ? `where: { id: "0x8237f38694211f25b4c872f147f027044466fa80" }` : `where: { nftSymbol: "${$nuxt.$route.params.collectionid}"}`
+	  const query = gql`
+		query Sample {
+		  contracts(${isArray ? allArray : firstObject}) {
+			id
+			title
+			mint_count
+			bid_count
+			sell_count
+			sell_max_price
+			sell_min_price
+			sell_total_price
+			sell_refi_price
+			list_count
+			dna_count
+			nftName
+			nftSymbol
+			ownerCount
+			createrFee
+			producerFee
+			marketFee
+			total_co2
+		  }
+		}`;
+	  let data = await this.$graphql.default.request(query)
+	  return isArray ? data.contracts : data.contracts[0]
 	} catch {
 	  return []
 	}
@@ -1735,22 +1960,22 @@ export const actions = {
     const time24hNftsQuery = gql`
       query Sample {
         contractSells(where: { contract: "${contract}" updatedAt_gte: ${timeBeforeOneDay} }) {
-          price_value
+          price_total
         }
       }`;
     const time48hNftsQuery = gql`
       query Sample {
         contractSells(where: { contract: "${contract}" updatedAt_gte: ${timeBeforeTwoDays} updatedAt_lt: ${timeBeforeOneDay} }) {
-          price_value
+		  price_total
         }
       }`;
     const data1 = await this.$graphql.default.request(time24hNftsQuery)
     const data2 = await this.$graphql.default.request(time48hNftsQuery)
     let ts1 = 0
     let ts2 = 0
-    data1.contractSells.forEach(item => ts1 += item.price_value)
-    data2.contractSells.forEach(item => ts2 += item.price_value)
-    const tsOffset = ts1 - ts2;
+    data1.contractSells.forEach(item => ts1 += item.price_total / 1000)
+    data2.contractSells.forEach(item => ts2 += item.price_total / 1000)
+	const tsOffset = ts1 - ts2;
     return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
   },
   async getContractInfoWeekPercent({commit, state}, contract) {
@@ -1760,22 +1985,22 @@ export const actions = {
     const time7dNftsQuery = gql`
       query Sample {
         contractSells(where: { contract: "${contract}" updatedAt_gte: ${timeBefore7Days} }) {
-          price_value
+		  price_total
         }
       }`;
     const time14dNftsQuery = gql`
       query Sample {
         contractSells(where: { contract: "${contract}" updatedAt_gte: ${timeBefore14Days} updatedAt_lt: ${timeBefore7Days} }) {
-          price_value
+		  price_total
         }
       }`;
     const data1 = await this.$graphql.default.request(time7dNftsQuery)
     const data2 = await this.$graphql.default.request(time14dNftsQuery)
     let ts1 = 0
     let ts2 = 0
-    data1.contractSells.forEach(item => ts1 += item.price_value)
-    data2.contractSells.forEach(item => ts2 += item.price_value)
-    const tsOffset = ts1 - ts2;
+    data1.contractSells.forEach(item => ts1 += item.price_total / 1000)
+    data2.contractSells.forEach(item => ts2 += item.price_total / 1000)
+	const tsOffset = ts1 - ts2;
     return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
   },
 
@@ -1787,14 +2012,19 @@ export const actions = {
     const signer = provider.getSigner()
     let contract = null
     if (payloadNft.contract !== 'nomdom') {
-      contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
+      
     } else {
-      contract = new ethers.Contract(state.marketNom, nomABI, signer)
+      
     }
     try {
-      if (payloadNft.contract !== 'nomdom') {
+	  if (payloadNft.contract === 'CBCN') {
+		contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
+		await contract.delistToken(payloadNft.contract_id, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
+      } else if (payloadNft.contract !== 'nomdom') {
+		contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
         await contract.delistToken(payloadNft.contract_address , payloadNft.contract_id, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
       } else {
+		contract = new ethers.Contract(state.marketNom, nomABI, signer)
         await contract.delistToken(payloadNft.name , { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
       }
       provider.once(contract, async () => {
@@ -1831,17 +2061,17 @@ export const actions = {
 	  const symbol = $nuxt.$route.params.collectionid || nftSymbol
 	  const query = gql`
 		query Sample {
-			traitTypes(first: 1000 where: { nftSymbol: "${symbol}" }) {
+		  traitTypes(first: 1000 where: { nftSymbol: "${symbol}" }) {
 			nftSymbol
 			traitType
 			traitIndex
-			}
-			traitValues(first: 1000 where: { nftSymbol: "${symbol}" }) {
+		  }
+		  traitValues(first: 1000 where: { nftSymbol: "${symbol}" }) {
 			nftSymbol
 			traitType
 			traitValue
 			useCount
-			}
+		  }
 		}`;
 	  const data = await this.$graphql.default.request(query)
 	  const traitFilters = data.traitTypes
@@ -1895,10 +2125,11 @@ export const actions = {
 		  notificationItem.to = item.toAddress.substr(0, 6)
 		  notificationItem.owned = item.fromAddress.toLowerCase() === address
 		  notificationItem.totalCount = data.notificationInfos[0].total_count
-		  notificationItem.read = parseInt(item.id) <= maxId  
+		  notificationItem.read = parseInt(item.id) <= maxId
+
 		  switch(item.notify_type) {
-		    case KEY_TRANSACTION_TYPE.LIST:
-		  	  notificationItem.type = 'LISTED'
+			case KEY_TRANSACTION_TYPE.LIST:
+			  notificationItem.type = 'LISTED'
 			  break
 			case KEY_TRANSACTION_TYPE.SELL:
 			  notificationItem.type = 'SOLD'
@@ -1916,23 +2147,95 @@ export const actions = {
 			default:
 			  notificationItem.type = 'UNKNOWN'
 			  break
-			}
-
-			const infoIndex = notificationList.findIndex(info => info.date === updatedTime)
-			if (infoIndex < 0) {
-			  notificationList.push({
-				date: updatedTime,
-				items: [notificationItem]
-			  })
-			} else {
-			  notificationList[infoIndex].items.push(notificationItem)
-			}	  
 		  }
-		})
-		commit('setNotificationList', notificationList)
+
+		  const infoIndex = notificationList.findIndex(info => info.date === updatedTime)
+		  if (infoIndex < 0) {
+			notificationList.push({
+			  date: updatedTime,
+			  items: [notificationItem]
+			})
+		  } else {
+			notificationList[infoIndex].items.push(notificationItem)
+		  }	  
+		}
+	  })
+	  commit('setNotificationList', notificationList)
 	} catch(e) {
 	  console.log(e)
 	}
+  },
+
+  // Certificate Methods
+
+  async mintCertificate({state, getters, commit}, price) {
+	try {
+	  const ethereumProvider = getters.provider
+	  const provider = new ethers.providers.Web3Provider(ethereumProvider)
+	  const web3 = new Web3(ethereumProvider)
+	  const accounts = await web3.eth.getAccounts()
+	  const account = accounts[0]
+	  const kit = ContractKit.newKitFromWeb3(web3)
+	  const contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
+	  const parsePrice = ethers.utils.parseEther(String(price))
+	  const result = await contract.methods.mintMonthNFT().send({
+	    from: account,
+	    value: parsePrice,
+	    gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+	  })
+
+	  provider.once(result, async () => {
+	    commit('changeSuccessBuyToken', true)
+	  })
+	} catch (e) {
+	  console.log(e)
+	  commit('changeSuccessBuyToken', 'error')
+	}
+  },
+
+  async getCurrentMonthNFTID({state, getters}) {
+	try {
+	  if (!state.fullAddress) return 0
+	  const web3 = new Web3(getters.provider)
+	  const kit = ContractKit.newKitFromWeb3(web3)
+	  const contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
+	  const result = await contract.methods.getCurrentMonthNFTID(state.fullAddress).call()
+	  return result
+	  return 0
+	} catch(e) {
+	  console.log(e)
+	  return 0
+	}
+  },
+
+  async getMonthNFTID({state, getters}, date) {
+	try {
+	  if (!state.fullAddress) return 0
+	  const web3 = new Web3(getters.provider)
+	  const kit = ContractKit.newKitFromWeb3(web3)
+	  const contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
+	  return await contract.methods.getMonthNFTID(state.fullAddress, date.year, date.month).call()
+	} catch(e) {
+	  console.log(e)
+	  return 0
+	}
+  },
+
+  async exchangeBonusNFT({state, getters, commit}, year) {
+	try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+      const signer = provider.getSigner()
+      const contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
+	  await contract.exchangeMonthNFTToBonus(year).send({
+	    gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
+	  })
+	  provider.once(contract, async () => {
+	    commit('changeSuccessBuyToken', true)
+	  })
+	} catch(error) {
+	  console.log(error)
+	  commit('changeSuccessBuyToken', 'error')
+    }
   }
 }
 
@@ -1941,25 +2244,31 @@ export const mutations = {
     state.user = user
   },
   setAddress(state,address) {
-	try {
+	if (!address) return
+	if (process.browser) {
 	  localStorage.setItem('address', address)
-      state.fullAddress = address.toLowerCase()
-      const startID = address.split("").slice(0, 6);
-      const endID = address.split("").slice(-4);
-      const dotArr = [".", ".", "."];
-      state.address = startID
-        .concat(dotArr)
-        .concat(endID)
-        .join("");
-	} catch(e) {
-	  console.log(e)
 	}
+    state.fullAddress = address.toLowerCase()
+	// const startID = address.split("").slice(0, 6);
+	const startID = ['0', 'x']
+    const endID = address.split("").slice(-4);
+    const dotArr = [".", ".", "."];
+    state.address = startID
+      .concat(dotArr)
+      .concat(endID)
+	  .join("");
+  },
+  setBalance(state, balance) {
+	state.balance = balance;
   },
   setAddressByNom(state, nomAddress) {
     state.address = `${nomAddress}.nom`
   },
   setWalletConnected(state, connected) {
     state.walletConnected = connected
+  },
+  setMagicConnected(state, connected) {
+    state.magicConnected = connected
   },
   setCMCO2TokenPrice(state, celoPrice) {
     state.cMCO2Price = celoPrice;
@@ -1999,11 +2308,21 @@ export const mutations = {
   setNotificationList(state, list) {
     state.notificationList = list
   },
+  setCertificateSaleList(state, list) {
+    state.certificateSaleList = list
+  },
+  setCertificateList(state, list) {
+    state.certificateList = list
+  },
   setNewNft(state, nft) {
-    state.nft = {
-      ...nft,
-      price: nft.price / 1000
-    }
+	if (nft) {
+	  state.nft = {
+		...nft,
+		price: nft.price / 1000
+	  }
+	} else {
+	  state.nft = {}
+	}
   },
   setMyNftList(state, list) {
     state.myNftList = list
@@ -2045,7 +2364,10 @@ export const mutations = {
   },
   changeSuccessTransferToken(state, status) {
     state.successTransferToken = status
-  },
+	},
+	changeSellTokenClosed(state, status) {
+    state.sellTokenClosed = status
+	},
   setChainId(state, chain) {
     state.chainId = chain
     state.wrongNetwork = chain !== 42220
@@ -2136,7 +2458,7 @@ export const mutations = {
 	  if (type !== 'pagination') {
 		state.countPage = 1
 		state.pagination = null
-		if (type.includes('rarity')) {
+	    if (type.includes('rarity')) {
 		  state.raritySort = type
 		} else {
 		  state.raritySort = null
@@ -2146,6 +2468,7 @@ export const mutations = {
 	  console.log(e)
 	}
   },
+
   changeMyCollectionSort(state, option) {
     let address = state.fullAddress
     if (!address) {

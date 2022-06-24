@@ -247,7 +247,10 @@ export default {
 		}
 	  }
 	  const result = await this.$store.dispatch('getGraphData', traitFilterInfo)
-	  const newNftList = isReplace ? this.listNft : []
+	  let newNftList = isReplace ? this.listNft : []
+	  if (this.activeFilter !== 'all' && isReplace) {
+		newNftList = this.filteredNft ? this.filteredNft : []
+	  }
       for (let nft of result) {
         if (nft.contract !== 'nom') {
           newNftList.push({
@@ -256,7 +259,7 @@ export default {
           })
         }
 	  }
-	  if (isReplace) {
+	  if (this.activeFilter === 'all' && isReplace) {
 		this.listNft = newNftList
 	  }
       this.filteredNft = JSON.parse(JSON.stringify(newNftList))
@@ -310,7 +313,7 @@ export default {
     async addCurrentPage() {
       const count = this.$store.state.countPage
       const element = document.body
-      if (element.scrollHeight <= window.pageYOffset + window.innerHeight && count * 48 === this.listNft.length) {
+      if (element.scrollHeight <= window.pageYOffset + window.innerHeight && this.filteredNft && count * 48 === this.filteredNft.length) {
         this.$store.commit('changeCountPage', count + 1)
         this.$store.commit('changeSortData', 'pagination')
         await this.addMyCollection()

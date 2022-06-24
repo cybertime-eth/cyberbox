@@ -9,6 +9,12 @@ const editionSize = 8640; // this will print 100 copies : (use if you already ha
 const CDN_ROOT = 'https://cdn.cyberbox.art/'
 const AMPLITUDE_API_KEY = '06a79e76e64715fc4c6577fa883553ea'
 
+const CERTIFICATE_TOKEN_TYPE = {
+  MONTH: 0,
+  YEAR: 1,
+  BONUS: 2
+}
+
 const raceWeights = [
   {
     value: "DAOS", // Change to whatever you want
@@ -349,5 +355,6 @@ module.exports = {
   races,
   raceWeights,
   CDN_ROOT,
-  AMPLITUDE_API_KEY
+  AMPLITUDE_API_KEY,
+  CERTIFICATE_TOKEN_TYPE
 };

@@ -17,7 +17,7 @@
             <nuxt-link class="header__link" active-class="gradient-text" to="/rankings" exact @click="sendRankingEvent">Rankings</nuxt-link>
           </li>
           <li class="header__list">
-            <nuxt-link class="header__link" active-class="gradient-text" to="/loans"  exact>NFT loans</nuxt-link>
+            <nuxt-link class="header__link" active-class="gradient-text" to="/carbon"  exact>Offset Tracker</nuxt-link>
           </li>
           <!-- <li class="header__list">
             <a class="header__link" href="https://forms.gle/R7LmANz7iqsCA88X8" target="_blank">Launchpad</a>
@@ -31,13 +31,29 @@
             <img src="/lightning.svg" alt="lightning">
             <span class="header__notification-count" v-if="notificationCount">{{ notificationCount }}</span>
           </nuxt-link>
+		  <dropdown-menu class="header__celo" :right="true" v-model="showCeloDropdown">
+			<img class="header__celo-toggle dropdown-toggle" src="/wallet.svg" alt="wallet">
+			<div slot="dropdown">
+				<!-- <a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
+					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" src="/celo.svg" alt="celo"> CELO by Credit Card <img class="dropdown-item-cards" src="/payable-cards.svg" alt="cards"></span>
+					<img class="dropdown-item-nav" src="/array-right.svg" alt="right">
+				</a> -->
+				<a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
+					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" src="/celo.svg" alt="celo"> CELO on Ubeswap</span>
+					<img class="dropdown-item-nav" src="/array-right.svg" alt="right">
+				</a>
+			</div>
+		  </dropdown-menu>
         </div>
         <button v-else class="header__null"></button>
         <div class="header__wallet" ref="wallet" v-if="address && !isMobile()" @click="showProfileMenu = !showProfileMenu">
-          <h3 class="header__wallet-address">{{ address }}</h3>
-          <div class="header__wallet-avatar gradient-button">
-            <img src="/celo.svg" alt="avatar">
-          </div>
+          <h3 class="header__wallet-balance">{{ balance }} CELO</h3>
+		  <h3 class="header__wallet-address">{{ address }}</h3>
+		  <div class="header__wallet-avatar-box">
+			<div class="header__wallet-avatar gradient-button">
+				<img src="/celo.svg" alt="avatar">
+			</div>
+		  </div>
         </div>
       </client-only>
       <button class="gradient-button header__connect" v-if="!address" @click="showConnectModal = true">Connect Wallet</button>
@@ -48,29 +64,47 @@
             <span class="header__notification-count" v-if="notificationCount">{{ notificationCount }}</span>
           </nuxt-link>
           <div class="header__box" v-if="address && isMobile()">
-            <nuxt-link class="header__link" active-class="gradient-text" to="/mycollection" exact><img src="/mycollection.svg" alt="mycollection"></nuxt-link>
+            <nuxt-link class="header__link header__mycollection" active-class="gradient-text" to="/mycollection" exact><img src="/mycollection.svg" alt="mycollection"></nuxt-link>
+			<dropdown-menu class="header__celo" :right="true" v-model="showCeloDropdown">
+				<img class="header__celo-toggle dropdown-toggle" src="/wallet.svg" alt="wallet">
+				<div slot="dropdown">
+					<!-- <a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
+						<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" src="/celo.svg" alt="celo"> CELO by Credit Card <img class="dropdown-item-cards" src="/payable-cards.svg" alt="cards"></span>
+						<img class="dropdown-item-nav" src="/array-right.svg" alt="right">
+					</a> -->
+					<a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
+						<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" src="/celo.svg" alt="celo"> CELO on Ubeswap</span>
+						<img class="dropdown-item-nav" src="/array-right.svg" alt="right">
+					</a>
+				</div>
+			</dropdown-menu>
           </div>
         </client-only>
         <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
         <img src="/search-mobile.svg" alt="search" class="header__mobile-search" @click="showSearchView = true">
         <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showMobileMenu">
+		<img src="/close.svg" alt="close" class="header__mobile-close" @click="closeSellModal">
       </div>
       <div class="header__error-network" v-if="showWrongNetwork">
         <img src="/pulse.svg" alt="pulse">
         <p class="header__error-network-text">You are on the wrong network</p>
       </div>
     </div>
-    <connect v-if="showConnectModal && !address" @showValora="openValoraModal" @closeModal="closeModal"/>
-    <valoraConnect v-if="showValoraModal"  @closeModal="showValoraModal = false" />
+    <!-- <connect @showWallet="openWalletModal" @showEmail="openEmailModal" @closeModal="closeModal" v-if="showConnectModal && !address"/> -->
+	<walletConnect @showConnect="openConnectModal" @showValora="openValoraModal" @closeModal="closeModal" v-if="showConnectModal && !address"/>
+	<valoraConnect @closeModal="closeModal" v-if="showValoraModal"/>
+	<socialConnect @showConnect="openConnectModal" @closeModal="closeModal" v-if="showEmailModal"/>
     <wrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
     <profileModal v-show="showProfileMenu" @closeModal="closeModal"/>
-    <profileModalMobile v-show="showProfileMenuMobile" @closeModal="closeModal"/>
+    <profileModalMobile v-show="showProfileMenuMobile" :balance="balance" @closeModal="closeModal"/>
     <searchView v-show="showSearchView" @close="showSearchView = false"/>
   </header>
 </template>
 <script>
 import connect from '@/components/modals/connect'
+import walletConnect from '@/components/modals/walletConnect'
 import valoraConnect from '@/components/modals/valoraConnect'
+import socialConnect from '@/components/modals/socialConnect'
 import profileModal from '@/components/modals/profileModal'
 import profileModalMobile from '@/components/modals/profileModalMobile'
 import wrongNetwork from '@/components/modals/wrongNetwork'
@@ -79,9 +113,12 @@ import searchView from '@/components/search/searchView'
 export default {
   data() {
     return {
-      image: false,
+	  image: false,
       showConnectModal: false,
-      showValoraModal: false,
+	  showWalletModal: false,
+	  showValoraModal: false,
+	  showEmailModal: false,
+	  showCeloDropdown: false,
       showProfileMenu: false,
       showProfileMenuMobile: false,
       showWrongNetwork: false,
@@ -109,7 +146,9 @@ export default {
   },
   components: {
     connect,
-    valoraConnect,
+	walletConnect,
+	valoraConnect,
+	socialConnect,
     wrongNetwork,
     profileModal,
     profileModalMobile,
@@ -125,7 +164,10 @@ export default {
     },
     address() {
       return this.$store.state.address
-    },
+	},
+	balance() {
+	  return this.$store.state.balance.toFixed(1);
+	},
     nftId() {
       return this.$route.params.nftid
     },
@@ -141,10 +183,10 @@ export default {
       return count
     }
   },
-  created() {
+  async created() {
     if (process.browser) {
       window.addEventListener('click', this.handleClickWindow)
-    }
+	}
   },
   beforeDestroy() {
     window.removeEventListener('click', this.handleClickWindow)
@@ -164,13 +206,33 @@ export default {
       const footerEl = document.querySelector('.footer')
       footerEl.classList.add('fixed')
       footerEl.classList.add('sidemenu')
-    },
-    openValoraModal() {
+	},
+	closeSellModal() {
+	  this.$store.commit('changeSellTokenClosed', true)
+	  this.$refs.header.classList.remove('buy')
+	},
+	openConnectModal() {
+	  this.showWalletModal = false
+	  this.showEmailModal = false
+	  this.showConnectModal = true
+	},
+    openWalletModal() {
+      this.showWalletModal = true
+      this.showConnectModal = false
+	},
+	openValoraModal() {
       this.showValoraModal = true
+      this.showWalletModal = false
+	},
+	openEmailModal() {
+      this.showEmailModal = true
       this.showConnectModal = false
     },
     closeModal(payload) {
-      this.showConnectModal = payload
+	  this.showConnectModal = payload
+	  this.showWalletModal = payload
+	  this.showValoraModal = payload
+	  this.showEmailModal = payload
       this.showProfileMenu = payload
       this.showProfileMenuMobile = payload
       if (this.isMobile()) {
@@ -212,7 +274,7 @@ header {
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 6.4rem 23.6rem 28rem 52.1rem 22rem;
+  grid-template-columns: 6.4rem 23.6rem 28rem 50.2rem 24rem;
   align-items: center;
   position: relative;
   &__back {
@@ -240,8 +302,8 @@ header {
   &__box {
     display: flex;
     align-items: center;
-    justify-self: end;
-    cursor: pointer;
+	justify-self: end;
+	padding-right: 2.4rem;
   }
   &__notification {
     position: relative;
@@ -290,28 +352,64 @@ header {
       }
     }
   }
+  &__celo {
+	margin-left: 2.4rem;
+	.dropdown-menu {
+	  width: 25rem;
+	}
+	.dropdown-item {
+	  cursor: pointer;
+	  &:hover {
+		background: $lightGreen;
+	  }
+	  &-name {
+		display: flex;
+		align-items: center;
+		font-weight: 600;
+		font-size: 1.6rem;
+	  }
+	  &-celo {
+		width: 1.6rem;
+		margin: 0 0.4rem;
+	  }
+	  &-cards {
+		margin-left: 1.6rem;
+	  }
+	}
+  }
   &__wallet {
-    background: #E9FCEE;
-    border-radius: 2.5rem;
-    width: 19.7rem;
-    height: 4.8rem;
-    display: flex;
+	display: flex;
     align-items: center;
-    justify-content: space-between;
+	width: 24rem;
     justify-self: end;
+	position: relative;
     cursor: pointer;
     z-index: 1;
-    &-address {
-      width: 65%;
-      padding-left: 2.2rem;
+    &-balance, &-address {
+      flex: 1;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
+	&-balance {
+	  background: $white;
+	  padding: 1rem 3rem 1rem 1.2rem;
+	  border: 1px solid $lightGreen;
+	  border-radius: 2.5rem 0 0 2.5rem;
+    }
+	&-address {
+	  background: $lightGreen;
+	  padding: 1.1rem 1.2rem 1.1rem 3rem;
+	  border-radius: 0 2.5rem 2.5rem 0;
+    }
+	&-avatar-box {
+	  position: absolute;
+	  left: 50%;
+	  transform: translateX(-50%);
+	}
     &-avatar {
-      width: 4.6rem;
-      height: 4.6rem;
+      width: 4rem;
+      height: 4rem;
       border-radius: 50% !important;
       display: flex;
       align-items: center;
@@ -334,15 +432,17 @@ header {
   }
   &__mobile {
     display: none;
-    &-search {
+    &-search, &-menu, &-connect, &-close {
       display: none;
     }
-    &-menu {
-      display: none;
-    }
-    &-connect {
-      display: none;
-    }
+  }
+  &.buy {
+	.header__back-img, .header__mobile-search, .header__mobile-menu {
+	  display: none;
+  	}
+	.header__mobile-close {
+	  display: block;
+	}
   }
 }
 @media screen and (max-width: 460px) {
@@ -382,7 +482,12 @@ header {
       &.has-nft {
         display: none;
       }
-    }
+	}
+	&__mycollection {
+	  img {
+		width: 1.8rem;
+	  }
+	}
     &__notification {
       width: 2.4rem;
       height: 2.4rem;
@@ -401,7 +506,6 @@ header {
     }
     &__box {
       height: 1.8rem;
-      margin-right: 2.2rem;
       a {
         height: 100%;
       }
@@ -427,23 +531,51 @@ header {
           font-size: 1.2rem;
         }
       }
-    }
+	}
+	&__celo {
+	  .dropdown-toggle {
+		width: 2rem;
+	  }
+	  .dropdown-menu {
+		position: fixed !important;
+		top: 7rem !important;
+		left: 0.8rem;
+		right: 0.8rem !important;
+		z-index: 3;
+    	width: auto;
+	  }
+	  .dropdown-item {
+		&-name {
+		  font-size: 1.4rem;
+		  flex-wrap: wrap;
+		}
+		&-cards {
+		  margin-left: 0;
+		  margin-top: 0.8rem;
+		}
+	  }
+	}
     &__wallet {
-      width: 9.2rem;
-      height: 2.4rem;
-      max-width: fit-content;
-      justify-self: center;
-      padding: .2rem 1rem;
-      margin-right: 1rem;
-      background: $purpleLight;
-      &-avatar {
-        display: none;
-      }
-      &-address {
-        width: auto;
-        padding-left: 0;
-        font-size: 1.3rem;
-      }
+      width: 18.8rem;
+	  margin-right: 1rem;
+	  cursor: default;
+      &-balance, &-address {
+        font-size: 1.2rem;
+	  }
+	  &-balance {
+		padding: 0.4rem 2rem 0.4rem 1rem;
+	  }
+	  &-address {
+		padding: 0.4rem 1rem 0.4rem 2rem;
+	  }
+	  &-avatar {
+		width: 2.2rem;
+		height: 2.2rem;
+		img {
+		  width: 1.2rem;
+		  height: 1.2rem;
+		}
+	  }
     }
     &__mobile {
       display: flex;

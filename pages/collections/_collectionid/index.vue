@@ -1,11 +1,11 @@
 <template>
   <section class="collection">
-    <img :src="collection.banner" alt="banner" class="collection__banner">
+    <img :src="collectionBanner" alt="banner" class="collection__banner">
     <div class="collection__content container-xl">
       <div class="collection__header">
         <img :src="collection.logo" alt="avatar" class="collection__header-avatar">
-        <h1 class="collection__header-title" ><span>{{ collection.name }}</span> <img src="/confirmed.svg" alt="confirm"></h1>
-        <div class="collection__header-socials">
+        <h1 class="collection__header-title"><span :class="{certificate: isCertificateCollection}">{{ collection.name }}</span> <img src="/confirmed.svg" alt="confirm"></h1>
+        <div class="collection__header-socials" :class="{certificate: isCertificateCollection}">
           <a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
           <a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
           <a :href="collection.twitter" target="_blank" v-if="collection.twitter"><img src="/socials/twitter.svg" alt="social"></a>
@@ -56,7 +56,7 @@
           Sold
         </button>
       </div>
-      <div class="collection__sort" v-if="!isMultiNftCollection">
+      <div class="collection__sort" v-if="!isMultiNftCollection && !isCertificateCollection">
         <button
           class="collection__sort-button"
           :class="{'collection__sort-button-active': sort === 'mint-lowest'}"
@@ -128,17 +128,12 @@
       <div class="collection__info" v-else>
         <h3 class="collection__info-items">{{ countItems }} items</h3>
         <div class="collection__info-nft">
-          <div class="collection__info-nft-search search-box" v-if="!isMultiNftCollection">
+          <div class="collection__info-nft-search search-box" v-if="!isMultiNftCollection && !isCertificateCollection">
             <input class="search-box-input" :type="!isNomDomain ? 'number' : 'text'" min="1" :placeholder="fitlerPlaceholder" v-model="searchName" @input="searchNft">
             <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
             <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
           </div>
-          <div  class="collection__info-nft-filter" @click="changeMyNftStatus">
-            <h3 class="collection__info-nft-text">My NFTs</h3>
-            <div class="collection__info-nft-switcher" :class="{'collection__info-nft-switcher-active': myNft}">
-              <div class="collection__info-nft-switcher-element" :class="{'collection__info-nft-switcher-element-active': myNft}"></div>
-            </div>
-          </div>
+		  <CustomSwitch label="My NFTs" :value="myNft" @onChange="changeMyNftStatus"/>
         </div>
       </div>
       <div class="collection__loading" v-if="nftLoading">
@@ -164,6 +159,7 @@ import _ from 'lodash'
 import nft from '@/components/nft.vue'
 import attributesFilter from '@/components/modals/attributesFilter'
 import TraitsFilterModal from '@/components/modals/traitsFilterModal'
+import CustomSwitch from '@/components/utility/CustomSwitch'
 import {BigNumber} from 'ethers'
 export default {
   data() {
@@ -196,7 +192,8 @@ export default {
   components: {
     nft,
     attributesFilter,
-    TraitsFilterModal
+	TraitsFilterModal,
+	CustomSwitch
   },
   computed: {
     pageTitle() {
@@ -221,6 +218,9 @@ export default {
     },
     isMultiNftCollection() {
       return this.$store.state.multiNftSymbols.includes(this.$route.params.collectionid)
+	},
+	isCertificateCollection() {
+      return this.$route.params.collectionid === 'CBCN'
     },
     isNomDomain() {
       return this.$route.params.collectionid === 'nomdom'
@@ -243,7 +243,14 @@ export default {
       const colletionList = this.$store.state.collectionList || []
       const filteredList = colletionList.filter(item => item.route === this.$route.params.collectionid)
       return filteredList.length > 0 ? filteredList[0] : {}
-    },
+	},
+	collectionBanner() {
+	  if (this.collection.route !== 'CBCN' || !this.isMobile()) {
+		return this.collection.banner
+	  } else {
+		return this.collection.mobileBanner
+	  }
+	},
     nftList() {
       return this.$store.state.nftList
     },
@@ -399,7 +406,7 @@ export default {
     },
     async fetchNftList() {
       if (this.fetchEnabled) {
-        await this.$store.dispatch(this.activeRequest)
+        await this.$store.dispatch(this.activeRequest, this.$store.state.filteredTraits)
       } else {
         this.$store.commit('setNewNftList', [])
       }
@@ -414,7 +421,7 @@ export default {
     async changeSort(id) {
 	  this.sort = id
 	  this.sendCollectionEvent({ sort: id })
-      if (this.isMultiNftCollection) return
+      if (this.isMultiNftCollection || this.isCertificateCollection) return
       this.loading = true
       let sortPrefix = ''
       if (this.myNft) {
@@ -448,7 +455,7 @@ export default {
     },
     changeMyNftStatus() {
       this.myNft = !this.myNft
-      if (!this.isMultiNftCollection) return
+      if (this.isMultiNftCollection) return
       this.changeMyNftFilter()
       this.changeCollectionSetting({ myNft: this.myNft })
     },
@@ -806,6 +813,10 @@ export default {
       }
       &-title {
         padding-top: 1rem;
+		span.certificate {
+		  white-space: normal;
+		  text-align: center;
+		}
       }
       &-subtitle {
         padding-top: .5rem;
@@ -815,6 +826,9 @@ export default {
         left: auto;
         right: auto;
         width: 15rem;
+		&.certificate {
+		  top: 21rem;
+		}
       }
       &-info {
         width: 100%;

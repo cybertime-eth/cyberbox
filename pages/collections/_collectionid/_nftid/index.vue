@@ -1,6 +1,6 @@
 <template>
-  <section id="nft">
-    <div class="nft">
+  <section id="nft" :class="{ mobile: !contentVisible }">
+    <div class="nft" v-if="contentVisible">
       <div>
         <a class="nft__crumbs" @click="handleClickBack">
           Back
@@ -10,7 +10,7 @@
 
 
         <div class="nft__block">
-          <img :src="getNFTImage(nft)" alt="item" class="nft__block-image" v-if="nft.image && nftImageLoaded">
+          <img :src="getNFTImage(nft, true)" alt="item" class="nft__block-image" v-if="nftImageLoaded">
           <div class="nft__block-image-loading" v-else>
             <img src="/loading-nft.gif" alt="load">
           </div>
@@ -21,7 +21,7 @@
             <div v-if="!nftReloading">
               <div class="nft__block-info-collection">
                 <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
-                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName }}</h2>
+                <h2 class="nft__block-info-collection-name" @click="gotoCollection">{{ collectionName }}</h2>
               </div>
               <h1 class="nft__block-info-name">{{ nftName }}</h1>
   <!--            <p class="nft__block-info-date" v-if="isSellNFT && nft.market_status === 'LISTED'"><img src="/time.svg" alt="time"> Sale ends in-->
@@ -53,11 +53,13 @@
                 </div>
                 <button class="nft__block-info-buy" @click="handleClickBuyNow">Buy now</button>
               </div>
-              <p class="nft__block-info-refi" v-if="nft.market_status === 'LISTED' && nft.price">
-                <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }} ton CO2</span>
-              </p>
+              <div class="nft__block-info-refi" v-if="nft.market_status === 'LISTED' && nft.price">
+			  	<p class="nft__block-info-refi-total"><img class="nft__block-info-refi-total-carbon" src="/plant.svg" alt="plant">Total carbon offset = <span class="nft__block-info-refi-total-amount">{{ refiOffset }} ton co2</span></p>
+				<p class="nft__block-info-refi-offset">Buy NFT and we add {{ nftProducerFee }}% of total offset to your <img class="nft__block-info-refi-offset-carbon" src="/carbon-tracker.svg" alt="tracker"> Offset Tracker</p>
+              </div>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
-              <Attributes :item="attributes" :info="nft" v-if="!isMultiNft"/>
+			  <p class="nft__block-info-description" v-else-if="isCertificateNft">Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands.</p>
+              <Attributes :item="attributes" :info="nft" v-if="!isMultiNft && !isCertificateNft"/>
               <div class="nft__block-info-address" v-else-if="nft.contract_address">
                 <h3 class="nft__block-info-address-title">Contract Address</h3>
                 <a
@@ -81,7 +83,7 @@
             <div v-if="!nftReloading">
               <div class="nft__block-info-collection">
                 <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
-                <h2 class="nft__block-info-collection-name" @click="$router.push(`/collections/${$route.params.collectionid}`)">{{ collectionName }}</h2>
+                <h2 class="nft__block-info-collection-name" @click="gotoCollection">{{ collectionName }}</h2>
               </div>
               <h1 class="nft__block-info-name">{{ nftName }}</h1>
   <!--            <p class="nft__block-info-date" v-if="isSellNFT"><img src="/time.svg" alt="time"> Sale ends in-->
@@ -127,11 +129,13 @@
                   </button>
                 </div>
               </div>
-              <p class="nft__block-info-refi listed" v-if="nft.market_status === 'LISTED' && nft.price">
-                <img src="/plant.svg" alt="plant" class="nft__block-info-refi-img"> Successful NFT sale offset<span class="nft__block-info-refi-amount">{{ refiOffset }} ton CO2</span>
-              </p>
+			  <div class="nft__block-info-refi listed" v-if="nft.market_status === 'LISTED' && nft.price">
+			  	<p class="nft__block-info-refi-total"><img class="nft__block-info-refi-total-carbon" src="/plant.svg" alt="plant">Total carbon offset = <span class="nft__block-info-refi-total-amount">{{ refiOffset }} ton co2</span></p>
+				<p class="nft__block-info-refi-offset">Buy NFT and we add {{ nftProducerFee }}% of total offset to your <img class="nft__block-info-refi-offset-carbon" src="/carbon-tracker.svg" alt="tracker"> Offset Tracker</p>
+              </div>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
-              <Attributes :item="attributes" :info="nft" v-if="!isMultiNft"/>
+			  <p class="nft__block-info-description" v-else-if="isCertificateNft">Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands.</p>
+              <Attributes :item="attributes" :info="nft" v-if="!isMultiNft && !isCertificateNft"/>
               <div class="nft__block-info-address" v-else-if="nft.contract_address">
                 <h3 class="nft__block-info-address-title">Contract Address</h3>
                 <a
@@ -168,13 +172,14 @@
         </div>
       </div>
     </div>
-  <connect v-if="showConnectModal" @closeModal="closeModal"/>
+  <!-- <connect @showWallet="openWalletModal" @showEmail="openEmailModal" @closeModal="closeModal" v-if="showConnectModal"/> -->
+  <walletConnect @showConnect="openConnectModal" @closeModal="closeModal" v-if="showConnectModal"/>
+  <valoraConnect @closeModal="closeModal" v-if="showValoraModal"/>
   <WrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
-  <Transfer :nft="nft" @done="closeAndReload" @closeModal="showTransferModal=false"  v-if="showTransferModal" />
+  <Transfer :nft="nft" @done="closeAndReload" :approved="nftApproved" @closeModal="showTransferModal=false"  v-if="showTransferModal" />
   <SellToken :nft="nft" :celoPrice="celoPrice" :approved="nftApproved" @done="closeAndReload" @closeModal="closeSellModal" v-if="showSellTokenModal" />
   <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" :multiNft="isMultiNft" @closeModal="closeModal"/>
-  <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft)" :name="nftName"/>
-<!--    <History />-->
+  <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft, true)" :name="nftName" :refiOffset="refiOffset"/>
   </section>
 </template>
 <script>
@@ -185,6 +190,8 @@ import Approve from '@/components/sale-nft/Approve';
 import Sign from '@/components/sale-nft/Sign';
 import Successful from '@/components/sale-nft/Successful';
 import connect from '@/components/modals/connect'
+import walletConnect from '@/components/modals/walletConnect'
+import valoraConnect from '@/components/modals/valoraConnect'
 import WrongNetwork from '@/components/modals/wrongNetwork'
 import Transfer from '@/components/modals/transfer'
 import SellToken from '@/components/modals/sellToken'
@@ -195,7 +202,10 @@ export default {
   data() {
     return {
       attributes: [],
-      showConnectModal: false,
+	  showConnectModal: false,
+	  showWalletModal: false,
+	  showValoraModal: false,
+	  showEmailModal: false,
       showWrongNetworkModal: false,
       showTransferModal: false,
       showSellTokenModal: false,
@@ -203,10 +213,11 @@ export default {
       nftReloading: false,
       oldNftStatus: null,
       oldNftPrice: null,
-      nftImageLoaded: true,
+      nftImageLoaded: false,
       nft: {
         price: 0
       },
+	  nftProducerFee: 0,
       nftApproved: false,
       priceToken: 0,
       listStatus: 'default',
@@ -263,7 +274,9 @@ export default {
     Approve,
     Sign,
     Successful,
-    connect,
+	connect,
+	walletConnect,
+	valoraConnect,
     WrongNetwork,
     Transfer,
     SellToken,
@@ -278,7 +291,8 @@ export default {
       footerEl.classList.add('fixed')
     }
 
-    const imageURL = this.getNFTImage(this.nft)
+	await this.loadNft()
+	const imageURL = this.getNFTImage(this.nft, true)
     if (imageURL && !this.nftImageLoaded) {
       const img = new Image(imageURL)
       if (img.complete) {
@@ -288,9 +302,8 @@ export default {
           this.nftImageLoaded = true
         }
       }
-    }
+	}
 
-    await this.loadNft()
     await this.loadBalance()
     await this.getAttributes()
     setInterval(() => {
@@ -314,12 +327,20 @@ export default {
   computed: {
     address() {
       return this.$store.state.address
-    },
+	},
+	contentVisible() {
+	  return !this.isMobile() || (this.isMobile() && !this.showSellTokenModal)
+	},
     isMultiNft() {
       return this.$store.state.multiNftSymbols.includes(this.$route.params.collectionid)
+	},
+	isCertificateNft() {
+      return this.nft.contract === 'CBCN'
     },
     nftName() {
-      if (!this.isMultiNft) {
+	  if (this.isCertificateNft) {
+		return this.getCertificateName(this.nft)
+      } else if (!this.isMultiNft) {
         if (!this.nft.name) {
           return ''
         } else {
@@ -330,7 +351,7 @@ export default {
       }
     },
     cutContractAddress() {
-      const address = this.nft.contract_address
+      const address = !this.isCertificateNft ? this.nft.contract_address : this.$store.state.certContractAddress
       if (address) {
         const startID = address.split("").slice(0, 6);
         const endID = address.split("").slice(-4);
@@ -477,9 +498,10 @@ export default {
     },
     async loadNftStatus() {
       const multiNftSymbols = ['knoxnft']
+	  const collectionResult = await this.$store.dispatch('getCollectionInfo') || {}
+	  this.nftProducerFee = collectionResult.producerFee ? collectionResult.producerFee / 10 : 0
       if (multiNftSymbols.includes(this.$route.params.collectionid)) {
         if ((!this.seller || (this.seller && this.nft.market_status !== 'LISTED'))) {
-          const collectionResult = await this.$store.dispatch('getCollectionInfo') || {}
           const ownedCollectionInfo = await this.$store.dispatch('getOwnedCollectionInfo', this.nft)
           this.collectionInfo = {
             ...collectionResult,
@@ -534,9 +556,29 @@ export default {
       if (!this.nftApproved && approved) {
         this.nftApproved = true
       }
+	},
+	openConnectModal() {
+	  this.showWalletModal = false
+	  this.showEmailModal = false
+	  this.showConnectModal = true
+	},
+    openWalletModal() {
+      this.showWalletModal = true
+      this.showConnectModal = false
+	},
+	openValoraModal() {
+      this.showValoraModal = true
+      this.showWalletModal = false
+	},
+	openEmailModal() {
+      this.showEmailModal = true
+      this.showConnectModal = false
     },
     closeModal(payload) {
-      this.showConnectModal = payload
+	  this.showConnectModal = payload
+	  this.showWalletModal = payload
+	  this.showValoraModal = payload
+	  this.showEmailModal = payload
       this.showBuyTokenModal = payload
     },
     timeDifference() {
@@ -587,7 +629,10 @@ export default {
         })
       }
       this.attributes = attributes
-    },
+	},
+	gotoCollection() {
+	  this.$router.push(`/collections/${this.$route.params.collectionid}`)
+	},
     handleClickBuyNow() {
       if (!this.address) {
         this.showConnectModal = true
@@ -637,6 +682,10 @@ export default {
   padding-top: 2.5rem;
   width: 109.6rem;
   margin: 0 auto;
+  &.mobile {
+	padding-bottom: 0;
+	margin: 0;
+  }
 }
 .nft {
   padding-bottom: 3rem;
@@ -721,28 +770,38 @@ export default {
         padding-top: 2.4rem;
       }
       &-refi {
-        display: flex;
-        align-items: center;
         width: fit-content;
         width: -moz-fit-content;
         margin-top: 1.8rem;
         padding: 0.8rem;
         border: 1px solid $modalColor;
+		border-radius: 0.4rem;
         font-size: 1.2rem;
-        color: $black;
         &.listed {
           margin-top: 5.8rem;
         }
-        img {
-          width: 1.4rem;
-          margin-right: 0.9rem;
-        }
-        &-amount {
-          margin-left: 1rem;
-          font-weight: 600;
-          font-size: 1.3rem;
-          color: #63A60D;
-        }
+		&-total {
+		  font-size: 1.2rem;
+		  color: $black;
+		  &-carbon {
+			width: 1.4rem;
+			margin-right: 0.9rem;
+			transform: translateY(0.2rem);
+		  }
+		  &-amount {
+			font-weight: 700;
+			font-size: 1.3rem;
+			color: $green3;
+		  }
+		}
+		&-offset {
+		  margin-top: 1.2rem;
+		  font-size: 1.2rem;
+		  color: $border;
+		  &-carbon {
+			transform: translateY(0.2rem);
+		  }
+		}
       }
       &-description {
         padding-top: 2.4rem;
@@ -1097,6 +1156,9 @@ export default {
           padding-top: 1rem;
           font-size: 2.2rem;
         }
+		&-refi {
+		  padding: 1rem;
+		}
         &-minted {
           font-size: 1.4rem;
           padding-top: .5rem;

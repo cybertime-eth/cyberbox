@@ -21,8 +21,8 @@
     </div>
     <div class="collection__item-info">
       <h2 class="collection__item-info-name" :class="{multinft: multiNft, 'multi-collection': isMultiNftCollection}">{{ nftName }}</h2>
-      <p class="collection__item-info-rank" v-if="nft.contract !== 'nomdom' && !multiNft">Rarity Rank {{ nft.rating_index }}</p>
-      <p class="collection__item-info-id" :class="{'nomdom-nft': nft.contract === 'nomdom', 'nomdom-collection': $route.params.collectionid === 'nomdom'}" v-if="!multiNft">Token ID {{ nftID }}</p>
+      <p class="collection__item-info-rank" v-if="nft.contract !== 'nomdom' && nft.contract !== 'CBCN' && !multiNft">Rarity Rank {{ nft.rating_index }}</p>
+      <p class="collection__item-info-id" :class="{'nomdom-nft': nft.contract === 'nomdom' || nft.contract === 'CBCN', 'nomdom-collection': $route.params.collectionid === 'nomdom'}" v-if="!multiNft">Token ID {{ nftID }}</p>
       <div class="collection__item-info-bottom">
         <p class="collection__item-info-type" :class="{multinft: multiNft}" v-if="sellInfo">Last sell</p>
         <p class="collection__item-info-type" :class="{multinft: multiNft}" v-else>Price</p>
@@ -79,7 +79,9 @@ export default {
       if (this.multiNft) {
         const nftId = this.nft.id.split('/')[1].split('.')[0]
         return this.$store.state.multiNftNames.find(item => item.id === nftId).name
-      } else {
+      } else if (this.nft.contract === 'CBCN') {
+		return this.getCertificateName(this.nft)
+	  }	else {
         return `${this.nft.name || this.nft.contract_name}${this.nft.contract === 'nomdom' ? '.nom' : ''}`
       }
     },

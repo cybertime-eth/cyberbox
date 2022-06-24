@@ -209,8 +209,94 @@ ul {
     z-index: 4;
     cursor: pointer;
   }
+  &__step {
+    display: flex;
+    align-items: center;
+    margin-top: 2.4rem;
+    padding: 0 13.7rem;
+    &-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border: 2px solid $border2;
+      border-radius: 50%;
+      font-size: 1rem;
+      color: $border2;
+      &.active {
+        border: 1px solid $pink;
+        color: $pink;
+        * {
+          color: $pink;
+        }
+      }
+      &.approved {
+        border: 0;
+      }
+    }
+    &-line {
+      flex: 1;
+      height: 2px;
+      background: $border2;
+      opacity: 0.65;
+      &.active {
+        background: linear-gradient(93.06deg,  #2CFF64 8.21%, #FC2EF5 100%);
+        opacity: 1;
+      }
+    }
+  }
 }
 
+.dropdown {
+  display: flex;
+  position: relative;
+  .dropdown-toggle {
+    cursor: pointer;
+  }
+  .dropdown-menu {
+    position: absolute;
+	top: calc(100% + 2.4rem);
+	background: $white;
+	box-shadow: 0px 1.5rem 3rem rgba(0, 0, 0, 0.1);
+	border-radius: 0.4rem;
+	&.right {
+	  right: 0;
+	}
+    .dropdown-item {
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	  padding: 2rem 2.2rem 2rem 1.6rem;
+	  font-size: 1.6rem;
+	  @media (max-width: 460px) {
+		font-size: 1.4rem;
+	  }
+    }
+  }
+  .dropdown-menu-right {
+	right: 0;
+  }
+}
+
+.features-list {
+  list-style: none;
+  &-item {
+	padding-bottom: 0.8rem;
+	font-size: 1.4rem;
+	color: $grayDark;
+	&::before {
+	  content: "\2022";
+	  display: inline-block;
+	  color: $green;
+	  font-weight: bold;
+	  width: 1em;
+	}
+	&:last-child {
+	  padding: 0;
+	}
+  }
+}
 //FONTS
 
 @font-face {
@@ -273,6 +359,9 @@ ul {
   }
   .modal__block {
     padding: 2.8rem 2.5rem;
+  }
+  .modal__step {
+	padding: 0 4.5rem;
   }
 }
 </style>

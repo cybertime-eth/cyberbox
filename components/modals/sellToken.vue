@@ -1,5 +1,5 @@
 <template>
-  <div class="modal">
+  <div class="modal" :class="{mobile: mobileVersion}">
     <div class="modal__block sell" :class="{ success: showSuccessModal }">
         <div class="modal__sell-header">
           <button class="modal__sell-header-button" @click="closeModal"><img src="/close.svg" alt="close"></button>
@@ -20,13 +20,17 @@
                 <input class="modal__sell-form-input" ref="sellInput" type="number" min="0" :readonly="pending || successSellToken" placeholder="0" v-model="nftPrice">
               </div>
               <p class="modal__sell-form-unit">${{ dollarPrice }}</p>
-              <p class="modal__sell-form-refioffset">
-                <img src="/plant.svg" alt="plant" class="modal__sell-form-refioffset-img"> Successful NFT sale offset<span class="modal__sell-form-refioffset-amount">{{ refiOffset }} ton CO2</span>
-              </p>
+              <div class="modal__sell-form-refioffset">
+			  	<p class="modal__sell-form-refioffset-total">
+                	<img src="/plant.svg" alt="plant" class="modal__sell-form-refioffset-total-carbon"> Total carbon offset = <span class="modal__sell-form-refioffset-total-amount">{{ refiOffset }} ton CO2</span>
+				</p>
+				<p class="modal__sell-form-refioffset-description">
+                	Sell NFT and we add {{ nftProducerFee }}% of total offset to your <img src="/carbon-tracker.svg" alt="tracker" class="modal__sell-form-refioffset-description-carbon"> Carbon Tracker
+				</p>
+              </div>
               <p class="modal__sell-form-description">Item will be on sale until you cancelled.</p>
-              <p class="modal__sell-form-feeinfo">Once sold, the following fees will be deducted:<br/>{{ nftServiceFee }}% service fee | {{ nftRoyalty }}% creator royalty | {{nftProducerFee}}% ReFi fee</p>
+              <p class="modal__sell-form-feeinfo">Once sold, the following fees will be deducted:<br/>{{ nftServiceFee }}% service fee | {{ nftRoyalty }}% creator royalty</p>
             </div>
-            <p class="modal__sell-content">List your NFT to sell for {{ nftPrice || 0 }} CELO</p>
           </div>
           <div class="modal__sell-success" v-else>
             <p class="modal__sell-description">{{ sellDescription }}</p>
@@ -65,6 +69,9 @@
 export default {
   props: ['nft', 'celoPrice', 'approved'],
   computed: {
+    mobileVersion() {
+      return this.isMobile()
+    },
     approveToken() {
       return this.$store.state.approveToken
     },
@@ -76,7 +83,10 @@ export default {
     },
     successSellToken() {
       return this.listToken === true
-    },
+	},
+	sellTokenClosed() {
+	  return this.$store.state.sellTokenClosed
+	},
     modalTitle() {
       if (!this.showSuccessModal) {
         return this.nft.market_status !== 'LISTED' ? 'Sell your NFT' : 'Change sell price'
@@ -125,26 +135,41 @@ export default {
       } else {
         this.closeModal()
       }
-    }
+	},
+	sellTokenClosed() {
+	  if (this.$store.state.sellTokenClosed) {
+		this.closeModal()
+	  }
+	}
   },
   async mounted() {
+	if (process.browser) {
+	  this.$store.commit('changeSellTokenClosed', false)
+	  const header = document.querySelector('.header')
+	  if (this.isMobile()) {
+		header.classList.add('buy')
+	  } else {
+		header.classList.remove('buy')
+	  }
+	}
     this.$store.commit('changelistToken', '')
     const collectionInfo = await this.$store.dispatch('getCollectionInfo')
     this.nftServiceFee = collectionInfo.marketFee / 10
     this.nftRoyalty = collectionInfo.createrFee / 10
-    this.nftProducerFee = collectionInfo.producerFee / 10
+	this.nftProducerFee = collectionInfo.producerFee / 10
     if (this.nft.market_status === 'LISTED') {
       this.nftPrice = this.nft.price
-    }
+	}
   },
   methods: {
     closeModal() {
       this.$emit('closeModal', this.tokenApproved)
-      this.$store.commit('changelistToken', '')
+	  this.$store.commit('changelistToken', '')
+	  this.$store.commit('changeSellTokenClosed', false)
     },
     closeSuccessModal() {
       this.$emit('done', this.nftPrice ? parseFloat(this.nftPrice) : 0)
-      this.$store.commit('changelistToken', '')
+	  this.$store.commit('changelistToken', '')
     },
     submitApproveToken() {
       if (this.pending) return
@@ -196,7 +221,7 @@ export default {
     &.sell {
       width: 45.6rem;
       background: $white;
-      padding: 2.1rem 1.6rem 2.4rem;
+      padding: 2.1rem 0.8rem 2.4rem;
       cursor: default;
       &.success {
         width: 23.5rem;
@@ -248,7 +273,7 @@ export default {
         background: transparent;
         position: absolute;
         top: 0;
-        right: 1.6rem;
+        right: 2rem;
         line-height: 1.4rem;
       }
     }
@@ -313,25 +338,41 @@ export default {
         color: $grayLight;
       }
       &-refioffset {
-        display: flex;
-        align-items: center;
         width: fit-content;
         width: -moz-fit-content;
         margin-top: 1.8rem;
         padding: 0.8rem;
         border: 1px solid $modalColor;
-        font-size: 1.2rem;
-        color: $black;
-        img {
-          width: 1.4rem;
-          margin-right: 0.9rem;
-        }
-        &-amount {
-          margin-left: 1rem;
-          font-weight: 600;
-          font-size: 1.3rem;
-          color: #63A60D;
-        }
+		border-radius: 0.4rem;
+		&-total {
+		  display: flex;
+		  align-items: center;
+		  white-space: nowrap;
+		  font-size: 1.2rem;
+		  color: $black;
+		  &-carbon {
+			width: 1.4rem;
+			margin-right: 0.9rem;
+		  }
+		  &-amount {
+			margin-left: 0.4rem;
+			font-weight: 700;
+			font-size: 1.3rem;
+			color: $green3;
+		  }
+		}
+		&-description {
+		  display: flex;
+		  align-items: center;
+		  margin-top: 1rem;
+		  white-space: nowrap;
+		  font-size: 1.2rem;
+		  color: $border;
+		  &-carbon {
+			width: 1.8rem;
+			margin: 0 0.7rem;
+		  }
+		}
       }
       &-description {
         padding-top: 1.8rem;
@@ -354,6 +395,9 @@ export default {
     &-buttons {
       display: flex;
       justify-content: flex-end;
+	  margin: 0 -0.8rem;
+	  padding: 2.4rem 0.8rem 0;
+	  border-top: 1px solid $modalColor;
       &-button {
         display: flex;
         align-items: center;
@@ -399,42 +443,19 @@ export default {
       }
     }
   }
-  &__step {
-    display: flex;
-    align-items: center;
-    margin-top: 2.4rem;
-    padding: 0 13.7rem;
-    &-status {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 24px;
-      height: 24px;
-      border: 2px solid $border2;
-      border-radius: 50%;
-      font-size: 1rem;
-      color: $border2;
-      &.active {
-        border: 1px solid $pink;
-        color: $pink;
-        * {
-          color: $pink;
-        }
-      }
-      &.approved {
-        border: 0;
-      }
-    }
-    &-line {
-      flex: 1;
-      height: 2px;
-      background: $border2;
-      opacity: 0.65;
-      &.active {
-        background: linear-gradient(93.06deg,  #2CFF64 8.21%, #FC2EF5 100%);
-        opacity: 1;
-      }
-    }
+  &.mobile {
+	position: static;
+	margin: 0;
+	z-index: 0;
+	.modal__block {
+	  margin: 0;
+	  border-radius: 0;
+	}
+	.modal__sell {
+	  &-header {
+		display: none;
+	  }
+	}
   }
 }
 @media screen and (max-width: 460px) {
@@ -446,7 +467,7 @@ export default {
       &.sell {
         width: 100%;
         height: auto;
-        padding: 0 .8rem 2.4rem !important;
+        padding: 0 0.8rem 2.4rem !important;
         border-radius: 10px;
         overflow-y: auto;
         &.success {
@@ -508,6 +529,16 @@ export default {
           padding-top: 1.6rem;
           font-size: 1.2rem;
         }
+		&-refioffset {
+		  width: auto;
+		  &-description {
+			display: block;
+			white-space: normal;
+			&-carbon {
+			  margin: 0;
+			}
+		  }
+		}
       }
       &-content {
         width: 100%;
@@ -524,20 +555,10 @@ export default {
         }
       }
     }
-    &__step {
-      padding: 0 4.5rem;
-    }
   }
 }
 @mixin block-overflow {
-  max-height: 65vh;
-  overflow-x: hidden;
-  overflow-y: auto;
   padding-right: 0.2rem;
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
 }
 @media screen and (max-height: 750px) {
   .modal {
@@ -555,9 +576,6 @@ export default {
     &__sell {
       &-block {
         @include block-overflow;
-        &.not-approved {
-          max-height: 60vh;
-        }
       }
     }
   }
