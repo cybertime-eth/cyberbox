@@ -268,10 +268,11 @@ export default {
       return this.getCertificateName(certificate, false)
     },
     certificateOwner(certificate) {
-      return certificate.owner === this.$store.state.fullAddress
+	  return certificate.owner === this.$store.state.fullAddress
 	},
 	certificateBuyAvailable(certificate) {
-	  return !this.certificateOwner(certificate) && (certificate.offset || certificate.price)
+	  const date = new Date()
+	  return !this.certificateOwner(certificate) && (certificate.offset || (!certificate.offset && certificate.year === date.getFullYear() && certificate.month === (date.getMonth() + 1) && certificate.price))
     },
     async loadBalance() {
       if (this.$store.state.address) {
@@ -542,11 +543,6 @@ export default {
 		.lending__collection-item-box-img {
 		  border-radius: 0.8rem;
 		  border: 4px solid $green;
-		}
-	  }
-	  &.last {
-		.lending__collection-item-date {
-		  color: $border;
 		}
 	  }
     }

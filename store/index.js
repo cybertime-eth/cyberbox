@@ -511,7 +511,7 @@ export const actions = {
 	let multiNftInfos = contractInfos.filter(item => state.multiNftSymbols.includes(item.contract))
 	if (multiNftInfos.length > 0) {
 	  const nftImages = contractInfos.map(item => item.image)
-	  contractInfos = contractInfos.filter((item, index) => nftImages.indexOf(item.image) === index)
+	  contractInfos = contractInfos.filter((item, index) => item.contract === 'CBCN' || (item.image && nftImages.indexOf(item.image) === index))
 	  contractInfos = contractInfos.map(item => {
 		if (state.multiNftSymbols.includes(item.contract)) {
 		  const newItem = collectionData.multiNFTs.find(nft => nft.nftSymbol === item.contract && nft.image === item.image) || {}
