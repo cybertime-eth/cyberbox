@@ -17,7 +17,7 @@
             <nuxt-link class="header__link" active-class="gradient-text" to="/rankings" exact @click="sendRankingEvent">Rankings</nuxt-link>
           </li>
           <li class="header__list">
-            <nuxt-link class="header__link" active-class="gradient-text" to="/carbon"  exact>Offset Tracker</nuxt-link>
+            <nuxt-link class="header__link" active-class="gradient-text" to="/carbon" @click="sendTrackerEvent" exact>Offset Tracker</nuxt-link>
           </li>
           <!-- <li class="header__list">
             <a class="header__link" href="https://forms.gle/R7LmANz7iqsCA88X8" target="_blank">Launchpad</a>
@@ -258,7 +258,16 @@ export default {
 		  rankings_enter: 'Menu'
 		}
 	  })
-    }
+	},
+	sendTrackerEvent() {
+	  this.sendEvent({
+		category: 'Browse',
+		eventName: 'tracker_enter',
+		properties: {
+		  tracker_enter: 'Menu'
+		}
+	  })
+	}
   }
 }
 </script>

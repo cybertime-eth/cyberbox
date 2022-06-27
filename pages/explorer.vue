@@ -3,7 +3,7 @@
     <h1 class="home__title">Discover, collect and trade NFTs</h1>
     <div class="home__items">
       <div class="home__item" @click="$router.push(`/collections/${collection.route}`)" v-for="collection of list">
-        <img :src="collection.image" alt="dao" class="home__item-image">
+        <img :src="collectionImage(collection)" alt="dao" class="home__item-image">
         <div class="home__item-info">
           <h2 class="home__item-info-name">{{ collection.name }}</h2>
           <button class="home__item-info-button">Marketplace</button>
@@ -29,6 +29,13 @@ export default {
     this.$store.commit('updateCollectionSetting', null)
   },
   methods: {
+	collectionImage(collection) {
+	  if (collection.route !== 'CBCN' || !this.isMobile()) {
+		return collection.image
+	  } else {
+		return collection.mobileImage
+	  }
+	},
     openDaopolis() {
       window.open('https://daopolis.city')
     }

@@ -1,6 +1,6 @@
 <template>
   <section class="collection">
-    <img :src="collectionBanner" alt="banner" class="collection__banner">
+    <img :src="collection.banner" alt="banner" class="collection__banner">
     <div class="collection__content container-xl">
       <div class="collection__header">
         <img :src="collection.logo" alt="avatar" class="collection__header-avatar">
@@ -243,13 +243,6 @@ export default {
       const colletionList = this.$store.state.collectionList || []
       const filteredList = colletionList.filter(item => item.route === this.$route.params.collectionid)
       return filteredList.length > 0 ? filteredList[0] : {}
-	},
-	collectionBanner() {
-	  if (this.collection.route !== 'CBCN' || !this.isMobile()) {
-		return this.collection.banner
-	  } else {
-		return this.collection.mobileBanner
-	  }
 	},
     nftList() {
       return this.$store.state.nftList

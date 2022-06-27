@@ -27,7 +27,14 @@ export default {
 	},
 	routeCarbonTracker() {
 	  this.$store.commit('changeSuccessBuyToken', false)
-      this.$router.push('/carbon?tab=1')
+	  this.sendEvent({
+		category: 'Browse',
+		eventName: 'tracker_enter',
+		properties: {
+		  tracker_enter: 'Mint_success_alert'
+		}
+	  })
+      this.$router.push('/carbon')
 	},
     routeMyCollection() {
       this.$store.commit('changeSuccessBuyToken', false)

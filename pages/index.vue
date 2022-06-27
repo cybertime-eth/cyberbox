@@ -26,7 +26,7 @@
 				<li class="features-list-item">1 NFT = 1 ton CO2 offset</li>
 				<li class="features-list-item">Collect or sell on the marketplace</li>
 			</ul>
-			<button class="refi__block-carbon-info-buy" @click="$router.push('/lending')">Buy & Offset Now</button>
+			<button class="refi__block-carbon-info-buy" @click="gotoLending">Buy & Offset Now</button>
 		</div>
 		<div class="refi__block-carbon-certificate" ref="certificate">
 			<div class="refi__block-carbon-certificate-item" :class="{current: certificate.current }" :key="idx" v-for="(certificate, idx) of certificates">
@@ -314,7 +314,17 @@ export default {
         this.collectionTab = tab
         this.updateHotCollections()
       }
-    },
+	},
+	gotoLending() {
+	  this.sendEvent({
+		category: 'Browse',
+		eventName: 'minter_enter',
+		properties: {
+		  minter_enter: 'Main'
+		}
+	  })
+	  this.$router.push('/lending')
+	},
     gotoCollection(symbol) {
       this.sendEvent({
         category: 'Collection',

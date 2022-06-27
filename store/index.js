@@ -71,8 +71,8 @@ export const state = () => ({
 	  name: 'NFT Carbon Offset Certificate',
 	  route: 'CBCN',
 	  image: '/collections/CBCN.png',
+	  mobileImage: '/collections/CBCN-mobile.png',
 	  banner: '/collections/CBCN-banner.png',
-	  mobileBanner: '/collections/CBCN-banner-mobile.png',
 	  logo: '/collections/CBCN-logo.png',
 	  website: '/lending',
 	  twitter: 'https://twitter.com/cybertime_eth',
@@ -2186,7 +2186,15 @@ export const actions = {
 	  })
 
 	  provider.once(result, async () => {
-	    commit('changeSuccessBuyToken', true)
+		const currMonth = new Date().toLocaleString('en-us', { month: 'long' })
+		commit('changeSuccessBuyToken', true)
+		this._vm.sendEvent({
+		  category: 'Certificates',
+		  eventName: 'mint_success',
+		  properties: {
+		    mint_success: currMonth
+		  }
+		})
 	  })
 	} catch (e) {
 	  console.log(e)

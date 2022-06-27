@@ -32,7 +32,7 @@
 							</div>
 						</div>
 						<div class="carbon__tracker-block-info-certificate">
-							<button class="carbon__tracker-block-info-certificate-button gradient-button" @click="$router.push('/lending')">Buy NFT Certificate</button>
+							<button class="carbon__tracker-block-info-certificate-button gradient-button" @click="gotoLending">Buy NFT Certificate</button>
 							<a class="carbon__tracker-block-info-certificate-bonus" @click="showExchangeBonus=true" v-if="!bonusPurchased"><img class="carbon__tracker-block-info-certificate-img" src="/gift.svg" alt="bonus"></a>
 						</div>
 					</div>
@@ -237,6 +237,16 @@ export default {
 	  this.yearFilter = year
 	  this.certificateList = this.getCertificatesOfYear(year)
 	  this.changeFilter()
+	},
+	gotoLending() {
+	  this.sendEvent({
+		category: 'Browse',
+		eventName: 'minter_enter',
+		properties: {
+		  minter_enter: 'Tracker_button'
+		}
+	  })
+	  this.$router.push('/lending')
 	}
   }
 }
