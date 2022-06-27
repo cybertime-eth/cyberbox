@@ -2245,7 +2245,6 @@ export const mutations = {
   },
   setAddress(state,address) {
 	if (!address) return
-	address = '0x1216844ff46527e5112a71450baa6c529b3c6717'
 	if (process.browser) {
 	  localStorage.setItem('address', address)
 	}

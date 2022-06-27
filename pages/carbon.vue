@@ -85,6 +85,7 @@ export default {
 	  totalCertCO2: 0,
 	  totalTradingCO2: 0,
 	  totalCO2Offset: 0,
+	  currYearCertCount: 0,
 	  showExchangeBonus: false,
 	  showExchangeToken: false,
 	  bonusPurchased: false
@@ -211,6 +212,7 @@ export default {
 		}
 
 		this.certificateList = newList
+		this.currYearCertCount = currYearCertCount
 		this.changeFilter()
 	  }
 	},
@@ -411,6 +413,12 @@ export default {
 		  &-certificate {
 			width: calc(100% - 1.6rem);
 			margin: 2.8rem 0.8rem 0;
+    		flex-direction: column-reverse;
+			&-button {
+			  width: 100%;
+    		  margin-top: 2.4rem;
+    		  font-size: 1.4rem;
+			}
 			&-img {
 			  width: 2.3rem;
 			}
@@ -425,6 +433,7 @@ export default {
 		font-size: 1.6rem;
 	  }
 	  &-list {
+		padding-top: 0;
 		grid-template-columns: repeat(2, 14.4rem);
 		grid-column-gap: 1.6rem;
 		grid-row-gap: 1.6rem;

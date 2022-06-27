@@ -801,6 +801,7 @@ export default {
           display: block;
           width: 14.8rem;
           height: 4.8rem;
+		  font-size: 1.4rem;
           &.explorer {
             margin-right: 0;
           }
@@ -889,6 +890,7 @@ export default {
 		  &-buy {
 			display: block;
 			margin: 2.4rem auto 0;
+			font-size: 1.4rem;
 		  }
 		}
 	  }
