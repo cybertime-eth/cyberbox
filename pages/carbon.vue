@@ -20,7 +20,7 @@
 						<div class="carbon__tracker-block-info-summary">
 							<div class="carbon__tracker-block-info-summary-item">
 								<span class="carbon__tracker-block-info-summary-item-name">NFT Carbon certificates</span>
-								<span class="carbon__tracker-block-info-summary-item-conent">{{ totalCertCO2 }} ton CO2</span>
+								<span class="carbon__tracker-block-info-summary-item-conent">{{ formatCO2(totalCertCO2) }} ton CO2</span>
 							</div>
 							<div class="carbon__tracker-block-info-summary-item">
 								<span class="carbon__tracker-block-info-summary-item-name">NFT Trading CO2 offset</span>
@@ -167,7 +167,7 @@ export default {
   },
   methods: {
 	formatCO2(value) {
-	  return value > 0 ? value.toFixed(2) : 0
+	  return value > 0 ? value.toFixed(1) : 0
 	},
 	updateCertificateList() {
 	  if (this.$store.state.address) {
@@ -253,7 +253,7 @@ export default {
   }
   &__tracker {
 	padding-top: 4.2rem;
-  	padding-bottom: 10.2rem;
+  	padding-bottom: 6rem;
 	box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
 	&-year {
 	  margin: 0 auto;
@@ -271,7 +271,6 @@ export default {
 	  align-items: center;
 	  justify-content: center;
 	  padding-top: 6rem;
-	  padding-bottom: 7.8rem;
 	  &-status {
 		width: 40.2rem;
 		height: 40.2rem;
@@ -384,10 +383,10 @@ export default {
 	}
 	&__tracker {
 	  padding-top: 2.5rem;
+	  padding-bottom: 2.8rem;
 	  &-block {
 		display: block;
 		padding-top: 4.4rem;
-		padding-bottom: 4.1rem;
 		&-status {
 		  width: 28.8rem;
 		  height: 28.8rem;
@@ -429,11 +428,10 @@ export default {
 	&__certificates {
 	  padding: 3.2rem 0.8rem 0;
 	  .carbon__title {
-		padding-bottom: 4rem;
 		font-size: 1.6rem;
 	  }
 	  &-list {
-		padding-top: 0;
+		padding-top: 4rem;
 		grid-template-columns: repeat(2, 14.4rem);
 		grid-column-gap: 1.6rem;
 		grid-row-gap: 1.6rem;

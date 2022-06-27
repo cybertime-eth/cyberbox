@@ -6,7 +6,7 @@
       <div class="refi__block-info">
         <div class="refi__block-info-buttons">
           <button class="refi__block-info-button explorer" @click="gotoExplorer('Top_button')">Explorer NFT</button>
-          <button class="refi__block-info-button gradient-button ranking" @click="gotoRankings('Top_button')">Rankings</button>
+          <button class="refi__block-info-button top ranking" @click="gotoRankings('Top_button')">Rankings</button>
         </div>
         <img class="refi__block-info-picture" src="/earth.png" alt="earth">
         <div class="refi__block-info-live" v-if="totalCO2Amount > 0">
@@ -169,7 +169,7 @@ export default {
 	  totalCO2Amount += co2celoPrice
 	  if (item.nftSymbol === 'CBCN') {
 		totalCO2Amount += item.sell_total_price / 1000 * item.producerFee / 1000 * cmco2Price
-		totalCO2Amount += item.total_co2 / Math.pow(10, 8)
+		totalCO2Amount += item.total_co2 / Math.pow(10, 7)
 	  }
       item.name = (this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol) || {}).name
       item.image = `/${item.nftSymbol}.png`
@@ -389,6 +389,7 @@ export default {
       align-items: center;
       &-buttons {
         display: flex;
+		flex-direction: column;
         align-items: center;
       }
       &-button {
@@ -401,10 +402,14 @@ export default {
         color: $textColor;
         &.explorer {
           background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
-          margin-right: 2.4rem;
           color: $white;
         }
         &.ranking {
+		  &.top {
+			width: auto;
+			height: auto;
+			margin-top: 2.6rem;
+		  }
           &::after {
             background: linear-gradient(to right, #C074B5, #E5C282);
             border-radius: 3rem;
@@ -793,10 +798,6 @@ export default {
     &__block {
       padding-top: 2.4rem;
       &-info {
-        &-buttons {
-          display: block;
-          text-align: center;
-        }
         &-button {
           display: block;
           width: 14.8rem;
@@ -807,6 +808,9 @@ export default {
           }
           &.ranking {
             margin-top: 0.8rem;
+			&.top {
+			  margin-top: 1.6rem;
+			}
           }
         }
         &-picture {

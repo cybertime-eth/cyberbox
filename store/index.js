@@ -1027,6 +1027,7 @@ export const actions = {
 		}
 		co2Owners(first: 1 where: { owner: "${address}" }) {
 		  mint_count
+		  total_co2
 		}
         ownerTrackers(first: 1 where: { address: "${address}" }) {
 		  id
@@ -1042,7 +1043,7 @@ export const actions = {
 	  const producerFee = data.contracts.length > 0 ? data.contracts[0].producerFee : 0
 	  const ownerTrackerInfo = data.ownerTrackers.length > 0 ? data.ownerTrackers[0] : {}
 	  return {
-		totalCount: certificateInfo.mint_count || 0,
+		totalCount: (certificateInfo.total_co2 || 0) / Math.pow(10, 7),
 		totalTradingCelo: ((ownerTrackerInfo.totalSell + ownerTrackerInfo.totalBuy) || 0) / 1000 / 2,
 		producerFee
 	  }
@@ -1597,7 +1598,7 @@ export const actions = {
 		contractAddress = state.certContractAddress
 	  }
       const contract = new ethers.Contract(contractAddress, AbiNft, signer)
-      const approvedForAll = await contract.isApprovedForAll(getters.storedAddress, resultAddress)
+	  const approvedForAll = await contract.isApprovedForAll(getters.storedAddress, resultAddress)
       if (!submitApprove) {
 		return approvedForAll
       } else {

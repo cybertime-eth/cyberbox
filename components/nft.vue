@@ -6,7 +6,7 @@
         <img src="/outline-sell.svg" alt="sell">
         <h3>{{ visitMenuName }}</h3>
       </div>
-     <div class="collection__item-modal-button" @click="showTransferModal = true" v-if="seller">
+     <div class="collection__item-modal-button" @click="handleClickTransfer" v-if="seller">
        <img src="/transfer-black.svg" alt="transfer">
        <h3>Transfer</h3>
      </div>
@@ -37,7 +37,7 @@
         <button class="collection__item-info-details" @click="routeNft(true)">Details</button>
       </div>
     </div>
-    <transfer :nft="nft" @closeModal="showTransferModal = false" v-if="showTransferModal" />
+    <transfer :nft="nft" @closeModal="showTransferModal = false" @done="closeTransfer" v-if="showTransferModal" />
   </div>
 </template>
 <script>
@@ -201,7 +201,14 @@ export default {
     },
     realNftImage() {
       return this.cdnImage || this.getNFTImage(this.nft)
-    },
+	},
+	handleClickTransfer() {
+	  this.$store.commit('setNewNft', this.nft)
+	  this.showTransferModal = true
+	},
+	closeTransfer() {
+	  location.reload()
+	},
     copyLink(e) {
       const collectionUrl = location.protocol + '//' + location.host
       this.$copyText(`${collectionUrl}/collections/${this.nft.contract}/${this.nft.contract_id}`)
