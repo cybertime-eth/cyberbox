@@ -1037,13 +1037,13 @@ export const actions = {
 		}
 	  }`
 	const data = await this.$graphql.default.request(query)
-	if (data.ownerTrackers.length > 0) {
+	if (data.co2Owners.length > 0) {
+	  const certificateInfo =  data.co2Owners[0]
 	  const producerFee = data.contracts.length > 0 ? data.contracts[0].producerFee : 0
-	  const certificateInfo = data.co2Owners.length > 0 ? data.co2Owners[0] : {}
 	  const ownerTrackerInfo = data.ownerTrackers.length > 0 ? data.ownerTrackers[0] : {}
 	  return {
 		totalCount: certificateInfo.mint_count || 0,
-		totalTradingCelo: (ownerTrackerInfo.totalSell + ownerTrackerInfo.totalBuy) / 1000 / 2,
+		totalTradingCelo: ((ownerTrackerInfo.totalSell + ownerTrackerInfo.totalBuy) || 0) / 1000 / 2,
 		producerFee
 	  }
 	} else {
@@ -2245,6 +2245,7 @@ export const mutations = {
   },
   setAddress(state,address) {
 	if (!address) return
+	address = '0x1216844ff46527e5112a71450baa6c529b3c6717'
 	if (process.browser) {
 	  localStorage.setItem('address', address)
 	}

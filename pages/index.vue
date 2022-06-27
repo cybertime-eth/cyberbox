@@ -169,6 +169,7 @@ export default {
 	  totalCO2Amount += co2celoPrice
 	  if (item.nftSymbol === 'CBCN') {
 		totalCO2Amount += item.sell_total_price / 1000 * item.producerFee / 1000 * cmco2Price
+		totalCO2Amount += item.total_co2 / Math.pow(10, 8)
 	  }
       item.name = (this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol) || {}).name
       item.image = `/${item.nftSymbol}.png`
