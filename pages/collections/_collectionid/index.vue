@@ -529,8 +529,13 @@ export default {
     const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
-    if (this.$store.state.cMCO2Price > 0 && this.collectionInfo.producerFee > 0 && this.collectionInfo.sell_refi_price > 0) {
-      const refiPrice = this.$store.state.cMCO2Price * this.collectionInfo.producerFee / 1000 * this.collectionInfo.sell_refi_price / 1000
+	if (this.$store.state.cMCO2Price > 0
+		&& this.collectionInfo.producerFee > 0
+		&& (this.collectionInfo.sell_refi_price > 0 || (this.$route.params.collectionid === 'CBCN' && (this.collectionInfo.sell_total_price > 0 || this.collectionInfo.total_co2 > 0)))) {
+	  let refiPrice = this.$store.state.cMCO2Price * this.collectionInfo.producerFee / 1000 * this.collectionInfo.sell_refi_price / 1000
+	  if (this.$route.params.collectionid === 'CBCN') {
+		refiPrice = this.$store.state.cMCO2Price * this.collectionInfo.producerFee / 1000 * this.collectionInfo.sell_total_price / 1000 + (this.collectionInfo.total_co2 / Math.pow(10, 7))
+	  }
       const refiPriceDiff = Math.ceil(refiPrice) - refiPrice
       this.refiCO2Price = refiPrice !== 0 ? refiPrice.toFixed(refiPriceDiff === 0 ? 0 : 2) : 0
     }
