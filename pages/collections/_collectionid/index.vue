@@ -534,7 +534,7 @@ export default {
 		&& (this.collectionInfo.sell_refi_price > 0 || (this.$route.params.collectionid === 'CBCN' && (this.collectionInfo.sell_total_price > 0 || this.collectionInfo.total_co2 > 0)))) {
 	  let refiPrice = this.$store.state.cMCO2Price * this.collectionInfo.producerFee / 1000 * this.collectionInfo.sell_refi_price / 1000
 	  if (this.$route.params.collectionid === 'CBCN') {
-		refiPrice = this.$store.state.cMCO2Price * this.collectionInfo.producerFee / 1000 * this.collectionInfo.sell_total_price / 1000 + (this.collectionInfo.total_co2 / Math.pow(10, 7))
+		refiPrice = (this.$store.state.cMCO2Price * this.collectionInfo.producerFee / 1000 * this.collectionInfo.sell_total_price / 1000) + (this.collectionInfo.total_co2 / Math.pow(10, 7))
 	  }
       const refiPriceDiff = Math.ceil(refiPrice) - refiPrice
       this.refiCO2Price = refiPrice !== 0 ? refiPrice.toFixed(refiPriceDiff === 0 ? 0 : 2) : 0

@@ -162,9 +162,9 @@ export default {
     const invisibleTokens = ['cconnectpunks']
     let totalCO2Amount = 0
     this.collectionList = collections.filter(item => !invisibleTokens.includes(item.nftSymbol)).map(item => {
-	  let co2celoPrice = item.sell_refi_price / 1000 * item.producerFee / 1000 * cmco2Price
+	  let co2celoPrice =  item.sell_refi_price / 1000 * item.producerFee / 1000 * cmco2Price
 	  if (item.nftSymbol === 'CBCN') {
-		co2celoPrice = item.sell_total_price / 1000 * item.producerFee / 1000 + (item.total_co2 / Math.pow(10, 7))
+		co2celoPrice = (item.sell_total_price / 1000 * item.producerFee / 1000 * cmco2Price) + (item.total_co2 / Math.pow(10, 7))
 	  }
 	  const co2CeloDiff = Math.ceil(co2celoPrice) - co2celoPrice
       item.volumeCelo = Math.round(item.sell_total_price / 1000)
