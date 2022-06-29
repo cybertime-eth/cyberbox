@@ -168,11 +168,16 @@ export default {
       }
 	},
 	notificationImage(notification) {
-    let contractId = notification.tokenId
-    if (notification.nftSymbol === 'nomdom') {
-      contractId = notification.image
-    }
-    return CDN_ROOT + notification.nftSymbol + `/${contractId}.png`
+	  if (notification.nftSymbol !== 'CBCN') {
+		let contractId = notification.tokenId
+        if (notification.nftSymbol === 'nomdom') {
+          contractId = notification.image
+        }
+        return CDN_ROOT + notification.nftSymbol + `/${contractId}.png`
+	  } else {
+		return CDN_ROOT + `CBCN/thumb/${notification.month}.png`
+	  }
+      
 	},
     notificationIcon(notification) {
       switch(notification.type) {

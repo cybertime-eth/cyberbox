@@ -1,5 +1,5 @@
 <template>
-  <div class="modal" :class="{mobile: mobileVersion}">
+  <div class="modal" :class="{mobile: mobileVersion && !showSuccessModal}">
     <div class="modal__block sell" :class="{ success: showSuccessModal }">
         <div class="modal__sell-header">
           <button class="modal__sell-header-button" @click="closeModal"><img src="/close.svg" alt="close"></button>
@@ -130,8 +130,10 @@ export default {
     },
     listToken() {
       if (this.$store.state.listToken === true) {
-        this.pending = false
-        setTimeout(() => this.showSuccessModal = true)
+		this.pending = false
+		setTimeout(() => this.showSuccessModal = true)
+		const header = document.querySelector('.header')
+		header.classList.remove('buy')
       } else {
         this.closeModal()
       }

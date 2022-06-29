@@ -44,7 +44,7 @@
                 <h3 class="rankings__table-content-item-collection-image-new-active">New</h3>
               </div>
               <div class="rankings__table-content-item-collection-name-box">
-                <h3 class="rankings__table-content-item-collection-name">{{ item.name }}</h3>
+                <h3 class="rankings__table-content-item-collection-name">{{ collectionName(item) }}</h3>
                 <button class="rankings__table-content-item-more" @click="showNftDetail(idx, $event)">
                   <img :src="nftMoreIcon(idx)" class="rankings__table-content-item-more-image">
                   <span class="rankings__table-content-item-more-name">{{ nftMoreButtonName(idx) }}</span>
@@ -152,6 +152,17 @@ export default {
         return 'Less';
       }
 	},
+	collectionName(item) {
+	  if (!this.isMobile()) {
+		return item.name
+	  } else {
+		if (item.route !== 'CBCN') {
+		  return item.name
+		} else {
+		  return 'Offset Certificate'
+		}
+	  }
+	},
 	sendRankingsEvent(eventInfo) {
 	  this.sendEvent({
 		category: 'Browse',
@@ -216,7 +227,10 @@ export default {
         volume = volume + price
         nftName = (this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol) || {}).name
         const mintCountDiff = Math.ceil(item.mint_count / 1000) - (item.mint_count / 1000)
-        const co2Celo = (item.sell_refi_price / 1000) * (item.producerFee / 1000) * cmco2Price
+		let co2Celo = (item.sell_refi_price / 1000) * (item.producerFee / 1000) * cmco2Price
+		if (item.nftSymbol === 'CBCN') {
+		  co2Celo = item.producerFee / 1000 * item.sell_total_price / 1000 + (item.total_co2 / Math.pow(10, 7))
+		}
         const co2CeloDiff = Math.ceil(co2Celo) - co2Celo
         this.list.push({
           id: (itemNum + 1),

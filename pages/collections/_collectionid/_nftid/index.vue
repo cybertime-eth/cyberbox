@@ -328,8 +328,11 @@ export default {
     address() {
       return this.$store.state.address
 	},
+	listToken() {
+      return this.$store.state.listToken
+    },
 	contentVisible() {
-	  return !this.isMobile() || (this.isMobile() && !this.showSellTokenModal)
+	  return !this.isMobile() || (this.isMobile() && (!this.showSellTokenModal || this.listToken))
 	},
     isMultiNft() {
       return this.$store.state.multiNftSymbols.includes(this.$route.params.collectionid)

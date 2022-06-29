@@ -1703,7 +1703,7 @@ export const actions = {
     try {
 	  if (state.nft.contract === 'CBCN' || state.nft.contract !== 'nomdom') {
 		const contractAddress = state.nft.contract === 'CBCN' ? state.certContractAddress : state.nft.contract_address
-		if (state.nft.contract === 'CBCN') {
+		if (state.nft.contract !== 'CBCN') {
 		  contract = new ethers.Contract(state.marketMain, MarketMainABI, signer)
 		} else {
 		  contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)

@@ -162,15 +162,14 @@ export default {
     const invisibleTokens = ['cconnectpunks']
     let totalCO2Amount = 0
     this.collectionList = collections.filter(item => !invisibleTokens.includes(item.nftSymbol)).map(item => {
-	  const co2celoPrice = item.sell_refi_price / 1000 * item.producerFee / 1000 * cmco2Price
+	  let co2celoPrice = item.sell_refi_price / 1000 * item.producerFee / 1000 * cmco2Price
+	  if (item.nftSymbol === 'CBCN') {
+		co2celoPrice = item.sell_total_price / 1000 * item.producerFee / 1000 + (item.total_co2 / Math.pow(10, 7))
+	  }
 	  const co2CeloDiff = Math.ceil(co2celoPrice) - co2celoPrice
       item.volumeCelo = Math.round(item.sell_total_price / 1000)
       item.co2Celo = co2celoPrice !== 0 ? co2celoPrice.toFixed(co2CeloDiff === 0 ? 0 : 2) : 0
 	  totalCO2Amount += co2celoPrice
-	  if (item.nftSymbol === 'CBCN') {
-		totalCO2Amount += item.sell_total_price / 1000 * item.producerFee / 1000 * cmco2Price
-		totalCO2Amount += item.total_co2 / Math.pow(10, 7)
-	  }
       item.name = (this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol) || {}).name
       item.image = `/${item.nftSymbol}.png`
       return item
