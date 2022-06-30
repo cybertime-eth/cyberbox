@@ -207,6 +207,7 @@ export default {
 	  this.showTransferModal = true
 	},
 	closeTransfer() {
+    this.showTransferModal = false
 	  location.reload()
 	},
     copyLink(e) {
