@@ -2267,9 +2267,6 @@ export const mutations = {
 	if (process.browser) {
 	  localStorage.setItem('address', address)
 	}
-	// TODO
-	address = '0xeb8ae37329786a7173a1995694bd2ec857e90588'
-	//
 	state.fullAddress = address.toLowerCase()
 	// const startID = address.split("").slice(0, 6);
 	const startID = ['0', 'x']
