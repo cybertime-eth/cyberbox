@@ -33,7 +33,7 @@
       </div>
       <div class="my-collection-sort" v-if="activeFilter !== 'knoxnft'">
 		<div class="my-collection-sort-buttons" v-if="activeFilter !== 'all'">
-			<CustomSelect :options="sortOptions" :selected="activePriceSort" @change="changeSort"/>
+			<CustomSelect class="sort-select" :options="sortOptions" :selected="activePriceSort" @change="changeSort"/>
 			<div class="my-collection-sort-buttons-box" :class="{ 'no-traits': !isTraitVisible }" v-if="activeFilter !== 'sale'">
 			  	<button class="my-collection-sort-buttons-button" :class="{active: activeSort === 'mint-highest'}" @click="changeSort('mint-highest')">
 					<span>Token ID</span>
@@ -680,7 +680,7 @@ export default {
 			display: none;
 		  }
 		}
-		.custom-select {
+		.sort-select {
 		  width: 14.4rem;
 		}
 	  }
