@@ -2105,6 +2105,12 @@ export const actions = {
 			nftSymbol
 			amount
 			updatedAt
+			linked_contract {
+			 tag_element0
+			 tag_element1
+			 tag_element2
+			 tag_element3
+			}
 		  }
 		  notificationInfos(first: 1) {
 			id
@@ -2127,6 +2133,10 @@ export const actions = {
 		  notificationItem.owned = item.fromAddress.toLowerCase() === address
 		  notificationItem.totalCount = data.notificationInfos[0].total_count
 		  notificationItem.read = parseInt(item.id) <= maxId
+		  if (item.nftSymbol === 'CBCN') {
+			notificationItem.year = parseInt(item.linked_contract.tag_element1)
+			notificationItem.month = parseInt(item.linked_contract.tag_element2)
+		  }
 
 		  switch(item.notify_type) {
 			case KEY_TRANSACTION_TYPE.LIST:
@@ -2257,7 +2267,10 @@ export const mutations = {
 	if (process.browser) {
 	  localStorage.setItem('address', address)
 	}
-    state.fullAddress = address.toLowerCase()
+	// TODO
+	address = '0xeb8ae37329786a7173a1995694bd2ec857e90588'
+	//
+	state.fullAddress = address.toLowerCase()
 	// const startID = address.split("").slice(0, 6);
 	const startID = ['0', 'x']
     const endID = address.split("").slice(-4);
