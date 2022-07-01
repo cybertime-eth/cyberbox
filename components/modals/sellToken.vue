@@ -25,11 +25,11 @@
                 	<img src="/plant.svg" alt="plant" class="modal__sell-form-refioffset-total-carbon"> Total carbon offset = <span class="modal__sell-form-refioffset-total-amount">{{ refiOffset }} ton CO2</span>
 				</p>
 				<p class="modal__sell-form-refioffset-description">
-                	Sell NFT and we add {{ nftProducerFee }}% of total offset to your <img src="/carbon-tracker.svg" alt="tracker" class="modal__sell-form-refioffset-description-carbon"> Carbon Tracker
+                	Sell NFT and we add 50% of total offset to your <img src="/carbon-tracker.svg" alt="tracker" class="modal__sell-form-refioffset-description-carbon"> Carbon Tracker
 				</p>
               </div>
               <p class="modal__sell-form-description">Item will be on sale until you cancelled.</p>
-              <p class="modal__sell-form-feeinfo">Once sold, the following fees will be deducted:<br/>{{ nftServiceFee }}% service fee | {{ nftRoyalty }}% creator royalty</p>
+              <p class="modal__sell-form-feeinfo">Once sold, the following fees will be deducted:<br/>{{ nftServiceFee }}% service fee | {{ nftRoyalty }}% creator royalty | {{ nftProducerFee }}% carbon offset</p>
             </div>
           </div>
           <div class="modal__sell-success" v-else>
@@ -156,12 +156,14 @@ export default {
 	}
     this.$store.commit('changelistToken', '')
     const collectionInfo = await this.$store.dispatch('getCollectionInfo')
-    this.nftServiceFee = collectionInfo.marketFee / 10
-	this.nftRoyalty = collectionInfo.createrFee / 10
 	if (collectionInfo.nftSymbol !== 'CBCN') {
+	  this.nftServiceFee = collectionInfo.marketFee / 10
+	  this.nftRoyalty = collectionInfo.createrFee / 10
 	  this.nftProducerFee = collectionInfo.producerFee / 10
 	} else {
-	  this.nftProducerFee = 5
+	  this.nftServiceFee = 2
+	  this.nftRoyalty = 5
+	  this.nftProducerFee = 5.5
 	}
     if (this.nft.market_status === 'LISTED') {
       this.nftPrice = this.nft.price
@@ -227,7 +229,7 @@ export default {
     &.sell {
       width: 45.6rem;
       background: $white;
-      padding: 2.1rem 0.8rem 2.4rem;
+      padding: 2.1rem 1.6rem 2.4rem;
       cursor: default;
       &.success {
         width: 23.5rem;

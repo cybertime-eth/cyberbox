@@ -505,7 +505,7 @@ export default {
       if (collectionResult.nftSymbol !== 'CBCN') {
 		this.nftProducerFee = collectionResult.producerFee ? collectionResult.producerFee / 10 : 0
 	  } else {
-		this.nftProducerFee = 5
+		this.nftProducerFee = 5.5
 	  }
       if (multiNftSymbols.includes(this.$route.params.collectionid)) {
         if ((!this.seller || (this.seller && this.nft.market_status !== 'LISTED'))) {
@@ -549,7 +549,7 @@ export default {
       if (this.$store.state.cMCO2Price) {
 		let producerFee = this.nft.producerFee
 		if (this.nft.contract === 'CBCN') {
-		  producerFee = 50
+		  producerFee = 55
 		}
         this.nft = {
           ...this.nft,
