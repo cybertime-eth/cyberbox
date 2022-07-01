@@ -74,7 +74,7 @@ export default {
       return this.$store.state.successApproveBuyToken || this.buyTokenApproved
     },
     refiOffset() {
-      if (this.nft.contract !== 'CBCN') {
+      if (this.nft.contract !== 'CBCN' || (this.nft.contract === 'CBCN' && this.nft.owner)) {
         return this.nft.refiOffset > 0 ? parseFloat(this.nft.refiOffset).toFixed(3) : 0
       } else {
         return '1'

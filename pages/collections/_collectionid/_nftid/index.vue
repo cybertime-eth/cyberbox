@@ -501,8 +501,12 @@ export default {
     },
     async loadNftStatus() {
       const multiNftSymbols = ['knoxnft']
-	  const collectionResult = await this.$store.dispatch('getCollectionInfo') || {}
-	  this.nftProducerFee = collectionResult.producerFee ? collectionResult.producerFee / 10 : 0
+      const collectionResult = await this.$store.dispatch('getCollectionInfo') || {}
+      if (collectionResult.nftSymbol !== 'CBCN') {
+		this.nftProducerFee = collectionResult.producerFee ? collectionResult.producerFee / 10 : 0
+	  } else {
+		this.nftProducerFee = 5
+	  }
       if (multiNftSymbols.includes(this.$route.params.collectionid)) {
         if ((!this.seller || (this.seller && this.nft.market_status !== 'LISTED'))) {
           const ownedCollectionInfo = await this.$store.dispatch('getOwnedCollectionInfo', this.nft)
@@ -543,9 +547,13 @@ export default {
     },
     updateRefiOffset() {
       if (this.$store.state.cMCO2Price) {
+		let producerFee = this.nft.producerFee
+		if (this.nft.contract === 'CBCN') {
+		  producerFee = 50
+		}
         this.nft = {
           ...this.nft,
-          refiOffset: (this.nft.market_status === 'LISTED' ? this.nft.price : 1) * (this.nft.producerFee / 1000) * this.$store.state.cMCO2Price
+          refiOffset: (this.nft.market_status === 'LISTED' ? this.nft.price : 1) * (producerFee / 1000) * this.$store.state.cMCO2Price
         }  
       }
     },

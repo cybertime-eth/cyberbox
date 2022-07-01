@@ -222,7 +222,7 @@ export default {
       image: this.currentCertificateImage,
       price: CERTIFICATE_MINT_PRICE,
       nftid: currMonth + 1,
-      refiOffset: CERTIFICATE_MINT_PRICE * 25 / 1000 * this.$store.state.cMCO2Price
+      refiOffset: CERTIFICATE_MINT_PRICE * 45 / 1000 * this.$store.state.cMCO2Price
     }
     this.certificateList = this.getCertificatesOfYear(new Date().getFullYear(), true)
 	this.loadMyCertificates()
