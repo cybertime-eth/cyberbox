@@ -111,7 +111,7 @@ export default {
     async buyToken() {
       this.pending = true
       try {
-        if (this.nft.contract !== 'monthnft') {
+        if (this.nft.contract !== 'CBCN' || (this.nft.contract === 'CBCN' && this.nft.owner)) {
 		  await this.$store.dispatch('buyNFT', {
 			id: !this.multiNft ? this.$route.params.nftid : this.nft.contract_id,
 			price: this.nft.price

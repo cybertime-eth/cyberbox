@@ -218,7 +218,7 @@ export default {
     const month = today.toLocaleString('en-us', { month: 'long' })
     this.certificate = {
       name: `Carbon Offset Certificate ${month} ${today.getFullYear()}`,
-      contract: 'monthnft',
+      contract: 'CBCN',
       image: this.currentCertificateImage,
       price: CERTIFICATE_MINT_PRICE,
       nftid: currMonth + 1,
