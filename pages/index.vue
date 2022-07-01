@@ -229,7 +229,6 @@ export default {
       const endMonth = currMonth < 12 ? currMonth + 1 : 12
 	  const list = []
 
-	  console.log('Start Month:', currMonth)
 	  for (let i = startMonth; i <= endMonth; i++) {
 		date.setMonth(i - 1)
 		const month = date.toLocaleString('en-us', { month: 'long' })
@@ -242,7 +241,6 @@ export default {
 		  case (currMonth + 1): status = 'Next'
 		  	break
 		}
-		console.log('Certificate Month:', i)
 		list.push({
 		  name: `${month} ${currYear}`,
 		  image: `/certificates/${currYear}/${i}.jpg`,
