@@ -229,7 +229,7 @@ export default {
     &.sell {
       width: 45.6rem;
       background: $white;
-      padding: 2.1rem 1.6rem 2.4rem;
+      padding: 2.1rem 2.4rem 2.4rem;
       cursor: default;
       &.success {
         width: 23.5rem;

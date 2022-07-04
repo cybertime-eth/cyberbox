@@ -5,6 +5,13 @@
       <div class="collection__header">
         <img :src="collection.logo" alt="avatar" class="collection__header-avatar">
         <h1 class="collection__header-title"><span :class="{certificate: isCertificateCollection}">{{ collection.name }}</span> <img src="/confirmed.svg" alt="confirm"></h1>
+		<div class="collection__header-mint" v-if="mintLink">
+			<img class="collection__header-mint-icon" src="/mint-unicon.svg" alt="mint">
+			<a class="collection__header-mint-link" :href="mintLink" target="_blank">Mint</a>
+			<client-only>
+				<span class="collection__header-mint-description" v-if="!isMobile()"><b>-</b>rank will change as minting’s live</span>
+			</client-only>
+		</div>
         <div class="collection__header-socials" :class="{certificate: isCertificateCollection}">
           <a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
           <a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
@@ -262,7 +269,28 @@ export default {
         }
       })
       return sectionCount
-    }
+	},
+	fullyMinted() {
+	  const fullyMintedCollections = ['knoxnft', 'christmaspunk', 'cpunkneon', 'cak', 'nomstronaut', 'mpunk', 'ctoadz', 'cshape', 'cpaint']
+	  return fullyMintedCollections.includes(this.$route.params.collectionid)
+	},
+	mintLink() {
+	  const collectionId = this.$route.params.collectionid
+	  switch (collectionId) {
+		case 'gang': return 'https://chinchillagang.shop/'
+		  break
+		case 'cdp': return 'https://mint.celodaopunks.art/'
+		  break
+		case 'cer': return 'https://celoerectus.shop/'
+		  break
+		case 'cmbs': return 'https://mint.celomonkeybusiness.xyz/'
+		  break
+		case 'nkw': return 'https://mint.navikatz.com/'
+		  break
+		default: return this.collection.website
+		  break
+	  }
+	}
   },
   watch: {
     nftList() {
@@ -586,6 +614,30 @@ export default {
         transform: translateY(.2rem);
       }
     }
+	&-mint {
+	  position: absolute;
+	  left: 0;
+	  top: 10rem;
+	  display: flex;
+      align-items: center;
+	  &-icon {
+		width: 1.6rem;
+		margin-right: 1rem;
+	  }
+	  &-link {
+		text-decoration: underline;
+		font-weight: 600;
+		font-size: 1.6rem;
+	  }
+	  &-description {
+		font-size: 1.6rem;
+		color: $grayLight;
+		b {
+		  margin: 0 0.8rem;
+		  color: #000;
+		}
+	  }
+	}
     &-socials {
       position: absolute;
       right: 0;
@@ -818,7 +870,13 @@ export default {
       }
       &-subtitle {
         padding-top: .5rem;
-      }
+	  }
+	  &-mint {
+		top: 6rem;
+		&-link {
+		  text-decoration: none;
+		}
+	  }
       &-socials {
         top: 17rem;
         left: auto;
