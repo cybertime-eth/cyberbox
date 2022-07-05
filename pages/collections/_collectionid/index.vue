@@ -911,6 +911,7 @@ export default {
 		  margin: 0 auto;
 		  padding-top: 1.2rem;
 		  padding-bottom: 1rem;
+		}
 		.collection__header-socials {
 		  top: 16rem;
 		  left: 50%;
