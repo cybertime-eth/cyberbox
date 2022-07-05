@@ -74,7 +74,7 @@ export default {
       return this.$store.state.successApproveBuyToken || this.buyTokenApproved
     },
     refiOffset() {
-      if (this.nft.contract !== 'CBCN') {
+      if (this.nft.contract !== 'CBCN' || (this.nft.contract === 'CBCN' && this.nft.owner)) {
         return this.nft.refiOffset > 0 ? parseFloat(this.nft.refiOffset).toFixed(3) : 0
       } else {
         return '1'
@@ -111,7 +111,7 @@ export default {
     async buyToken() {
       this.pending = true
       try {
-        if (this.nft.contract !== 'monthnft') {
+        if (this.nft.contract !== 'CBCN' || (this.nft.contract === 'CBCN' && this.nft.owner)) {
 		  await this.$store.dispatch('buyNFT', {
 			id: !this.multiNft ? this.$route.params.nftid : this.nft.contract_id,
 			price: this.nft.price

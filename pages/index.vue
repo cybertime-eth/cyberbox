@@ -164,7 +164,7 @@ export default {
     this.collectionList = collections.filter(item => !invisibleTokens.includes(item.nftSymbol)).map(item => {
 	  let co2celoPrice =  item.sell_refi_price / 1000 * item.producerFee / 1000 * cmco2Price
 	  if (item.nftSymbol === 'CBCN') {
-		co2celoPrice = (item.sell_total_price / 1000 * 0.045 * cmco2Price) + (item.total_co2 / Math.pow(10, 7))
+		co2celoPrice = (item.sell_total_price / 1000 * 0.055 * cmco2Price) + (item.total_co2 / Math.pow(10, 7))
 	  }
 	  const co2CeloDiff = Math.ceil(co2celoPrice) - co2celoPrice
       item.volumeCelo = Math.round(item.sell_total_price / 1000)
