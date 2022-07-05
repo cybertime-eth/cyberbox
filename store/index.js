@@ -467,7 +467,7 @@ export const actions = {
   async getMultiNftPriceData({}, contractInfos) {
 	const queryRequests = []
 	const queryFormat = `
-		contractLists(first: 1 orderBy: price orderDirection: asc where: { contract: "nftContract" image: "nftImage" }) {
+		contractInfos: contractLists(first: 1 orderBy: price orderDirection: asc where: { contract: "nftContract" image: "nftImage" }) {
 			price
 			contract_id
 			contract
@@ -477,7 +477,17 @@ export const actions = {
 		}
 	`
 	const queryFormat2 = `
-		contractLists: contractInfos(first: 1 orderBy: price orderDirection: asc where: { contract: "nftContract" image: "nftImage" }) {
+		contractInfos: contractSells(first: 1 orderBy: price_total orderDirection: asc where: { contract: "nftContract" image: "nftImage" }) {
+			contract_id
+			contract
+			price_total
+			tag_element0
+			tag_element1
+			tag_element2
+		}
+	`
+	const queryFormat3 = `
+		contractInfos(first: 1 orderBy: price orderDirection: asc where: { contract: "nftContract" image: "nftImage" }) {
 			contract_id
 			contract
 			tag_element0
@@ -489,8 +499,10 @@ export const actions = {
 	  let queryContent;
 	  if (item.list_count > 0) {
 	    queryContent = queryFormat.replace('nftContract', item.nftSymbol).replace('nftImage', item.image)
-	  } else {
+	  } else if (item.sell_count > 0) {
 		queryContent = queryFormat2.replace('nftContract', item.nftSymbol).replace('nftImage', item.image)
+	  } else {
+		queryContent = queryFormat3.replace('nftContract', item.nftSymbol).replace('nftImage', item.image)
 	  }
 	  const query = gql`
 		query Sample {
@@ -503,11 +515,14 @@ export const actions = {
 	const queryResults = await Promise.all(queryRequests)
 	contractInfos.map((item, index) => {
 	  const result = queryResults[index]
-	  if (result && result.contractLists.length > 0) {
-		const contractInfo = result.contractLists[0]
+	  if (result && result.contractInfos.length > 0) {
+		const contractInfo = result.contractInfos[0]
 		if (contractInfo.price) {
 		  item.list_price = contractInfo.price
 		}
+		if (contractInfo.price_total) {
+			item.list_price = contractInfo.price_total
+		  }
 		if (!item.contract_id) {
 		  item.contract_id = contractInfo.contract_id
 		}
@@ -570,6 +585,9 @@ export const actions = {
 		}`
 	  const data = await this.$graphql.default.request(query)
 	  let contractInfos = data.multiNFTs
+	  if (filter === 'sold') {
+		contractInfos.map(item => item.list_count = 0)
+	  }
 	  if ($nuxt.$route.params.collectionid === 'knoxnft') {
 		const orderedSymbols = ['COMMON', 'RARE', 'SUPER-RARE', 'LEGENDARY']
 		contractInfos = data.multiNFTs.sort((a, b) => {
