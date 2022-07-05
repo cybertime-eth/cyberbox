@@ -5,37 +5,37 @@
       <div class="collection__header">
         <img :src="collection.logo" alt="avatar" class="collection__header-avatar">
         <h1 class="collection__header-title"><span :class="{certificate: isCertificateCollection}">{{ collection.name }}</span> <img src="/confirmed.svg" alt="confirm"></h1>
-		<div class="collection__header-mint" v-if="mintLink">
-			<img class="collection__header-mint-icon" src="/mint-unicon.svg" alt="mint">
-			<a class="collection__header-mint-link" :href="mintLink" target="_blank">Mint</a>
-			<client-only>
-				<span class="collection__header-mint-description" v-if="!isMobile()"><b>-</b>rank will change as minting’s live</span>
-			</client-only>
+		<div class="collection__header-block">
+			<div class="collection__header-mint" v-if="mintLink">
+				<img class="collection__header-mint-icon" src="/mint-unicon.svg" alt="mint">
+				<a class="collection__header-mint-link" :href="mintLink" target="_blank">Mint</a>
+				<p class="collection__header-mint-tooltip">Minting available</p>
+			</div>
+			<div class="collection__header-socials" :class="{certificate: isCertificateCollection}">
+				<a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
+				<a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
+				<a :href="collection.twitter" target="_blank" v-if="collection.twitter"><img src="/socials/twitter.svg" alt="social"></a>
+				<a :href="collection.website" target="_blank" v-if="collection.website"><img src="/socials/web.svg" alt="social"></a>
+			</div>
+			<div class="collection__header-info">
+				<div class="collection__header-info-block" ref="itemsInfo">
+					<h3 class="collection__header-info-block-title">{{ collectionInfo.mint_count ? collectionInfo.mint_count : 0 }}</h3>
+					<h3 class="collection__header-info-block-subtitle">Items</h3>
+				</div>
+				<div class="collection__header-info-block">
+					<h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ (collectionInfo.sell_total_price ? collectionInfo.sell_total_price / 1000 : 0).toFixed(2) }}</h3>
+					<h3 class="collection__header-info-block-subtitle">Volume traded</h3>
+				</div>
+				<div class="collection__header-info-block">
+					<h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ floorPrice }}</h3>
+					<h3 class="collection__header-info-block-subtitle">Floor price</h3>
+				</div>
+				<div class="collection__header-info-block" ref="refiInfo">
+					<h3 class="collection__header-info-block-title">{{ refiCO2Price }}</h3>
+					<h3 class="collection__header-info-block-subtitle">Ton CO2 <img src="/plant.svg" alt="plant"></h3>
+				</div>
+			</div>
 		</div>
-        <div class="collection__header-socials" :class="{certificate: isCertificateCollection}">
-          <a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
-          <a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
-          <a :href="collection.twitter" target="_blank" v-if="collection.twitter"><img src="/socials/twitter.svg" alt="social"></a>
-          <a :href="collection.website" target="_blank" v-if="collection.website"><img src="/socials/web.svg" alt="social"></a>
-        </div>
-        <div class="collection__header-info">
-          <div class="collection__header-info-block" ref="itemsInfo">
-            <h3 class="collection__header-info-block-title">{{ collectionInfo.mint_count ? collectionInfo.mint_count : 0 }}</h3>
-            <h3 class="collection__header-info-block-subtitle">Items</h3>
-          </div>
-          <div class="collection__header-info-block">
-            <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ (collectionInfo.sell_total_price ? collectionInfo.sell_total_price / 1000 : 0).toFixed(2) }}</h3>
-            <h3 class="collection__header-info-block-subtitle">Volume traded</h3>
-          </div>
-         <div class="collection__header-info-block">
-           <h3 class="collection__header-info-block-title"><img src="/celo.svg" alt="celo">{{ floorPrice }}</h3>
-           <h3 class="collection__header-info-block-subtitle">Floor price</h3>
-         </div>
-         <div class="collection__header-info-block" ref="refiInfo">
-           <h3 class="collection__header-info-block-title">{{ refiCO2Price }}</h3>
-           <h3 class="collection__header-info-block-subtitle">Ton CO2 <img src="/plant.svg" alt="plant"></h3>
-         </div>
-        </div>
         <h3 class="collection__header-content">
           {{ collection.description }}
         </h3>
@@ -614,6 +614,9 @@ export default {
       }
     }
 	&-mint {
+	  position: absolute;
+      left: 0;
+      top: 10rem;
 	  display: flex;
 	  align-items: center;
 	  margin-top: 1.6rem;
@@ -634,6 +637,24 @@ export default {
 		b {
 		  margin: 0 0.8rem;
 		  color: #000;
+		}
+	  }
+	  &-tooltip {
+		display: none;
+		position: absolute;
+		top: -0.4rem;
+		left: 50%;
+		transform: translate(-50%, -100%);
+		background: rgba(0, 0, 0, 0.57);
+		padding: 0.8rem;
+		border-radius: 0.4rem;
+		white-space: nowrap;
+		font-size: 1.2rem;
+		color: $white;
+	  }
+	  &:hover {
+		.collection__header-mint-tooltip {
+		  display: block;
 		}
 	  }
 	}
@@ -880,10 +901,26 @@ export default {
         left: auto;
         right: auto;
         width: 15rem;
-		&.certificate {
-		  top: 25rem;
+	  }
+	  &-block {
+		display: flex;
+		flex-direction: column-reverse;
+		.collection__header-mint {
+		  position: relative;
+		  top: 0;
+		  margin: 0 auto;
+		  padding-top: 1.2rem;
+		  padding-bottom: 1rem;
 		}
-      }
+		.collection__header-socials {
+		  top: 16rem;
+		  left: 50%;
+		  transform: translateX(-50%);
+		  &.certificate {
+			top: 22rem;
+		  }
+		}
+	  }
       &-info {
         width: 100%;
         padding-top: 7.2rem;
