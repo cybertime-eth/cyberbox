@@ -1424,7 +1424,8 @@ export const actions = {
 
   async getNft({commit, state, getters}, token) {
     let nftQuery = ''
-    const isMultiNft = state.multiNftSymbols.includes(token.collectionId)
+	const isMultiNft = state.multiNftSymbols.includes(token.collectionId)
+	const tokenId = token.collectionId === 'CBCN' ? `${token.id}.jpg` : token.id
     const infoAttributes = `
       id
       contract
@@ -1481,16 +1482,16 @@ export const actions = {
         contractInfos: contractInfos(first: 1 where: { contract: "${token.collectionId}" image_contains: "${token.id}" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
         }
-        ownedListedInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract: "${token.collectionId}" image_contains: "${token.id}" market_status: "LISTED" } orderBy: price orderDirection: asc ) {
+        ownedListedInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract: "${token.collectionId}" image_contains: "${tokenId}" market_status: "LISTED" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
         }
-        ownedContractInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract: "${token.collectionId}" image_contains: "${token.id}" } orderBy: price orderDirection: asc ) {
+        ownedContractInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract: "${token.collectionId}" image_contains: "${tokenId}" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
         }
-        listedContractInfos: contractInfos(first: 1 where: { contract: "${token.collectionId}" image_contains: "${token.id}" market_status: "LISTED" } orderBy: price orderDirection: asc ) {
+        listedContractInfos: contractInfos(first: 1 where: { contract: "${token.collectionId}" image_contains: "${tokenId}" market_status: "LISTED" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
         }
-        multiNFTs: multiNFTs(first: 1 where: { nftSymbol: "${token.collectionId}" image_contains: "${token.id}" } ) {
+        multiNFTs: multiNFTs(first: 1 where: { nftSymbol: "${token.collectionId}" image_contains: "${tokenId}" } ) {
           id
           nftSymbol
           keySting
