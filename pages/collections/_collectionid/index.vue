@@ -270,11 +270,10 @@ export default {
       })
       return sectionCount
 	},
-	fullyMinted() {
-	  const fullyMintedCollections = ['knoxnft', 'christmaspunk', 'cpunkneon', 'cak', 'nomstronaut', 'mpunk', 'ctoadz', 'cshape', 'cpaint']
-	  return fullyMintedCollections.includes(this.$route.params.collectionid)
-	},
 	mintLink() {
+	  const fullyMintedCollections = ['knoxnft', 'christmaspunk', 'cpunkneon', 'cak', 'nomstronaut', 'mpunk', 'ctoadz', 'cshape', 'cpaint']
+	  if (fullyMintedCollections.includes(this.$route.params.collectionid)) return null
+
 	  const collectionId = this.$route.params.collectionid
 	  switch (collectionId) {
 		case 'gang': return 'https://chinchillagang.shop/'
