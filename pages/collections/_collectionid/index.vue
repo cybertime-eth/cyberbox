@@ -5,6 +5,13 @@
       <div class="collection__header">
         <img :src="collection.logo" alt="avatar" class="collection__header-avatar">
         <h1 class="collection__header-title"><span :class="{certificate: isCertificateCollection}">{{ collection.name }}</span> <img src="/confirmed.svg" alt="confirm"></h1>
+		<div class="collection__header-mint" v-if="mintLink">
+			<img class="collection__header-mint-icon" src="/mint-unicon.svg" alt="mint">
+			<a class="collection__header-mint-link" :href="mintLink" target="_blank">Mint</a>
+			<client-only>
+				<span class="collection__header-mint-description" v-if="!isMobile()"><b>-</b>rank will change as minting’s live</span>
+			</client-only>
+		</div>
         <div class="collection__header-socials" :class="{certificate: isCertificateCollection}">
           <a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
           <a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
@@ -262,7 +269,27 @@ export default {
         }
       })
       return sectionCount
-    }
+	},
+	mintLink() {
+	  const fullyMintedCollections = ['knoxnft', 'christmaspunk', 'cpunkneon', 'cak', 'nomstronaut', 'mpunk', 'ctoadz', 'cshape', 'cpaint']
+	  if (fullyMintedCollections.includes(this.$route.params.collectionid)) return null
+
+	  const collectionId = this.$route.params.collectionid
+	  switch (collectionId) {
+		case 'gang': return 'https://chinchillagang.shop/'
+		  break
+		case 'cdp': return 'https://mint.celodaopunks.art/'
+		  break
+		case 'cer': return 'https://celoerectus.shop/'
+		  break
+		case 'cmbs': return 'https://mint.celomonkeybusiness.xyz/'
+		  break
+		case 'nkw': return 'https://mint.navikatz.com/'
+		  break
+		default: return this.collection.website
+		  break
+	  }
+	}
   },
   watch: {
     nftList() {
@@ -290,7 +317,7 @@ export default {
       if (!this.isMultiNftCollection) {
         return `/collections/${nft.contract}/${nft.contract !== 'nomdom' ? nft.contract_id : nft.image}`
       } else {
-        return `/collections/${nft.nftSymbol}/${nft.id.split('/')[1].split('.')[0]}`
+		return `/collections/${nft.nftSymbol}/${nft.image.substring(nft.image.lastIndexOf('/') + 1).split('.')[0]}`
       }
     },
     nftOwned(nft) {
@@ -534,7 +561,7 @@ export default {
 		&& (this.collectionInfo.sell_refi_price > 0 || (this.$route.params.collectionid === 'CBCN' && (this.collectionInfo.sell_total_price > 0 || this.collectionInfo.total_co2 > 0)))) {
 	  let refiPrice = this.$store.state.cMCO2Price * this.collectionInfo.producerFee / 1000 * this.collectionInfo.sell_refi_price / 1000
 	  if (this.$route.params.collectionid === 'CBCN') {
-		refiPrice = (this.$store.state.cMCO2Price * 0.045 * this.collectionInfo.sell_total_price / 1000) + (this.collectionInfo.total_co2 / Math.pow(10, 7))
+		refiPrice = (this.$store.state.cMCO2Price * 0.055 * this.collectionInfo.sell_total_price / 1000) + (this.collectionInfo.total_co2 / Math.pow(10, 7))
 	  }
       const refiPriceDiff = Math.ceil(refiPrice) - refiPrice
       this.refiCO2Price = refiPrice !== 0 ? refiPrice.toFixed(refiPriceDiff === 0 ? 0 : 2) : 0
@@ -586,6 +613,30 @@ export default {
         transform: translateY(.2rem);
       }
     }
+	&-mint {
+	  position: absolute;
+	  left: 0;
+	  top: 10rem;
+	  display: flex;
+      align-items: center;
+	  &-icon {
+		width: 1.6rem;
+		margin-right: 1rem;
+	  }
+	  &-link {
+		text-decoration: underline;
+		font-weight: 600;
+		font-size: 1.6rem;
+	  }
+	  &-description {
+		font-size: 1.6rem;
+		color: $grayLight;
+		b {
+		  margin: 0 0.8rem;
+		  color: #000;
+		}
+	  }
+	}
     &-socials {
       position: absolute;
       right: 0;
@@ -818,7 +869,13 @@ export default {
       }
       &-subtitle {
         padding-top: .5rem;
-      }
+	  }
+	  &-mint {
+		top: 6rem;
+		&-link {
+		  text-decoration: none;
+		}
+	  }
       &-socials {
         top: 17rem;
         left: auto;

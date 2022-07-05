@@ -142,7 +142,7 @@ export default {
       return filteredCollection?.name || ''
 	},
 	isTraitVisible() {
-	  return !['sale', 'nomdom', 'knoxnft'].includes(this.activeFilter)
+	  return !['sale', 'nomdom', 'knoxnft', 'CBCN'].includes(this.activeFilter)
 	},
     nftCount() {
       return this.totalNftCount > this.listNft.length ? this.totalNftCount : this.listNft.length

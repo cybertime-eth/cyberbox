@@ -77,11 +77,13 @@ export default {
     },
     nftName() {
       if (this.multiNft) {
-        const nftId = this.nft.id.split('/')[1].split('.')[0]
-        return this.$store.state.multiNftNames.find(item => item.id === nftId).name
-      } else if (this.nft.contract === 'CBCN') {
-		return this.getCertificateName(this.nft)
-	  }	else {
+		if (this.nft.nftSymbol === 'CBCN') {
+		  return this.getCertificateName(this.nft)
+		} else {
+		  const nftId = this.nft.image.substring(this.nft.image.lastIndexOf('/') + 1).split('.')[0]
+          return this.$store.state.multiNftNames.find(item => item.id === nftId).name
+		}
+      } else {
         return `${this.nft.name || this.nft.contract_name}${this.nft.contract === 'nomdom' ? '.nom' : ''}`
       }
     },
@@ -162,7 +164,7 @@ export default {
   },
   methods: {
     getCDNImageUrl() {
-	  if (this.nft.contract !== 'CBCN') {
+	  if (this.nft.contract !== 'CBCN' && this.nft.nftSymbol !== 'CBCN') {
 		let fileExtension = this.nft.image.split('.').pop()
 		let contractId = this.nft.contract_id
 		if (fileExtension.split('//').length > 1 || this.nft.contract === 'nomdom') {
