@@ -614,19 +614,19 @@ export default {
       }
     }
 	&-mint {
-	  position: absolute;
-	  left: 0;
-	  top: 10rem;
 	  display: flex;
-      align-items: center;
+	  align-items: center;
+	  margin-top: 1.6rem;
 	  &-icon {
 		width: 1.6rem;
 		margin-right: 1rem;
 	  }
 	  &-link {
-		text-decoration: underline;
 		font-weight: 600;
 		font-size: 1.6rem;
+		&:hover {
+		  text-decoration: underline;
+		}
 	  }
 	  &-description {
 		font-size: 1.6rem;
@@ -662,7 +662,7 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-top: 2rem;
+      padding-top: 1.6rem;
       &-block {
         width: 14.6rem;
         height: 6.8rem;
@@ -871,7 +871,6 @@ export default {
         padding-top: .5rem;
 	  }
 	  &-mint {
-		top: 6rem;
 		&-link {
 		  text-decoration: none;
 		}
@@ -882,7 +881,7 @@ export default {
         right: auto;
         width: 15rem;
 		&.certificate {
-		  top: 21rem;
+		  top: 25rem;
 		}
       }
       &-info {
