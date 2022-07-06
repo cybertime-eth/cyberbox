@@ -55,7 +55,7 @@
               </div>
               <div class="nft__block-info-refi" v-if="nft.market_status === 'LISTED' && nft.price">
 			  	<p class="nft__block-info-refi-total"><img class="nft__block-info-refi-total-carbon" src="/plant.svg" alt="plant">Total carbon offset = <span class="nft__block-info-refi-total-amount">{{ refiOffset }} ton co2</span></p>
-				<p class="nft__block-info-refi-offset">Buy NFT and we add {{ nftProducerFee }}% of total offset to your <img class="nft__block-info-refi-offset-carbon" src="/carbon-tracker.svg" alt="tracker"> Offset Tracker</p>
+				<p class="nft__block-info-refi-offset">Buy NFT and we add 50% of total offset to your <img class="nft__block-info-refi-offset-carbon" src="/carbon-tracker.svg" alt="tracker"> Offset Tracker</p>
               </div>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
 			  <p class="nft__block-info-description" v-else-if="isCertificateNft">Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands.</p>
@@ -131,7 +131,7 @@
               </div>
 			  <div class="nft__block-info-refi listed" v-if="nft.market_status === 'LISTED' && nft.price">
 			  	<p class="nft__block-info-refi-total"><img class="nft__block-info-refi-total-carbon" src="/plant.svg" alt="plant">Total carbon offset = <span class="nft__block-info-refi-total-amount">{{ refiOffset }} ton co2</span></p>
-				<p class="nft__block-info-refi-offset">Buy NFT and we add {{ nftProducerFee }}% of total offset to your <img class="nft__block-info-refi-offset-carbon" src="/carbon-tracker.svg" alt="tracker"> Offset Tracker</p>
+				<p class="nft__block-info-refi-offset">Buy NFT and we add 50% of total offset to your <img class="nft__block-info-refi-offset-carbon" src="/carbon-tracker.svg" alt="tracker"> Offset Tracker</p>
               </div>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
 			  <p class="nft__block-info-description" v-else-if="isCertificateNft">Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands.</p>
