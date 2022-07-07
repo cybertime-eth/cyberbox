@@ -127,7 +127,6 @@ export default {
   },
   async created() {
 	this.yearFilter = new Date().getFullYear()
-	this.certificateList = this.getCertificatesOfYear(this.yearFilter)
 	if (process.broswer) {
 	  if (!this.isMobie()) {
 		this.progressSize = Math.round(0.6945 * document.body.offsetHeight / 1000)
@@ -171,7 +170,7 @@ export default {
 	},
 	updateCertificateList() {
 	  if (this.$store.state.address) {
-		const newList = JSON.parse(JSON.stringify(this.certificateList))
+		let newList = this.getCertificatesOfYear(this.yearFilter)
 		const additionalList = []
 		const date = new Date()
 		const currYear = date.getFullYear()
@@ -202,15 +201,16 @@ export default {
 			}
 		  }
 		})
-		if (currMonth < 12) {
-		  for (let i = currMonth + 1; i <= 12; i++) {
-			const foundIndex = this.ownedCertificates.findIndex(oItem => oItem.year === currYear && oItem.month === i)
-			if (foundIndex >= 0) {
-			  newList.push(this.ownedCertificates[foundIndex])
-			}
+		this.ownedCertificates.forEach(oItem => {
+          const foundIndex = newList.findIndex(item => oItem.year === item.year && oItem.month === item.month)
+          if (foundIndex < 0) {
+            newList.push({
+              ...oItem,
+              image: this.getCertificateImage(oItem)
+            })
 		  }
-		}
-
+		})
+		newList = newList.sort((a, b) => ((a.year + a.month) - (b.year + b.month)))
 		this.certificateList = newList
 		this.currYearCertCount = currYearCertCount
 		this.changeFilter()
