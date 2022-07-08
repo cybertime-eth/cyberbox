@@ -46,6 +46,7 @@ export default {
     position: absolute;
     top: 2.9rem;
     right: 2.9rem;
+    cursor: pointer;
   }
   &-guide {
     flex: 1;

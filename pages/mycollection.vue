@@ -1,13 +1,22 @@
 <template>
   <section class="my-collection container-xl">
     <div class="my-collection-header" v-if="address">
-      <div class="my-collection-header-avatar">
-        <img src="/earth.png" alt="earth">
-      </div>
-      <div class="my-collection-header-address">
-        <h1 class="my-collection-header-address-highlight">{{ cuttenAddress }}</h1>
-        <p class="my-collection-header-address-copy" @click="copyAddress">{{ cuttenAddress }} <img src="/copy.svg" alt="copy"></p>
-      </div>
+	  <div class="my-collection-header-info">
+		<div class="my-collection-header-avatar">
+			<img src="/earth.png" alt="earth">
+		</div>
+		<div class="my-collection-header-address">
+			<h1 class="my-collection-header-address-highlight">{{ cuttenAddress }}</h1>
+			<div class="my-collection-header-address-copy-box">
+				<p class="my-collection-header-address-copy" @click="copyAddress">{{ !this.addressCopied ? cuttenAddress : 'Copped' }}</p>
+				<ShareFrame class="my-collection-header-share" @onShared="linkShared = true"/>
+			</div>
+		</div>
+	  </div>
+	  <a class="my-collection-header-tracker" href="/carbon" v-if="linkShared">
+		<img class="my-collection-header-tracker-img" src="/carbon-tracker-gradient.svg" alt="tracker">
+		<p class="my-collection-header-tracker-name">Offset tracker</p>
+	  </a>
     </div>
     <div class="my-collection__loading" v-if="!filteredNft && loading">
       <img src="/loading-button.svg" alt="load">
@@ -75,17 +84,21 @@
 import _ from 'lodash'
 import nft from '@/components/nft.vue'
 import CustomSelect from '@/components/utility/CustomSelect.vue'
+import ShareFrame from '@/components/ShareFrame.vue'
 import TraitsFilterModal from '@/components/modals/traitsFilterModal'
 export default {
   components: {
 	CustomSelect,
+	ShareFrame,
 	TraitsFilterModal
   },
   data() {
     return {
       showTransfer: false,
       showPurchased: false,
-      loading: true,
+	  loading: true,
+	  addressCopied: false,
+	  linkShared: false,
       listNft: [],
       collectionFilters: [],
       filteredNft: false,
@@ -97,7 +110,7 @@ export default {
 	  saleNftCount: 0,
 	  activeMintCount: 0,
 	  showTraitsFilter: false,
-	  traitFilters: null
+	  traitFilters: null,
     }
   },
   beforeDestroy() {
@@ -126,16 +139,16 @@ export default {
       return this.$store.state.fullAddress
     },
     cuttenAddress() {
-      const address = this.address
-      if (address) {
-        const startID = address.split("").slice(0, 6);
-        const endID = address.split("").slice(-4);
-        const dotArr = [".", ".", "."];
-        return startID
-          .concat(dotArr)
-          .concat(endID)
-          .join("");
-      }
+	  const address = this.address
+	  if (address) {
+		const startID = address.split("").slice(0, 6);
+		const endID = address.split("").slice(-4);
+		const dotArr = [".", ".", "."];
+		return startID
+		  .concat(dotArr)
+		  .concat(endID)
+		  .join("");
+	  }
     },
     currCollectionFilter() {
       const filteredCollection = this.$store.state.collectionList.find(item => item.route === this.activeFilter)
@@ -198,11 +211,9 @@ export default {
       return this.$store.state.multiNftSymbols.includes(nft.nftSymbol)
     },
     copyAddress() {
+	  if (this.addressCopied) return
       this.$copyText(this.address)
-      this.$store.commit('setMessage', 'Address copied!')
-      setTimeout(() => {
-        this.$store.commit('setMessage', '')
-      }, 2000)
+      this.addressCopied = true
     },
     async reloadMyCollection() {
       if (process.browser && !localStorage.getItem('move_back')) {
@@ -411,7 +422,12 @@ export default {
   padding-bottom: 20rem;
   &-header {
     display: flex;
-    align-items: center;
+	align-items: flex-start;
+	justify-content: space-between;
+	&-info {
+	  display: flex;
+	  align-items: center;
+	}
     &-avatar {
       width: 11.2rem;
       height: 11.2rem;
@@ -425,6 +441,7 @@ export default {
 	  }
     }
     &-address {
+	  margin-right: 0.8rem;
       &-highlight {
         background: linear-gradient(to right, #A90DEC, #3121E2, #1AB9EA);
         -webkit-background-clip: text;
@@ -432,15 +449,20 @@ export default {
         font-family: Cabin-Medium;
         font-weight: 500;
         font-size: 3.2rem;
-      }
+	  }
+	  &-copy-box {
+		display: flex;
+		align-items: center;
+		margin-top: 1.6rem;
+	  }
       &-copy {
         display: flex;
         align-items: center;
         width: fit-content;
         width: -moz-fit-content;
         background: $white;
-        padding: 0.8rem 1.6rem;
-        margin-top: 1.6rem;
+		padding: 0.8rem 1.6rem;
+		margin-right: 0.8rem;
         border-radius: 2.5rem;
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
         font-size: 1.6rem;
@@ -450,7 +472,20 @@ export default {
           margin-left: 2rem;
         }
       }
-    }
+	}
+	&-tracker {
+	  display: flex;
+	  align-items: center;
+	  &-img {
+		width: 2.4rem;
+		margin-right: 0.8rem;
+	  }
+	  &-name {
+		font-weight: 600;
+		font-size: 1.4rem;
+		color: $textColor3;
+	  }
+	}
   }
   &__empty {
     padding-top: 6rem;
@@ -626,8 +661,11 @@ export default {
       font-size: 1.4rem;
 	}
 	&-header {
-	  justify-content: center;
-	  flex-wrap: wrap;
+	  flex-direction: column;
+      align-items: center;
+	  &-info {
+		flex-direction: column;
+	  }
 	  &-avatar {
 		width: 8rem;
 		height: 8rem;
@@ -646,6 +684,20 @@ export default {
 		  img {
 			margin-left: 1rem;
 		  }
+		}
+	  }
+	  &-share {
+		.dropdown-menu {
+		  right: -6rem;
+		}
+	  }
+	  &-tracker {
+		margin-top: 3rem;
+		&-img {
+		  width: 1.8rem;
+		}
+		&-name {
+		  font-size: 1.4rem;
 		}
 	  }
 	}
