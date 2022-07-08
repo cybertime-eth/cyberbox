@@ -3,15 +3,22 @@
     <div class="menu-mobile-header container-xl">
       <img src="/logo.svg" alt="logo" class="menu-mobile-header-logo" @click="gotoHome">
       <div class="menu-mobile-header-walletbox">
-        <div class="header__wallet" ref="wallet" v-if="address">
-          <h3 class="header__wallet-balance">{{ balance }} CELO</h3>
-		  <h3 class="header__wallet-address">{{ address }}</h3>
-		  <div class="header__wallet-avatar-box">
-			<div class="header__wallet-avatar gradient-button">
-				<img src="/celo.svg" alt="avatar">
+		<dropdown-menu class="header__wallet-dropdown" :right="true" v-model="showCeloDropdown">
+			<div class="header__wallet" v-if="address">
+				<h3 class="header__wallet-balance">{{ balance }} CELO</h3>
+				<h3 class="header__wallet-address">{{ address }}</h3>
+				<div class="header__wallet-avatar-box">
+					<div class="header__wallet-avatar gradient-button">
+						<img src="/celo.svg" alt="avatar">
+					</div>
+				</div>
 			</div>
-		  </div>
-        </div>
+			<div slot="dropdown">
+				<a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
+					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" src="/celo.svg" alt="celo"> CELO on Ubeswap</span>
+				</a>
+			</div>
+		</dropdown-menu>
         <img :src="closeIcon" alt="close" class="menu-mobile-header-close" @click="closeModal">
       </div>
     </div>
@@ -20,6 +27,7 @@
         <nuxt-link to="/explorer" active-class="gradient-text" class="menu-mobile-list-link" @click="sendExplorerEvent">Explorer</nuxt-link>
         <nuxt-link to="/rankings" active-class="gradient-text" class="menu-mobile-list-link" @click="sendRankingEvent">Rankings</nuxt-link>
         <nuxt-link to="/carbon" active-class="gradient-text" class="menu-mobile-list-link">Offset Tracker</nuxt-link>
+		<nuxt-link to="/mycollection" active-class="gradient-text" class="menu-mobile-list-link">My collection</nuxt-link>
       </div>
       <client-only>
         <profileModal :sideMenu="true" v-if="isMobile()"/>
@@ -35,6 +43,11 @@ export default {
   props: ['balance'],
   components: {
     profileModal
+  },
+  data() {
+	return {
+	  showCeloDropdown: false
+	}
   },
   computed: {
     address() {

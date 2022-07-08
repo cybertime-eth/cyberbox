@@ -1,12 +1,12 @@
 <template>
-    <div class="certificate__item collection__item">
-        <img src="/more.png" alt="more" class="collection__item-more" @click="openModal(certificate.id)" v-if="owner">
+    <div class="certificate__item collection__item" @click="routeCertificate">
+        <img src="/more.png" alt="more" class="collection__item-more" @click="openModal(certificate.id, $event)" v-if="owner">
 		<div class="collection__item-modal" @mouseleave="modalId = 0" v-if="modalId === certificate.id">
 			<div class="collection__item-modal-button" @click="routeCertificate">
 				<img src="/outline-sell.svg" alt="sell">
 				<h3>{{ visitMenuName }}</h3>
 			</div>
-			<div class="collection__item-modal-button" @click="showTransferModal = true" v-if="owner">
+			<div class="collection__item-modal-button" @click="showTransfer" v-if="owner">
 				<img src="/transfer-black.svg" alt="transfer">
 				<h3>Transfer</h3>
 			</div>
@@ -17,20 +17,18 @@
 		</div>
         <div class="collection__item-image">
             <img :src="certificate.image" alt="item">
+			<button class="collection__item-image-button" @click="routeCertificate" v-if="!owner && saleAvailable">Offset now</button>
         </div>
         <div class="collection__item-info">
             <h2 class="collection__item-info-name">{{ certificateName }}</h2>
             <p class="collection__item-info-type">Price</p>
-            <div class="collection__item-info-price" v-if="certificate.price">
+            <div class="collection__item-info-price" v-if="priceVisible">
                 <img src="/celo.svg" alt="celo">
-                <h3 class="collection__item-info-price-text">{{ certificate.price }}</h3>
+                <h3 class="collection__item-info-price-text">{{ certificatePrice }}</h3>
             </div>
             <p class="certificate__item-description" :class="{ 'not-sale': owner || !saleAvailable }" v-else>{{ certificateDescription }}</p>
-            <button class="collection__item-info-details" @click="routeCertificate" v-if="owner">Details</button>
-            <button class="collection__item-info-details buy" @click="routeCertificate" v-else-if="buyAvailable">Buy</button>
-            <button class="collection__item-info-details offset" @click="routeCertificate" v-else-if="saleAvailable">Offset now</button>
         </div>
-		<transfer :nft="certificate" @closeModal="showTransferModal=false" v-if="showTransferModal" />
+		<transfer :nft="certificate" @close="closeTransfer($event)" v-if="showTransferModal" />
     </div>    
 </template>
 
@@ -62,7 +60,10 @@ export default {
       return this.$store.state.fullAddress === this.certificate.owner
 	},
 	priceVisible() {
-      return this.certificate.price > 0
+      return this.certificate.price > 0 || this.certificate.offset
+	},
+	certificatePrice() {
+	  return this.certificate.offset ? 15 : this.certificate.price
 	},
 	buyAvailable() {
       return !this.owner && this.certificate.price > 0
@@ -75,34 +76,49 @@ export default {
     }
   },
   methods: {
-	openModal(id) {
+	openModal(id, e) {
       if (this.modalId !== id) {
         this.modalId = id
       } else {
         this.modalId = 0
-      }
-    },
-	copyLink() {
+	  }
+	  e.preventDefault()
+	  e.stopPropagation()
+	},
+	showTransfer(e) {
+	  this.showTransferModal = true
+	  e.preventDefault()
+	  e.stopPropagation()
+	},
+	closeTransfer(e) {
+	  this.showTransferModal = false
+	  e.preventDefault()
+	  e.stopPropagation()
+	},
+	copyLink(e) {
       const collectionUrl = location.protocol + '//' + location.host
       this.$copyText(`${collectionUrl}/collections/${this.certificate.contract}/${this.certificate.contract_id}`)
       this.$store.commit('setMessage', 'Link copied!')
       setTimeout(() => {
         this.$store.commit('setMessage', '')
-      }, 2000)
+	  }, 2000)
+	  e.preventDefault()
+	  e.stopPropagation()
     },
-    routeCertificate() {
-	  if (this.certificate.offset) {
-		this.sendEvent({
-		  category: 'Browse',
-		  eventName: 'minter_enter',
-		  properties: {
-			minter_enter: 'Tracker_my_cert'
-		  }
-		})
-		this.$router.push('/lending')
-	  } else {
-		this.$router.push(`/collections/CBCN/${this.certificate.contract_id}`)
-	  }
+    routeCertificate(e) {
+	  if (this.showTransferModal) return
+	//   if (this.certificate.offset) {
+	// 	this.sendEvent({
+	// 	  category: 'Browse',
+	// 	  eventName: 'minter_enter',
+	// 	  properties: {
+	// 		minter_enter: 'Tracker_my_cert'
+	// 	  }
+	// 	})
+	// 	this.$router.push('/lending')
+	//   } else {
+	// 	this.$router.push(`/collections/CBCN/${this.certificate.contract_id}`)
+	//   }
     }
   }
 }
@@ -110,7 +126,10 @@ export default {
 
 <style lang="scss" scoped>
 .certificate__item {
-  height: 39.7rem;
+  height: 35.4rem;
+  .collection__item-more, .collection__item-modal {
+	z-index: 1;
+  }
   .collection__item-info-name {
 	font-size: 1.8rem;
     padding-bottom: 4rem;
@@ -118,18 +137,32 @@ export default {
   }
   .collection__item-info-type {
 	padding-top: 1.2rem;
+	font-weight: 700;
 	font-size: 1.2rem;
   }
   .collection__item-image {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(0deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), linear-gradient(46.74deg, #365BE0 -17.17%, #D676CF 48.99%, #FFE884 113%);
 	max-width: 20rem;
 	border-radius: 0.4rem;
 	overflow: hidden;
+	position: relative;
     img {
       max-width: 100%;
+	}
+	.collection__item-image-button {
+	  position: absolute;
+	  left: 50%;
+	  width: 11rem;
+	  height: 2.8rem;
+	  bottom: 0.8rem;
+	  background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
+	  border-radius: 2rem;
+	  transform: translateX(-50%);
+	  font-weight: 600;
+	  font-size: 1.4rem;
+      color: $white;
     }
   }
   &-description {
@@ -137,23 +170,6 @@ export default {
     font-size: 1.4rem;
     &.not-sale {
       color: $border;
-    }
-  }
-  .collection__item-info-details {
-	margin-top: 1.6rem;
-    &.buy {
-      background: $white;
-      border: 1px solid $modalColor;
-    }
-    &.offset {
-      background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
-      color: $white;
-      &.disabled {
-        background: $white;
-        pointer-events: none;
-        border: 1px solid $modalColor;
-        color: $border2;
-      }
     }
   }
 

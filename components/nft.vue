@@ -1,8 +1,8 @@
 <template>
-  <div class="collection__item" :class="{ multinft: multiNft && $route.params.collectionid }" @click="routeNft(false)">
+  <div class="collection__item" :class="{ multinft: multiNft && $route.params.collectionid }" @click="routeNft">
     <img src="/more.png" alt="more" v-if="moreButtonVisible" class="collection__item-more" @click="openModal(nft.id, $event)">
     <div class="collection__item-modal" v-if="modalId === nft.id" @mouseleave="modalId = 0">
-      <div class="collection__item-modal-button" @click="routeNft(true)">
+      <div class="collection__item-modal-button">
         <img src="/outline-sell.svg" alt="sell">
         <h3>{{ visitMenuName }}</h3>
       </div>
@@ -34,10 +34,9 @@
           <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span>
         </div>
         <h3 class="collection__item-info-price-null" :class="{ multinft: multiNft }" v-else>{{ saleInfo }} <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span></h3>
-        <button class="collection__item-info-details" @click="routeNft(true)">Details</button>
       </div>
     </div>
-    <transfer :nft="nft" @closeModal="showTransferModal = false" @done="closeTransfer" v-if="showTransferModal" />
+    <transfer :nft="nft" @close="closeTransfer" @done="closeSucceedTransfer" v-if="showTransferModal" />
   </div>
 </template>
 <script>
@@ -204,12 +203,19 @@ export default {
     realNftImage() {
       return this.cdnImage || this.getNFTImage(this.nft)
 	},
-	handleClickTransfer() {
+	handleClickTransfer(e) {
 	  this.$store.commit('setNewNft', this.nft)
 	  this.showTransferModal = true
+	  e.preventDefault()
+      e.stopPropagation()
 	},
-	closeTransfer() {
-    this.showTransferModal = false
+	closeTransfer(e) {
+	  this.showTransferModal = false
+	  e.preventDefault()
+      e.stopPropagation()
+	},
+	closeSucceedTransfer(e) {
+	  this.closeTransfer()
 	  location.reload()
 	},
     copyLink(e) {
@@ -228,12 +234,11 @@ export default {
       } else {
         this.modalId = 0
       }
-      if (this.owner) {
-        e.preventDefault()
-        e.stopPropagation()
-      }
+      e.preventDefault()
+	  e.stopPropagation()
     },
-    routeNft(payload) {
+    routeNft() {
+	  if (this.showTransferModal) return
 	  this.sendEvent({
 		category: 'Browse',
 		eventName: 'nft_enter',
@@ -241,12 +246,7 @@ export default {
           nft_enter: this.from
         }
 	  })
-      if (!this.seller) {
-        this.$router.push(this.route)
-      }
-      if (payload) {
-        this.$router.push(this.route)
-      }
+      this.$router.push(this.route)
     }
   }
 }

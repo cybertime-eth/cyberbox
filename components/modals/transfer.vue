@@ -123,12 +123,13 @@ export default {
     this.$store.commit('changeSuccessTransferToken', false)
   },
   methods: {
-    closeModal() {
+    closeModal(e) {
       this.$emit('closeModal', false)
+      this.$emit('close', e)
       this.$store.commit('changeSuccessTransferToken', false)
     },
     closeSuccessModal() {
-      this.$emit('done')
+      this.$emit('done', e)
       this.$store.commit('changeSuccessTransferToken', false)
     },
 	submitApproveToken() {

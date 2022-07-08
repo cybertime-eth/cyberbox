@@ -19,9 +19,6 @@
           <li class="header__list">
             <nuxt-link class="header__link" active-class="gradient-text" to="/carbon" @click="sendTrackerEvent" exact>Offset Tracker</nuxt-link>
           </li>
-          <!-- <li class="header__list">
-            <a class="header__link" href="https://forms.gle/R7LmANz7iqsCA88X8" target="_blank">Launchpad</a>
-          </li> -->
         </ul>
       </nav>
       <client-only>
@@ -31,8 +28,11 @@
             <img src="/lightning.svg" alt="lightning">
             <span class="header__notification-count" v-if="notificationCount">{{ notificationCount }}</span>
           </nuxt-link>
-		  <dropdown-menu class="header__celo" :right="true" v-model="showCeloDropdown">
-			<img class="header__celo-toggle dropdown-toggle" src="/wallet.svg" alt="wallet">
+        </div>
+        <button v-else class="header__null"></button>
+        <div class="header__wallet" v-if="address && !isMobile()">
+		  <dropdown-menu class="header__wallet-dropdown" :right="true" v-model="showCeloDropdown">
+          	<h3 class="header__wallet-balance dropdown-toggle">{{ balance }} CELO</h3>
 			<div slot="dropdown">
 				<!-- <a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
 					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" src="/celo.svg" alt="celo"> CELO by Credit Card <img class="dropdown-item-cards" src="/payable-cards.svg" alt="cards"></span>
@@ -40,15 +40,10 @@
 				</a> -->
 				<a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
 					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" src="/celo.svg" alt="celo"> CELO on Ubeswap</span>
-					<img class="dropdown-item-nav" src="/array-right.svg" alt="right">
 				</a>
 			</div>
 		  </dropdown-menu>
-        </div>
-        <button v-else class="header__null"></button>
-        <div class="header__wallet" ref="wallet" v-if="address && !isMobile()" @click="showProfileMenu = !showProfileMenu">
-          <h3 class="header__wallet-balance">{{ balance }} CELO</h3>
-		  <h3 class="header__wallet-address">{{ address }}</h3>
+		  <h3 class="header__wallet-address" ref="wallet" @click="showProfileMenu = !showProfileMenu">{{ address }}</h3>
 		  <div class="header__wallet-avatar-box">
 			<div class="header__wallet-avatar gradient-button">
 				<img src="/celo.svg" alt="avatar">
@@ -65,19 +60,6 @@
           </nuxt-link>
           <div class="header__box" v-if="address && isMobile()">
             <nuxt-link class="header__link header__mycollection" active-class="gradient-text" to="/mycollection" exact><img src="/mycollection.svg" alt="mycollection"></nuxt-link>
-			<dropdown-menu class="header__celo" :right="true" v-model="showCeloDropdown">
-				<img class="header__celo-toggle dropdown-toggle" src="/wallet.svg" alt="wallet">
-				<div slot="dropdown">
-					<!-- <a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
-						<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" src="/celo.svg" alt="celo"> CELO by Credit Card <img class="dropdown-item-cards" src="/payable-cards.svg" alt="cards"></span>
-						<img class="dropdown-item-nav" src="/array-right.svg" alt="right">
-					</a> -->
-					<a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
-						<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" src="/celo.svg" alt="celo"> CELO on Ubeswap</span>
-						<img class="dropdown-item-nav" src="/array-right.svg" alt="right">
-					</a>
-				</div>
-			</dropdown-menu>
           </div>
         </client-only>
         <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
@@ -312,7 +294,7 @@ header {
     display: flex;
     align-items: center;
 	justify-self: end;
-	padding-right: 2.4rem;
+	padding-right: 1.2rem;
   }
   &__notification {
     position: relative;
@@ -322,7 +304,7 @@ header {
     width: 4.4rem;
     height: 4.4rem;
     background: $white;
-    margin-left: 4rem;
+    margin-left: 2.8rem;
     border-radius: 50%;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
     img {
@@ -361,31 +343,6 @@ header {
       }
     }
   }
-  &__celo {
-	margin-left: 2.4rem;
-	.dropdown-menu {
-	  width: 25rem;
-	}
-	.dropdown-item {
-	  cursor: pointer;
-	  &:hover {
-		background: $lightGreen;
-	  }
-	  &-name {
-		display: flex;
-		align-items: center;
-		font-weight: 600;
-		font-size: 1.6rem;
-	  }
-	  &-celo {
-		width: 1.6rem;
-		margin: 0 0.4rem;
-	  }
-	  &-cards {
-		margin-left: 1.6rem;
-	  }
-	}
-  }
   &__wallet {
 	display: flex;
     align-items: center;
@@ -395,17 +352,44 @@ header {
     cursor: pointer;
     z-index: 1;
     &-balance, &-address {
-      flex: 1;
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis;
+	  text-overflow: ellipsis;
+	  width: 7.4rem;
+      max-width: 7.4rem;
     }
 	&-balance {
 	  background: $white;
 	  padding: 1rem 3rem 1rem 1.2rem;
 	  border: 1px solid $lightGreen;
 	  border-radius: 2.5rem 0 0 2.5rem;
-    }
+	}
+	&-dropdown {
+	  .dropdown-menu {
+		top: calc(100% + 1.2rem) !important;
+		right: 1rem !important;
+		width: 23.4rem;
+	  }
+	  .dropdown-item {
+		cursor: pointer;
+		&:hover {
+			background: $lightGreen;
+		}
+		&-name {
+			display: flex;
+			align-items: center;
+			font-weight: 600;
+			font-size: 1.6rem;
+		}
+		&-celo {
+			width: 1.6rem;
+			margin: 0 0.4rem;
+		}
+		&-cards {
+			margin-left: 1.6rem;
+		}
+	  }
+	}
 	&-address {
 	  background: $lightGreen;
 	  padding: 1.1rem 1.2rem 1.1rem 3rem;
@@ -414,7 +398,7 @@ header {
 	&-avatar-box {
 	  position: absolute;
 	  left: 50%;
-	  transform: translateX(-50%);
+	  transform: translateX(-55%);
 	}
     &-avatar {
       width: 4rem;
@@ -541,29 +525,6 @@ header {
         }
       }
 	}
-	&__celo {
-	  .dropdown-toggle {
-		width: 2rem;
-	  }
-	  .dropdown-menu {
-		position: fixed !important;
-		top: 7rem !important;
-		left: 0.8rem;
-		right: 0.8rem !important;
-		z-index: 3;
-    	width: auto;
-	  }
-	  .dropdown-item {
-		&-name {
-		  font-size: 1.4rem;
-		  flex-wrap: wrap;
-		}
-		&-cards {
-		  margin-left: 0;
-		  margin-top: 0.8rem;
-		}
-	  }
-	}
     &__wallet {
       width: 18.8rem;
 	  margin-right: 1rem;
@@ -583,6 +544,22 @@ header {
 		img {
 		  width: 1.2rem;
 		  height: 1.2rem;
+		}
+	  }
+	  &-dropdown {
+		.dropdown-menu {
+		  width: 21.2rem;
+		  z-index: 3;
+		  .dropdown-item {
+			&-name {
+			  font-size: 1.4rem;
+			  flex-wrap: wrap;
+			}
+			&-cards {
+			  margin-left: 0;
+			  margin-top: 0.8rem;
+			}
+		  }
 		}
 	  }
     }
