@@ -77,9 +77,9 @@
 	<valoraConnect @closeModal="closeModal" v-if="showValoraModal"/>
 	<socialConnect @showConnect="openConnectModal" @closeModal="closeModal" v-if="showEmailModal"/>
     <wrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
-    <profileModal v-show="showProfileMenu" @closeModal="closeModal"/>
-    <profileModalMobile v-show="showProfileMenuMobile" :balance="balance" @closeModal="closeModal"/>
-    <searchView v-show="showSearchView" @close="showSearchView = false"/>
+    <profileModal v-if="showProfileMenu" @closeModal="closeModal"/>
+    <profileModalMobile v-if="showProfileMenuMobile" :balance="balance" @closeModal="closeModal"/>
+    <searchView v-if="showSearchView" @close="showSearchView = false"/>
   </header>
 </template>
 <script>
