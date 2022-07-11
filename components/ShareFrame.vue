@@ -1,8 +1,8 @@
 <template>
     <div class="share-frame">
-        <dropdown-menu class="share-frame-dropdown" :right="true" v-model="showShareFrame">
+        <dropdown-menu class="share-frame-dropdown" :right="true" v-model="showShareFrame" v-if="dropdownVisible">
             <a class="share-frame__link dropdown-toggle"><img src="/upload.svg" alt="share"></a>
-            <div slot="dropdown" v-if="showShareFrame">
+            <div slot="dropdown">
                 <h2 class="share-frame__title">Share link to this page</h2>
                 <div class="share-frame__block">
                     <div class="share-frame__block-item">
@@ -31,9 +31,15 @@
 export default {
   data() {
     return {
+      dropdownVisible: false,
       showShareFrame: false,
       isCopied: false
     }
+  },
+  created() {
+	this.$nextTick(function() {
+      this.dropdownVisible = true
+    })
   },
   methods: {
     sharingUrlForSocial(socialName) {

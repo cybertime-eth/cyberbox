@@ -23,14 +23,14 @@
 				</div>
 				<div class="carbon__tracker-buttons">
 					<button class="carbon__tracker-buttons-button buy gradient-button" @click="gotoLending">Buy NFT Certificate</button>
-					<button class="carbon__tracker-buttons-button bonus" @click="showExchangeBonus=true" v-if="!bonusPurchased && webVersion">Get a Bonus</button>
+					<button class="carbon__tracker-buttons-button bonus" @click="showExchangeBonus=true" v-if="!bonusPurchased && bonusVisible">Get a Bonus</button>
 				</div>
 				<div class="carbon__tracker-share">
 					<a class="carbon__tracker-share-profile" href="/mycollection" v-if="linkShared">
 						<img class="carbon__tracker-share-profile-img" src="/earth-small.svg" alt="earth">
 						<span class="carbon__tracker-share-profile-name">Profile</span>
 					</a>
-					<ShareFrame class="carbon__tracker-share-frame" @onShared="linkShared = true"/>
+					<!-- <ShareFrame class="carbon__tracker-share-frame" @onShared="linkShared = true"/> -->
 				</div>
 			</div>
 			<div class="carbon__certificates">
@@ -85,6 +85,7 @@ export default {
 	  showExchangeBonus: false,
 	  showExchangeToken: false,
 	  bonusPurchased: false,
+	  bonusVisible: false,
 	  linkShared: false
 	}
   },
@@ -136,16 +137,12 @@ export default {
 	},
 	refiPrice() {
 	  return this.$store.state.cMCO2Price
-	},
-	webVersion() {
-	  if (!process || !process.browser) {
-		return false
-	  } else {
-		return !this.isMobile()
-	  }
 	}
   },
   async created() {
+	this.$nextTick(function() {
+	  this.bonusVisible = !this.isMobile()
+    })
 	this.yearFilter = new Date().getFullYear()
 	if (process.broswer) {
 	  if (!this.isMobie()) {

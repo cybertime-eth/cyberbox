@@ -1,20 +1,22 @@
 <template>
   <div class="collection__item" :class="{ multinft: multiNft && $route.params.collectionid }" @click="routeNft">
-    <img src="/more.png" alt="more" v-if="moreButtonVisible" class="collection__item-more" @click="openModal(nft.id, $event)">
-    <div class="collection__item-modal" v-if="modalId === nft.id" @mouseleave="modalId = 0">
-      <div class="collection__item-modal-button">
-        <img src="/outline-sell.svg" alt="sell">
-        <h3>{{ visitMenuName }}</h3>
-      </div>
-     <div class="collection__item-modal-button" @click="handleClickTransfer" v-if="seller">
-       <img src="/transfer-black.svg" alt="transfer">
-       <h3>Transfer</h3>
-     </div>
-      <div class="collection__item-modal-button" @click="copyLink">
-        <img src="/copy-link.svg" alt="copy">
-        <h3>Copy link</h3>
-      </div>
-    </div>
+	<dropdown-menu class="collection__item-dropdown" v-model="showMoreMenu" v-if="moreButtonVisible">
+		<img src="/more.png" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
+		<div slot="dropdown" class="collection__item-modal">
+			<div class="collection__item-modal-button">
+				<img src="/outline-sell.svg" alt="sell">
+				<h3>{{ visitMenuName }}</h3>
+			</div>
+			<div class="collection__item-modal-button" @click="handleClickTransfer" v-if="seller">
+			<img src="/transfer-black.svg" alt="transfer">
+			<h3>Transfer</h3>
+			</div>
+			<div class="collection__item-modal-button" @click="copyLink">
+				<img src="/copy-link.svg" alt="copy">
+				<h3>Copy link</h3>
+			</div>
+		</div>
+	</dropdown-menu>
     <img :src="realNftImage()" alt="item" class="collection__item-image" v-if="nftImageLoaded">
     <div class="collection__item-loading" v-else>
       <img src="/loading-nft.gif" alt="load">
@@ -49,7 +51,7 @@ export default {
   },
   data() {
     return {
-      modalId: 0,
+      showMoreMenu: false,
       showTransferModal: false,
       nftImageLoaded: false,
       cdnImage: null,
@@ -66,7 +68,7 @@ export default {
     },
     moreButtonVisible() {
       return (this.seller || (!this.seller && this.owner)) && !this.multiNft
-    },
+	},
     visitMenuName() {
       if (this.nft.market_status === 'LISTED') {
         return 'Remove from sale'
@@ -227,16 +229,12 @@ export default {
       }, 2000)
       e.preventDefault()
       e.stopPropagation()
-    },
-    openModal(id, e) {
-      if (this.modalId !== id) {
-        this.modalId = id
-      } else {
-        this.modalId = 0
-      }
-      e.preventDefault()
-	  e.stopPropagation()
-    },
+	},
+	openModal(e) {
+	  this.showMoreMenu = !this.showMoreMenu
+	  e.preventDefault()
+      e.stopPropagation()
+	},
     routeNft() {
 	  if (this.showTransferModal) return
 	  this.sendEvent({
@@ -267,6 +265,11 @@ export default {
     &.multinft {
       height: 37rem;
     }
+	&-dropdown {
+	  .dropdown-menu {
+		top: 100% !important;
+	  }
+	}
     &-modal {
       position: absolute;
       top: 3.8rem;
