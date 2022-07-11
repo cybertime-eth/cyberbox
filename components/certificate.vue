@@ -107,18 +107,18 @@ export default {
     },
     routeCertificate(e) {
 	  if (this.showTransferModal) return
-	//   if (this.certificate.offset) {
-	// 	this.sendEvent({
-	// 	  category: 'Browse',
-	// 	  eventName: 'minter_enter',
-	// 	  properties: {
-	// 		minter_enter: 'Tracker_my_cert'
-	// 	  }
-	// 	})
-	// 	this.$router.push('/lending')
-	//   } else {
-	// 	this.$router.push(`/collections/CBCN/${this.certificate.contract_id}`)
-	//   }
+	  if (this.certificate.offset) {
+		this.sendEvent({
+		  category: 'Browse',
+		  eventName: 'minter_enter',
+		  properties: {
+			minter_enter: 'Tracker_my_cert'
+		  }
+		})
+		this.$router.push('/lending')
+	  } else {
+		this.$router.push(`/collections/CBCN/${this.certificate.contract_id}`)
+	  }
     }
   }
 }
