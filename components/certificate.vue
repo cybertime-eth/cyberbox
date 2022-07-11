@@ -1,20 +1,22 @@
 <template>
     <div class="certificate__item collection__item" @click="routeCertificate">
-        <img src="/more.png" alt="more" class="collection__item-more" @click="openModal(certificate.id, $event)" v-if="owner">
-		<div class="collection__item-modal" @mouseleave="modalId = 0" v-if="modalId === certificate.id">
-			<div class="collection__item-modal-button" @click="routeCertificate">
-				<img src="/outline-sell.svg" alt="sell">
-				<h3>{{ visitMenuName }}</h3>
+		<dropdown-menu class="collection__item-dropdown" v-model="showMoreMenu" v-if="owner">
+			<img src="/more.png" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
+			<div slot="dropdown" class="collection__item-modal">
+				<div class="collection__item-modal-button" @click="routeCertificate">
+					<img src="/outline-sell.svg" alt="sell">
+					<h3>{{ visitMenuName }}</h3>
+				</div>
+				<div class="collection__item-modal-button" @click="showTransfer" v-if="owner">
+					<img src="/transfer-black.svg" alt="transfer">
+					<h3>Transfer</h3>
+				</div>
+				<div class="collection__item-modal-button" @click="copyLink">
+					<img src="/copy-link.svg" alt="copy">
+					<h3>Copy link</h3>
+				</div>
 			</div>
-			<div class="collection__item-modal-button" @click="showTransfer" v-if="owner">
-				<img src="/transfer-black.svg" alt="transfer">
-				<h3>Transfer</h3>
-			</div>
-			<div class="collection__item-modal-button" @click="copyLink">
-				<img src="/copy-link.svg" alt="copy">
-				<h3>Copy link</h3>
-			</div>
-		</div>
+		</dropdown-menu>
         <div class="collection__item-image">
             <img :src="certificate.image" alt="item">
 			<button class="collection__item-image-button" @click="routeCertificate" v-if="!owner && saleAvailable">Offset now</button>
@@ -41,7 +43,7 @@ export default {
   },
   data() {
 	return {
-	  modalId: 0,
+	  showMoreMenu: false,
 	  showTransferModal: false
 	}
   },
@@ -76,21 +78,19 @@ export default {
     }
   },
   methods: {
-	openModal(id, e) {
-      if (this.modalId !== id) {
-        this.modalId = id
-      } else {
-        this.modalId = 0
-	  }
+	openModal(e) {
+      this.showMoreMenu = !this.showMoreMenu
 	  e.preventDefault()
 	  e.stopPropagation()
 	},
 	showTransfer(e) {
+	  this.$store.commit('setNewNft', this.certificate)
 	  this.showTransferModal = true
 	  e.preventDefault()
 	  e.stopPropagation()
 	},
 	closeTransfer(e) {
+	  this.$store.commit('setNewNft', null)
 	  this.showTransferModal = false
 	  e.preventDefault()
 	  e.stopPropagation()

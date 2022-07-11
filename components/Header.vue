@@ -54,11 +54,11 @@
       <button class="gradient-button header__connect" v-if="!address" @click="showConnectModal = true">Connect Wallet</button>
       <div class="header__mobile">
         <client-only>
-          <nuxt-link class="header__notification" to="/notification" exact v-if="isMobile()">
+          <nuxt-link class="header__notification" to="/notification" exact v-if="mobileMenuVisible">
             <img src="/lightning.svg" alt="lightning">
             <span class="header__notification-count" v-if="notificationCount">{{ notificationCount }}</span>
           </nuxt-link>
-          <div class="header__box" v-if="address && isMobile()">
+          <div class="header__box" v-if="address && mobileMenuVisible">
             <nuxt-link class="header__link header__mycollection" active-class="gradient-text" to="/mycollection" exact><img src="/mycollection.svg" alt="mycollection"></nuxt-link>
           </div>
         </client-only>
@@ -96,6 +96,7 @@ export default {
   data() {
     return {
 	  image: false,
+	  mobileMenuVisible: false,
       showConnectModal: false,
 	  showWalletModal: false,
 	  showValoraModal: false,
@@ -169,6 +170,9 @@ export default {
     if (process.browser) {
       window.addEventListener('click', this.handleClickWindow)
 	}
+	this.$nextTick(function() {
+	  this.mobileMenuVisible = this.isMobile()
+    })
   },
   beforeDestroy() {
     window.removeEventListener('click', this.handleClickWindow)
