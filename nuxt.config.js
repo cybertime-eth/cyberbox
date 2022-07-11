@@ -30,13 +30,13 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '@/plugins/aos.client.js',
-    '@/plugins/analytics.client.js',
-    '@/plugins/amplitude.client.js',
+    // '@/plugins/analytics.client.js',
+    // '@/plugins/amplitude.client.js',
     '@/plugins/outside.js',
     '@/plugins/components.js',
     '@/plugins/vue-carousel.client.js',
     '@/plugins/utils.js',
-    // '@/plugins/bugsnag.js',
+    '@/plugins/bugsnag.js',
     '@/plugins/logrocket.js'
   ],
 
@@ -69,14 +69,14 @@ export default {
       '@nuxtjs/axios',
       '@nuxtjs/proxy',
       'nuxt-logrocket',
-      // ['nuxt-bugsnag', {
-      //   apiKey: 'cef8153f64709623f660870486f23999',
-      //   publishRelease: true,
-      //   reporterOptions: {
-      //     appVersion: 'v1.0.0',
-      //     autoAssignRelease: true
-      //   }
-      // }]
+      ['nuxt-bugsnag', {
+        apiKey: 'cef8153f64709623f660870486f23999',
+        publishRelease: true,
+        reporterOptions: {
+          appVersion: 'v1.0.0',
+          autoAssignRelease: true
+        }
+      }]
     ],
 
     axios: {
