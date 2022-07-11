@@ -6,10 +6,22 @@ Vue.mixin({
 	getNFTImage(nft, detail = false) {
 		if (nft.contract !== 'nomdom') {
 			if (nft.contract !== 'CBCN') {
-			  if (nft.image && nft.image.split('ipfs://').length > 1) {
-				return 'https://ipfs.io/ipfs/' + nft.image.split('ipfs://')[1]
-			  }
-			  return nft.image
+              if (nft.nftSymbol !== 'CBCN') {
+                if (nft.image && nft.image.split('ipfs://').length > 1) {
+                    return 'https://ipfs.io/ipfs/' + nft.image.split('ipfs://')[1]
+                }
+                return nft.image
+              } else {
+                try {
+                  const month = nft.image.substring(this.nft.image.lastIndexOf('/') + 1).split('.')[0]
+                  return this.getCertificateImage({
+                    month
+                  }, detail)
+                } catch(e) {
+                  console.log(e)
+                  return certificate.image
+                }
+              }
 			} else {
 			  return this.getCertificateImage(nft, detail)
 			}
@@ -49,7 +61,22 @@ Vue.mixin({
 			certificate.token_type = parseInt(certificate.tag_element0)
 			certificate.year = parseInt(certificate.tag_element1)
 			certificate.month = parseInt(certificate.tag_element2)
-		}
+        }
+        if (certificate.nftSymbol && certificate.image) {
+            try {
+                const month = parseInt(certificate.image.substring(this.nft.image.lastIndexOf('/') + 1).split('.')[0])
+                certificate.token_type = CERTIFICATE_TOKEN_TYPE.MONTH
+                certificate.year = 2022
+                certificate.month = month
+                if (month > 12) {
+                  certificate.token_type = CERTIFICATE_TOKEN_TYPE.BONUS
+                  certificate.year = 2022
+                  certificate.month = 0
+                }
+            } catch(e) {
+                console.log(e)
+            }
+        }
 		if (certificate.token_type === CERTIFICATE_TOKEN_TYPE.YEAR || certificate.token_type === CERTIFICATE_TOKEN_TYPE.BONUS) {
             return 'Rare 2022'
         } else {
@@ -69,7 +96,7 @@ Vue.mixin({
 	},
 	getCertificateImage(certificate, detail = false) {
 	  const folderName = detail ? 'detail' : 'thumb'
-	  const month = certificate.month || parseInt(certificate.tag_element2)
+      const month = certificate.month || certificate.tag_element2
 	  return CDN_ROOT + `CBCN/${folderName}/${month}.png`
 	},
 	sendEvent(event) {

@@ -317,7 +317,7 @@ export default {
       if (!this.isMultiNftCollection) {
         return `/collections/${nft.contract}/${nft.contract !== 'nomdom' ? nft.contract_id : nft.image}`
       } else {
-        return `/collections/${nft.nftSymbol}/${nft.id.split('/')[1].split('.')[0]}`
+		return `/collections/${nft.nftSymbol}/${nft.image.substring(nft.image.lastIndexOf('/') + 1).split('.')[0]}`
       }
     },
     nftOwned(nft) {

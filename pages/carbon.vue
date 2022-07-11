@@ -2,40 +2,35 @@
 	<section id="carbon">
 		<div class="carbon">
 			<div class="carbon__tracker">
+				<img class="carbon__tracker-bg" :src="trackerBGImage" alt="background">
 				<h2 class="carbon__title">Personal carbon offset tracker</h2>
+				<p class="carbon__address" v-if="linkShared">by {{ walletAddress }}</p>
+				<p class="carbon__tracker-year" :class="{shared: linkShared}">2022</p>
 				<!-- <CustomSelect class="carbon__tracker-picker" :options="dateOptions" @change="filterByYear"/> -->
-				<p class="carbon__tracker-year">2022</p>
-				<div class="carbon__tracker-block">
-					<div class="carbon__tracker-block-status" ref="trackerProgress">
-						<circle-progress :size="progressSize" :progress="certificateOccupancy"/>
-						<div class="carbon__tracker-block-status-bg">
-							<img class="carbon__tracker-block-status-bg-img" src="/occupancy.svg">
-							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-tiny.svg" v-if="certificateOccupancy < 35">
-							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-large.svg" v-else-if="certificateOccupancy >= 100">
-							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-medium.svg" v-else-if="certificateOccupancy >= 65">
-							<img class="carbon__tracker-block-status-bg-leaf" src="/leaf-small.svg" v-else>
+				<div class="carbon__tracker-info">
+					<h2 class="carbon__tracker-info-title">{{ formatCO2(totalCO2Offset) }}</h2>
+					<p class="carbon__tracker-info-description">Total CO2 offset (ton CO2) <img class="carbon__tracker-info-description-img" src="/plant.svg" alt="plant"></p>
+					<div class="carbon__tracker-info-block">
+						<div class="carbon__tracker-info-block-item">
+							<p class="carbon__tracker-info-block-item-value">{{ formatCO2(totalCertCO2) }}</p>
+							<p class="carbon__tracker-info-block-item-name">Carbon certificates<br/>(ton CO2)</p>
+						</div>
+						<div class="carbon__tracker-info-block-item">
+							<p class="carbon__tracker-info-block-item-value">{{ formatCO2(totalTradingCO2) }}</p>
+							<p class="carbon__tracker-info-block-item-name">Traiding CO2 offset<br/>(ton CO2)</p>
 						</div>
 					</div>
-					<div class="carbon__tracker-block-info">
-						<div class="carbon__tracker-block-info-summary">
-							<div class="carbon__tracker-block-info-summary-item">
-								<span class="carbon__tracker-block-info-summary-item-name">NFT Carbon certificates</span>
-								<span class="carbon__tracker-block-info-summary-item-conent">{{ formatCO2(totalCertCO2) }} ton CO2</span>
-							</div>
-							<div class="carbon__tracker-block-info-summary-item">
-								<span class="carbon__tracker-block-info-summary-item-name">NFT Trading CO2 offset</span>
-								<span class="carbon__tracker-block-info-summary-item-conent">{{ formatCO2(totalTradingCO2) }} ton CO2</span>
-							</div>
-							<div class="carbon__tracker-block-info-summary-item total">
-								<span class="carbon__tracker-block-info-summary-item-name">Total CO2 offset</span>
-								<span class="carbon__tracker-block-info-summary-item-conent">{{ formatCO2(totalCO2Offset) }} ton CO2</span>
-							</div>
-						</div>
-						<div class="carbon__tracker-block-info-certificate">
-							<button class="carbon__tracker-block-info-certificate-button gradient-button" @click="gotoLending">Buy NFT Certificate</button>
-							<a class="carbon__tracker-block-info-certificate-bonus" @click="showExchangeBonus=true" v-if="!bonusPurchased"><img class="carbon__tracker-block-info-certificate-img" src="/gift.svg" alt="bonus"></a>
-						</div>
-					</div>
+				</div>
+				<div class="carbon__tracker-buttons">
+					<button class="carbon__tracker-buttons-button buy gradient-button" @click="gotoLending">Buy NFT Certificate</button>
+					<button class="carbon__tracker-buttons-button bonus" @click="showExchangeBonus=true" v-if="!bonusPurchased && webVersion">Get a Bonus</button>
+				</div>
+				<div class="carbon__tracker-share">
+					<a class="carbon__tracker-share-profile" href="/mycollection" v-if="linkShared">
+						<img class="carbon__tracker-share-profile-img" src="/earth-small.svg" alt="earth">
+						<span class="carbon__tracker-share-profile-name">Profile</span>
+					</a>
+					<ShareFrame class="carbon__tracker-share-frame" @onShared="linkShared = true"/>
 				</div>
 			</div>
 			<div class="carbon__certificates">
@@ -57,7 +52,7 @@
 <script>
 import { CERTIFICATE_TOKEN_TYPE } from '@/config'
 import CustomSelect from '@/components/utility/CustomSelect.vue'
-import CircleProgress from '@/components/utility/CircleProgress.vue'
+import ShareFrame from '@/components/ShareFrame.vue'
 import certificate from '@/components/certificate.vue'
 import ExchangeBonus from '@/components/modals/exchangeBonus.vue'
 import ExchangeToken from '@/components/modals/exchangeToken.vue'
@@ -68,7 +63,7 @@ const MAX_TON_AMOUNT = 20
 export default {
   components: {
 	CustomSelect,
-	CircleProgress,
+	ShareFrame,
 	certificate,
 	ExchangeBonus,
 	ExchangeToken,
@@ -86,9 +81,11 @@ export default {
 	  totalTradingCO2: 0,
 	  totalCO2Offset: 0,
 	  currYearCertCount: 0,
+	  showShareFrame: false,
 	  showExchangeBonus: false,
 	  showExchangeToken: false,
-	  bonusPurchased: false
+	  bonusPurchased: false,
+	  linkShared: false
 	}
   },
   computed: {
@@ -104,6 +101,22 @@ export default {
 	},
 	address() {
 	  return this.$store.state.address
+	},
+	walletAddress() {
+	  const address = this.$store.state.fullAddress
+      if (address) {
+        const startID = address.split("").slice(0, 6);
+        const endID = address.split("").slice(-4);
+        const dotArr = [".", ".", "."];
+        return startID
+          .concat(dotArr)
+          .concat(endID)
+          .join("");
+	  }
+	  return ''
+	},
+	trackerBGImage() {
+	  return !this.isMobile() ? '/tracker-bg.png' : 'tracker-bg-mobile.png'
 	},
 	ownedCertificates() {
 	  return this.$store.state.certificateList
@@ -123,6 +136,13 @@ export default {
 	},
 	refiPrice() {
 	  return this.$store.state.cMCO2Price
+	},
+	webVersion() {
+	  if (!process || !process.browser) {
+		return false
+	  } else {
+		return !this.isMobile()
+	  }
 	}
   },
   async created() {
@@ -202,12 +222,12 @@ export default {
 		  }
 		})
 		this.ownedCertificates.forEach(oItem => {
-          const foundIndex = newList.findIndex(item => oItem.year === item.year && oItem.month === item.month)
-          if (foundIndex < 0) {
-            newList.push({
-              ...oItem,
-              image: this.getCertificateImage(oItem)
-            })
+		  const foundIndex = newList.findIndex(item => oItem.year === item.year && oItem.month === item.month)
+		  if (foundIndex < 0) {
+			newList.push({
+			  ...oItem,
+			  image: this.getCertificateImage(oItem)
+			})
 		  }
 		})
 		newList = newList.sort((a, b) => ((a.year + a.month) - (b.year + b.month)))
@@ -255,108 +275,127 @@ export default {
 <style lang="scss" scoped>
 .carbon {
   &__title {
-	padding-bottom: 1rem;
 	font-family: Cabin-Medium;
 	font-weight: 500;
 	font-size: 3.2rem;
 	text-align: center;
   }
+  &__address {
+	margin-top: 1rem;
+	text-align: center;
+	font-weight: 600;
+	font-size: 1.6rem;	  
+  }
   &__tracker {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	padding-top: 4.2rem;
-  	padding-bottom: 6rem;
-	box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+  	padding-bottom: 3.4rem;
+	background: rgba(255, 255, 255, 0.2);
+	position: relative;
+	&-bg {
+	  position: absolute;
+	  left: 0;
+	  top: 0;
+	  width: 100%;
+	  height: 100%;
+	  z-index: -1;
+	}
+	&-share {
+	  display: flex;
+	  align-items: center;
+	  position: absolute;
+	  top: 4.1rem;
+	  right: 6rem;
+	  &-profile {
+		display: flex;
+		align-items: center;
+		margin-right: 2rem;
+		&-img {
+		  width: 2.2rem;
+		  margin-right: 0.8rem;
+		}
+		&-name {
+		  font-weight: 600;
+		  font-size: 1.8rem;
+		  color: $textColor3;
+		}
+	  }
+	}
 	&-year {
-	  margin: 0 auto;
+	  margin: 1.8rem auto 0;
 	  text-align: center;
 	  font-weight: 600;
 	  font-size: 1.6rem;
 	  color: $grayDark;
 	}
-	&-picker {
-	  width: 8.2rem;
-	  margin: 0 auto;
-	}
-	&-block {
-	  display: flex;
-	  align-items: center;
-	  justify-content: center;
-	  padding-top: 6rem;
-	  &-status {
-		width: 40.2rem;
-		height: 40.2rem;
-		margin-right: 14.6rem;
-		position: relative;
-		&-bg {
-		  display: flex;
-		  align-items: center;
-		  justify-content: center;
-		  position: absolute;
-		  left: 50%;
-		  top: 50%;
-		  width: 27rem;
-		  height: 27rem;
-		  transform: translate(-50%, -50%);
-		  &-img {
-			position: absolute;
-			left: 0;
-			top: 0;
-			width: 100%;
+	&-info {
+	  background: $white;
+	  width: 38rem;
+	  margin-top: 3.2rem;
+	  padding: 2.4rem 2.2rem;
+	  border-radius: 2.4rem;
+	  text-align: center;
+	  &-title {
+		font-weight: 500;
+		font-size: 6.2rem;
+		line-height: 5.6rem;
+	  }
+	  &-description {
+		margin-top: 0.8rem;
+		font-weight: 600;
+		font-size: 1.4rem;
+		color: $grayLight;
+		img {
+		  width: 1.5rem;
+		}
+	  }
+	  &-block {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 2rem;
+		padding: 2.2rem 2.9rem 0;
+		border-top: 1px solid $modalColor;
+		&-item {
+		  text-align: center;
+		  &-value {
+			font-weight: 600;
+			font-size: 1.8rem;
 		  }
-		  &-leaf {
-			position: relative;
+		  &-name {
+			margin-top: 0.8rem;
+			text-align: center;
+			font-weight: 600;
+			font-size: 1.2rem;
+			color: $grayLight;
 		  }
 		}
 	  }
-	  &-info {
-		&-summary {
-		  width: 39.1rem;
-		  padding: 1.8rem 1.6rem;
-		  border: 1px solid $modalColor;
-		  border-radius: 8px;
-		  &-item {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			font-size: 1.6rem;
-			margin-bottom: 2rem;
-			&-content {
-			  font-weight: 600;
-			}
-			&:last-child {
-			  margin: 0;
-			  padding-top: 1.3rem;
-			  border-top: 1px solid #F3F4F6;
-			  * {
-				font-weight: 600;
-				color: $green;
-			  }
-			  color: $green;
-			}
+	}
+	&-buttons {
+	  display: flex;
+	  margin-top: 3.8rem;
+	  &-button {
+		width: 18.5rem;
+		height: 3.6rem;
+		padding: 0.8rem 2.4rem;
+		border-radius: 2.3rem;
+		text-align: center;
+		font-weight: 600;
+		font-size: 1.4rem;
+		background: transparent;
+		white-space: nowrap;
+		&.buy {
+		  color: $white;
+		  &::after {
+			background: linear-gradient(to right, #365BE0, #D676CF, #FFE884);
 		  }
 		}
-		&-certificate {
-		  display: flex;
-		  align-items: center;
-		  justify-content: space-between;
-		  width: 100%;
-		  margin-top: 2.8rem;
-		  &-button {
-			padding: 1.3rem 2.4rem;
-			border-radius: 2.3rem;
-			font-weight: 600;
-    		font-size: 1.6rem;
-    		color: $grayDark;
-			&::after {
-			  background: linear-gradient(to right, #365BE0, #D676CF, #FFE884);
-			}
-		  }
-		  &-bonus {
-			display: flex;
-			cursor: pointer;
-		  }
-		  &-img {
-			width: 3.4rem;
-		  }
+		&.bonus {
+		  margin-left: 0.8rem;
+		  border: 1px solid $border;
+		  color: $textColor3;
 		}
 	  }
 	}
@@ -386,52 +425,34 @@ export default {
   }
   @media (max-width: 460px) {
 	&__title {
-	  padding-bottom: 2.5rem;
 	  font-family: OpenSans-SemiBold;
 	  font-weight: 600;
 	  font-size: 1.8rem;
 	}
+	&__address {
+	  font-size: 1.4rem;
+	}
 	&__tracker {
-	  padding-top: 2.5rem;
-	  padding-bottom: 2.8rem;
-	  &-block {
-		display: block;
-		padding-top: 4.4rem;
-		&-status {
-		  width: 28.8rem;
-		  height: 28.8rem;
-		  margin: 0 auto 4.3rem;
-		  &-bg {
-			width: 19.2rem;
-			height: 19.2rem;
-		  }
+	  padding-top: 7.3rem;
+	  padding-bottom: 3.6rem;
+	  &-share {
+		top: 1.6rem;
+		right: 1rem;
+	  }
+	  &-year {
+		font-size: 1.4rem;
+		&.shared {
+		  margin-top: 0.8rem;
 		}
-		&-info {
-		  &-summary {
-			width: calc(100% - 5rem);
-			margin: 0 0.8rem;
-			padding: 1.4rem 1.6rem;
-			&-item {
-			  margin-bottom: 1.2rem;
-			  font-size: 1.4rem;
-			  &:last-child {
-				padding-top: 1.6rem;
-			  }
-			}
-		  }
-		  &-certificate {
-			width: calc(100% - 1.6rem);
-			margin: 2.8rem 0.8rem 0;
-    		flex-direction: column-reverse;
-			&-button {
-			  width: 100%;
-    		  margin-top: 2.4rem;
-    		  font-size: 1.4rem;
-			}
-			&-img {
-			  width: 2.3rem;
-			}
-		  }
+	  }
+	  &-info {
+		width: calc(100% - 6rem);
+		&-block {
+		  padding-left: 0;
+		  padding-right: 0;
+		}
+		&-title {
+		  font-size: 4.2rem;
 		}
 	  }
 	}

@@ -350,7 +350,12 @@ export default {
           return this.nft.contract !== 'nomdom' ? this.nft.name : `${this.nft.name}.nom`
         }
       } else {
-        return this.$store.state.multiNftNames.find(item => item.id === this.$route.params.nftid).name
+		if (this.nft.contract === 'knoxnft') {
+		  return this.$store.state.multiNftNames.find(item => item.id === this.$route.params.nftid).name
+		} else {
+		  return ''
+		}
+        
       }
     },
     cutContractAddress() {
@@ -483,7 +488,7 @@ export default {
         ...nft,
         rating_index: rarityInfos && rarityInfos.length > 0 ? rarityInfos[0].rating_index : null,
         price: nft.price / 1000
-      }
+	  }
       this.updateRefiOffset()
       this.loadButton = false
     },
@@ -500,14 +505,11 @@ export default {
       }
     },
     async loadNftStatus() {
-      const multiNftSymbols = ['knoxnft']
       const collectionResult = await this.$store.dispatch('getCollectionInfo') || {}
       if (collectionResult.nftSymbol !== 'CBCN') {
 		this.nftProducerFee = collectionResult.producerFee ? collectionResult.producerFee / 10 : 0
-	  } else {
-		this.nftProducerFee = 5.5
 	  }
-      if (multiNftSymbols.includes(this.$route.params.collectionid)) {
+      if (this.$store.state.multiNftSymbols.includes(this.$route.params.collectionid)) {
         if ((!this.seller || (this.seller && this.nft.market_status !== 'LISTED'))) {
           const ownedCollectionInfo = await this.$store.dispatch('getOwnedCollectionInfo', this.nft)
           this.collectionInfo = {

@@ -57,7 +57,7 @@ export const state = () => ({
   raritySort: null,
   pagination: null,
   collectionSetting: null,
-  multiNftSymbols: ['knoxnft'],
+  multiNftSymbols: ['knoxnft', 'CBCN'],
   multiNftNames: [
     { id: 'COMMON', name: 'Knoxer' },
     { id: 'LEGENDARY', name: 'LydianKnoxer' },
@@ -467,22 +467,42 @@ export const actions = {
   async getMultiNftPriceData({}, contractInfos) {
 	const queryRequests = []
 	const queryFormat = `
-		contractLists(first: 1 orderBy: price orderDirection: asc where: { contract: "nftContract" image: "nftImage" }) {
+		contractInfos: contractLists(first: 1 orderBy: price orderDirection: asc where: { contract: "nftContract" image: "nftImage" }) {
 			price
 			contract_id
+			contract
+			tag_element0
+			tag_element1
+			tag_element2
 		}
 	`
 	const queryFormat2 = `
-		contractLists: contractInfos(first: 1 orderBy: price orderDirection: asc where: { contract: "nftContract" image: "nftImage" }) {
+		contractInfos: contractSells(first: 1 orderBy: price_total orderDirection: asc where: { contract: "nftContract" image: "nftImage" }) {
 			contract_id
+			contract
+			price_total
+			tag_element0
+			tag_element1
+			tag_element2
+		}
+	`
+	const queryFormat3 = `
+		contractInfos(first: 1 orderBy: price orderDirection: asc where: { contract: "nftContract" image: "nftImage" }) {
+			contract_id
+			contract
+			tag_element0
+			tag_element1
+			tag_element2
 		}
 	`
 	contractInfos.forEach(item => {
 	  let queryContent;
 	  if (item.list_count > 0) {
 	    queryContent = queryFormat.replace('nftContract', item.nftSymbol).replace('nftImage', item.image)
-	  } else {
+	  } else if (item.sell_count > 0) {
 		queryContent = queryFormat2.replace('nftContract', item.nftSymbol).replace('nftImage', item.image)
+	  } else {
+		queryContent = queryFormat3.replace('nftContract', item.nftSymbol).replace('nftImage', item.image)
 	  }
 	  const query = gql`
 		query Sample {
@@ -495,12 +515,22 @@ export const actions = {
 	const queryResults = await Promise.all(queryRequests)
 	contractInfos.map((item, index) => {
 	  const result = queryResults[index]
-	  if (result && result.contractLists.length > 0) {
-		if (result.contractLists[0].price) {
-		  item.list_price = result.contractLists[0].price
+	  if (result && result.contractInfos.length > 0) {
+		const contractInfo = result.contractInfos[0]
+		if (contractInfo.price) {
+		  item.list_price = contractInfo.price
 		}
+		if (contractInfo.price_total) {
+			item.list_price = contractInfo.price_total
+		  }
 		if (!item.contract_id) {
-		  item.contract_id = result.contractLists[0].contract_id
+		  item.contract_id = contractInfo.contract_id
+		}
+		if (item.nftSymbol === 'CBCN') {
+		  item.contract = contractInfo.contract
+		  item.tag_element0 = contractInfo.tag_element0
+		  item.tag_element1 = contractInfo.tag_element1
+		  item.tag_element2 = contractInfo.tag_element0
 		}
 	  }
 	})
@@ -511,11 +541,15 @@ export const actions = {
 	let multiNftInfos = contractInfos.filter(item => state.multiNftSymbols.includes(item.contract))
 	if (multiNftInfos.length > 0) {
 	  const nftImages = contractInfos.map(item => item.image)
-	  contractInfos = contractInfos.filter((item, index) => item.contract === 'CBCN' || (item.image && nftImages.indexOf(item.image) === index))
+	  contractInfos = contractInfos.filter((item, index) => item.image && nftImages.indexOf(item.image) === index)
 	  contractInfos = contractInfos.map(item => {
 		if (state.multiNftSymbols.includes(item.contract)) {
 		  const newItem = collectionData.multiNFTs.find(nft => nft.nftSymbol === item.contract && nft.image === item.image) || {}
 		  newItem.list_price = item.price
+		  newItem.contract = item.contract
+		  newItem.tag_element0 = item.tag_element0
+		  newItem.tag_element1 = item.tag_element1
+		  newItem.tag_element2 = item.tag_element2
 		  return newItem
 		}
 		return item
@@ -534,7 +568,7 @@ export const actions = {
 	  }
 	  const query = gql`
 		query Sample {
-			multiNFTs(firt: 48 where: { nftSymbol: "${$nuxt.$route.params.collectionid}" ${condition} }) {
+			multiNFTs(firt: 48 orderBy: image orderDirection: asc where: { nftSymbol: "${$nuxt.$route.params.collectionid}" ${condition} }) {
 			id
 			nftSymbol
 			keySting
@@ -550,12 +584,18 @@ export const actions = {
 			}
 		}`
 	  const data = await this.$graphql.default.request(query)
-	  const orderedSymbols = ['COMMON', 'RARE', 'SUPER-RARE', 'LEGENDARY']
-	  let contractInfos = data.multiNFTs.sort((a, b) => {
-		const idA = a.id.replace('.png', '').split('/')[1]
-		const idB = b.id.replace('.png', '').split('/')[1]
-		return orderedSymbols.indexOf(idA) - orderedSymbols.indexOf(idB)
-	  })
+	  let contractInfos = data.multiNFTs
+	  if (filter === 'sold') {
+		contractInfos.map(item => item.list_count = 0)
+	  }
+	  if ($nuxt.$route.params.collectionid === 'knoxnft') {
+		const orderedSymbols = ['COMMON', 'RARE', 'SUPER-RARE', 'LEGENDARY']
+		contractInfos = data.multiNFTs.sort((a, b) => {
+		  const idA = a.id.replace('.png', '').split('/')[1]
+		  const idB = b.id.replace('.png', '').split('/')[1]
+		  return orderedSymbols.indexOf(idA) - orderedSymbols.indexOf(idB)
+		})
+	  }
 	  contractInfos = await dispatch('getMultiNftPriceData', contractInfos)
 	  commit('setNewNftList', contractInfos)
 	  return contractInfos
@@ -1402,7 +1442,8 @@ export const actions = {
 
   async getNft({commit, state, getters}, token) {
     let nftQuery = ''
-    const isMultiNft = state.multiNftSymbols.includes(token.collectionId)
+	const isMultiNft = state.multiNftSymbols.includes(token.collectionId)
+	const tokenId = token.collectionId === 'CBCN' ? `${token.id}.jpg` : token.id
     const infoAttributes = `
       id
       contract
@@ -1459,16 +1500,16 @@ export const actions = {
         contractInfos: contractInfos(first: 1 where: { contract: "${token.collectionId}" image_contains: "${token.id}" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
         }
-        ownedListedInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract: "${token.collectionId}" image_contains: "${token.id}" market_status: "LISTED" } orderBy: price orderDirection: asc ) {
+        ownedListedInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract: "${token.collectionId}" image_contains: "${tokenId}" market_status: "LISTED" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
         }
-        ownedContractInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract: "${token.collectionId}" image_contains: "${token.id}" } orderBy: price orderDirection: asc ) {
+        ownedContractInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract: "${token.collectionId}" image_contains: "${tokenId}" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
         }
-        listedContractInfos: contractInfos(first: 1 where: { contract: "${token.collectionId}" image_contains: "${token.id}" market_status: "LISTED" } orderBy: price orderDirection: asc ) {
+        listedContractInfos: contractInfos(first: 1 where: { contract: "${token.collectionId}" image_contains: "${tokenId}" market_status: "LISTED" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
         }
-        multiNFTs: multiNFTs(first: 1 where: { nftSymbol: "${token.collectionId}" image_contains: "${token.id}" } ) {
+        multiNFTs: multiNFTs(first: 1 where: { nftSymbol: "${token.collectionId}" image_contains: "${tokenId}" } ) {
           id
           nftSymbol
           keySting
@@ -1498,25 +1539,25 @@ export const actions = {
       multiNftInfo = data.contractInfos[0]
       if (data.ownedListedInfos.length > 0) {
         multiNftInfo = data.ownedListedInfos.find(item => {
-		  const nftId = item.image.split('//')[1].split('/')[1].split('.')[0]
+		  const nftId = item.image.substring(item.image.lastIndexOf('/') + 1).split('.')[0]
 		  return nftId === token.id
 		})
       }
       else if (data.ownedContractInfos.length > 0) {
         multiNftInfo = data.ownedContractInfos.find(item => {
-		  const nftId = item.image.split('//')[1].split('/')[1].split('.')[0]
+		  const nftId = item.image.substring(item.image.lastIndexOf('/') + 1).split('.')[0]
 		  return nftId === token.id
 		})
       }
       else if (data.listedContractInfos.length > 0) {
 		multiNftInfo = data.listedContractInfos.find(item => {
-		  const nftId = item.image.split('//')[1].split('/')[1].split('.')[0]
+		  const nftId = item.image.substring(item.image.lastIndexOf('/') + 1).split('.')[0]
 		  return nftId === token.id
 		})
       }
       if (data.multiNFTs.length > 0) {
         multiNftCollection = data.multiNFTs.find(item => {
-		  const nftId = item.id.split('/')[1].split('.')[0]
+		  const nftId = item.image.substring(item.image.lastIndexOf('/') + 1).split('.')[0]
 		  return nftId === token.id
 		})
       }
@@ -1525,7 +1566,7 @@ export const actions = {
       ...(isMultiNft ? multiNftInfo : data.contractInfo),
       multiNft: multiNftCollection,
       producerFee: data.contracts.length > 0 ? data.contracts[0].producerFee : 0
-    }
+	}
     commit('setNewNft', nftInfo)
     return nftInfo
   },
@@ -1799,6 +1840,9 @@ export const actions = {
 		  mint_key
 		  price_total
 		}
+		contracts(first: 1 where: { contract: "CBCN" }) {
+		  mint_count
+		})
       }`
 	let data = await this.$graphql.default.request(query)
 	let totalSold = 0
@@ -1808,6 +1852,10 @@ export const actions = {
 	if (!itemExist) {
 	  totalSold += state.nft.price
 	}
+	if (collection.route === 'CBCN' && data.contracts.length > 0) {
+	  totalSold +=  data.contracts[0].mint_count * 15
+	}
+
 	const totalPrice = totalSold * price.value
 	this._vm.sendRevenueEvent(`${collection.name} - ${state.nft.contract_id}`, price.value * state.nft.price, totalPrice, collection.name)
   },
@@ -2179,7 +2227,7 @@ export const actions = {
 
   // Certificate Methods
 
-  async mintCertificate({state, getters, commit}, price) {
+  async mintCertificate({state, getters, commit, dispatch}, price) {
 	try {
 	  const ethereumProvider = getters.provider
 	  const provider = new ethers.providers.Web3Provider(ethereumProvider)
@@ -2195,6 +2243,7 @@ export const actions = {
 	    gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
 	  })
 
+	  const certCollection = collectionList.find(item => item.route === 'CBCN')
 	  provider.once(result, async () => {
 		const currMonth = new Date().toLocaleString('en-us', { month: 'long' })
 		commit('changeSuccessBuyToken', true)
@@ -2205,6 +2254,7 @@ export const actions = {
 		    mint_success: currMonth
 		  }
 		})
+		dispatch('reportRevenue', certCollection)
 	  })
 	} catch (e) {
 	  console.log(e)

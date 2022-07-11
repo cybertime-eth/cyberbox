@@ -15,7 +15,6 @@
           <img src="/logout.svg" alt="logout" class="profile__menu-link-info-icon">
           <h3>Logout</h3>
         </div>
-        <img src="/array-right.svg" alt="array">
       </div>
     </li>
   </ul>
@@ -41,10 +40,10 @@ export default {
 <style lang="scss">
 .profile__menu {
   position: absolute;
-  right: 5.5rem;
-  top: 9.6rem;
+  right: 6rem;
+  top: 7.6rem;
   background: $white;
-  width: 12.1rem;
+  width: 9.4rem;
   box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.1);
   border-radius: .4rem;
   animation: showModal .5s;

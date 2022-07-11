@@ -102,6 +102,7 @@ export default {
     position: absolute;
     top: 2.7rem;
     right: 2.9rem;
+    cursor: pointer;
   }
   &-title {
     font-family: Cabin-Regular;

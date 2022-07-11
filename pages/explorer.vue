@@ -6,7 +6,6 @@
         <img :src="collectionImage(collection)" alt="dao" class="home__item-image">
         <div class="home__item-info">
           <h2 class="home__item-info-name">{{ collection.name }}</h2>
-          <button class="home__item-info-button">Marketplace</button>
         </div>
       </div>
     </div>
@@ -58,7 +57,7 @@ export default {
   }
   &__item {
     width: 42.4rem;
-    height: 37.6rem;
+    height: 30.4rem;
     border-radius: .4rem;
     box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
     cursor: pointer;
