@@ -171,7 +171,7 @@ export default {
       item.co2Celo = co2celoPrice !== 0 ? co2celoPrice.toFixed(co2CeloDiff === 0 ? 0 : 2) : 0
 	  totalCO2Amount += co2celoPrice
       item.name = (this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol) || {}).name
-      item.image = this.getCDNImage(`${item.nftSymbol}.png`)
+      item.image = this.getCDNImage(`${item.nftSymbol}.webp`)
       return item
     })
     this.updateHotCollections()
