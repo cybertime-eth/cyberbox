@@ -142,8 +142,8 @@
             <div class="lending__footer">
                 <p class="lending__footer-description">Supported & Powered by</p>
                 <client-only>
-                    <img :src="getCDNImage('investors.png')" alt="support" v-if="!isMobile()">
-                    <img :src="getCDNImage('investors-mobile.png')" alt="support" v-else>
+                    <img :src="getCDNImage('investors.webp')" alt="support" v-if="!isMobile()">
+                    <img :src="getCDNImage('investors-mobile.webp')" alt="support" v-else>
                 </client-only>
             </div>
         </div>

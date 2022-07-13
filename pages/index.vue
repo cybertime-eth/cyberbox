@@ -8,7 +8,7 @@
           <button class="refi__block-info-button explorer" @click="gotoExplorer('Top_button')">Explorer NFT</button>
           <button class="refi__block-info-button top ranking" @click="gotoRankings('Top_button')">Rankings</button>
         </div>
-        <img class="refi__block-info-picture" :src="getCDNImage('earth.png')" alt="earth">
+        <img class="refi__block-info-picture" :src="getCDNImage('earth.webp')" alt="earth">
         <div class="refi__block-info-live" v-if="totalCO2Amount > 0">
           <h3 class="refi__block-info-live-title">LIVE <span/> Carbon Offsetting</h3>
           <div class="refi__block-info-live-co2 gradient-box">
@@ -199,7 +199,7 @@ export default {
       }
     },
     investorsIcon() {
-      return this.isMobile() || (process.browser && window.innerWidth <= 460) ? this.getCDNImage('investors-mobile.png') : this.getCDNImage('investors.png')
+      return this.isMobile() || (process.browser && window.innerWidth <= 460) ? this.getCDNImage('investors-mobile.webp') : this.getCDNImage('investors.webp')
     },
     listingPageCount() {
       if (!this.isMobile()) {

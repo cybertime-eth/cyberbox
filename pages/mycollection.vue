@@ -3,7 +3,7 @@
     <div class="my-collection-header" v-if="address">
 	  <div class="my-collection-header-info">
 		<div class="my-collection-header-avatar">
-			<img :src="getCDNImage('earth.png')" alt="earth">
+			<img :src="getCDNImage('earth.webp')" alt="earth">
 		</div>
 		<div class="my-collection-header-address">
 			<h1 class="my-collection-header-address-highlight">{{ cuttenAddress }}</h1>
