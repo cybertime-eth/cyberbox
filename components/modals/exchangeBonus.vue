@@ -27,7 +27,7 @@ export default {
   computed: {
 	bonusImage() {
 	  const date = new Date()
-	  return `/certificates/${date.getFullYear()}/rare.jpg`
+	  return this.getCDNImage('certificates/rare.jpg')
 	}
   }
 }

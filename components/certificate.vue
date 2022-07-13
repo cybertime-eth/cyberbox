@@ -1,18 +1,18 @@
 <template>
     <div class="certificate__item collection__item" @click="routeCertificate">
 		<dropdown-menu class="collection__item-dropdown" v-model="showMoreMenu" v-if="owner">
-			<img src="/more.png" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
+			<img :src="getCDNImage('more.png')" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
 			<div slot="dropdown" class="collection__item-modal">
 				<div class="collection__item-modal-button" @click="routeCertificate">
-					<img src="/outline-sell.svg" alt="sell">
+					<img :src="getCDNImage('outline-sell.svg')" alt="sell">
 					<h3>{{ visitMenuName }}</h3>
 				</div>
 				<div class="collection__item-modal-button" @click="showTransfer" v-if="owner">
-					<img src="/transfer-black.svg" alt="transfer">
+					<img :src="getCDNImage('transfer-black.svg')" alt="transfer">
 					<h3>Transfer</h3>
 				</div>
 				<div class="collection__item-modal-button" @click="copyLink">
-					<img src="/copy-link.svg" alt="copy">
+					<img :src="getCDNImage('copy-link.svg')" alt="copy">
 					<h3>Copy link</h3>
 				</div>
 			</div>
@@ -25,7 +25,7 @@
             <h2 class="collection__item-info-name">{{ certificateName }}</h2>
             <p class="collection__item-info-type">Price</p>
             <div class="collection__item-info-price" v-if="priceVisible">
-                <img src="/celo.svg" alt="celo">
+                <img :src="getCDNImage('celo.svg')" alt="celo">
                 <h3 class="collection__item-info-price-text">{{ certificatePrice }}</h3>
             </div>
             <p class="certificate__item-description" :class="{ 'not-sale': owner || !saleAvailable }" v-else>{{ certificateDescription }}</p>

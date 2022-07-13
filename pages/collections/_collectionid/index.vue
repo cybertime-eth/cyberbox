@@ -212,11 +212,11 @@ export default {
     metaIcon() {
 			let imageSrc = ''
       switch (this.$route.params.collectionid) {
-        case 'cpunk': imageSrc = '/collections/Media_punks.png'
+        case 'cpunk': imageSrc = this.getCDNImage('collections/Media_punks.png')
           break
-        case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
+        case 'ctoadz': imageSrc = this.getCDNImage('collections/Media_toadz.png')
           break
-        case 'knoxnft': imageSrc = '/collections/KnoxersDAO.png'
+        case 'knoxnft': imageSrc = this.getCDNImage('collections/KnoxersDAO.png')
           break
         default: imageSrc = this.collection.image
           break

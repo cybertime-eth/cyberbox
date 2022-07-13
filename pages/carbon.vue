@@ -9,7 +9,7 @@
 				<!-- <CustomSelect class="carbon__tracker-picker" :options="dateOptions" @change="filterByYear"/> -->
 				<div class="carbon__tracker-info">
 					<h2 class="carbon__tracker-info-title">{{ formatCO2(totalCO2Offset) }}</h2>
-					<p class="carbon__tracker-info-description">Total CO2 offset (ton CO2) <img class="carbon__tracker-info-description-img" src="/plant.svg" alt="plant"></p>
+					<p class="carbon__tracker-info-description">Total CO2 offset (ton CO2) <img class="carbon__tracker-info-description-img" :src="getCDNImage('plant.svg')" alt="plant"></p>
 					<div class="carbon__tracker-info-block">
 						<div class="carbon__tracker-info-block-item">
 							<p class="carbon__tracker-info-block-item-value">{{ formatCO2(totalCertCO2) }}</p>
@@ -23,14 +23,14 @@
 				</div>
 				<div class="carbon__tracker-buttons">
 					<button class="carbon__tracker-buttons-button buy gradient-button" @click="gotoLending">Buy NFT Certificate</button>
-					<button class="carbon__tracker-buttons-button bonus" @click="showExchangeBonus=true" v-if="!bonusPurchased && bonusVisible">Get a Bonus</button>
+					<button class="carbon__tracker-buttons-button bonus" @click="showExchangeBonus=true" v-if="!bonusPurchased">Get a Bonus</button>
 				</div>
 				<div class="carbon__tracker-share">
 					<a class="carbon__tracker-share-profile" href="/mycollection" v-if="linkShared">
-						<img class="carbon__tracker-share-profile-img" src="/earth-small.svg" alt="earth">
+						<img class="carbon__tracker-share-profile-img" :src="getCDNImage('earth-small.svg')" alt="earth">
 						<span class="carbon__tracker-share-profile-name">Profile</span>
 					</a>
-					<!-- <ShareFrame class="carbon__tracker-share-frame" @onShared="linkShared = true"/> -->
+					<ShareFrame class="carbon__tracker-share-frame" @onShared="linkShared = true"/>
 				</div>
 			</div>
 			<div class="carbon__certificates">
@@ -85,7 +85,7 @@ export default {
 	  showExchangeBonus: false,
 	  showExchangeToken: false,
 	  bonusPurchased: false,
-	  bonusVisible: false,
+	  webVersion: false,
 	  linkShared: false
 	}
   },
@@ -117,7 +117,7 @@ export default {
 	  return ''
 	},
 	trackerBGImage() {
-	  return !this.isMobile() ? '/tracker-bg.png' : 'tracker-bg-mobile.png'
+	  return this.webVersion ? this.getCDNImage('tracker-bg.png') : this.getCDNImage('tracker-bg-mobile.png')
 	},
 	ownedCertificates() {
 	  return this.$store.state.certificateList
@@ -130,7 +130,7 @@ export default {
 	},
 	bonusImage() {
 	  const date = new Date()
-	  return `/certificates/${date.getFullYear()}/rare.jpg`
+	  return this.getCDNImage('certificates/rare.jpg')
 	},
 	certificateName() {
 	  return 'Rare 2022'
@@ -141,7 +141,7 @@ export default {
   },
   async created() {
 	this.$nextTick(function() {
-	  this.bonusVisible = !this.isMobile()
+	  this.webVersion = !this.isMobile()
     })
 	this.yearFilter = new Date().getFullYear()
 	if (process.broswer) {
@@ -447,9 +447,27 @@ export default {
 		&-block {
 		  padding-left: 0;
 		  padding-right: 0;
+		  &-item {
+			&-name {
+			  font-size: 1rem;
+			}
+		  }
 		}
 		&-title {
 		  font-size: 4.2rem;
+		}
+	  }
+	  &-buttons {
+		flex-direction: column;
+		&-button {
+		  &.buy {
+			padding-left: 1rem;
+			padding-right: 1rem;
+		  }
+		  &.bonus {
+			margin-left: 0;
+			margin-top: 1.2rem;
+		  }
 		}
 	  }
 	}

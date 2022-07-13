@@ -12,7 +12,7 @@
     <li class="profile__menu-list" @click="logout">
       <div class="profile__menu-link">
         <div class="profile__menu-link-info">
-          <img src="/logout.svg" alt="logout" class="profile__menu-link-info-icon">
+          <img :src="getCDNImage('logout.svg')" alt="logout" class="profile__menu-link-info-icon">
           <h3>Logout</h3>
         </div>
       </div>

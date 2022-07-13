@@ -1,7 +1,7 @@
 <template>
     <div class="search-view">
         <searchInput class="search-view__searchbox" @collectionSelected="$emit('close')" />
-        <img class="search-view__close" src="/arrow-left.svg" alt="back" @click="$emit('close')" >
+        <img class="search-view__close" :src="getCDNImage('arrow-left.svg')" alt="back" @click="$emit('close')" >
     </div>
 </template>
 

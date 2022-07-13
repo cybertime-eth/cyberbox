@@ -3,23 +3,23 @@
     <div class="my-collection-header" v-if="address">
 	  <div class="my-collection-header-info">
 		<div class="my-collection-header-avatar">
-			<img src="/earth.png" alt="earth">
+			<img :src="getCDNImage('earth.png')" alt="earth">
 		</div>
 		<div class="my-collection-header-address">
 			<h1 class="my-collection-header-address-highlight">{{ cuttenAddress }}</h1>
 			<div class="my-collection-header-address-copy-box">
-				<p class="my-collection-header-address-copy" @click="copyAddress">{{ !this.addressCopied ? cuttenAddress : 'Copped' }}</p>
-				<ShareFrame class="my-collection-header-share" @onShared="linkShared = true"/>
+				<p class="my-collection-header-address-copy" @click="copyAddress">{{ !addressCopied ? cuttenAddress : 'Copped' }}</p>
+				<ShareFrame class="my-collection-header-share" :class="{ copied: addressCopied }" @onShared="linkShared = true"/>
 			</div>
 		</div>
 	  </div>
 	  <a class="my-collection-header-tracker" href="/carbon" v-if="linkShared">
-		<img class="my-collection-header-tracker-img" src="/carbon-tracker-gradient.svg" alt="tracker">
+		<img class="my-collection-header-tracker-img" :src="getCDNImage('carbon-tracker-gradient.svg')" alt="tracker">
 		<p class="my-collection-header-tracker-name">Offset tracker</p>
 	  </a>
     </div>
     <div class="my-collection__loading" v-if="!filteredNft && loading">
-      <img src="/loading-button.svg" alt="load">
+      <img :src="getCDNImage('loading-button.svg')" alt="load">
     </div>
     <div class="my-collection__empty" v-else-if="!filteredNft">
       <h3 class="my-collection__empty-title">You don't have NFT yet</h3>
@@ -46,23 +46,23 @@
 			<div class="my-collection-sort-buttons-box" :class="{ 'no-traits': !isTraitVisible }" v-if="activeFilter !== 'sale'">
 			  	<button class="my-collection-sort-buttons-button" :class="{active: activeSort === 'mint-highest'}" @click="changeSort('mint-highest')">
 					<span>Token ID</span>
-					<img src="/arrow-down.svg" alt="down">
+					<img :src="getCDNImage('arrow-down.svg')" alt="down">
 			  	</button>
 				<button class="my-collection-sort-buttons-button" :class="{active: activeSort === 'mint-lowest'}" @click="changeSort('mint-lowest')">
 					<span>Token ID</span>
-				  	<img src="/arrow-up.svg" alt="up">
+				  	<img :src="getCDNImage('arrow-up.svg')" alt="up">
 			  	</button>
 				<button class="my-collection-sort-buttons-button" @click="showTrailtsModal" v-if="isTraitVisible">
 					<span class="my-collection-sort-buttons-button-name">Traits</span>
-				  	<img src="/trait.svg" alt="trait">
+				  	<img :src="getCDNImage('trait.svg')" alt="trait">
 					<span class="my-collection-sort-buttons-button-bage" v-if="filtersCount">{{ filtersCount }}</span>
 			  	</button>
 			</div>
 		</div>
         <div class="collection__info-nft-search search-box" :class="{ 'with-sort': activeFilter !== 'all' }">
           <input class="search-box-input" type="number" min="1" placeholder="Mint number" v-model="searchName" @input="searchNft">
-          <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
-          <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
+          <img :src="getCDNImage('search.svg')" alt="search" class="search-box-img" v-if="!searchName">
+          <img :src="getCDNImage('close-bold.svg')" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
         </div>
       </div>
     </div>
@@ -213,7 +213,8 @@ export default {
     copyAddress() {
 	  if (this.addressCopied) return
       this.$copyText(this.address)
-      this.addressCopied = true
+	  this.addressCopied = true
+	  setTimeout(() => this.addressCopied = false, 1000)
     },
     async reloadMyCollection() {
       if (process.browser && !localStorage.getItem('move_back')) {
@@ -689,6 +690,11 @@ export default {
 	  &-share {
 		.dropdown-menu {
 		  right: -6rem;
+		}
+		&.copied {
+		  .dropdown-menu {
+			right: -8rem;
+		  }
 		}
 	  }
 	  &-tracker {

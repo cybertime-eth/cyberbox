@@ -33,7 +33,7 @@
                                     <p class="notification__list-item-info-status" v-if="item.type === 'TRANSFERED'">
                                         Transfered from <span class="notification__list-item-info-status-circle other"/> <b>{{ item.to }}</b> to <span class="notification__list-item-info-status-circle"/> <b>{{ item.owned ? 'You' : item.from }}</b>
                                     </p>
-                                    <p class="notification__list-item-info-time">{{ notificationTime(item) }} <img src="/share.svg" alt="share"></p>
+                                    <p class="notification__list-item-info-time">{{ notificationTime(item) }} <img :src="getCDNImage('share.svg')" alt="share"></p>
                                 </div>
                             </div>
                         </div>
@@ -43,25 +43,25 @@
                     <h2 class="notification__filter-title">Filters</h2>
                     <div class="notification__filter-list">
                         <div class="notification__filter-item listing" :class="{active: activeFilter === 'listing'}" @click="changeFilter('listing')">
-                            <img src="/bookmark.svg" alt="listing" v-if="activeFilter !== 'listing'"><img src="/bookmark-blue.svg" alt="listing" v-else>Listing
+                            <img :src="getCDNImage('bookmark.svg')" alt="listing" v-if="activeFilter !== 'listing'"><img :src="getCDNImage('bookmark-blue.svg')" alt="listing" v-else>Listing
                         </div>
                         <div class="notification__filter-item purchase" :class="{active: activeFilter === 'purchase'}" @click="changeFilter('purchase')">
-                            <img src="/checked-grey.svg" alt="purchase" v-if="activeFilter !== 'purchase'"><img src="/check-green.svg" alt="purchase" v-else>Purchase
+                            <img :src="getCDNImage('checked-grey.svg')" alt="purchase" v-if="activeFilter !== 'purchase'"><img :src="getCDNImage('check-green.svg')" alt="purchase" v-else>Purchase
                         </div>
                         <div class="notification__filter-item sales" :class="{active: activeFilter === 'sales'}" @click="changeFilter('sales')">
-                            <img src="/sales.svg" alt="sales" v-if="activeFilter !== 'sales'"><img src="/sales-yellow.svg" alt="sales" v-else>Sales
+                            <img :src="getCDNImage('sales.svg')" alt="sales" v-if="activeFilter !== 'sales'"><img :src="getCDNImage('sales-yellow.svg')" alt="sales" v-else>Sales
                         </div>
                         <!-- <div class="notification__filter-item" :class="{active: activeFilter === 'offer'}" @click="changeFilter('offer')">
                             <img src="/broadcast.svg" alt="offer">Offers
                         </div> -->
                         <div class="notification__filter-item transfer" :class="{active: activeFilter === 'transfer'}" @click="changeFilter('transfer')">
-                            <img src="/transmit.svg" alt="transfer" v-if="activeFilter !== 'transfer'"><img src="/transmit-purple.svg" alt="transfer" v-else>Transfer
+                            <img :src="getCDNImage('transmit.svg')" alt="transfer" v-if="activeFilter !== 'transfer'"><img :src="getCDNImage('transmit-purple.svg')" alt="transfer" v-else>Transfer
                         </div>
                     </div>
                 </div>
             </div>
 			<div class="notification__loading" v-else-if="loading">
-			  <img src="/loading-button.svg" alt="load">
+			  <img :src="getCDNImage('loading-button.svg')" alt="load">
 		    </div>
             <p class="notification__empty" v-else>You don't have any action</p>
         </div>
@@ -181,14 +181,14 @@ export default {
 	},
     notificationIcon(notification) {
       switch(notification.type) {
-        case 'SOLD': return '/sales-filled.svg'
+        case 'SOLD': return this.getCDNImage('sales-filled.svg')
             break
-        case 'BOUGHT': return '/check-filled.svg'
+        case 'BOUGHT': return this.getCDNImage('check-filled.svg')
 			break
 		case 'TRANSFER': 
-		case 'TRANSFERED': return '/transmit-filled.svg'
+		case 'TRANSFERED': return this.getCDNImage('transmit-filled.svg')
             break
-        default: return '/bookmark-filled.svg'
+        default: return this.getCDNImage('bookmark-filled.svg')
             break
       }
 	},

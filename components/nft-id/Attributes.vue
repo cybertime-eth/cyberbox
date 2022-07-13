@@ -22,7 +22,7 @@
           <h3 class="attributes__block-content-item-title">Owned by</h3>
           <div class="attributes__block-content-item-address" @click="copyOwnerAddress">
             <h3 class="attributes__block-content-item-subtitle attributes__block-content-item-address-info">{{ cutAddress( info.owner) }}</h3>
-            <img src="/copy.svg" alt="copy">
+            <img :src="getCDNImage('copy.svg')" alt="copy">
           </div>
         </div>
         <div class="attributes__block-content-item">
@@ -37,7 +37,7 @@
             class="attributes__block-content-item-subtitle"
           >
             {{ cutAddress(contractAddress) }}
-            <img src="/send.svg" alt="send">
+            <img :src="getCDNImage('send.svg')" alt="send">
           </a>
         </div>
       </div>

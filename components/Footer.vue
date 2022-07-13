@@ -2,30 +2,30 @@
 	<section class="footer" :class="{ fixed: footerFixed }">
 		<div class="footer__container container-xl">
 			<a class="footer__logo" href="/">
-				<img src="/footer-logo.svg" alt="logo" >
+				<img :src="getCDNImage('footer-logo.svg')" alt="logo" >
 			</a>
 			<div class="footer__links">
 				<div class="footer__links-box">
 					<div class="footer__links-social">
 						<a class="footer__links-social-link" href="https://twitter.com/cybertime_eth" target="_blank">
-							<img class="footer__links-social-link-icon" src="/socials/twitter-gray.svg" alt="twitter">
+							<img class="footer__links-social-link-icon" :src="getCDNImage('socials/twitter-gray.svg')" alt="twitter">
 						</a>
 						<a class="footer__links-social-link" href="https://t.me/cybertime_eth" target="_blank">
-							<img class="footer__links-social-link-icon" src="/socials/telegram-gray.svg" alt="telegram">
+							<img class="footer__links-social-link-icon" :src="getCDNImage('socials/telegram-gray.svg')" alt="telegram">
 						</a>
 						<a class="footer__links-social-link" href="https://cybertime.medium.com/" target="_blank">
-							<img class="footer__links-social-link-icon" src="/socials/medium-gray.svg" alt="medium">
+							<img class="footer__links-social-link-icon" :src="getCDNImage('socials/medium-gray.svg')" alt="medium">
 						</a>
 						<a class="footer__links-social-link" href="https://discord.gg/cKcWfCux4s" target="_blank">
-							<img class="footer__links-social-link-icon" src="/socials/discord-gray.svg" alt="discord">
+							<img class="footer__links-social-link-icon" :src="getCDNImage('socials/discord-gray.svg')" alt="discord">
 						</a>
 					</div>
 					<a class="footer__links-link" href="https://docs.cybertime.finance/	" target="_blank">
-						<img class="footer__links-link-icon" src="/help.svg" alt="help">
+						<img class="footer__links-link-icon" :src="getCDNImage('help.svg')" alt="help">
 					</a>
 				</div>
 				<button class="footer__links-button" @click="gotoTop">
-					<img class="footer__links-button-icon" src="/circle-arrow-up.svg" alt="up">
+					<img class="footer__links-button-icon" :src="getCDNImage('circle-arrow-up.svg')" alt="up">
 				</button>
 			</div>
 		</div>

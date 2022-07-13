@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { CDN_ROOT, CERTIFICATE_TOKEN_TYPE } from "@/config"
+import { CDN_ROOT, CERTIFICATE_TOKEN_TYPE, RESOURCE_CDN_ROOT } from "@/config"
 
 Vue.mixin({
   methods: {
@@ -47,7 +47,7 @@ Vue.mixin({
 		const startMonth = (year === 2022 && all || year !== 2022) ? 1 : 6
 		for (let i = startMonth; i <= endMonth; i++) {
 			dataList.push({
-				image: `/certificates/${currYear}/${i}.jpg`,
+				image: `${RESOURCE_CDN_ROOT}/certificates/${i}.jpg`,
 				year,
 				month: i,
 				offset: year === currYear && i === currMonth,
@@ -98,6 +98,9 @@ Vue.mixin({
 	  const folderName = detail ? 'detail' : 'thumb'
       const month = certificate.month || certificate.tag_element2
 	  return CDN_ROOT + `CBCN/${folderName}/${month}.png`
+	},
+	getCDNImage(imageName) {
+	 return `${RESOURCE_CDN_ROOT}/${imageName}`
 	},
 	sendEvent(event) {
 		try {
