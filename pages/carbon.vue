@@ -117,7 +117,7 @@ export default {
 	  return ''
 	},
 	trackerBGImage() {
-	  return this.webVersion ? this.getCDNImage('tracker-bg.png') : this.getCDNImage('tracker-bg-mobile.png')
+	  return this.webVersion ? this.getCDNImage('tracker-bg.webp') : this.getCDNImage('tracker-bg-mobile.webp')
 	},
 	ownedCertificates() {
 	  return this.$store.state.certificateList
@@ -130,7 +130,7 @@ export default {
 	},
 	bonusImage() {
 	  const date = new Date()
-	  return this.getCDNImage('certificates/rare.jpg')
+	  return this.getCDNImage('certificates/rare.webp')
 	},
 	certificateName() {
 	  return 'Rare 2022'

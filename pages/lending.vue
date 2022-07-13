@@ -153,7 +153,7 @@
 </template>
 
 <script>
-import { CERTIFICATE_TOKEN_TYPE } from '@/config'
+import { CERTIFICATE_TOKEN_TYPE, CDN_ROOT } from '@/config'
 import BuyToken from '@/components/modals/buyToken'
 import SuccessfullBuy from '@/components/modals/successBuy'
 const CERTIFICATE_MINT_PRICE = 15
@@ -194,7 +194,7 @@ export default {
 	currentCertificateImage() {
 	  const date = new Date()
     const currMonth = date.getMonth() + 1
-	  return this.getCDNImage(`certificates/${currMonth}.jpg`)
+    return CDN_ROOT + `CBCN/detail/${currMonth}.png`
 	},
     ownedCertificates() {
 	  return this.$store.state.certificateList

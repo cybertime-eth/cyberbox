@@ -240,10 +240,10 @@ export default {
 			break
 		  case (currMonth + 1): status = 'Next'
 		  	break
-		}
+    }
 		list.push({
 		  name: `${month} ${currYear}`,
-		  image: this.getCDNImage(`certificates/${i}.jpg`),
+		  image: this.getCDNImage(`certificates/${i}.webp`),
 		  status,
 		  current: i === currMonth
 		})

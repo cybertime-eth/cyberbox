@@ -19,7 +19,7 @@
 	</dropdown-menu>
     <img :src="realNftImage()" alt="item" class="collection__item-image" v-if="nftImageLoaded">
     <div class="collection__item-loading" v-else>
-      <img :src="getCDNImage('loading-nft.gif')" alt="load">
+      <img :src="getCDNImage('loading-nft.webp')" alt="load">
     </div>
     <div class="collection__item-info">
       <h2 class="collection__item-info-name" :class="{multinft: multiNft, 'multi-collection': isMultiNftCollection}">{{ nftName }}</h2>

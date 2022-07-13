@@ -234,7 +234,7 @@ export default {
         const co2CeloDiff = Math.ceil(co2Celo) - co2Celo
         this.list.push({
           id: (itemNum + 1),
-          collectionImage: `/${item.nftSymbol}.png`,
+          collectionImage: this.getCDNImage(`${item.nftSymbol}.webp`),
           verification: false,
           new: false,
           name: nftName,

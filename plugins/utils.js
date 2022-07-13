@@ -47,7 +47,7 @@ Vue.mixin({
 		const startMonth = (year === 2022 && all || year !== 2022) ? 1 : 6
 		for (let i = startMonth; i <= endMonth; i++) {
 			dataList.push({
-				image: `${RESOURCE_CDN_ROOT}/certificates/${i}.jpg`,
+				image: `${RESOURCE_CDN_ROOT}/certificates/${i}.webp`,
 				year,
 				month: i,
 				offset: year === currYear && i === currMonth,

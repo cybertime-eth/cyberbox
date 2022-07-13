@@ -12,7 +12,7 @@
         <div class="nft__block">
           <img :src="getNFTImage(nft, true)" alt="item" class="nft__block-image" v-if="nftImageLoaded">
           <div class="nft__block-image-loading" v-else>
-            <img :src="getCDNImage('loading-nft.gif')" alt="load">
+            <img :src="getCDNImage('loading-nft.webp')" alt="load">
           </div>
 
           <!-- INFO BUYER -->
@@ -73,7 +73,7 @@
               </div>
             </div>
             <div class="nft__block-info-loading" v-else>
-              <img :src="getCDNImage('loading-nft.gif')" alt="load">
+              <img :src="getCDNImage('loading-nft.webp')" alt="load">
             </div>
           </div>
 
@@ -149,7 +149,7 @@
               </div>
             </div>
             <div class="nft__block-info-loading" v-else>
-              <img :src="getCDNImage('loading-nft.gif')" alt="load">
+              <img :src="getCDNImage('loading-nft.webp')" alt="load">
             </div>
           </div>
         </div>
@@ -444,9 +444,11 @@ export default {
     metaIcon() {
 			let imageSrc = ''
       switch (this.$route.params.collectionid) {
-        case 'cpunk': imageSrc = this.getCDNImage('collections/Media_punks.png')
+        case 'cpunk': imageSrc = this.getCDNImage('collections/Media_punks.webp')
           break
-        case 'ctoadz': imageSrc = this.getCDNImage('collections/Media_toadz.png')
+        case 'ctoadz': imageSrc = this.getCDNImage('collections/Media_toadz.webp')
+          break
+        case 'knoxnft': imageSrc = this.getCDNImage('collections/KnoxersDAO.webp')
           break
         default: imageSrc = this.collection.image
           break

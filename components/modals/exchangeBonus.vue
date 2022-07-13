@@ -27,7 +27,7 @@ export default {
   computed: {
 	bonusImage() {
 	  const date = new Date()
-	  return this.getCDNImage('certificates/rare.jpg')
+	  return this.getCDNImage('certificates/rare.webp')
 	}
   }
 }
