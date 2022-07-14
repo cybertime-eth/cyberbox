@@ -300,46 +300,55 @@ ul {
 //FONTS
 
 @font-face {
+  font-display: swap;
   font-family: "Cabin-Bold";
   src: local("Cabin-Bold"),
   url(./assets/fonts/Cabin-Bold.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: "Cabin-Medium";
   src: local("Cabin-Medium"),
   url(./assets/fonts/Cabin-Medium.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: "Cabin-Regular";
   src: local("Cabin-Regular"),
   url(./assets/fonts/Cabin-Regular.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: 'OpenSans-Bold';
   src: local("OpenSans-Bold"),
   url(./assets/fonts/OpenSans-Bold.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: 'OpenSans-SemiBold';
   src: local("OpenSans-SemiBold"),
   url(./assets/fonts/OpenSans-SemiBold.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: 'OpenSans-Light';
   src: local("OpenSans-Light"),
   url(./assets/fonts/OpenSans-Light.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: 'OpenSans-Medium';
   src: local("OpenSans-Medium"),
   url(./assets/fonts/OpenSans-Medium.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: 'OpenSans-Regular';
   src: local("OpenSans-Regular"),
   url(./assets/fonts/OpenSans-Regular.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: 'Orbitron-Black';
   src: local("Orbitron-Black"),
   url(./assets/fonts/Orbitron-Black.ttf) format('truetype');

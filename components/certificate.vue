@@ -1,7 +1,7 @@
 <template>
     <div class="certificate__item collection__item" @click="routeCertificate">
 		<dropdown-menu class="collection__item-dropdown" v-model="showMoreMenu" v-if="owner">
-			<img :src="getCDNImage('more.png')" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
+			<img :src="getCDNImage('more.webp')" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
 			<div slot="dropdown" class="collection__item-modal">
 				<div class="collection__item-modal-button" @click="routeCertificate">
 					<img :src="getCDNImage('outline-sell.svg')" alt="sell">
