@@ -6,8 +6,6 @@ export default() => {
 
 	window.dataLayer = window.dataLayer || []
 	function gtag(){dataLayer.push(arguments)}
-	gtag('js', new Date())
-	gtag('config', 'G-2YVPEFEZ6C')
 
 	const script2 = document.createElement('script')
 	script2.innerHTML = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -17,4 +15,8 @@ export default() => {
 		})(window,document,'script','dataLayer','GTM-P72DPCX');
 	`
 	document.head.appendChild(script2)
+	setTimeout(() => {
+		gtag('js', new Date())
+		gtag('config', 'G-2YVPEFEZ6C')
+	}, 5000);
 }

@@ -72,6 +72,7 @@ export default {
       '@nuxtjs/proxy',
       'nuxt-logrocket',
       'nuxt-lazy-load',
+      ['@nuxtjs/component-cache', { maxAge: 1000 * 60 * 60 }],
       ['nuxt-bugsnag', {
         apiKey: 'cef8153f64709623f660870486f23999',
         publishRelease: true,

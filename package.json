@@ -15,6 +15,7 @@
     "@ensdomains/ensjs": "^2.1.0",
     "@innologica/vue-dropdown-menu": "^0.1.4",
     "@nuxtjs/axios": "^5.13.6",
+    "@nuxtjs/component-cache": "^1.1.6",
     "@nuxtjs/proxy": "^2.1.0",
     "@nuxtjs/style-resources": "^1.2.1",
     "@vue/shared": "^3.2.30",
