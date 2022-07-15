@@ -385,6 +385,21 @@ export default {
 }
 .refi {
   padding: 6.7rem 6rem 16.3rem;
+  &__loading {
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	background: $white;
+	z-index: 1;
+	&-img {
+	  position: absolute;
+	  left: 50%;
+	  top: 50%;
+	  transform: translate(-50%, -50%);
+	}
+  }
   &__title {
     text-align: center;
     font-family: Cabin-Bold;
@@ -799,23 +814,13 @@ export default {
       }
     }
   }
-  &__loading {
-	position: fixed;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	background: $white;
-	z-index: 1;
-	&-img {
-	  position: absolute;
-	  left: 50%;
-	  top: 50%;
-	  transform: translate(-50%, -50%);
-	}
-  }
   @media(max-width: 460px) {
     padding: 2.4rem 0.8rem 13.4rem;
+	&__loading {
+	  &-img {
+		width: 26rem;
+	  }
+	}
     &__title {
       font-family: Cabin-Medium;
       font-weight: 600;
