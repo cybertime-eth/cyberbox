@@ -44,7 +44,7 @@
 <script>
 import transfer from '@/components/modals/transfer'
 import {BigNumber} from "ethers";
-import { CDN_ROOT } from "@/config";
+import { CDN_ROOT, COLLECTION_CDN_ROOT } from "@/config";
 export default {
   components: {
     transfer
@@ -174,8 +174,13 @@ export default {
 			contractId = this.nft.image
 		  }
 		}
-		const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
-		const imageURL = CDN_ROOT + contractName + `/${contractId}.${fileExtension}`
+    const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
+    let cdnRoot = CDN_ROOT
+    if (contractName === 'daos') {
+      cdnRoot = COLLECTION_CDN_ROOT + '280/'
+      fileExtension = 'cwebp'
+    }
+    const imageURL = cdnRoot + contractName + `/${contractId}.${fileExtension}`
 		return imageURL
 	  } else {
 		return this.getCertificateImage(this.nft)

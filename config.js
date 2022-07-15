@@ -8,6 +8,7 @@ const endEditionAt = 8640; // endEditionAt and edtionSize MUST be the SAME // st
 const editionSize = 8640; // this will print 100 copies : (use if you already have a 10k 1 1st edition) // erase the 100
 const CDN_ROOT = 'https://cdn.cyberbox.art/'
 const RESOURCE_CDN_ROOT = 'https://d3l21udha0g2ci.cloudfront.net'
+const COLLECTION_CDN_ROOT = 'https://d12dnfv3y3wpc7.cloudfront.net/'
 const AMPLITUDE_API_KEY = 'a2ccaf05b6accc4819ef3ea8fd9fba80'
 
 const CERTIFICATE_TOKEN_TYPE = {
@@ -357,6 +358,7 @@ module.exports = {
   raceWeights,
   CDN_ROOT,
   RESOURCE_CDN_ROOT,
+  COLLECTION_CDN_ROOT,
   AMPLITUDE_API_KEY,
   CERTIFICATE_TOKEN_TYPE
 };

@@ -475,7 +475,7 @@ export default {
   },
   methods: {
     collectionIcon(contract) {
-      return contract ? this.getCDNImage(`${contract}.png`) : null
+      return contract ? this.getCDNImage(`${contract}.webp`) : null
     },
     async loadNft() {
       const nft = await this.$store.dispatch('getNft', {

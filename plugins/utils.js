@@ -1,10 +1,11 @@
 import Vue from 'vue'
-import { CDN_ROOT, CERTIFICATE_TOKEN_TYPE, RESOURCE_CDN_ROOT } from "@/config"
+import { CDN_ROOT, COLLECTION_CDN_ROOT, CERTIFICATE_TOKEN_TYPE, RESOURCE_CDN_ROOT } from "@/config"
 
 Vue.mixin({
   methods: {
 	getNFTImage(nft, detail = false) {
-		if (nft.contract !== 'nomdom') {
+		const cdnCollections = ['nomdom', 'daos']
+		if (!cdnCollections.includes(nft.contract)) {
 			if (nft.contract !== 'CBCN') {
               if (nft.nftSymbol !== 'CBCN') {
                 if (nft.image && nft.image.split('ipfs://').length > 1) {
@@ -26,7 +27,12 @@ Vue.mixin({
 			  return this.getCertificateImage(nft, detail)
 			}
 		} else {
-			return CDN_ROOT + nft.contract + `/${nft.image}.png`
+			if (nft.contract === 'daos') {
+				return COLLECTION_CDN_ROOT + '500/' + nft.contract + `/${nft.contract_id}.cwebp`
+			} else {
+				return CDN_ROOT + nft.contract + `/${nft.image}.png`
+			}
+			
 		}
 	},
 	isMobile() {
@@ -118,7 +124,7 @@ Vue.mixin({
 			}
 			if (event.eventName === 'connect') {
 				userProperties.auth_type = properties.connect
-			}
+		  	}
 			amplitude.setUserProperties(userProperties)
 			amplitude.identify(identify)
 			amplitude.logEvent(event.eventName, properties)
