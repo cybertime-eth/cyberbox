@@ -126,13 +126,13 @@ export default {
 
 <style lang="scss" scoped>
 .certificate__item {
-  height: 35.4rem;
+  height: 33.5rem;
   .collection__item-more, .collection__item-modal {
 	z-index: 1;
   }
   .collection__item-info-name {
 	font-size: 1.8rem;
-    padding-bottom: 4rem;
+    padding-bottom: 1.6rem;
     border-bottom: .1rem solid $modalColor;
   }
   .collection__item-info-type {
@@ -174,9 +174,8 @@ export default {
   }
 
   @media (max-width: 460px) {
-	height: 28.8rem;
+	height: 25.8rem;
 	.collection__item-info-name {
-	  padding-bottom: 3.2rem;
 	  font-size: 1.4rem;
 	}
   }

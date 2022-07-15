@@ -921,7 +921,7 @@ export default {
             grid-column-gap: 1.6rem;
             height: 35rem;
             .collection__item {
-              height: 34rem;
+              height: 30rem;
               &-image {
                 max-width: 14.4rem;
               }

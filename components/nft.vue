@@ -1,5 +1,5 @@
 <template>
-  <div class="collection__item" :class="{ multinft: multiNft && $route.params.collectionid }" @click="routeNft">
+  <div class="collection__item" :class="{ knoxnft: nft.nftSymbol === 'knoxnft', multinft: multiNft && $route.params.collectionid }" @click="routeNft">
 	<dropdown-menu class="collection__item-dropdown" v-model="showMoreMenu" v-if="moreButtonVisible">
     <img :src="getCDNImage('more.webp')" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
 		<div slot="dropdown" class="collection__item-modal">
@@ -260,7 +260,7 @@ export default {
     display: flex;
     flex-direction: column;
     width: 20rem;
-    height: 40rem;
+    height: 37.5rem;
     border-radius: .4rem;
     box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
     transition: .3s;
@@ -268,7 +268,7 @@ export default {
     position: relative;
     top: 0;
     &.multinft {
-      height: 37rem;
+      height: 33.5rem;
     }
 	&-dropdown {
 	  .dropdown-menu {
@@ -375,7 +375,9 @@ export default {
       &-price {
         display: flex;
         align-items: center;
-        padding-top: .4rem;
+        &-box {
+          padding-top: .4rem;
+        }
         img {
           width: 1.8rem;
         }
@@ -432,6 +434,12 @@ export default {
     &__item {
       width: 14.4rem;
       height: auto;
+      &.multinft {
+        height: 28.5rem;
+        &.knoxnft {
+          height: 26.5rem;
+        }
+      }
       &-image {
         width: 14.4rem;
         height: 14.4rem;
@@ -441,7 +449,7 @@ export default {
         height: 14.4rem;
       }
       &-info {
-        padding: .5rem 0.8rem 0.8rem;
+        padding: 1.2rem 0.8rem 1.8rem;
         &-name {
           &.multinft {
             padding-bottom: 5.4rem;
