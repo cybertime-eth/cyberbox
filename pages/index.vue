@@ -123,6 +123,9 @@
         </div>
       </div>
     </div>
+	<div class="refi__loading" v-if="loading">
+		<img class="refi__loading-img" src="/load_page.webp" alt="loading">
+	</div>
   </section>
 </template>
 <script>
@@ -134,6 +137,7 @@ export default {
   },
   data() {
     return {
+	  loading: true,
       totalCO2Amount: 0,
       collectionTab: 1,
       latestListings: [],
@@ -184,6 +188,8 @@ export default {
 	  category: 'Browse',
 	  eventName: 'site_visit'
 	})
+
+	this.loading = false
   },
   mounted() {
 	if (this.$refs.certificate && this.isMobile()) {
@@ -792,6 +798,21 @@ export default {
         }
       }
     }
+  }
+  &__loading {
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	background: $white;
+	z-index: 1;
+	&-img {
+	  position: absolute;
+	  left: 50%;
+	  top: 50%;
+	  transform: translate(-50%, -50%);
+	}
   }
   @media(max-width: 460px) {
     padding: 2.4rem 0.8rem 13.4rem;
