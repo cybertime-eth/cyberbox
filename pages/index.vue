@@ -1,6 +1,6 @@
 <template>
-  <div class="refi__loading" v-if="loading">
-	<img class="refi__loading-img" :src="getCDNImage('load_page.webp')" alt="loading">
+  <div class="page__loading" v-if="loading">
+	<img class="page__loading-img" :src="getCDNImage('load_page.webp')" alt="loading">
   </div>
   <section class="refi container-xl" v-else>
     <h1 class="refi__title">Regenerate Nature by trading NFTs</h1>
@@ -385,21 +385,6 @@ export default {
 }
 .refi {
   padding: 6.7rem 6rem 16.3rem;
-  &__loading {
-	position: fixed;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	background: $white;
-	z-index: 1;
-	&-img {
-	  position: absolute;
-	  left: 50%;
-	  top: 50%;
-	  transform: translate(-50%, -50%);
-	}
-  }
   &__title {
     text-align: center;
     font-family: Cabin-Bold;
@@ -816,11 +801,6 @@ export default {
   }
   @media(max-width: 460px) {
     padding: 2.4rem 0.8rem 13.4rem;
-	&__loading {
-	  &-img {
-		width: 26rem;
-	  }
-	}
     &__title {
       font-family: Cabin-Medium;
       font-weight: 600;

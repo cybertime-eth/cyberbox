@@ -5,6 +5,7 @@
     <Footer />
     <h3 class="message" v-if="message">{{ message }}</h3>
   </div>
+  
 </template>
 <script>
 import Header from './../components/Header'
@@ -76,6 +77,23 @@ export default {
   background: linear-gradient(93.06deg, #FC2EF5 8.21%, #5489D8 50.57%, #2CFF64 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.page__loading {
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	background: $white;
+	z-index: 1;
+	&-img {
+	  position: absolute;
+	  left: 50%;
+	  top: 50%;
+	  width: 32rem;
+	  transform: translate(-50%, -50%);
+	}
 }
 
 //DEFAULT STYLES
@@ -372,5 +390,10 @@ ul {
   .modal__step {
 	padding: 0 4.5rem;
   }
+  .page__loading {
+	  &-img {
+		  width: 26rem;
+	  }
+	}
 }
 </style>

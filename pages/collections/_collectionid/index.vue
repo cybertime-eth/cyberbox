@@ -1,5 +1,8 @@
 <template>
-  <section class="collection">
+  <div class="page__loading" v-if="pageLoading">
+	  <img class="page__loading-img" :src="getCDNImage('load_page.webp')" alt="loading">
+  </div>
+  <section class="collection" v-else>
     <img :src="collection.banner" alt="banner" class="collection__banner">
     <div class="collection__content container-xl">
       <div class="collection__header">
@@ -171,6 +174,7 @@ import {BigNumber} from 'ethers'
 export default {
   data() {
     return {
+      pageLoading: true,
       loading: false,
       nftLoading: false,
       showTraitsFilter: false,
@@ -567,6 +571,7 @@ export default {
       this.refiCO2Price = refiPrice !== 0 ? refiPrice.toFixed(refiPriceDiff === 0 ? 0 : 2) : 0
     }
 	this.loading = false
+	this.pageLoading = false
 	this.sendCollectionEvent({ render: true })
   },
   mounted() {
