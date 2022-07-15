@@ -4,30 +4,30 @@
 	  <div class="modal__wallet-header">
 		<!-- <img class="modal__wallet-header-back" src="/arrow-left-black.svg" alt="back" @click="showConnectModal"> -->
       	<h2 class="modal__wallet-header-title">Connect Wallet</h2>
-		<img class="modal__wallet-header-close" src="/close.svg" alt="close" @click="closeModal">
+		<img class="modal__wallet-header-close" :src="getCDNImage('close.svg')" alt="close" @click="closeModal">
 	  </div>
 	  <div class="modal__wallet-buttons">
 		<button	class="modal__wallet-buttons-button" @click="connectMetaTrust">
-			<img class="modal__wallet-buttons-button-image" src="/auth/metamask.svg" alt="metamask">
+			<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/metamask.svg')" alt="metamask">
 			<p class="modal__wallet-buttons-button-name">Metamask</p>
 		</button>
 		<client-only v-if="!isMobile()">
 			<button	class="modal__wallet-buttons-button" @click="connectWallet">
-				<img class="modal__wallet-buttons-button-image" src="/auth/wallet-connect.svg" alt="wallet">
+				<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/wallet-connect.svg')" alt="wallet">
 				<p class="modal__wallet-buttons-button-name">WalletConnect</p>
 			</button>
 			<button	class="modal__wallet-buttons-button" @click="connectValora">
-				<img class="modal__wallet-buttons-button-image" src="/auth/valora.svg" alt="valora">
+				<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/valora.svg')" alt="valora">
 				<p class="modal__wallet-buttons-button-name">Valora</p>
 			</button>
 		</client-only>
 		<client-only v-else>
 			<button	class="modal__wallet-buttons-button" @click="connectValora">
-				<img class="modal__wallet-buttons-button-image" src="/auth/valora.svg" alt="valora">
+				<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/valora.svg')" alt="valora">
 				<p class="modal__wallet-buttons-button-name">Valora</p>
 			</button>
 			<button	class="modal__wallet-buttons-button" @click="connectWallet">
-				<img class="modal__wallet-buttons-button-image" src="/auth/wallet-connect.svg" alt="wallet">
+				<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/wallet-connect.svg')" alt="wallet">
 				<p class="modal__wallet-buttons-button-name">WalletConnect</p>
 			</button>
 		</client-only>

@@ -1,5 +1,8 @@
 <template>
-  <section class="collection">
+  <div class="page__loading" v-if="pageLoading">
+	  <img class="page__loading-img" :src="getCDNImage('load_page.webp')" alt="loading">
+  </div>
+  <section class="collection" v-else>
     <img :src="collection.banner" alt="banner" class="collection__banner">
     <div class="collection__content container-xl">
       <div class="collection__header">
@@ -171,6 +174,7 @@ import {BigNumber} from 'ethers'
 export default {
   data() {
     return {
+      pageLoading: true,
       loading: false,
       nftLoading: false,
       showTraitsFilter: false,
@@ -212,11 +216,11 @@ export default {
     metaIcon() {
 			let imageSrc = ''
       switch (this.$route.params.collectionid) {
-        case 'cpunk': imageSrc = '/collections/Media_punks.png'
+        case 'cpunk': imageSrc = this.getCDNImage('collections/Media_punks.webp')
           break
-        case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
+        case 'ctoadz': imageSrc = this.getCDNImage('collections/Media_toadz.webp')
           break
-        case 'knoxnft': imageSrc = '/collections/KnoxersDAO.png'
+        case 'knoxnft': imageSrc = this.getCDNImage('collections/KnoxersDAO.webp')
           break
         default: imageSrc = this.collection.image
           break
@@ -546,14 +550,13 @@ export default {
       this.searchName = this.$store.state.mintNumFilter
     } else {
       this.$store.commit('setTraitFilters', [])
-      this.loading = true
       this.initNftListSetting()
       this.$store.commit('changeMintNumFilter', null)
       this.$store.commit('updateCollectionSetting', null)
       await this.$store.dispatch(this.activeRequest)
       this.$store.dispatch('loadTraitFilters')
-    }
-    const collectionResult = await this.$store.dispatch('getCollectionInfo')
+	}
+	const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
 	if (this.$store.state.cMCO2Price > 0
@@ -566,7 +569,7 @@ export default {
       const refiPriceDiff = Math.ceil(refiPrice) - refiPrice
       this.refiCO2Price = refiPrice !== 0 ? refiPrice.toFixed(refiPriceDiff === 0 ? 0 : 2) : 0
     }
-	this.loading = false
+	this.pageLoading = false
 	this.sendCollectionEvent({ render: true })
   },
   mounted() {

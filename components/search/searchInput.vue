@@ -1,8 +1,8 @@
 <template>
     <div class="search-box" ref="searchBox">
         <input class="search-box-input" placeholder="Search collections" v-model="searchName" @input="searchCollection">
-        <img src="/search.svg" alt="search" class="search-box-img" v-if="!searchName">
-        <img src="/close-bold.svg" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
+        <img :src="getCDNImage('search.svg')" alt="search" class="search-box-img" v-if="!searchName">
+        <img :src="getCDNImage('close-bold.svg')" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
         <div class="search-box-dropdown" v-if="filteredCollections.length > 0">
             <div class="search-box-dropdown-item" :key="idx" v-for="(collection, idx) in filteredCollections" @click="showCollectionPage(collection)">
             <img :src="collection.logo" class="search-box-dropdown-item-icon">

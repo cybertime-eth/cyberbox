@@ -1,24 +1,24 @@
 <template>
     <div class="share-frame">
         <dropdown-menu class="share-frame-dropdown" :right="true" v-model="showShareFrame" v-if="dropdownVisible">
-            <a class="share-frame__link dropdown-toggle"><img src="/upload.svg" alt="share"></a>
+            <a class="share-frame__link dropdown-toggle"><img :src="getCDNImage('upload.svg')" alt="share"></a>
             <div slot="dropdown">
                 <h2 class="share-frame__title">Share link to this page</h2>
                 <div class="share-frame__block">
                     <div class="share-frame__block-item">
-                        <a class="share-frame__block-item-link" :href="sharingUrlForSocial('facebook')" target="_blank" @click="shareLink"><img class="share-frame__block-item-link-facebook" src="/socials/facebook.svg" alt="facebook"></a>
+                        <a class="share-frame__block-item-link" :href="sharingUrlForSocial('facebook')" target="_blank" @click="shareLink"><img class="share-frame__block-item-link-facebook" :src="getCDNImage('socials/facebook.svg')" alt="facebook"></a>
                         <p class="share-frame__block-item-name">Facebook</p>
                     </div>
                     <div class="share-frame__block-item">
-                        <a class="share-frame__block-item-link" :href="sharingUrlForSocial('telegram')" target="_blank" @click="shareLink"><img class="share-frame__block-item-link-telegram" src="/socials/telegram.svg" alt="telegram"></a>
+                        <a class="share-frame__block-item-link" :href="sharingUrlForSocial('telegram')" target="_blank" @click="shareLink"><img class="share-frame__block-item-link-telegram" :src="getCDNImage('socials/telegram.svg')" alt="telegram"></a>
                         <p class="share-frame__block-item-name">Telegram</p>
                     </div>
                     <div class="share-frame__block-item">
-                        <a class="share-frame__block-item-link" :href="sharingUrlForSocial('twitter')" target="_blank" @click="shareLink"><img class="share-frame__block-item-link-twitter" src="/socials/twitter.svg" alt="twitter"></a>
+                        <a class="share-frame__block-item-link" :href="sharingUrlForSocial('twitter')" target="_blank" @click="shareLink"><img class="share-frame__block-item-link-twitter" :src="getCDNImage('socials/twitter.svg')" alt="twitter"></a>
                         <p class="share-frame__block-item-name">Twitter</p>
                     </div>
                     <div class="share-frame__block-item">
-                        <a class="share-frame__block-item-link" @click="copyLink"><img class="share-frame__block-item-link-copy" src="/socials/link.svg" alt="copy"></a>
+                        <a class="share-frame__block-item-link" @click="copyLink"><img class="share-frame__block-item-link-copy" :src="getCDNImage('socials/link.svg')" alt="copy"></a>
                         <p class="share-frame__block-item-name">{{ !isCopied ? 'Copy' : 'Coped!' }}</p>
                     </div>
                 </div>                

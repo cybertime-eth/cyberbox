@@ -1,7 +1,7 @@
 <template>
   <div class="menu-mobile">
     <div class="menu-mobile-header container-xl">
-      <img src="/logo.svg" alt="logo" class="menu-mobile-header-logo" @click="gotoHome">
+      <img :src="getCDNImage('logo.svg')" alt="logo" class="menu-mobile-header-logo" @click="gotoHome">
       <div class="menu-mobile-header-walletbox">
 		<dropdown-menu class="header__wallet-dropdown" :right="true" v-model="showCeloDropdown">
 			<div class="header__wallet" v-if="address">
@@ -9,13 +9,13 @@
 				<h3 class="header__wallet-address">{{ address }}</h3>
 				<div class="header__wallet-avatar-box">
 					<div class="header__wallet-avatar gradient-button">
-						<img src="/celo.svg" alt="avatar">
+						<img :src="getCDNImage('celo.svg')" alt="avatar">
 					</div>
 				</div>
 			</div>
 			<div slot="dropdown">
 				<a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
-					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" src="/celo.svg" alt="celo"> CELO on Ubeswap</span>
+					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" :src="getCDNImage('celo.svg')" alt="celo"> CELO on Ubeswap</span>
 				</a>
 			</div>
 		</dropdown-menu>
@@ -55,9 +55,9 @@ export default {
     },
     closeIcon() {
       if (!this.isMobile()) {
-        return '/close.svg'
+        return this.getCDNImage('close.svg')
       } else {
-        return '/close-header.svg'
+        return this.getCDNImage('close-header.svg')
       }
     }
   },

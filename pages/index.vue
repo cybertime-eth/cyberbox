@@ -1,5 +1,8 @@
 <template>
-  <section class="refi container-xl">
+  <div class="page__loading" v-if="loading">
+	<img class="page__loading-img" :src="getCDNImage('load_page.webp')" alt="loading">
+  </div>
+  <section class="refi container-xl" v-else>
     <h1 class="refi__title">Regenerate Nature by trading NFTs</h1>
     <h3 class="refi__subtitle">CyberBox is the first NFT marketplace with ReFi integration</h3>
     <div class="refi__block">
@@ -8,12 +11,12 @@
           <button class="refi__block-info-button explorer" @click="gotoExplorer('Top_button')">Explorer NFT</button>
           <button class="refi__block-info-button top ranking" @click="gotoRankings('Top_button')">Rankings</button>
         </div>
-        <img class="refi__block-info-picture" src="/earth.png" alt="earth">
+        <img class="refi__block-info-picture" :src="getCDNImage('earth.webp')" alt="earth">
         <div class="refi__block-info-live" v-if="totalCO2Amount > 0">
           <h3 class="refi__block-info-live-title">LIVE <span/> Carbon Offsetting</h3>
           <div class="refi__block-info-live-co2 gradient-box">
             <h3 class="refi__block-info-live-co2-count">{{ totalCO2Amount }}</h3>
-            <p class="refi__block-info-live-co2-description">Ton CO2 <img src="/plant.svg" alt="plant"></p>
+            <p class="refi__block-info-live-co2-description">Ton CO2 <img :src="getCDNImage('plant.svg')" alt="plant"></p>
           </div>
         </div>
       </div>
@@ -33,14 +36,14 @@
 				<h3 class="refi__block-carbon-certificate-item-name">{{ certificate.name }}</h3>
 				<div class="refi__block-carbon-certificate-item-box" :class="{unknown: !certificate.image}">
 					<img class="refi__block-carbon-certificate-item-box-image" :src="certificate.image" v-if="certificate.image">
-					<img class="refi__block-carbon-certificate-item-box-image-unknown" src="/question-mark.svg" v-else>
+					<img class="refi__block-carbon-certificate-item-box-image-unknown" :src="getCDNImage('question-mark.svg')" v-else>
 				</div>
 				<p class="refi__block-carbon-certificate-item-status">{{ certificate.status }}</p>
 			</div>
 		</div>
 	  </div>
       <div class="refi__block-listings">
-        <h3 class="refi__block-listings-title">Latest Listings <img src="/fire.svg" alt="fire"></h3>
+        <h3 class="refi__block-listings-title">Latest Listings <img :src="getCDNImage('fire.svg')" alt="fire"></h3>
         <div class="refi__block-listings-items">
           <client-only>
             <carousel :per-page="1" :navigate-to="listingPageNum" :mouse-drag="false" :paginationEnabled="false" :speed="1000">
@@ -52,19 +55,19 @@
             </carousel>
           </client-only>
           <button class="btn-navigate btn-navigate-left" @click="showPrevListingPage" v-if="listingPageNum > 0">
-            <img src="/navigate-left.svg" alt="left">
+            <img :src="getCDNImage('navigate-left.svg')" alt="left">
           </button>
           <button class="btn-navigate btn-navigate-right" @click="showNextListingPage" v-if="listingPageNum < listingPageCount - 1">
-            <img src="/navigate-right.svg" alt="right">
+            <img :src="getCDNImage('navigate-right.svg')" alt="right">
           </button>
         </div>
       </div>
       <div class="refi__block-collections">
         <div class="refi__block-collections-header">
-          <h3 class="refi__block-collections-header-title">Hot collections <img src="/star-filled.svg" alt="star"></h3>
+          <h3 class="refi__block-collections-header-title">Hot collections <img :src="getCDNImage('star-filled.svg')" alt="star"></h3>
           <div class="refi__block-collections-header-tab">
-            <div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 1}"  @click="updateCollectionTab(1)"><img class="refi__block-collections-header-tab-item-img" src="/chart.svg" alt="chart"> Volume</div>
-            <div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 2}" @click="updateCollectionTab(2)"><img class="refi__block-collections-header-tab-item-img" src="/plant.svg" alt="plant"> Carbon</div>
+            <div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 1}"  @click="updateCollectionTab(1)"><img class="refi__block-collections-header-tab-item-img" :src="getCDNImage('chart.svg')" alt="chart"> Volume</div>
+            <div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 2}" @click="updateCollectionTab(2)"><img class="refi__block-collections-header-tab-item-img" :src="getCDNImage('plant.svg')" alt="plant"> Carbon</div>
           </div>
         </div>
         <p class="refi__block-collections-description" v-if="collectionTab === 2">Amount of CO2 offseting through NFT trading</p>
@@ -75,7 +78,7 @@
                 <p class="refi__block-collections-items-group-item-info-ranking">{{ collection.index }}</p>
                 <div class="refi__block-collections-items-group-item-info-icon">
                   <img class="refi__block-collections-items-group-item-info-icon-image" :src="collection.image" :alt="collection.nftSymbol">
-                  <img class="refi__block-collections-items-group-item-info-icon-mark" src="/checkmark.svg" alt="checkmark">
+                  <img class="refi__block-collections-items-group-item-info-icon-mark" :src="getCDNImage('checkmark.svg')" alt="checkmark">
                 </div>
                 <p class="refi__block-collections-items-group-item-info-name">{{ collection.name }}</p>
               </div>
@@ -83,7 +86,7 @@
                 <p class="refi__block-collections-items-group-item-carbon-value">{{collection.co2Celo}}</p>
                 <p class="refi__block-collections-items-group-item-carbon-unit">Ton CO2</p>
               </div>
-              <p class="refi__block-collections-items-group-item-amount" v-else><img src="/celo.svg" alt="celo"> {{collection.volumeCelo}}</p>
+              <p class="refi__block-collections-items-group-item-amount" v-else><img :src="getCDNImage('celo.svg')" alt="celo"> {{collection.volumeCelo}}</p>
             </div>
           </div>
         </div>
@@ -94,21 +97,21 @@
         <div class="refi__block-footer-info">
           <div class="refi__block-footer-info-box">
             <div class="refi__block-footer-info-box-header">
-              <img class="refi__block-footer-info-box-header-icon" src="/refi-rankings.svg" alt="rankings">
+              <img class="refi__block-footer-info-box-header-icon" :src="getCDNImage('refi-rankings.svg')" alt="rankings">
               <h3 class="refi__block-footer-info-box-header-title">Carbon Offset Integration</h3>
             </div>
             <p class="refi__block-footer-info-box-description">When trading NFTs on our marketplace, carbon offset users do not have to do anything!</p>
           </div>
           <div class="refi__block-footer-info-box">
             <div class="refi__block-footer-info-box-header">
-              <img class="refi__block-footer-info-box-header-icon" src="/refi-integration.svg" alt="integration">
+              <img class="refi__block-footer-info-box-header-icon" :src="getCDNImage('refi-integration.svg')" alt="integration">
               <h3 class="refi__block-footer-info-box-header-title">NFT Carbon Certificates</h3>
             </div>
             <p class="refi__block-footer-info-box-description">Buy a unique NFT certificate every month at the expense of carbon offset.</p>
           </div>
           <div class="refi__block-footer-info-box">
             <div class="refi__block-footer-info-box-header">
-              <img class="refi__block-footer-info-box-header-icon" src="/refi-setting.svg" alt="settings">
+              <img class="refi__block-footer-info-box-header-icon" :src="getCDNImage('refi-setting.svg')" alt="settings">
               <h3 class="refi__block-footer-info-box-header-title">Unique opportunities for NFT creators</h3>
             </div>
             <p class="refi__block-footer-info-box-description">Flexible royalty system, ability to set % for Carbon offset, all the benefits of Celo chain, access to 200k of users via Valora app.</p>
@@ -134,6 +137,7 @@ export default {
   },
   data() {
     return {
+	  loading: true,
       totalCO2Amount: 0,
       collectionTab: 1,
       latestListings: [],
@@ -171,7 +175,7 @@ export default {
       item.co2Celo = co2celoPrice !== 0 ? co2celoPrice.toFixed(co2CeloDiff === 0 ? 0 : 2) : 0
 	  totalCO2Amount += co2celoPrice
       item.name = (this.$store.state.collectionList.find(collection => collection.route === item.nftSymbol) || {}).name
-      item.image = `/${item.nftSymbol}.png`
+      item.image = this.getCDNImage(`${item.nftSymbol}.webp`)
       return item
     })
     this.updateHotCollections()
@@ -184,6 +188,8 @@ export default {
 	  category: 'Browse',
 	  eventName: 'site_visit'
 	})
+
+	this.loading = false
   },
   mounted() {
 	if (this.$refs.certificate && this.isMobile()) {
@@ -199,7 +205,7 @@ export default {
       }
     },
     investorsIcon() {
-      return this.isMobile() || (process.browser && window.innerWidth <= 460) ? '/investors-mobile.png' : '/investors.png'
+      return this.isMobile() || (process.browser && window.innerWidth <= 460) ? this.getCDNImage('investors-mobile.webp') : this.getCDNImage('investors.webp')
     },
     listingPageCount() {
       if (!this.isMobile()) {
@@ -240,10 +246,10 @@ export default {
 			break
 		  case (currMonth + 1): status = 'Next'
 		  	break
-		}
+    }
 		list.push({
 		  name: `${month} ${currYear}`,
-		  image: `/certificates/${currYear}/${i}.jpg`,
+		  image: this.getCDNImage(`certificates/${i}.webp`),
 		  status,
 		  current: i === currMonth
 		})
@@ -921,7 +927,7 @@ export default {
             grid-column-gap: 1.6rem;
             height: 35rem;
             .collection__item {
-              height: 34rem;
+              height: 30rem;
               &-image {
                 max-width: 14.4rem;
               }

@@ -1,25 +1,25 @@
 <template>
-  <div class="collection__item" :class="{ multinft: multiNft && $route.params.collectionid }" @click="routeNft">
+  <div class="collection__item" :class="{ knoxnft: nft.nftSymbol === 'knoxnft', multinft: multiNft && $route.params.collectionid }" @click="routeNft">
 	<dropdown-menu class="collection__item-dropdown" v-model="showMoreMenu" v-if="moreButtonVisible">
-		<img src="/more.png" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
+    <img :src="getCDNImage('more.webp')" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
 		<div slot="dropdown" class="collection__item-modal">
 			<div class="collection__item-modal-button">
-				<img src="/outline-sell.svg" alt="sell">
+				<img :src="getCDNImage('outline-sell.svg')" alt="sell">
 				<h3>{{ visitMenuName }}</h3>
 			</div>
 			<div class="collection__item-modal-button" @click="handleClickTransfer" v-if="seller">
-			<img src="/transfer-black.svg" alt="transfer">
+			<img :src="getCDNImage('transfer-black.svg')" alt="transfer">
 			<h3>Transfer</h3>
 			</div>
 			<div class="collection__item-modal-button" @click="copyLink">
-				<img src="/copy-link.svg" alt="copy">
+				<img :src="getCDNImage('copy-link.svg')" alt="copy">
 				<h3>Copy link</h3>
 			</div>
 		</div>
 	</dropdown-menu>
     <img :src="realNftImage()" alt="item" class="collection__item-image" v-if="nftImageLoaded">
     <div class="collection__item-loading" v-else>
-      <img src="/loading-nft.gif" alt="load">
+      <img :src="getCDNImage('loading-nft.webp')" alt="load">
     </div>
     <div class="collection__item-info">
       <h2 class="collection__item-info-name" :class="{multinft: multiNft, 'multi-collection': isMultiNftCollection}">{{ nftName }}</h2>
@@ -30,7 +30,7 @@
         <p class="collection__item-info-type" :class="{multinft: multiNft}" v-else>Price</p>
         <div class="collection__item-info-price-box" :class="{ multinft: multiNft }" v-if="priceVisible">
           <div class="collection__item-info-price" >
-            <img src="/celo.svg" alt="celo">
+            <img :src="getCDNImage('celo.svg')" alt="celo">
             <h3 class="collection__item-info-price-text">{{ nftPrice }}</h3>
           </div>
           <span class="collection__item-info-price-quantity" v-if="nftQuantity">{{ nftQuantity }}</span>
@@ -44,7 +44,7 @@
 <script>
 import transfer from '@/components/modals/transfer'
 import {BigNumber} from "ethers";
-import { CDN_ROOT } from "@/config";
+import { CDN_ROOT, COLLECTION_CDN_ROOT } from "@/config";
 export default {
   components: {
     transfer
@@ -174,8 +174,13 @@ export default {
 			contractId = this.nft.image
 		  }
 		}
-		const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
-		const imageURL = CDN_ROOT + contractName + `/${contractId}.${fileExtension}`
+    const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
+    let cdnRoot = CDN_ROOT
+    if (contractName === 'daos') {
+      cdnRoot = COLLECTION_CDN_ROOT + '280/'
+      fileExtension = 'cwebp'
+    }
+    const imageURL = cdnRoot + contractName + `/${contractId}.${fileExtension}`
 		return imageURL
 	  } else {
 		return this.getCertificateImage(this.nft)
@@ -255,7 +260,7 @@ export default {
     display: flex;
     flex-direction: column;
     width: 20rem;
-    height: 40rem;
+    height: 37.5rem;
     border-radius: .4rem;
     box-shadow: 0 .4rem 1.2rem rgba(0, 0, 0, 0.05);
     transition: .3s;
@@ -263,7 +268,7 @@ export default {
     position: relative;
     top: 0;
     &.multinft {
-      height: 37rem;
+      height: 33.5rem;
     }
 	&-dropdown {
 	  .dropdown-menu {
@@ -370,7 +375,9 @@ export default {
       &-price {
         display: flex;
         align-items: center;
-        padding-top: .4rem;
+        &-box {
+          padding-top: .4rem;
+        }
         img {
           width: 1.8rem;
         }
@@ -427,6 +434,12 @@ export default {
     &__item {
       width: 14.4rem;
       height: auto;
+      &.multinft {
+        height: 28.5rem;
+        &.knoxnft {
+          height: 26.5rem;
+        }
+      }
       &-image {
         width: 14.4rem;
         height: 14.4rem;
@@ -436,7 +449,7 @@ export default {
         height: 14.4rem;
       }
       &-info {
-        padding: .5rem 0.8rem 0.8rem;
+        padding: 1.2rem 0.8rem 1.8rem;
         &-name {
           &.multinft {
             padding-bottom: 5.4rem;

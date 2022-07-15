@@ -6,7 +6,7 @@
               <client-only>
                 <img :src="logoIcon" alt="logo">
                 <button class="modal__button gradient-button" @click="closeModal" v-if="!isMobile()">Close</button>
-                <button class="modal__button modal__button-close" @click="closeModal" v-else><img src="/close.svg"></button>
+                <button class="modal__button modal__button-close" @click="closeModal" v-else><img :src="getCDNImage('close.svg')"></button>
               </client-only>
             </div>
             <div class="modal__traits-filter">
@@ -15,7 +15,7 @@
                 <div class="modal__traits-filter-item" :key="traitCategories.length+fIdx" v-for="(filter, fIdx) in traitFilterValues(category)" @click="updateFilterCheck(category, filter)">
                   <div class="modal__traits-filter-item-checkbox">
                     <span class="modal__traits-filter-item-checkbox-check" :class="{ checked: filter.checked }">
-                      <img src="/check-white.svg" alt="check" v-if="filter.checked">
+                      <img :src="getCDNImage('check-white.svg')" alt="check" v-if="filter.checked">
                     </span>
                     <span class="modal__traits-filter-item-checkbox-name">{{ filter.traitValue }}</span>
                   </div>
@@ -49,7 +49,7 @@ export default {
   },
   computed: {
     logoIcon() {
-      return !this.isMobile() ? '/logo.svg' : '/mobile-logo2.svg'
+      return !this.isMobile() ? this.getCDNImage('logo.svg') : this.getCDNImage('mobile-logo2.svg')
     },
     traitFilters() {
       return this.$store.state.traitFilters

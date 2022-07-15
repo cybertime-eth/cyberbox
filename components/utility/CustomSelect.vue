@@ -2,8 +2,8 @@
     <div class="custom-select">
         <div class="custom-select__trigger" :class="{active: showDropdown}" ref="trigger" @click="showDropdown = !showDropdown">
             <span class="custom-select__trigger-name">{{ currOpion }}</span>
-            <img class="custom-select__trigger-arrow" src="/dropdown-down.svg" alt="arrow" v-if="!showDropdown">
-            <img class="custom-select__trigger-arrow" src="/dropdown-up.svg" alt="arrow" v-else>
+            <img class="custom-select__trigger-arrow" :src="getCDNImage('dropdown-down.svg')" alt="arrow" v-if="!showDropdown">
+            <img class="custom-select__trigger-arrow" :src="getCDNImage('dropdown-up.svg')" alt="arrow" v-else>
         </div>
         <div class="custom-select__dropdown" v-if="showDropdown">
             <div class="custom-select__dropdown-option"

@@ -28,7 +28,7 @@
                     <div class="lending__block-info-price" v-if="!bought">
                         <div class="lending__block-info-price-detail">
                             <div class="lending__block-info-price-detail-celo">
-                                <img src="/celo.svg" alt="celo">
+                                <img :src="getCDNImage('celo.svg')" alt="celo">
                                 <p class="lending__block-info-price-detail-celo-value">{{ certificate.price }}</p>
                             </div>
                             <p class="lending__block-info-price-detail-value">Price (${{ priceToken }})</p>
@@ -61,7 +61,7 @@
                             <p class="lending__collection-item-date">{{ certificateName(certificate) }}</p>
                             <div class="lending__collection-item-box no-bg">
                                 <img class="lending__collection-item-box-img" :src="certificate.image" alt="certificate">
-                                <img class="lending__collection-item-box-checked" src="/checked-circle.svg" alt="checkmark" v-if="certificateOwner(certificate)">
+                                <img class="lending__collection-item-box-checked" :src="getCDNImage('checked-circle.svg')" alt="checkmark" v-if="certificateOwner(certificate)">
                             </div>
                         </div>
                     </div>
@@ -72,17 +72,17 @@
 				<p class="lending__guide-description">Every day the inhabitants of the earth leave their carbon footprint. With our NFT certificates you can make your carbon footprint neutral or even negative</p>
 				<div class="lending__reason-info">
 					<div class="lending__reason-info-item">
-						<h3 class="lending__reason-info-item-title">Footprint without carbon offset <img src="/sad-face.svg" alt="sad"></h3>
+						<h3 class="lending__reason-info-item-title">Footprint without carbon offset <img :src="getCDNImage('sad-face.svg')" alt="sad"></h3>
 						<client-only>
-							<img class="lending__reason-info-item-diagram" src="/carbon-positive.svg" alt="diagram" v-if="!isMobile()">
-							<img class="lending__reason-info-item-diagram" src="/carbon-positive-mobile.svg" alt="diagram" v-else>
+							<img class="lending__reason-info-item-diagram" :src="getCDNImage('carbon-positive.svg')" alt="diagram" v-if="!isMobile()">
+							<img class="lending__reason-info-item-diagram" :src="getCDNImage('carbon-positive-mobile.svg')" alt="diagram" v-else>
 						</client-only>
 					</div>
 					<div class="lending__reason-info-item">
-						<h3 class="lending__reason-info-item-title">Footprint with carbon offset <img src="/happy-face.svg" alt="happy"></h3>
+						<h3 class="lending__reason-info-item-title">Footprint with carbon offset <img :src="getCDNImage('happy-face.svg')" alt="happy"></h3>
 						<client-only>
-							<img class="lending__reason-info-item-diagram" src="/carbon-neutral.svg" alt="diagram" v-if="!isMobile()">
-							<img class="lending__reason-info-item-diagram" src="/carbon-neutral-mobile.svg" alt="diagram" v-else>
+							<img class="lending__reason-info-item-diagram" :src="getCDNImage('carbon-neutral.svg')" alt="diagram" v-if="!isMobile()">
+							<img class="lending__reason-info-item-diagram" :src="getCDNImage('carbon-neutral-mobile.svg')" alt="diagram" v-else>
 						</client-only>
 					</div>
 				</div>
@@ -92,25 +92,25 @@
 				<div class="lending__market-items">
 					<div class="lending__market-items-item">
 						<div class="lending__market-items-item-img-box">
-							<img class="lending__market-items-item-img" src="/carbon-substract.svg" alt="substract">
+							<img class="lending__market-items-item-img" :src="getCDNImage('carbon-substract.svg')" alt="substract">
 						</div>
 						<p class="lending__market-items-item-description">100% verification of your carbon negative status</p>
 					</div>
 					<div class="lending__market-items-item">
 						<div class="lending__market-items-item-img-box">
-							<img class="lending__market-items-item-img" src="/carbon-unique.svg" alt="unique">
+							<img class="lending__market-items-item-img" :src="getCDNImage('carbon-unique.svg')" alt="unique">
 						</div>
 						<p class="lending__market-items-item-description">Unique art that changes every month</p>
 					</div>
 					<div class="lending__market-items-item">
 						<div class="lending__market-items-item-img-box">
-							<img class="lending__market-items-item-img" src="/carbon-coffee.svg" alt="coffee">
+							<img class="lending__market-items-item-img" :src="getCDNImage('carbon-coffee.svg')" alt="coffee">
 						</div>
 						<p class="lending__market-items-item-description">The price of an NFT certificate is like a few cups of coffee</p>
 					</div>
 					<div class="lending__market-items-item">
 						<div class="lending__market-items-item-img-box">
-							<img class="lending__market-items-item-img" src="/carbon-valora.svg" alt="valora">
+							<img class="lending__market-items-item-img" :src="getCDNImage('carbon-valora.svg')" alt="valora">
 						</div>
 						<p class="lending__market-items-item-description">Can be purchased with a credit card the Valora app</p>
 					</div>
@@ -120,8 +120,8 @@
                 <h2 class="lending__title">How it’s works?</h2>
 				<p class="lending__guide-description">No complicated logic and calculations. Buying one unique NFT you offset 1 ton CO2. Everything is simple!</p>
                 <client-only>
-                    <img class="lending__guide-diagram" src="/carbon-diagram.svg" alt="diagram" v-if="!isMobile()">
-                    <img class="lending__guide-diagram" src="/carbon-diagram-mobile.svg" alt="diagram" v-else>
+                    <img class="lending__guide-diagram" :src="getCDNImage('carbon-diagram.svg')" alt="diagram" v-if="!isMobile()">
+                    <img class="lending__guide-diagram" :src="getCDNImage('carbon-diagram-mobile.svg')" alt="diagram" v-else>
                 </client-only>
             </div>
             <!-- <div class="lending__faq">
@@ -142,8 +142,8 @@
             <div class="lending__footer">
                 <p class="lending__footer-description">Supported & Powered by</p>
                 <client-only>
-                    <img src="/investors.png" alt="support" v-if="!isMobile()">
-                    <img src="/investors-mobile.png" alt="support" v-else>
+                    <img :src="getCDNImage('investors.webp')" alt="support" v-if="!isMobile()">
+                    <img :src="getCDNImage('investors-mobile.webp')" alt="support" v-else>
                 </client-only>
             </div>
         </div>
@@ -153,7 +153,7 @@
 </template>
 
 <script>
-import { CERTIFICATE_TOKEN_TYPE } from '@/config'
+import { CERTIFICATE_TOKEN_TYPE, CDN_ROOT } from '@/config'
 import BuyToken from '@/components/modals/buyToken'
 import SuccessfullBuy from '@/components/modals/successBuy'
 const CERTIFICATE_MINT_PRICE = 15
@@ -193,9 +193,8 @@ export default {
     },
 	currentCertificateImage() {
 	  const date = new Date()
-      const currYear = date.getFullYear()
-	  const currMonth = date.getMonth() + 1
-	  return `/certificates/${currYear}/${currMonth}.jpg`
+    const currMonth = date.getMonth() + 1
+    return CDN_ROOT + `CBCN/detail/${currMonth}.png`
 	},
     ownedCertificates() {
 	  return this.$store.state.certificateList

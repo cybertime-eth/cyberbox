@@ -3,7 +3,7 @@
     <div class="modal__wrong">
       <div class="modal__wrong-container">
         <div class="modal__wrong-header">
-          <img class="modal__wrong-header-icon" src="/pulse-pink.svg" alt="pulse">
+          <img class="modal__wrong-header-icon" :src="getCDNImage('pulse-pink.svg')" alt="pulse">
           <h1 class="modal__wrong-header-title">You are on the wrong network</h1>
         </div>
         <p class="modal__wrong-subtitle">Click the button below to switch or add the Celo network as a custom network to your Metamask wallet.</p>
@@ -36,7 +36,7 @@
         </div>
       </div>
       <button class="modal__wrong-close-button" @click="closeModal">
-        <img src="/close-bold.svg" class="modal__close-button-icon">
+        <img :src="getCDNImage('close-bold.svg')" class="modal__close-button-icon">
       </button>
     </div>
   </div>

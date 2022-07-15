@@ -13,13 +13,15 @@ export default {
       {vmid: 'og:title', hid: 'og:title', property: 'og:title', content: 'Cyberbox - ReFi NFT Marketplace'},
       {vmid: 'description', hid: 'description', name: 'description', content: 'Regenerate nature by trading NFTs on the Celo blockchain. Buy or gift NFT carbon offset certificates. Track your carbon status in realtime.'},
       {vmid: 'og:description', hid: 'og:description', property: 'og:description', content: 'Regenerate nature by trading NFTs on the Celo blockchain. Buy or gift NFT carbon offset certificates. Track your carbon status in realtime.'},
-      {vmid: 'og:image', hid: 'og:image', property: 'og:image', content: '/cyberbox.png'},
+      {vmid: 'og:image', hid: 'og:image', property: 'og:image', content: '/cyberbox.webp'},
       {name: 'format-detection', content: 'telephone=no'}
     ],
     link: [
       {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'}
     ]
   },
+  // smaller-in-size JS bundle
+  modern: true,
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '@/assets/var.css'
@@ -69,6 +71,7 @@ export default {
       '@nuxtjs/axios',
       '@nuxtjs/proxy',
       'nuxt-logrocket',
+      ['@nuxtjs/component-cache', { maxAge: 1000 * 60 * 60 }],
       ['nuxt-bugsnag', {
         apiKey: 'cef8153f64709623f660870486f23999',
         publishRelease: true,
@@ -91,9 +94,26 @@ export default {
       }
     },
 
+    features: {
+      store: true,
+      layouts: true,
+      meta: true,
+      middleware: true,
+      transitions: false,
+      deprecations: false,
+      validate: false,
+      asyncData: true,
+      fetch: false,
+      clientOnline: true,
+      clientPrefetch: true,
+      componentAliases: true,
+      componentClientOnly: true
+    },
+
     // Build Configuration: https://go.nuxtjs.dev/config-build
     build: {
       cache: false,
+      aggressiveCodeRemoval: true,
       extend(config, {}) {
         config.node = {
           fs: 'empty'

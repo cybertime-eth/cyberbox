@@ -1,18 +1,18 @@
 <template>
     <div class="certificate__item collection__item" @click="routeCertificate">
 		<dropdown-menu class="collection__item-dropdown" v-model="showMoreMenu" v-if="owner">
-			<img src="/more.png" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
+			<img :src="getCDNImage('more.webp')" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
 			<div slot="dropdown" class="collection__item-modal">
 				<div class="collection__item-modal-button" @click="routeCertificate">
-					<img src="/outline-sell.svg" alt="sell">
+					<img :src="getCDNImage('outline-sell.svg')" alt="sell">
 					<h3>{{ visitMenuName }}</h3>
 				</div>
 				<div class="collection__item-modal-button" @click="showTransfer" v-if="owner">
-					<img src="/transfer-black.svg" alt="transfer">
+					<img :src="getCDNImage('transfer-black.svg')" alt="transfer">
 					<h3>Transfer</h3>
 				</div>
 				<div class="collection__item-modal-button" @click="copyLink">
-					<img src="/copy-link.svg" alt="copy">
+					<img :src="getCDNImage('copy-link.svg')" alt="copy">
 					<h3>Copy link</h3>
 				</div>
 			</div>
@@ -25,7 +25,7 @@
             <h2 class="collection__item-info-name">{{ certificateName }}</h2>
             <p class="collection__item-info-type">Price</p>
             <div class="collection__item-info-price" v-if="priceVisible">
-                <img src="/celo.svg" alt="celo">
+                <img :src="getCDNImage('celo.svg')" alt="celo">
                 <h3 class="collection__item-info-price-text">{{ certificatePrice }}</h3>
             </div>
             <p class="certificate__item-description" :class="{ 'not-sale': owner || !saleAvailable }" v-else>{{ certificateDescription }}</p>
@@ -126,13 +126,13 @@ export default {
 
 <style lang="scss" scoped>
 .certificate__item {
-  height: 35.4rem;
+  height: 33.5rem;
   .collection__item-more, .collection__item-modal {
 	z-index: 1;
   }
   .collection__item-info-name {
 	font-size: 1.8rem;
-    padding-bottom: 4rem;
+    padding-bottom: 1.6rem;
     border-bottom: .1rem solid $modalColor;
   }
   .collection__item-info-type {
@@ -174,9 +174,8 @@ export default {
   }
 
   @media (max-width: 460px) {
-	height: 28.8rem;
+	height: 25.8rem;
 	.collection__item-info-name {
-	  padding-bottom: 3.2rem;
 	  font-size: 1.4rem;
 	}
   }

@@ -5,6 +5,7 @@
     <Footer />
     <h3 class="message" v-if="message">{{ message }}</h3>
   </div>
+  
 </template>
 <script>
 import Header from './../components/Header'
@@ -76,6 +77,23 @@ export default {
   background: linear-gradient(93.06deg, #FC2EF5 8.21%, #5489D8 50.57%, #2CFF64 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.page__loading {
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	background: $white;
+	z-index: 1;
+	&-img {
+	  position: absolute;
+	  left: 50%;
+	  top: 50%;
+	  width: 32rem;
+	  transform: translate(-50%, -60%);
+	}
 }
 
 //DEFAULT STYLES
@@ -300,46 +318,55 @@ ul {
 //FONTS
 
 @font-face {
+  font-display: swap;
   font-family: "Cabin-Bold";
   src: local("Cabin-Bold"),
   url(./assets/fonts/Cabin-Bold.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: "Cabin-Medium";
   src: local("Cabin-Medium"),
   url(./assets/fonts/Cabin-Medium.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: "Cabin-Regular";
   src: local("Cabin-Regular"),
   url(./assets/fonts/Cabin-Regular.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: 'OpenSans-Bold';
   src: local("OpenSans-Bold"),
   url(./assets/fonts/OpenSans-Bold.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: 'OpenSans-SemiBold';
   src: local("OpenSans-SemiBold"),
   url(./assets/fonts/OpenSans-SemiBold.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: 'OpenSans-Light';
   src: local("OpenSans-Light"),
   url(./assets/fonts/OpenSans-Light.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: 'OpenSans-Medium';
   src: local("OpenSans-Medium"),
   url(./assets/fonts/OpenSans-Medium.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: 'OpenSans-Regular';
   src: local("OpenSans-Regular"),
   url(./assets/fonts/OpenSans-Regular.ttf) format('truetype');
 }
 @font-face {
+  font-display: swap;
   font-family: 'Orbitron-Black';
   src: local("Orbitron-Black"),
   url(./assets/fonts/Orbitron-Black.ttf) format('truetype');
@@ -363,5 +390,10 @@ ul {
   .modal__step {
 	padding: 0 4.5rem;
   }
+  .page__loading {
+	  &-img {
+		  width: 26rem;
+	  }
+	}
 }
 </style>

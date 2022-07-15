@@ -7,14 +7,14 @@
           Web3 wallet
 		  <a class="modal__connect-button-nav">
 			<span class="modal__connect-button-nav-icons">
-			  <img src="/auth/metamask.svg" alt="metamsk" class="modal__connect-button-nav-icons-image">
-			  <img src="/auth/valora.svg" alt="valora" class="modal__connect-button-nav-icons-image">
+			  <img :src="getCDNImage('auth/metamask.svg')" alt="metamsk" class="modal__connect-button-nav-icons-image">
+			  <img :src="getCDNImage('auth/valora.svg')" alt="valora" class="modal__connect-button-nav-icons-image">
 			  <client-only>
-				<img src="/auth/wallet.svg" alt="wallet" class="modal__connect-button-nav-icons-image" v-if="isWeb">
+				<img :src="getCDNImage('auth/wallet.svg')" alt="wallet" class="modal__connect-button-nav-icons-image" v-if="isWeb">
 				<span class="modal__connect-button-nav-icons-ellipsis" v-else>...</span>
 			  </client-only>
 			</span>
-			<img src="/array-right.svg" alt="arrow" class="modal__connect-button-detail">
+			<img :src="getCDNImage('array-right.svg')" alt="arrow" class="modal__connect-button-detail">
 		  </a>
         </button>
         <!-- <button class="modal__connect-button" @click="connectEmail">
@@ -33,7 +33,7 @@
 		  </a>
         </button> -->
       </div>
-      <img src="/close.svg" alt="close" class="modal__close" @click="closeModal">
+      <img :src="getCDNImage('close.svg')" alt="close" class="modal__close" @click="closeModal">
     </div>
   </div>  
 </template>

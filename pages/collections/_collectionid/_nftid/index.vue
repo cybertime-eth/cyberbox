@@ -4,7 +4,7 @@
       <div>
         <a class="nft__crumbs" @click="handleClickBack">
           Back
-          <img src="/array-right.svg" alt="array">
+          <img :src="getCDNImage('array-right.svg')" alt="array">
           <span>{{ collectionName }}</span>
         </a>
 
@@ -12,7 +12,7 @@
         <div class="nft__block">
           <img :src="getNFTImage(nft, true)" alt="item" class="nft__block-image" v-if="nftImageLoaded">
           <div class="nft__block-image-loading" v-else>
-            <img src="/loading-nft.gif" alt="load">
+            <img :src="getCDNImage('loading-nft.webp')" alt="load">
           </div>
 
           <!-- INFO BUYER -->
@@ -46,7 +46,7 @@
               <div class="nft__block-info-box nft__block-info-box-buy" v-if="isBuyAvailable">
                 <div class="nft__block-info-price">
                   <div class="nft__block-info-price-celo">
-                    <img src="/celo.svg" alt="celo">
+                    <img :src="getCDNImage('celo.svg')" alt="celo">
                     <h1>{{ nft.price }}</h1>
                   </div>
                   <p class="nft__block-info-price-text">Price (${{ priceToken }})</p>
@@ -54,8 +54,8 @@
                 <button class="nft__block-info-buy" @click="handleClickBuyNow">Buy now</button>
               </div>
               <div class="nft__block-info-refi" v-if="nft.market_status === 'LISTED' && nft.price">
-			  	<p class="nft__block-info-refi-total"><img class="nft__block-info-refi-total-carbon" src="/plant.svg" alt="plant">Total carbon offset = <span class="nft__block-info-refi-total-amount">{{ refiOffset }} ton co2</span></p>
-				<p class="nft__block-info-refi-offset">Buy NFT and we add 50% of total offset to your <img class="nft__block-info-refi-offset-carbon" src="/carbon-tracker.svg" alt="tracker"> Offset Tracker</p>
+			  	<p class="nft__block-info-refi-total"><img class="nft__block-info-refi-total-carbon" :src="getCDNImage('plant.svg')" alt="plant">Total carbon offset = <span class="nft__block-info-refi-total-amount">{{ refiOffset }} ton co2</span></p>
+				<p class="nft__block-info-refi-offset">Buy NFT and we add 50% of total offset to your <img class="nft__block-info-refi-offset-carbon" :src="getCDNImage('carbon-tracker.svg')" alt="tracker"> Offset Tracker</p>
               </div>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
 			  <p class="nft__block-info-description" v-else-if="isCertificateNft">Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands.</p>
@@ -73,7 +73,7 @@
               </div>
             </div>
             <div class="nft__block-info-loading" v-else>
-              <img src="/loading-nft.gif" alt="load">
+              <img :src="getCDNImage('loading-nft.webp')" alt="load">
             </div>
           </div>
 
@@ -98,13 +98,13 @@
                 </h3>
               </div> -->
               <p class="nft__block-info-quantity" v-if="quantityCountInfo">{{ quantityCountInfo }}</p>
-              <button class="nft__block-info-transfer" @click="showTransferModal = true" v-if="nft.market_status !== 'LISTED'"><img src="/transfer.svg" alt="transfer">Transfer</button>
+              <button class="nft__block-info-transfer" @click="showTransferModal = true" v-if="nft.market_status !== 'LISTED'"><img :src="getCDNImage('transfer.svg')" alt="transfer">Transfer</button>
               <p class="nft__block-info-salecount" v-if="saleCountInfo">{{ saleCountInfo }}</p>
               <button class="nft__block-info-sell gradient-button" @click="handleClickSell"  v-if="nft.market_status !== 'LISTED'">Sell</button>
               <div class="nft__block-info-box" v-else>
                 <div class="nft__block-info-price">
                   <div class="nft__block-info-price-celo">
-                    <img src="/celo.svg" alt="celo">
+                    <img :src="getCDNImage('celo.svg')" alt="celo">
                     <h1>{{ nft.price }}</h1>
                   </div>
                   <p class="nft__block-info-price-text">Price (${{ priceToken }})</p>
@@ -116,7 +116,7 @@
                     @click="handleClickChangePrice"
                   >
                     {{ confirmButtonText }}
-                    <img src="/loading-button-black.svg" alt="load" v-if="loadButton">
+                    <img :src="getCDNImage('loading-button-black.svg')" alt="load" v-if="loadButton">
                   </button>
                   <button
                     class="
@@ -124,14 +124,14 @@
                     nft__content-buttons-button-cancel"
                     @click="removeFromMarket"
                   >
-                    <img src="/icon-delete.svg" alt="delete">
+                    <img :src="getCDNImage('icon-delete.svg')" alt="delete">
                     Remove from market
                   </button>
                 </div>
               </div>
 			  <div class="nft__block-info-refi listed" v-if="nft.market_status === 'LISTED' && nft.price">
-			  	<p class="nft__block-info-refi-total"><img class="nft__block-info-refi-total-carbon" src="/plant.svg" alt="plant">Total carbon offset = <span class="nft__block-info-refi-total-amount">{{ refiOffset }} ton co2</span></p>
-				<p class="nft__block-info-refi-offset">Buy NFT and we add 50% of total offset to your <img class="nft__block-info-refi-offset-carbon" src="/carbon-tracker.svg" alt="tracker"> Offset Tracker</p>
+			  	<p class="nft__block-info-refi-total"><img class="nft__block-info-refi-total-carbon" :src="getCDNImage('plant.svg')" alt="plant">Total carbon offset = <span class="nft__block-info-refi-total-amount">{{ refiOffset }} ton co2</span></p>
+				<p class="nft__block-info-refi-offset">Buy NFT and we add 50% of total offset to your <img class="nft__block-info-refi-offset-carbon" :src="getCDNImage('carbon-tracker.svg')" alt="tracker"> Offset Tracker</p>
               </div>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
 			  <p class="nft__block-info-description" v-else-if="isCertificateNft">Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands.</p>
@@ -144,12 +144,12 @@
                   class="nft__block-info-address-subtitle"
                 >
                   {{ cutContractAddress }}
-                  <img src="/send.svg" alt="send">
+                  <img :src="getCDNImage('send.svg')" alt="send">
                 </a>
               </div>
             </div>
             <div class="nft__block-info-loading" v-else>
-              <img src="/loading-nft.gif" alt="load">
+              <img :src="getCDNImage('loading-nft.webp')" alt="load">
             </div>
           </div>
         </div>
@@ -444,9 +444,11 @@ export default {
     metaIcon() {
 			let imageSrc = ''
       switch (this.$route.params.collectionid) {
-        case 'cpunk': imageSrc = '/collections/Media_punks.png'
+        case 'cpunk': imageSrc = this.getCDNImage('collections/Media_punks.webp')
           break
-        case 'ctoadz': imageSrc = '/collections/Media_toadz.png'
+        case 'ctoadz': imageSrc = this.getCDNImage('collections/Media_toadz.webp')
+          break
+        case 'knoxnft': imageSrc = this.getCDNImage('collections/KnoxersDAO.webp')
           break
         default: imageSrc = this.collection.image
           break
@@ -473,7 +475,7 @@ export default {
   },
   methods: {
     collectionIcon(contract) {
-      return contract ? `/${contract}.png` : null
+      return contract ? this.getCDNImage(`${contract}.webp`) : null
     },
     async loadNft() {
       const nft = await this.$store.dispatch('getNft', {

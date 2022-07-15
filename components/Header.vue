@@ -2,10 +2,10 @@
   <header>
     <div class="header container-xl" ref="header">
       <button class="header__back" v-if="nftId" @click="handleClickBack">
-        <img src="/arrow-left.svg" alt="back" class="header__back-img">
+        <img :src="getCDNImage('arrow-left.svg')" alt="back" class="header__back-img">
       </button>
       <div class="header__logo" :class="{ 'has-nft': nftId }" @click="$router.push('/')">
-        <img src="/logo.svg" alt="logo" class="header__logo-img">
+        <img :src="getCDNImage('logo.svg')" alt="logo" class="header__logo-img">
       </div>
       <searchInput class="header__search" />
       <nav class="header__navigation">
@@ -25,7 +25,7 @@
         <div class="header__box" v-if="address && !isMobile()">
           <nuxt-link class="header__link" active-class="gradient-text" to="/mycollection" exact>My NFT</nuxt-link>
           <nuxt-link class="header__notification" to="/notification" exact>
-            <img src="/lightning.svg" alt="lightning">
+            <img :src="getCDNImage('lightning.svg')" alt="lightning">
             <span class="header__notification-count" v-if="notificationCount">{{ notificationCount }}</span>
           </nuxt-link>
         </div>
@@ -39,14 +39,14 @@
 					<img class="dropdown-item-nav" src="/array-right.svg" alt="right">
 				</a> -->
 				<a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
-					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" src="/celo.svg" alt="celo"> CELO on Ubeswap</span>
+					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" :src="getCDNImage('celo.svg')" alt="celo"> CELO on Ubeswap</span>
 				</a>
 			</div>
 		  </dropdown-menu>
 		  <h3 class="header__wallet-address" ref="wallet" @click="showProfileMenu = !showProfileMenu">{{ address }}</h3>
 		  <div class="header__wallet-avatar-box">
 			<div class="header__wallet-avatar gradient-button">
-				<img src="/celo.svg" alt="avatar">
+				<img :src="getCDNImage('celo.svg')" alt="avatar">
 			</div>
 		  </div>
         </div>
@@ -55,20 +55,20 @@
       <div class="header__mobile">
         <client-only>
           <nuxt-link class="header__notification" to="/notification" exact v-if="mobileMenuVisible">
-            <img src="/lightning.svg" alt="lightning">
+            <img :src="getCDNImage('lightning.svg')" alt="lightning">
             <span class="header__notification-count" v-if="notificationCount">{{ notificationCount }}</span>
           </nuxt-link>
           <div class="header__box" v-if="address && mobileMenuVisible">
-            <nuxt-link class="header__link header__mycollection" active-class="gradient-text" to="/mycollection" exact><img src="/mycollection.svg" alt="mycollection"></nuxt-link>
+            <nuxt-link class="header__link header__mycollection" active-class="gradient-text" to="/mycollection" exact><img :src="getCDNImage('mycollection.svg')" alt="mycollection"></nuxt-link>
           </div>
         </client-only>
         <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
-        <img src="/search-mobile.svg" alt="search" class="header__mobile-search" @click="showSearchView = true">
-        <img src="/burger.svg" alt="burger" class="header__mobile-menu" @click="showMobileMenu">
-		<img src="/close.svg" alt="close" class="header__mobile-close" @click="closeSellModal">
+        <img :src="getCDNImage('search-mobile.svg')" alt="search" class="header__mobile-search" @click="showSearchView = true">
+        <img :src="getCDNImage('burger.svg')" alt="burger" class="header__mobile-menu" @click="showMobileMenu">
+		<img :src="getCDNImage('close.svg')" alt="close" class="header__mobile-close" @click="closeSellModal">
       </div>
       <div class="header__error-network" v-if="showWrongNetwork">
-        <img src="/pulse.svg" alt="pulse">
+        <img :src="getCDNImage('pulse.svg')" alt="pulse">
         <p class="header__error-network-text">You are on the wrong network</p>
       </div>
     </div>
