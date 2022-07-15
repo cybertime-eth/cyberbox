@@ -550,14 +550,13 @@ export default {
       this.searchName = this.$store.state.mintNumFilter
     } else {
       this.$store.commit('setTraitFilters', [])
-      this.loading = true
       this.initNftListSetting()
       this.$store.commit('changeMintNumFilter', null)
       this.$store.commit('updateCollectionSetting', null)
       await this.$store.dispatch(this.activeRequest)
       this.$store.dispatch('loadTraitFilters')
-    }
-    const collectionResult = await this.$store.dispatch('getCollectionInfo')
+	}
+	const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
 	if (this.$store.state.cMCO2Price > 0
@@ -570,7 +569,6 @@ export default {
       const refiPriceDiff = Math.ceil(refiPrice) - refiPrice
       this.refiCO2Price = refiPrice !== 0 ? refiPrice.toFixed(refiPriceDiff === 0 ? 0 : 2) : 0
     }
-	this.loading = false
 	this.pageLoading = false
 	this.sendCollectionEvent({ render: true })
   },

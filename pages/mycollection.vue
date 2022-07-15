@@ -313,7 +313,7 @@ export default {
             newCollectionFilters.push({
               contract: collection.route,
               name: collection.name,
-              image: `/${collection.route}.png`,
+              image: this.getCDNImage(`${collection.route}.webp`),
 			  count: nftCount,
 			  mintCount
             })
