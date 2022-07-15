@@ -1,5 +1,8 @@
 <template>
-  <section class="refi container-xl">
+  <div class="refi__loading" v-if="loading">
+	<img class="refi__loading-img" :src="getCDNImage('load_page.webp')" alt="loading">
+  </div>
+  <section class="refi container-xl" v-else>
     <h1 class="refi__title">Regenerate Nature by trading NFTs</h1>
     <h3 class="refi__subtitle">CyberBox is the first NFT marketplace with ReFi integration</h3>
     <div class="refi__block">
@@ -123,9 +126,6 @@
         </div>
       </div>
     </div>
-	<div class="refi__loading" v-if="loading">
-		<img class="refi__loading-img" src="/load_page.webp" alt="loading">
-	</div>
   </section>
 </template>
 <script>
