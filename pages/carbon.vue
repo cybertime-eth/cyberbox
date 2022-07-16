@@ -142,7 +142,8 @@ export default {
   async created() {
 	this.$nextTick(function() {
 	  this.webVersion = !this.isMobile()
-    })
+	})
+	this.$store.commit('changeSuccessBuyToken', false)
 	this.yearFilter = new Date().getFullYear()
 	if (process.broswer) {
 	  if (!this.isMobie()) {

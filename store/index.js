@@ -2244,7 +2244,7 @@ export const actions = {
 	    gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
 	  })
 
-	  const certCollection = collectionList.find(item => item.route === 'CBCN')
+	  const certCollection = (state.collectionList || []).find(item => item.route === 'CBCN')
 	  provider.once(result, async () => {
 		const currMonth = new Date().toLocaleString('en-us', { month: 'long' })
 		commit('changeSuccessBuyToken', true)
