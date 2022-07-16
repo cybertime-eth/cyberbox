@@ -1686,7 +1686,7 @@ export const actions = {
     try {
 	  if (state.nft.contract === 'CBCN') {
 		contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
-		await contract.listToken(state.nft.contract_id, web3.utils.toWei(String(price)), {
+		await contract.ListToken(state.nft.contract_id, web3.utils.toWei(String(price)), {
 		  gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
 		})
       } else if (state.nft.contract !== 'nomdom') {
