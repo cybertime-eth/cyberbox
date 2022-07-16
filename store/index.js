@@ -21,7 +21,7 @@ import { RESOURCE_CDN_ROOT } from '@/config'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
-  marketCertificate: '0xFEabeFDf5823f36D3918a753aa5962c96E275126',
+  marketCertificate: '0x3e7898C98E44bB734f43C60c782e8e7ee8854706',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   certContractAddress: '0xA4A8E345E1a88EFc9164014BB2CeBd4C2F98E986',
   user: {},
