@@ -130,7 +130,6 @@
 </template>
 <script>
 import nft from '@/components/nft.vue'
-import { currencies } from 'country-data';
 export default {
   components: {
     nft
@@ -147,7 +146,8 @@ export default {
     }
   },
   async created() {
-    // Latest 12 Listings
+	// Latest 12 Listings
+	setTimeout(() => this.loading = false, 5000)
     const newListings = await this.$store.dispatch('getLatestListings')
     newListings.map(item => {
       if (item.price) {
