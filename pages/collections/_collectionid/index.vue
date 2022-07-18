@@ -1,6 +1,6 @@
 <template>
   <div class="page__loading" v-if="pageLoading">
-	  <img class="page__loading-img" :src="getCDNImage('load_page.webp')" alt="loading">
+	  <img class="page__loading-img" :src="getCDNImage('loading_page_anim.webp')" alt="loading">
   </div>
   <section class="collection" v-else>
     <img :src="collection.banner" alt="banner" class="collection__banner">
@@ -573,7 +573,7 @@ export default {
 	this.sendCollectionEvent({ render: true })
   },
   mounted() {
-    if (this.isMobile()) {
+    if (this.isMobile() && this.$refs.itemsInfo) {
       this.$refs.itemsInfo.parentNode.insertBefore(this.$refs.refiInfo, this.$refs.itemsInfo.nextSibling)
     }
   }

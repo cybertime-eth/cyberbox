@@ -1,6 +1,6 @@
 <template>
   <div class="page__loading" v-if="loading">
-	<img class="page__loading-img" :src="getCDNImage('load_page.webp')" alt="loading">
+	<img class="page__loading-img" :src="getCDNImage('loading_page_anim.webp')" alt="loading">
   </div>
   <section class="refi container-xl" v-else>
     <h1 class="refi__title">Regenerate Nature by trading NFTs</h1>

@@ -91,8 +91,8 @@ export default {
 	  position: absolute;
 	  left: 50%;
 	  top: 50%;
-	  width: 32rem;
-	  transform: translate(-50%, -60%);
+	  width: 20rem;
+	  transform: translate(-50%, -50%);
 	}
 }
 
@@ -390,10 +390,5 @@ ul {
   .modal__step {
 	padding: 0 4.5rem;
   }
-  .page__loading {
-	  &-img {
-		  width: 26rem;
-	  }
-	}
 }
 </style>
