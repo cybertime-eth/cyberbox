@@ -210,16 +210,17 @@ export default {
 			}
 			ownedCount++
 		  } else {
-			if (newList[index].year === currYear && newList[index].month < currMonth) {
-			  const foundSaleIndex = this.saleCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month && oItem.year === currYear && oItem.month !== currMonth)
-			  if (foundSaleIndex >= 0) {
-				newList[index].offset = false
-				newList[index].contract_id = this.saleCertificates[foundSaleIndex].contract_id
-				newList[index].price = this.saleCertificates[foundSaleIndex].price
-			  } else {
-				invisibleList.push(item)
-			  }
+			if (newList[index].year !== currYear || (newList[index].year === currYear && newList[index].month < currMonth)) {
+			  invisibleList.push(item)
 			}
+			// if (newList[index].year === currYear && newList[index].month < currMonth) {
+			//   const foundSaleIndex = this.saleCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month && oItem.year === currYear && oItem.month !== currMonth)
+			//   if (foundSaleIndex >= 0) {
+			// 	newList[index].offset = false
+			// 	newList[index].contract_id = this.saleCertificates[foundSaleIndex].contract_id
+			// 	newList[index].price = this.saleCertificates[foundSaleIndex].price
+			//   }
+			// }
 		  }
 		})
 		newList = newList.filter(item => !invisibleList.find(invItem => item.year === invItem.year && item.month === invItem.month))
