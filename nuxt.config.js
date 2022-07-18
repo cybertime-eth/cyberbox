@@ -39,7 +39,7 @@ export default {
     '@/plugins/vue-carousel.client.js',
     '@/plugins/utils.js',
     '@/plugins/bugsnag.js',
-    '@/plugins/logrocket.js'
+    // '@/plugins/logrocket.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -70,7 +70,7 @@ export default {
       // https://go.nuxtjs.dev/axios
       '@nuxtjs/axios',
       '@nuxtjs/proxy',
-      'nuxt-logrocket',
+      // 'nuxt-logrocket',
       ['@nuxtjs/component-cache', { maxAge: 1000 * 60 * 60 }],
       ['nuxt-bugsnag', {
         apiKey: 'cef8153f64709623f660870486f23999',
@@ -86,13 +86,13 @@ export default {
       proxy: true
     },
 
-    logRocket: {
-      logRocketId: 'gcwpaj/cyberbox',
-      devModeAllowed: false,
-      config: {
-        //
-      }
-    },
+    // logRocket: {
+    //   logRocketId: 'gcwpaj/cyberbox',
+    //   devModeAllowed: false,
+    //   config: {
+    //     //
+    //   }
+    // },
 
     features: {
       store: true,
