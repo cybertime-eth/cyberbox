@@ -1498,13 +1498,13 @@ export const actions = {
     } else {
       const address = getters.storedAddress
       nftQuery = `
-        contractInfos: contractInfos(first: 1 where: { contract: "${token.collectionId}" image_contains: "${token.id}" } orderBy: price orderDirection: asc ) {
+        contractInfos: contractInfos(first: 1 where: { contract: "${token.collectionId}" image_contains: "${tokenId}" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
         }
         ownedListedInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract: "${token.collectionId}" image_contains: "${tokenId}" market_status: "LISTED" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
         }
-        ownedContractInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract: "${token.collectionId}" image_contains: "${tokenId}" } orderBy: price orderDirection: asc ) {
+        ownedContractInfos: contractInfos(first: 1 where: { owner: "${address.toLowerCase()}" contract	: "${token.collectionId}" image_contains: "${tokenId}" } orderBy: price orderDirection: asc ) {
           ${infoAttributes}
         }
         listedContractInfos: contractInfos(first: 1 where: { contract: "${token.collectionId}" image_contains: "${tokenId}" market_status: "LISTED" } orderBy: price orderDirection: asc ) {
@@ -1537,7 +1537,9 @@ export const actions = {
     let multiNftInfo = null
     let multiNftCollection = null
     if (isMultiNft) {
-      multiNftInfo = data.contractInfos[0]
+	  if (data.contractInfos.length > 0) {
+		multiNftInfo = data.contractInfos[0]
+	  }
       if (data.ownedListedInfos.length > 0) {
         multiNftInfo = data.ownedListedInfos.find(item => {
 		  const nftId = item.image.substring(item.image.lastIndexOf('/') + 1).split('.')[0]
@@ -1562,7 +1564,8 @@ export const actions = {
 		  return nftId === token.id
 		})
       }
-    }
+	}
+
     const nftInfo = {
       ...(isMultiNft ? multiNftInfo : data.contractInfo),
       multiNft: multiNftCollection,

@@ -117,7 +117,7 @@ export default {
 		})
 		this.$router.push('/lending')
 	  } else {
-		this.$router.push(`/collections/CBCN/${this.certificate.contract_id}`)
+		this.$router.push(`/collections/CBCN/${this.certificate.month}`)
 	  }
     }
   }

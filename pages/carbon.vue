@@ -197,8 +197,9 @@ export default {
 		let currYearCertCount = 0
 		const bonusNft = this.ownedCertificates.find(item => item.year === currYear && item.token_type === CERTIFICATE_TOKEN_TYPE.BONUS)
 		this.bonusPurchased = !!bonusNft
+		const invisibleList = []
 		newList.forEach((item, index) => {
-		  const foundIndex = this.ownedCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month )
+		  const foundIndex = this.ownedCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month)
 		  if (foundIndex >= 0) {
 			newList[index] = {
 			  ...this.ownedCertificates[foundIndex],
@@ -215,10 +216,13 @@ export default {
 				newList[index].offset = false
 				newList[index].contract_id = this.saleCertificates[foundSaleIndex].contract_id
 				newList[index].price = this.saleCertificates[foundSaleIndex].price
+			  } else {
+				invisibleList.push(item)
 			  }
 			}
 		  }
 		})
+		newList = newList.filter(item => !invisibleList.find(invItem => item.year === invItem.year && item.month === invItem.month))
 		this.ownedCertificates.forEach(oItem => {
 		  const foundIndex = newList.findIndex(item => oItem.year === item.year && oItem.month === item.month)
 		  if (foundIndex < 0) {
