@@ -1235,7 +1235,7 @@ export const actions = {
 		  connect_status: 'Error'
 		}
 	  })
-      throw new Error(error);
+      console.log(error)
     }
   },
   addEventHandlerForWalletProvider({state, commit, dispatch}, provider) {
@@ -1844,7 +1844,7 @@ export const actions = {
 		  mint_key
 		  price_total
 		}
-		contracts(first: 1 where: { contract: "CBCN" }) {
+		contracts(first: 1 where: { nftSymbol: "CBCN" }) {
 		  mint_count
 		})
       }`
