@@ -128,7 +128,7 @@ export default {
       this.$emit('close', e)
       this.$store.commit('changeSuccessTransferToken', false)
     },
-    closeSuccessModal() {
+    closeSuccessModal(e) {
       this.$emit('done', e)
       this.$store.commit('changeSuccessTransferToken', false)
     },

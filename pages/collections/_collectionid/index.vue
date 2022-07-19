@@ -174,7 +174,7 @@ import {BigNumber} from 'ethers'
 export default {
   data() {
     return {
-      pageLoading: true,
+      pageLoading: false,
       loading: false,
       nftLoading: false,
       showTraitsFilter: false,
