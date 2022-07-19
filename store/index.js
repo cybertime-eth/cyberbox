@@ -873,7 +873,7 @@ export const actions = {
       ...othersSale
     ]
   },
-  async getLatestListings({dispatch}) {
+  async getLatestListings({state, dispatch}) {
     const query = gql`
       query Sample {
         contractLists: contractLists(first: 48 orderBy: updatedAt, orderDirection: desc) {
@@ -912,6 +912,7 @@ export const actions = {
 	  contractInfos: data.contractLists,
 	  multiNFTs: data.multiNFTs
 	})
+	contractInfos = contractInfos.filter(item => !state.multiNftSymbols.includes(item.contract) || (state.multiNftSymbols.includes(item.contract) && item.list_count > 0))
 	contractInfos = contractInfos.slice(0, 12)
 	contractInfos = await dispatch('getRarirtyCollections', { contractInfos })
     return contractInfos
