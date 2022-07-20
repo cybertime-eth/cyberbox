@@ -3,8 +3,8 @@
 	<img class="page__loading-img" :src="getCDNImage('loading_page_anim.webp')" alt="loading">
   </div>
   <section class="refi container-xl" v-else>
-    <h1 class="refi__title">Regenerate Nature by trading NFTs</h1>
-    <h3 class="refi__subtitle">CyberBox is the first NFT marketplace with ReFi integration</h3>
+    <h1 class="refi__title">Regenerate nature with the power of NFTs</h1>
+    <h3 class="refi__subtitle">Cyberbox is a ReFi NFT marketplace that allows you to trade NFTs and automatically offset CO2</h3>
     <div class="refi__block">
       <div class="refi__block-info">
         <div class="refi__block-info-buttons">
