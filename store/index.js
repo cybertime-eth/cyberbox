@@ -912,6 +912,9 @@ export const actions = {
 	  contractInfos: data.contractLists,
 	  multiNFTs: data.multiNFTs
 	})
+	// hide special NOM nft with wrong image temporarily
+	contractInfos = contractInfos.filter(item => item.contract !== 'nomdom' || (item.contract === 'nomdom' && item.image !== '0x73bc38119131ba6787db4dbe24ecad911df955ffb98afd02ad3cac94d28543d1'))
+
 	contractInfos = contractInfos.filter(item => !state.multiNftSymbols.includes(item.contract) || (state.multiNftSymbols.includes(item.contract) && item.list_count > 0))
 	contractInfos = contractInfos.slice(0, 12)
 	contractInfos = await dispatch('getRarirtyCollections', { contractInfos })
