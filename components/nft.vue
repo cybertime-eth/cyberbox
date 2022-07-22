@@ -176,7 +176,7 @@ export default {
 		}
     const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
     let cdnRoot = CDN_ROOT
-    if (contractName === 'daos') {
+    if (this.$store.state.availableCDNCollections.includes(contractName)) {
       cdnRoot = COLLECTION_CDN_ROOT + '280/'
       fileExtension = 'cwebp'
     }
