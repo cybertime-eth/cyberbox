@@ -7,7 +7,7 @@
                         <span class="referral__main-summary-title-invite">Invite your friends</span> and earn<br/>money on helping nature
                     </h2>
                     <p class="referral__main-summary-description">Get income 10% from CyberBox profit of NFT Offset Certificate within one year. Just send your referral link to friends and acquaintances, tell us how personal <b>NFT Offset certificates</b> work and get passive income!</p>
-                    <a class="referral__main-summary-reward">How to get rewarded?</a>
+                    <a class="referral__main-summary-reward" @click="showRewardModal = true">How to get rewarded?</a>
                 </div>
                 <div class="referral__main-info">
                     <div class="referral__main-info-block">
@@ -101,19 +101,23 @@
                 </div>
             </div>
         </div>
+		<RewardInfoModal @closeModal="showRewardModal = false" v-if="showRewardModal"/>
     </section>
 </template>
 
 <script>
 import ShareFrame from '@/components/ShareFrame.vue'
+import RewardInfoModal from '@/components/modals/rewardInfoModal.vue'
 export default {
   components: {
-    ShareFrame
+	ShareFrame,
+	RewardInfoModal
   },
   data() {
     return {
       addressCopied: false,
       linkShared: false,
+      showRewardModal: false,
       activeFilter: 0,
       referralUrl: '',
       certificates: [],
