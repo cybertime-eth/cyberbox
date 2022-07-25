@@ -31,7 +31,7 @@
             <p class="certificate__item-description" :class="{ 'not-sale': owner || !saleAvailable }" v-else>{{ certificateDescription }}</p>
         </div>
 		<transfer :nft="certificate" @close="closeTransfer($event)" v-if="showTransferModal" />
-    </div>    
+    </div>    	
 </template>
 
 <script>
@@ -44,7 +44,8 @@ export default {
   data() {
 	return {
 	  showMoreMenu: false,
-	  showTransferModal: false
+	  showTransferModal: false,
+	  showStatus: false
 	}
   },
   computed: {

@@ -38,6 +38,31 @@
 					<div class="lending__block-info-minted" v-else>
 						<p class="lending__block-info-minted-description">Congratulations!<br/>You have already bought an NFT Carbon Offset Certificate this month.</p>
 					</div>
+					<div class="lending__block-referral" v-if="address">
+						<div class="lending__block-referral-info">
+							<p class="lending__block-referral-info-name">Earn passive income by helping nature</p>
+							<dropdown-menu class="lending__block-referral-info-dropdown" :hover="true" :right="true" v-model="showReferralInfo">
+								<img class="lending__block-referral-info-trigger" src="/question.svg" alt="question" @click="handleClickReferralInfo">
+								<div slot="dropdown">
+									<p class="lending__block-referral-info-content">
+										1. Share your referral link<br/>
+										2. Invite your friends to buy a carbon certificate on the mint page<br/>
+										3. Earn CELO for each purchased certificate through your referral link<br/>
+									</p>
+								</div>
+							</dropdown-menu>
+						</div>
+						<div class="lending__block-referral-box">
+							<div class="lending__block-referral-box-info" @click="copyReferralLink">
+								<p class="lending__block-referral-box-info-name">{{ referralUrlCopied ? 'Copped' : 'Referral Link:' }}</p>
+								<p class="lending__block-referral-box-info-url">{{ cuttenReferralLink(this.referralUrl) }}</p>
+							</div>
+							<a class="lending__block-referral-box-link" href="/referral">
+								<span class="lending__block-referral-box-link-name">Referral program</span>
+								<img class="lending__block-referral-box-link-icon" src="/array-right.svg" alt="right">
+							</a>
+						</div>
+					</div>
 					<div class="lending__block-info-minted-next" v-if="nextMintVisible">
 						<p class="lending__block-info-minted-next-name">Mint the next NFT in:</p>
 						<div class="lending__block-info-minted-next-timer">
@@ -62,10 +87,32 @@
                             <div class="lending__collection-item-box no-bg">
                                 <img class="lending__collection-item-box-img" :src="certificate.image" alt="certificate">
                                 <img class="lending__collection-item-box-checked" :src="getCDNImage('checked-circle.svg')" alt="checkmark" v-if="certificateOwner(certificate)">
+								<div class="lending__collection-item-box-status">
+									<div class="lending__collection-item-box-status-item">
+										<p class="lending__collection-item-box-status-item-name">Status:</p>
+										<p class="lending__collection-item-box-status-item-info">{{ getCertificateStatus(certificate) }}</p>
+									</div>
+									<div class="lending__collection-item-box-status-item">
+										<p class="lending__collection-item-box-status-item-name">Sold:</p>
+										<p class="lending__collection-item-box-status-item-info">{{ getCertificatePrice(certificate) }}</p>
+									</div>
+									<div class="lending__collection-item-box-status-item">
+										<p class="lending__collection-item-box-status-item-name">Offset:</p>
+										<p class="lending__collection-item-box-status-item-info">{{ getCertificateOffset(certificate) }}</p>
+									</div>
+								</div>
                             </div>
                         </div>
                     </div>
                 </div>
+				<div class="lending__list-exclusive">
+					<div class="lending__list-exclusive-info">
+						<h2 class="lending__list-exclusive-info-title">13th Exclusive NFT</h2>
+						<p class="lending__list-exclusive-info-description">Exchange all 12 NFTs for a unique NFT and get a chance to get into the closed ReFi DAO club</p>
+						<p class="lending__list-exclusive-info-read" @click="showExchangeBonus=true">Read more &#x276F;</p>
+					</div>
+					<img class="lending__list-exclusive-img" :src="getCDNImage('certificates/rare.webp')" alt="bonus">
+				</div>
             </div>
 			<div class="lending__reason lending__guide">
 				<h2 class="lending__title">Why buy NFT and offset carbon?</h2>
@@ -148,25 +195,33 @@
             </div>
         </div>
         <BuyToken v-if="showBuyToken" :nft="certificate" :priceToken="priceToken" :balance="balance" @closeModal="closeModal"/>
-        <SuccessfullBuy v-if="showSuccessModal===true" :image="certificate.image" :name="certificate.name" :certificate="true"/>
+		<ExchangeBonus @closeModal="showExchangeBonus = false" :bonusAvailable="bonusAvailable" @onExchange="showExchangeTokenModal" v-if="showExchangeBonus"/>
+		<ExchangeToken @closeModal="showExchangeToken = false" v-if="showExchangeToken"/>
+		<SuccessfullBuy v-if="showSuccessModal===true" :image="nftImage" :name="nftName" :certificate="true"/>
     </section>
 </template>
 
 <script>
 import { CERTIFICATE_TOKEN_TYPE, CDN_ROOT } from '@/config'
 import BuyToken from '@/components/modals/buyToken'
+import ExchangeBonus from '@/components/modals/exchangeBonus.vue'
+import ExchangeToken from '@/components/modals/exchangeToken.vue'
 import SuccessfullBuy from '@/components/modals/successBuy'
 const CERTIFICATE_MINT_PRICE = 15
 
 export default {
   components: {
-    BuyToken,
+	BuyToken,
+	ExchangeBonus,
+	ExchangeToken,
     SuccessfullBuy
   },
   data() {
     return {
 	  certificateList: [],
 	  faqList: [],
+	  referralUrl: '',
+	  referralUrlCopied: false,
       showBuyToken: false,
       certificate: {},
       balance: 0,
@@ -175,6 +230,11 @@ export default {
 	  bought: false,
 	  nextMintTimer: null,
 	  nextMintVisible: false,
+	  showReferralInfo: false,
+	  bonusAvailable: false,
+	  showExchangeBonus: false,
+	  showExchangeToken: false,
+	  bonusPurchased: false,
 	  leftMintTime: 0,
 	  nextMintDay: 0,
 	  nextMintHour: 0,
@@ -186,6 +246,20 @@ export default {
     address() {
       return this.$store.state.address
 	},
+	nftImage() {
+	  if (!this.bonusPurchased) {
+		return this.certificate.image
+	  } else {
+		return this.getCDNImage('certificates/rare.webp')
+	  }
+	},
+	nftName() {
+	  if (!this.bonusPurchased) {
+		return this.certificate.name
+	  } else {
+		return 'Rare 2022'
+	  }
+	},
     currentDate() {
       const today = new Date()
       const month = today.toLocaleString('en-us', { month: 'long' })
@@ -193,8 +267,8 @@ export default {
     },
 	currentCertificateImage() {
 	  const date = new Date()
-    const currMonth = date.getMonth() + 1
-    return CDN_ROOT + `CBCN/detail/${currMonth}.png`
+      const currMonth = date.getMonth() + 1
+      return CDN_ROOT + `CBCN/detail/${currMonth}.png`
 	},
     ownedCertificates() {
 	  return this.$store.state.certificateList
@@ -204,7 +278,7 @@ export default {
 	},
     showSuccessModal() {
       return this.$store.state.successBuyToken
-    }
+	}
   },
   beforeDestroy() {
 	if (this.nextMintTimer) {
@@ -217,7 +291,7 @@ export default {
     const month = today.toLocaleString('en-us', { month: 'long' })
     this.certificate = {
       name: `Carbon Offset Certificate ${month} ${today.getFullYear()}`,
-      contract: 'CBCN',
+	  contract: 'CBCN',
       image: this.currentCertificateImage,
       price: CERTIFICATE_MINT_PRICE,
       nftid: currMonth + 1,
@@ -236,19 +310,21 @@ export default {
 	this.$store.commit('changeSuccessBuyToken', false)
   },
   async mounted() {
-    this.updateCertificateList()
+	this.updateReferralUrl()
+	this.updateCertificateList()
     await this.loadBalance()
   },
   watch: {
     address() {
       if (this.$store.state.address) {
+		this.updateReferralUrl()
         if (this.certificateList.length === 0) {
           this.updateCertificateList()
         }
-        
+
         if (!this.balance) {
           this.loadBalance()
-        }
+		}
       }
     },
     ownedCertificates() {
@@ -256,8 +332,11 @@ export default {
 	},
     showSuccessModal() {
       if (this.$store.state.successBuyToken) {
-        this.showBuyToken = false
+		this.showBuyToken = false
+		this.showExchangeToken = false
+		this.bonusPurchased = true
       } else {
+		this.showExchangeToken = false
         this.loadMyCertificates()
       }
     }
@@ -272,7 +351,36 @@ export default {
 	certificateBuyAvailable(certificate) {
 	  const date = new Date()
 	  return !this.certificateOwner(certificate) && (certificate.offset || (!certificate.offset && certificate.year === date.getFullYear() && certificate.month === (date.getMonth() + 1) && certificate.price))
-    },
+	},
+	certificateMinted(certificate) {
+	  const date = new Date()
+	  const currYear = date.getFullYear()
+	  const currMonth = date.getMonth() + 1
+	  return certificate.year < currYear || (certificate.year === currYear && certificate.month < currMonth)
+	},
+	getCertificateStatus(certificate) {
+	  
+	  if (certificate.owner || this.certificateMinted(certificate)) {
+		return 'Minted'
+	  } else {
+		return certificate.offset ? 'Minting' : 'Comming soon'
+	  }
+	},
+	getCertificatePrice(certificate) {
+	  if (certificate.owner || certificate.offset || this.certificateMinted(certificate)) {
+		return '15'
+	  } else {
+		return '-'
+	  }
+	},
+	getCertificateOffset(certificate) {
+	  if (certificate.owner || certificate.offset || this.certificateMinted(certificate)) {
+		const offset = 15 * (55 / 1000) * this.$store.state.cMCO2Price
+		return `${offset.toFixed(1)} ton CO2`
+	  } else {
+		return '-'
+	  }
+	},
     async loadBalance() {
       if (this.$store.state.address) {
         this.balance = await this.$store.dispatch('getBalance')
@@ -283,12 +391,34 @@ export default {
     },
     loadMyCertificates() {
       this.$store.dispatch('getCertificates')
-    },
+	},
+	updateReferralUrl() {
+	  if (process && process.browser && this.address) {
+		if (this.$route.query.referral && this.address.toLowerCase() === this.$route.query.referral.toLowerCase()) {
+		  this.certificate = {
+			...this.certificate,
+			referral: true
+		  }
+		}
+		this.referralUrl = location.origin + location.pathname + `?referral=${this.$store.state.fullAddress}`
+	  }
+	},
+	handleClickReferralInfo() {
+	  if (this.isMobile() && this.showReferralInfo) {
+		this.showReferralInfo = false
+	  }
+	},
+	copyReferralLink() {
+	  this.referralUrlCopied = true
+	  this.$copyText(this.referralUrl)
+	  setTimeout(() => this.referralUrlCopied = false, 1000)
+	},
     updateCertificateList() {
 	  const today = new Date()
 	  const currYear = today.getFullYear()
 	  const currMonth = today.getMonth() + 1
 	  const newList = JSON.parse(JSON.stringify(this.certificateList))
+	  let currYearCertCount = 0
       newList.forEach((item, index) => {
         const foundIndex = this.ownedCertificates.findIndex(oItem => oItem.year === item.year && oItem.month === item.month)
         if (foundIndex >= 0) {
@@ -314,6 +444,7 @@ export default {
 	  const ownedCount = this.ownedCertificates.filter(item => item.year === currYear && item.token_type === CERTIFICATE_TOKEN_TYPE.MONTH).length
 	  const bonusNft = this.ownedCertificates.find(item => item.year === currYear && item.token_type === CERTIFICATE_TOKEN_TYPE.BONUS)
 	  this.nextMintVisible = ownedCount < 12 && !bonusNft
+	  this.bonusAvailable = ownedCount === 12 && !bonusNft
 	  if (this.nextMintVisible && !this.nextMintTimer) {
 		const currTime = today.getTime()
 		const nextMintTime = new Date(today.getFullYear(), today.getMonth() + 1, 1).getTime()
@@ -338,6 +469,10 @@ export default {
 	},
 	formatClockTime(time) {
 	  return time < 10 ?  `0${time}` : time
+	},
+	showExchangeTokenModal() {
+	  this.showExchangeBonus = false
+	  this.showExchangeToken = true
 	},
 	showFAQDetail(index) {
 	  const newFaqList = JSON.parse(JSON.stringify(this.faqList))
@@ -440,7 +575,7 @@ export default {
 		  color: $green;
 		}
 		&-next {
-		  padding-top: 4.8rem;
+		  padding-top: 3.2rem;
 		  &-name {
 			font-weight: 400;
 			font-size: 1.4rem;
@@ -471,6 +606,84 @@ export default {
 		}
 	  }
     }
+	&-referral {
+	  width: 100%;
+	  margin-top: 3.2rem;
+	  padding: 1.6rem;
+	  border: 1px solid $modalColor;
+	  border-radius: 0.8rem;
+	  &-info {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		&-name {
+		  background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
+		  -webkit-background-clip: text;
+		  -webkit-text-fill-color: transparent;
+		  font-weight: 600;
+		  font-size: 1.4rem;
+		}
+		&-trigger {
+		  width: 1.5rem;
+		}
+		::v-deep .dropdown-menu {
+		  top: -1rem !important;
+		  width: 23.4rem;
+		  padding: 0.8rem;
+		  background: rgba(0, 0, 0, 0.57);
+		  backdrop-filter: blur(13px);
+		  border-radius: 4px;
+		  transform: translateY(-100%);
+		}
+		&-content {
+		  font-size: 1.2rem;
+    	  line-height: 1.6rem;
+    	  color: $white;
+		}
+	  }
+	  &-box {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-top: 1.6rem;
+		&-info {
+		  display: flex;
+		  align-items: center;
+		  padding: 0.8rem 1.6rem;
+		  border: 1px solid $modalColor;
+		  border-radius: 2.5rem;
+		  cursor: pointer;
+		  &-name {
+			width: 8.7rem;
+			margin-right: 1.6rem;
+			white-space: nowrap;
+			font-size: 1.4rem;
+		  }
+		  &-url {
+			font-size: 1.4rem;
+			font-weight: 600;
+		  }
+		}
+		&-link {
+		  display: flex;
+		  align-items: center;
+		  cursor: pointer;
+		  &-name {
+			margin-right: 1rem;
+			font-size: 1.4rem;
+			color: $grayLight;
+		  }
+		  &-icon {
+			width: 0.5rem;
+		  }
+		  &:hover {
+			.lending__block-referral-box-link-name {
+			  text-decoration: underline;
+			}
+		  }
+		}
+	  }
+	}
   }
   &__title {
     max-width: 59rem;
@@ -481,11 +694,52 @@ export default {
     text-align: center;
   }
   &__list {
-    padding: 0 7rem;
+	padding: 0 7rem;
+	&-exclusive {
+	  position: relative;
+	  display: flex;
+	  justify-content: space-between;
+	  width: 60.2rem;
+	  background: $white;
+	  margin: 8.9rem auto;
+	  padding: 2.4rem;
+	  box-shadow: 0px 4px 19px rgba(172, 83, 169, 0.2);
+	  border-radius: 1.2rem;
+	  &::after {
+		position: absolute;
+		top: -.1rem; bottom: -.1rem;
+		left: -.1rem; right: -.1rem;
+		background: linear-gradient(93.06deg, #FC2EF5 8.21%, #5489D8 50.57%, #2CFF64 100%);
+		content: '';
+		z-index: -1;
+		border-radius: 1.2rem;
+	  }
+	  &-info {
+		width: 25.7rem;
+		&-title {
+		  font-family: Cabin-Bold;
+		  font-weight: 700;
+		  font-size: 3.2rem;
+		}
+		&-description, &-read {
+		  margin-top: 1.6rem;
+		  font-size: 1.4rem;
+		}
+		&-read {
+		  font-weight: 600;
+		  color: $pink;
+		  cursor: pointer;
+		}
+	  }
+	  &-img {
+		width: 19.4rem;
+		height: 19.4rem;
+		border-radius: 0.4rem;
+	  }
+	}
   }
   &__collection {
     padding-top: 8.2rem;
-    padding-bottom: 6.6rem;
     &-description {
       max-width: 36.7rem;
       margin: 1rem auto 0;
@@ -533,7 +787,45 @@ export default {
           width: 2.5rem;
           height: 2.5rem;
           opacity: 0.9;
-        }
+		}
+		&-status {
+		  display: none;
+		  position: absolute;
+		  left: 0;
+		  top: 0;
+		  right: 0;
+		  bottom: 0;
+		  background: rgba(0, 0, 0, 0.23);
+		  backdrop-filter: blur(8px);
+		  border-radius: 0.4rem;
+		  padding: 0 1.6rem 1.6rem 1.6rem;
+		  &-item {
+			display: flex;
+			align-items: flex-end;
+			margin-bottom: 0.8rem;
+			&:last-child {
+			  margin: 0;
+			}
+			&-name {
+			  width: 4.6rem;
+			  margin-right: 0.8rem;
+			  font-size: 1.4rem;
+			  color: $border2;
+			}
+			&-info {
+			  font-weight: 600;
+			  font-size: 1.4rem;
+			  color: $white;
+			}
+		  }
+		}
+		&:hover, &:focus-within {
+		  .lending__collection-item-box-status {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+		  }
+		}
 	  }
 	  &.available {
 		.lending__collection-item-date {
@@ -738,10 +1030,57 @@ export default {
 			padding-top: 3rem;
 		  }
 		}
-      }
+	  }
+	  &-referral {
+		position: relative;
+		width: calc(100% - 1.6rem);
+		padding-left: 0.8rem;
+		padding-right: 0.8rem;
+	    &-info {
+		  display: block;
+		  &-dropdown {
+			position: absolute;
+			bottom: 1.8rem;
+			right: 1rem;
+		  }
+		  ::v-deep .dropdown-menu {
+			top: calc(100% + 0.8rem) !important;
+			transform: none;
+		  }
+	  	}
+	    &-box {
+		  display: block;
+		  margin-top: 2rem;
+		  &-link {
+			margin-top: 1.6rem;
+		  }
+		}
+	  }
     }
     &__list {
-      padding: 0 0.8rem;
+	  padding: 0 0.8rem;
+	  &-exclusive {
+		display: block;
+		width: calc(100% - 1.6rem);
+		margin-top: 3.6rem;
+		margin-bottom: 4.8rem;
+		padding-left: 0.8rem;
+		padding-right: 0.8rem;
+		&-info {
+		  width: 100%;
+		  &-title {
+			font-family: OpenSans-Regular;
+			font-size: 1.8rem;
+		  }
+		  &-description {
+			margin-top: 0.8rem;
+		  }
+		}
+		&-img {
+		  display: block;
+		  margin: 2.4rem auto 0;
+		}
+	  }
     }
     &__title {
       max-width: 100%;
@@ -773,7 +1112,20 @@ export default {
           &-checked {
             width: 2rem;
             height: 2rem;
-          }
+		  }
+		  &-status {
+			padding: 0 1rem 1rem 1rem;
+			&-item {
+			  &-name {
+				width: 3.6rem;
+			    margin-right: 0.6rem;
+			    font-size: 1rem;
+			  }
+			  &-info {
+				font-size: 1rem;
+			  }
+			}
+		  }
         }
       }
     }

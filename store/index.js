@@ -1159,6 +1159,57 @@ export const actions = {
     commit('setCertificateList', certificates)
   },
 
+  async getReferralData({getters}, filter) {
+	const address = getters.storedAddress
+	if (!address) return null
+
+	try {
+	  const date = new Date()
+	  const year = date.getFullYear()
+	  const month = date.getMonth() + 1
+	  let day = date.getDate()
+	  const dateFilters = []
+	  if (filter === 0) {
+		dateFilters.push(`"${year}-${month}-${day}"`)
+	  } else {
+		const filterDays = filter === 1 ? 7 : 30
+		for (let i = 1; i <= filterDays; i++) {
+		  if (day - i < 0) {
+			date.setMonth(month - 2)
+		  }
+		  date.setDate(day - i)
+
+		  const filterMonth = date.getMonth() + 1		
+		  const filterDate = date.getDate()
+		  dateFilters.push(`"${year}-${filterMonth}-${filterDate}"`)
+		}
+	  }
+	  const query = gql`
+	  query Sample {
+		certReferUsers(first: 1 where: { referAddress: "${address}" }) {
+			id
+			referAddress
+			refer_fee
+			totalCount
+		}
+		certReferStatistics(first: 10 where: { referAddress_not: "${address}" date_key_in: [${dateFilters}] }) {
+			id
+			referAddress
+			refer_fee
+			totalCount
+		}
+	  }`
+	  const data = await this.$graphql.default.request(query)
+	  return {
+		userInfo: data.certReferUsers.length > 0 ? data.certReferUsers[0] : null,
+		userList: data.certReferStatistics
+	  }
+	} catch (e) {
+	  console.log(e)
+	  return null
+	}
+  },
+
   // AUTHORIZATION
 
   async handleAccountChanged({commit, dispatch}, account) {
@@ -2244,6 +2295,43 @@ export const actions = {
 	  const contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
 	  const parsePrice = ethers.utils.parseEther(String(price))
 	  const result = await contract.methods.mintMonthNFT().send({
+	    from: account,
+	    value: parsePrice,
+	    gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+	  })
+
+	  const certCollection = (state.collectionList || []).find(item => item.route === 'CBCN')
+	  provider.once(result, async () => {
+		const currMonth = new Date().toLocaleString('en-us', { month: 'long' })
+		commit('changeSuccessBuyToken', true)
+		this._vm.sendEvent({
+		  category: 'Certificates',
+		  eventName: 'mint_success',
+		  properties: {
+		    mint_success: currMonth
+		  }
+		})
+		dispatch('reportRevenue', certCollection)
+	  })
+	} catch (e) {
+	  console.log(e)
+	  commit('changeSuccessBuyToken', 'error')
+	}
+  },
+
+  async mintReferralCertificate({state, getters, commit, dispatch}, price) {
+	try {
+	  const address = getters.storedAddress
+	  if (!address) return
+	  const ethereumProvider = getters.provider
+	  const provider = new ethers.providers.Web3Provider(ethereumProvider)
+	  const web3 = new Web3(ethereumProvider)
+	  const accounts = await web3.eth.getAccounts()
+	  const account = accounts[0]
+	  const kit = ContractKit.newKitFromWeb3(web3)
+	  const contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
+	  const parsePrice = ethers.utils.parseEther(String(price))
+	  const result = await contract.methods.mintMonthNFTFromRefer(address).send({
 	    from: account,
 	    value: parsePrice,
 	    gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
