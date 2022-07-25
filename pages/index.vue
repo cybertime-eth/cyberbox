@@ -1,7 +1,8 @@
 <template>
-  <div class="page__loading" v-if="loading">
+  <!-- <div class="page__loading" v-if="loading">
 	<img class="page__loading-img" :src="getCDNImage('loading_page_anim.webp')" alt="loading">
-  </div>
+  </div> -->
+  <PageLoader v-if="loading"/>
   <section class="refi container-xl" v-else>
     <h1 class="refi__title">Regenerate nature with the power of NFTs</h1>
     <h3 class="refi__subtitle">Cyberbox is a ReFi NFT marketplace that allows you to trade NFTs and automatically offset CO2</h3>
@@ -129,9 +130,11 @@
   </section>
 </template>
 <script>
+import PageLoader from '@/components/utility/PageLoader.vue'
 import nft from '@/components/nft.vue'
 export default {
   components: {
+	PageLoader,
     nft
   },
   data() {

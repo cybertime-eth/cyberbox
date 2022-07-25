@@ -79,23 +79,6 @@ export default {
   -webkit-text-fill-color: transparent;
 }
 
-.page__loading {
-	position: fixed;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	background: $white;
-	z-index: 1;
-	&-img {
-	  position: absolute;
-	  left: 50%;
-	  top: 50%;
-	  width: 20rem;
-	  transform: translate(-50%, -50%);
-	}
-}
-
 //DEFAULT STYLES
 
 html,
