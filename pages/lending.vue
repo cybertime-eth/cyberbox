@@ -55,7 +55,7 @@
 						<div class="lending__block-referral-box">
 							<div class="lending__block-referral-box-info" @click="copyReferralLink">
 								<p class="lending__block-referral-box-info-name">{{ referralUrlCopied ? 'Copped' : 'Referral Link:' }}</p>
-								<p class="lending__block-referral-box-info-url">{{ cuttenReferralLink }}</p>
+								<p class="lending__block-referral-box-info-url">{{ cuttenReferralLink(this.referralUrl) }}</p>
 							</div>
 							<a class="lending__block-referral-box-link" href="/referral">
 								<span class="lending__block-referral-box-link-name">Referral program</span>
@@ -87,6 +87,20 @@
                             <div class="lending__collection-item-box no-bg">
                                 <img class="lending__collection-item-box-img" :src="certificate.image" alt="certificate">
                                 <img class="lending__collection-item-box-checked" :src="getCDNImage('checked-circle.svg')" alt="checkmark" v-if="certificateOwner(certificate)">
+								<div class="lending__collection-item-box-status">
+									<div class="lending__collection-item-box-status-item">
+										<p class="lending__collection-item-box-status-item-name">Status:</p>
+										<p class="lending__collection-item-box-status-item-info">{{ getCertificateStatus(certificate) }}</p>
+									</div>
+									<div class="lending__collection-item-box-status-item">
+										<p class="lending__collection-item-box-status-item-name">Sold:</p>
+										<p class="lending__collection-item-box-status-item-info">{{ getCertificatePrice(certificate) }}</p>
+									</div>
+									<div class="lending__collection-item-box-status-item">
+										<p class="lending__collection-item-box-status-item-name">Offset:</p>
+										<p class="lending__collection-item-box-status-item-info">{{ getCertificateOffset(certificate) }}</p>
+									</div>
+								</div>
                             </div>
                         </div>
                     </div>
@@ -264,16 +278,6 @@ export default {
 	},
     showSuccessModal() {
       return this.$store.state.successBuyToken
-	},
-	cuttenReferralLink() {
-	  if (this.referralUrl) {
-		const splits = this.referralUrl.split(/^https?:\/\//)
-		const urlSuffix = !this.isMobile() ? splits[1].substr(-11) : splits[1].substr(-4)
-		const resultUrl = location.protocol + '//' + splits[1].substr(0, 2) + '...' + urlSuffix
-		return resultUrl
-	  } else {
-		return ''
-	  }
 	}
   },
   beforeDestroy() {
@@ -287,7 +291,7 @@ export default {
     const month = today.toLocaleString('en-us', { month: 'long' })
     this.certificate = {
       name: `Carbon Offset Certificate ${month} ${today.getFullYear()}`,
-      contract: 'CBCN',
+	  contract: 'CBCN',
       image: this.currentCertificateImage,
       price: CERTIFICATE_MINT_PRICE,
       nftid: currMonth + 1,
@@ -317,7 +321,7 @@ export default {
         if (this.certificateList.length === 0) {
           this.updateCertificateList()
         }
-        
+
         if (!this.balance) {
           this.loadBalance()
 		}
@@ -347,7 +351,36 @@ export default {
 	certificateBuyAvailable(certificate) {
 	  const date = new Date()
 	  return !this.certificateOwner(certificate) && (certificate.offset || (!certificate.offset && certificate.year === date.getFullYear() && certificate.month === (date.getMonth() + 1) && certificate.price))
-    },
+	},
+	certificateMinted(certificate) {
+	  const date = new Date()
+	  const currYear = date.getFullYear()
+	  const currMonth = date.getMonth() + 1
+	  return certificate.year < currYear || (certificate.year === currYear && certificate.month < currMonth)
+	},
+	getCertificateStatus(certificate) {
+	  
+	  if (certificate.owner || this.certificateMinted(certificate)) {
+		return 'Minted'
+	  } else {
+		return certificate.offset ? 'Minting' : 'Comming soon'
+	  }
+	},
+	getCertificatePrice(certificate) {
+	  if (certificate.owner || certificate.offset || this.certificateMinted(certificate)) {
+		return '15'
+	  } else {
+		return '-'
+	  }
+	},
+	getCertificateOffset(certificate) {
+	  if (certificate.owner || certificate.offset || this.certificateMinted(certificate)) {
+		const offset = 15 * (55 / 1000) * this.$store.state.cMCO2Price
+		return `${offset.toFixed(1)} ton CO2`
+	  } else {
+		return '-'
+	  }
+	},
     async loadBalance() {
       if (this.$store.state.address) {
         this.balance = await this.$store.dispatch('getBalance')
@@ -361,6 +394,12 @@ export default {
 	},
 	updateReferralUrl() {
 	  if (process && process.browser && this.address) {
+		if (this.$route.query.referral && this.address.toLowerCase() === this.$route.query.referral.toLowerCase()) {
+		  this.certificate = {
+			...this.certificate,
+			referral: true
+		  }
+		}
 		this.referralUrl = location.origin + location.pathname + `?referral=${this.$store.state.fullAddress}`
 	  }
 	},
@@ -748,7 +787,45 @@ export default {
           width: 2.5rem;
           height: 2.5rem;
           opacity: 0.9;
-        }
+		}
+		&-status {
+		  display: none;
+		  position: absolute;
+		  left: 0;
+		  top: 0;
+		  right: 0;
+		  bottom: 0;
+		  background: rgba(0, 0, 0, 0.23);
+		  backdrop-filter: blur(8px);
+		  border-radius: 0.4rem;
+		  padding: 0 1.6rem 1.6rem 1.6rem;
+		  &-item {
+			display: flex;
+			align-items: flex-end;
+			margin-bottom: 0.8rem;
+			&:last-child {
+			  margin: 0;
+			}
+			&-name {
+			  width: 4.6rem;
+			  margin-right: 0.8rem;
+			  font-size: 1.4rem;
+			  color: $border2;
+			}
+			&-info {
+			  font-weight: 600;
+			  font-size: 1.4rem;
+			  color: $white;
+			}
+		  }
+		}
+		&:hover, &:focus-within {
+		  .lending__collection-item-box-status {
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+		  }
+		}
 	  }
 	  &.available {
 		.lending__collection-item-date {
@@ -1035,7 +1112,20 @@ export default {
           &-checked {
             width: 2rem;
             height: 2rem;
-          }
+		  }
+		  &-status {
+			padding: 0 1rem 1rem 1rem;
+			&-item {
+			  &-name {
+				width: 3.6rem;
+			    margin-right: 0.6rem;
+			    font-size: 1rem;
+			  }
+			  &-info {
+				font-size: 1rem;
+			  }
+			}
+		  }
         }
       }
     }

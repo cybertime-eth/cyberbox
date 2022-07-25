@@ -108,6 +108,16 @@ Vue.mixin({
 	getCDNImage(imageName) {
 	 return `${RESOURCE_CDN_ROOT}/${imageName}`
 	},
+	cuttenReferralLink(referralUrl) {
+	  if (referralUrl) {
+		const splits = referralUrl.split(/^https?:\/\//)
+		const urlSuffix = !this.isMobile() ? splits[1].substr(-11) : splits[1].substr(-4)
+		const resultUrl = location.protocol + '//' + splits[1].substr(0, 2) + '...' + urlSuffix
+		return resultUrl
+	  } else {
+		return ''
+	  }
+	},
 	sendEvent(event) {
 		try {
 			let properties = {}

@@ -117,7 +117,11 @@ export default {
 			price: this.nft.price
 		  })
 		} else {
-		  await this.$store.dispatch('mintCertificate', this.nft.price)
+		  if (!this.nft.referral) {
+			await this.$store.dispatch('mintCertificate', this.nft.price)
+		  } else {
+			await this.$store.dispatch('mintReferralCertificate', this.nft.price)
+		  }
 		}
       } catch (error) {
         this.closeModal()

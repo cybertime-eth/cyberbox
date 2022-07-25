@@ -21,7 +21,7 @@ export default {
     ]
   },
   // smaller-in-size JS bundle
-  modern: true,
+  // modern: true,
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '@/assets/var.css'
@@ -54,7 +54,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cert-minter-v2-two',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cert-minter-v2-refer-statistic',
         options: {}
       },
       ubeswap: {
