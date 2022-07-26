@@ -15,7 +15,7 @@
                             <div class="referral__main-info-block-withdraw-price">
                                 <div class="referral__main-info-block-withdraw-price-block">
                                     <img class="referral__main-info-block-withdraw-price-block-celo" :src="getCDNImage('celo.svg')" alt="celo">
-                                    <p class="referral__main-info-block-withdraw-price-block-value">0.3</p>
+                                    <p class="referral__main-info-block-withdraw-price-block-value">{{ ownerInfo.refer_fee ? ownerInfo.refer_fee.toFixed(1) : 0 }}</p>
                                 </div>
                                 <p class="referral__main-info-block-withdraw-ready">Ready for withdraw</p>
                             </div>
@@ -423,7 +423,8 @@ export default {
     }
     &-celo {
       display: flex;
-      align-items: center;
+	  align-items: center;
+	  justify-content: flex-end;
       &-img {
         width: 2rem;
         margin-right: 0.8rem;
