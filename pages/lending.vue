@@ -334,7 +334,9 @@ export default {
       if (this.$store.state.successBuyToken) {
 		this.showBuyToken = false
 		this.showExchangeToken = false
-		this.bonusPurchased = true
+		if (this.bonusAvailable) {
+		  this.bonusPurchased = true
+		}
       } else {
 		this.showExchangeToken = false
         this.loadMyCertificates()
