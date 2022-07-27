@@ -2323,7 +2323,7 @@ export const actions = {
 	}
   },
 
-  async mintReferralCertificate({state, getters, commit, dispatch}, price) {
+  async mintReferralCertificate({state, getters, commit, dispatch}, referralInfo) {
 	try {
 	  const address = getters.storedAddress
 	  if (!address) return
@@ -2334,8 +2334,8 @@ export const actions = {
 	  const account = accounts[0]
 	  const kit = ContractKit.newKitFromWeb3(web3)
 	  const contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
-	  const parsePrice = ethers.utils.parseEther(String(price))
-	  const result = await contract.methods.mintMonthNFTFromRefer(address).send({
+	  const parsePrice = ethers.utils.parseEther(String(referralInfo.price))
+	  const result = await contract.methods.mintMonthNFTFromRefer(referralInfo.referrer).send({
 	    from: account,
 	    value: parsePrice,
 	    gasPrice: ethers.utils.parseUnits('0.5', 'gwei')

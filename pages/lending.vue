@@ -399,7 +399,7 @@ export default {
 		if (this.$route.query.referral && this.$store.state.fullAddress.toLowerCase() !== this.$route.query.referral.toLowerCase()) {
 		  this.certificate = {
 			...this.certificate,
-			referral: true
+			referrer: this.$route.query.referral
 		  }
 		}
 		this.referralUrl = location.origin + location.pathname + `?referral=${this.$store.state.fullAddress}`

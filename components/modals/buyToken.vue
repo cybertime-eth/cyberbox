@@ -120,7 +120,10 @@ export default {
 		  if (!this.nft.referral) {
 			await this.$store.dispatch('mintCertificate', this.nft.price)
 		  } else {
-			await this.$store.dispatch('mintReferralCertificate', this.nft.price)
+			await this.$store.dispatch('mintReferralCertificate', {
+        price: this.nft.price,
+        referrer: this.nft.referrer
+      })
 		  }
 		}
       } catch (error) {
