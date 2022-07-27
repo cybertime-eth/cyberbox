@@ -118,12 +118,15 @@ export default {
 		  })
 		} else {
 		  if (!this.nft.referrer) {
-			await this.$store.dispatch('mintCertificate', this.nft.price)
+			await this.$store.dispatch('mintReferralCertificate', {
+          	  price: this.nft.price,
+          	  referrer: '0x454b9F80D3eA53000544eB7c9038D4bA8b84c324'
+        	})
 		  } else {
 			await this.$store.dispatch('mintReferralCertificate', {
-        price: this.nft.price,
-        referrer: this.nft.referrer
-      })
+        	  price: this.nft.price,
+          	  referrer: this.nft.referrer
+      		})
 		  }
 		}
       } catch (error) {
