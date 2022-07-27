@@ -396,7 +396,7 @@ export default {
 	},
 	updateReferralUrl() {
 	  if (process && process.browser && this.address) {
-		if (this.$route.query.referral && this.address.toLowerCase() === this.$route.query.referral.toLowerCase()) {
+		if (this.$route.query.referral && this.$store.state.fullAddress.toLowerCase() !== this.$route.query.referral.toLowerCase()) {
 		  this.certificate = {
 			...this.certificate,
 			referral: true
