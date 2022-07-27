@@ -50,7 +50,20 @@
                 </div>
             </div>
             <div class="referral__certificates">
-                <img class="referral__certificates-img" :src="certificate" alt="certificate" :key="idx" v-for="(certificate, idx) of certificates">
+				<client-only>
+					<vue-glide
+						class="referral__certificates-glide"
+						v-model="sliderActive"
+						ref="slider"
+						type="carousel"
+						:perView="this.isMobile() ? 2.5 : 7"
+						:autoplay="1000"
+					>
+						<vue-glide-slide v-for="(certificate, idx) in certificates" :key="idx">
+							<img class="referral__certificates-img" :src="certificate" alt="certificate">
+						</vue-glide-slide>
+					</vue-glide>
+				</client-only>
             </div>
             <div class="referral__list">
                 <div class="referral__list-filter">
@@ -126,13 +139,18 @@ export default {
         refer_fee: 0,
         totalCount: 0        
       },
-      referralList: []
-    }
+	  referralList: [],
+	  sliderActive: 0,
+	  sliderOptions: {
+		// type: 'carousel'
+		perView: 6
+	  }
+	}
   },
   computed: {
     address() {
       return this.$store.state.address
-    }
+	}
   },
   watch: {
     address() {
@@ -152,13 +170,13 @@ export default {
         images.push(this.getCDNImage('certificates/rare.webp'))
       }
     }
-    this.certificates = images
+	this.certificates = images
   },
   async mounted() {
     if (process && process.browser) {
       const footerEl = document.querySelector('.footer')
       footerEl.classList.remove('fixed')
-    }
+	}
   },
   methods: {
     updateReferralUrl() {
@@ -342,17 +360,25 @@ export default {
     }
   }
   &__certificates {
-    display: flex;
-    overflow-x: auto;
-    &-img {
-      width: 20rem;
-      height: 20rem;
-      margin-right: 0.8rem;
-      border-radius: 0.4rem;
-      &:last-child {
-        margin: 0;
-      }
-    }
+	&-glide {
+	  transform: translateX(-1.2rem);
+	  .glide {
+		::v-deep &__track {
+		  overflow: visible;
+		}
+		&__slide {
+		  width: 20rem !important;
+		  height: 20rem !important;
+		  transition: all 0.3s;
+		  border-radius: 0.4rem;
+		}
+	  }
+	}
+	&-img {
+	  width: 20rem;
+	  height: 20rem;
+	  border-radius: 0.4rem;
+	}
   }
   &__list {
     padding: 7.8rem 12rem;
@@ -521,6 +547,15 @@ export default {
       }
     }
     &__certificates {
+	  &-glide {
+		transform: translateX(-2.6rem);
+		.glide {
+		  &__slide {
+			width: 13.5rem !important;
+			height: 13.5rem !important;
+		  }
+		}
+	  }
       &-img {
         width: 13.5rem;
         height: 13.5rem;

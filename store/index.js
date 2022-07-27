@@ -21,7 +21,7 @@ import { RESOURCE_CDN_ROOT } from '@/config'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
-  marketCertificate: '0x3e7898C98E44bB734f43C60c782e8e7ee8854706',
+  marketCertificate: '0xD734bB58a28AAAAcbE5a738398f471B3187B2960',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   certContractAddress: '0xA4A8E345E1a88EFc9164014BB2CeBd4C2F98E986',
   user: {},
@@ -1480,16 +1480,20 @@ export const actions = {
 	return await redstone.getPrice('CELO')
   },
   async getCMCO2TokenPrice({commit}) {
-    const query = gql`
+	try {
+	  const query = gql`
       query Sample {
-        pairs(first: 1 where: { token0: "0x32a9fe697a32135bfd313a6ac28792dae4d9979d" token1: "0x471ece3750da237f93b8e339c536989b8978a438" }) {
-          token0Price
-        }
-      }`
-    let data = await this.$graphql.ubeswap.request(query)
-    const tokenCeloPrice = parseFloat(data.pairs[0].token0Price)
-    commit('setCMCO2TokenPrice', tokenCeloPrice)
-    return tokenCeloPrice
+		pairs(first: 1 where: { token0: "0x32a9fe697a32135bfd313a6ac28792dae4d9979d" token1: "0x471ece3750da237f93b8e339c536989b8978a438" }) {
+		  token0Price
+		}
+	  }`
+	  let data = await this.$graphql.ubeswap.request(query)
+	  const tokenCeloPrice = parseFloat(data.pairs[0].token0Price)
+	  commit('setCMCO2TokenPrice', tokenCeloPrice)
+	  return tokenCeloPrice
+	} catch {
+	  return 0
+	}
   },
 
   // GET NFT
