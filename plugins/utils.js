@@ -3,38 +3,39 @@ import { CDN_ROOT, COLLECTION_CDN_ROOT, CERTIFICATE_TOKEN_TYPE, RESOURCE_CDN_ROO
 
 Vue.mixin({
   methods: {
-	getNFTImage(nft, detail = false) {
-		const cdnCollections = ['nomdom', 'daos']
-		if (!cdnCollections.includes(nft.contract)) {
+	getNFTImage(nft, detail = false, isCloud = false) {
+		if (!isCloud || nft.contract === 'CBCN') {
 			if (nft.contract !== 'CBCN') {
-              if (nft.nftSymbol !== 'CBCN') {
-                if (nft.image && nft.image.split('ipfs://').length > 1) {
-                    return 'https://ipfs.io/ipfs/' + nft.image.split('ipfs://')[1]
-                }
-                return nft.image
-              } else {
-                try {
-                  const month = nft.image.substring(this.nft.image.lastIndexOf('/') + 1).split('.')[0]
-                  return this.getCertificateImage({
-                    month
-                  }, detail)
-                } catch(e) {
-                  console.log(e)
-                  return certificate.image
-                }
-              }
+				if (nft.nftSymbol !== 'CBCN') {
+					if (nft.image && nft.image.split('ipfs://').length > 1) {
+						return 'https://ipfs.io/ipfs/' + nft.image.split('ipfs://')[1]
+					}
+					return nft.image
+				} else {
+					try {
+						const month = nft.image.substring(this.nft.image.lastIndexOf('/') + 1).split('.')[0]
+						return this.getCertificateImage({
+							month
+						}, detail)
+					} catch(e) {
+						console.log(e)
+						return certificate.image
+					}
+				}
 			} else {
-			  return this.getCertificateImage(nft, detail)
+				return this.getCertificateImage(nft, detail)
 			}
 		} else {
-			if (this.$store.state.availableCDNCollections.includes(nft.contract)) {
-				const contractId = nft.contract === 'nomdom' ? nft.image : nft.contract_id
-				const folder = detail ? '500/' : '280/'
-				return COLLECTION_CDN_ROOT + folder + nft.contract + `/${contractId}.cwebp`
-			} else {
-				return CDN_ROOT + nft.contract + `/${nft.image}.png`
+			let contractId = nft.contract_id
+			let fileExtension = 'cwebp'
+			if (nft.contract === 'knoxnft') {
+				contractId = nft.image.substring(nft.image.lastIndexOf('/') + 1).split('.')[0]
+				fileExtension = 'webp'
+			} else if (nft.contract === 'nomdom') {
+				contractId = nft.image
 			}
-			
+			const folder = detail ? '500/' : '280/'
+			return COLLECTION_CDN_ROOT + folder + nft.contract + `/${contractId}.${fileExtension}`
 		}
 	},
 	isMobile() {

@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { CDN_ROOT } from "@/config"
+import { CDN_ROOT, COLLECTION_CDN_ROOT } from "@/config"
 export default {
   data() {
     return {
@@ -173,7 +173,7 @@ export default {
         if (notification.nftSymbol === 'nomdom') {
           contractId = notification.image
         }
-        return CDN_ROOT + notification.nftSymbol + `/${contractId}.png`
+        return COLLECTION_CDN_ROOT + '280/' + notification.nftSymbol + `/${contractId}.cwebp`
 	  } else {
 		return CDN_ROOT + `CBCN/thumb/${notification.month}.png`
 	  }
