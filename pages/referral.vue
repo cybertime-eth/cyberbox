@@ -186,13 +186,17 @@ export default {
     },
     cuttenAddress(address) {
 	  if (address) {
-		const startID = ['0x']
-		const endID = address.split("").slice(-4)
-		const dotArr = [".", ".", "."]
-		return startID
-		  .concat(dotArr)
-		  .concat(endID)
-		  .join("")
+		if (!address.includes('.nom')) {
+		  const startID = ['0x']
+		  const endID = address.split("").slice(-4)
+		  const dotArr = [".", ".", "."]
+		  return startID
+			.concat(dotArr)
+			.concat(endID)
+			.join("")
+		} else {
+		  return address
+		}
 	  } else {
         return '-'
       }
