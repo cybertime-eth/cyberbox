@@ -169,6 +169,7 @@ export default {
 		let fileExtension = 'cwebp'
         const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
 		const cdnRoot = COLLECTION_CDN_ROOT + '280/'
+		let contractId = this.nft.contract_id
 		if (this.nft.nftSymbol === 'knoxnft') {
           contractId = this.nft.image.substring(this.nft.image.lastIndexOf('/') + 1).split('.')[0]
           fileExtension = 'webp'
