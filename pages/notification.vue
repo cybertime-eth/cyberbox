@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { CDN_ROOT } from "@/config"
+import { CDN_ROOT, COLLECTION_CDN_ROOT } from "@/config"
 export default {
   data() {
     return {
@@ -170,12 +170,16 @@ export default {
 	notificationImage(notification) {
 	  if (notification.nftSymbol !== 'CBCN') {
 		let contractId = notification.tokenId
+		let fileExtension = 'cwebp'
         if (notification.nftSymbol === 'nomdom') {
           contractId = notification.image
+		} else if (notification.nftSymbol === 'knoxnft') {
+		  contractId = notification.image.substring(notification.image.lastIndexOf('/') + 1).split('.')[0]
+		  fileExtension = 'webp'
         }
-        return CDN_ROOT + notification.nftSymbol + `/${contractId}.png`
+		return COLLECTION_CDN_ROOT + '280/' + notification.nftSymbol + `/${contractId}.cwebp`
 	  } else {
-		return CDN_ROOT + `CBCN/thumb/${notification.month}.png`
+		return CDN_ROOT + `CBCN/thumb/${notification.month}.${fileExtension}`
 	  }
       
 	},

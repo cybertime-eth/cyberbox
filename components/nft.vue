@@ -44,7 +44,7 @@
 <script>
 import transfer from '@/components/modals/transfer'
 import {BigNumber} from "ethers";
-import { CDN_ROOT, COLLECTION_CDN_ROOT } from "@/config";
+import { COLLECTION_CDN_ROOT } from "@/config";
 export default {
   components: {
     transfer
@@ -166,21 +166,16 @@ export default {
   methods: {
     getCDNImageUrl() {
 	  if (this.nft.contract !== 'CBCN' && this.nft.nftSymbol !== 'CBCN') {
-		let fileExtension = this.nft.image.split('.').pop()
-		let contractId = this.nft.contract_id
-		if (fileExtension.split('//').length > 1 || this.nft.contract === 'nomdom') {
-		  fileExtension = 'png'
-		  if (this.nft.contract === 'nomdom') {
-			contractId = this.nft.image
-		  }
-		}
-    const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
-    let cdnRoot = CDN_ROOT
-    if (contractName === 'daos') {
-      cdnRoot = COLLECTION_CDN_ROOT + '280/'
-      fileExtension = 'cwebp'
-    }
-    const imageURL = cdnRoot + contractName + `/${contractId}.${fileExtension}`
+		let fileExtension = 'cwebp'
+        const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
+		const cdnRoot = COLLECTION_CDN_ROOT + '280/'
+		if (this.nft.nftSymbol === 'knoxnft') {
+          contractId = this.nft.image.substring(this.nft.image.lastIndexOf('/') + 1).split('.')[0]
+          fileExtension = 'webp'
+        } else if (this.nft.contract === 'nomdom') {
+          contractId = this.nft.image
+        }
+    	const imageURL = cdnRoot + contractName + `/${contractId}.${fileExtension}`
 		return imageURL
 	  } else {
 		return this.getCertificateImage(this.nft)

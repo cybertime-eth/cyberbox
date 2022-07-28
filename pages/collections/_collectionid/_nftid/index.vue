@@ -10,7 +10,7 @@
 
 
         <div class="nft__block">
-          <img :src="getNFTImage(nft, true)" alt="item" class="nft__block-image" v-if="nftImageLoaded">
+          <img :src="getNFTImage(nft, true, isCloudImage)" alt="item" class="nft__block-image" v-if="nftImageLoaded">
           <div class="nft__block-image-loading" v-else>
             <img :src="getCDNImage('loading-nft.webp')" alt="load">
           </div>
@@ -179,7 +179,7 @@
   <Transfer :nft="nft" @done="closeAndReload" :approved="nftApproved" @closeModal="showTransferModal=false"  v-if="showTransferModal" />
   <SellToken :nft="nft" :celoPrice="celoPrice" :approved="nftApproved" @done="closeAndReload" @closeModal="closeSellModal" v-if="showSellTokenModal" />
   <BuyToken v-if="showBuyTokenModal" :nft="nft" :priceToken="priceToken" :balance="balance" :multiNft="isMultiNft" @closeModal="closeModal"/>
-  <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft, true)" :name="nftName" :refiOffset="refiOffset"/>
+  <SuccessfullBuy v-if="showSuccessModal" :image="getNFTImage(nft, true, isCloudImage)" :name="nftName" :refiOffset="refiOffset"/>
   </section>
 </template>
 <script>
@@ -213,7 +213,8 @@ export default {
       nftReloading: false,
       oldNftStatus: null,
       oldNftPrice: null,
-      nftImageLoaded: false,
+	  nftImageLoaded: false,
+	  isCloudImage: false,
       nft: {
         price: 0
       },
@@ -292,14 +293,16 @@ export default {
     }
 
 	await this.loadNft()
-	const imageURL = this.getNFTImage(this.nft, true)
+	const imageURL = this.getNFTImage(this.nft, true, true)
     if (imageURL && !this.nftImageLoaded) {
       const img = new Image(imageURL)
       if (img.complete) {
-        this.nftImageLoaded = true
+		this.nftImageLoaded = true
+		this.isCloudImage = true
       } else {
         img.onload = () => {
-          this.nftImageLoaded = true
+		  this.nftImageLoaded = true
+		  this.isCloudImage = true
         }
       }
 	}
