@@ -177,7 +177,7 @@ export default {
 		  contractId = notification.image.substring(notification.image.lastIndexOf('/') + 1).split('.')[0]
 		  fileExtension = 'webp'
         }
-		return COLLECTION_CDN_ROOT + '280/' + notification.nftSymbol + `/${contractId}.cwebp`
+		return COLLECTION_CDN_ROOT + '280/' + notification.nftSymbol + `/${contractId}.${fileExtension}`
 	  } else {
 		return CDN_ROOT + `CBCN/thumb/${notification.month}.${fileExtension}`
 	  }
