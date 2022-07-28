@@ -1173,7 +1173,7 @@ export const actions = {
 		dateFilters.push(`"${year}-${month}-${day}"`)
 	  } else {
 		const filterDays = filter === 1 ? 7 : 30
-		for (let i = 1; i <= filterDays; i++) {
+		for (let i = 0; i < filterDays; i++) {
 		  if (day - i < 0) {
 			date.setMonth(month - 2)
 		  }
