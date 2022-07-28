@@ -116,7 +116,7 @@ export default {
 			minter_enter: 'Tracker_my_cert'
 		  }
 		})
-		this.$router.push('/lending')
+		this.$router.push('/calendar')
 	  } else {
 		this.$router.push(`/collections/CBCN/${this.certificate.month}`)
 	  }

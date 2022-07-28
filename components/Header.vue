@@ -17,7 +17,7 @@
             <nuxt-link class="header__link" active-class="gradient-text" to="/rankings" exact @click="sendRankingEvent">Rankings</nuxt-link>
           </li>
           <li class="header__list">
-            <nuxt-link class="header__link" active-class="gradient-text" to="/carbon" @click="sendTrackerEvent" exact>Offset Tracker</nuxt-link>
+            <nuxt-link class="header__link" active-class="gradient-text" to="/tracker" @click="sendTrackerEvent" exact>Offset Tracker</nuxt-link>
           </li>
         </ul>
       </nav>

@@ -355,7 +355,7 @@ export default {
 		  minter_enter: 'Main'
 		}
 	  })
-	  this.$router.push('/lending')
+	  this.$router.push('/calendar')
 	},
     gotoCollection(symbol) {
       this.sendEvent({

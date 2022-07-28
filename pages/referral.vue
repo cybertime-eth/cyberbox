@@ -181,7 +181,7 @@ export default {
   methods: {
     updateReferralUrl() {
       if (process && process.browser && this.address) {
-		this.referralUrl = location.origin + location.pathname + `?referral=${this.$store.state.fullAddress}`
+		this.referralUrl = location.origin + '/calendar' + `?referral=${this.$store.state.fullAddress}`
 	  }
     },
     cuttenAddress(address) {

@@ -76,7 +76,7 @@ export const state = () => ({
 	  mobileImage: `${RESOURCE_CDN_ROOT}/collections/CBCN-mobile.webp`,
 	  banner: `${RESOURCE_CDN_ROOT}/collections/CBCN-banner.webp`,
 	  logo: `${RESOURCE_CDN_ROOT}/collections/CBCN-logo.webp`,
-	  website: '/lending',
+	  website: '/calendar',
 	  twitter: 'https://twitter.com/cybertime_eth',
 	  discord: 'https://discord.gg/cKcWfCux4s',
 	  telegram: 'https://t.me/cybertime_eth',

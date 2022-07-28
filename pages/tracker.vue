@@ -263,7 +263,7 @@ export default {
 		  minter_enter: 'Tracker_button'
 		}
 	  })
-	  this.$router.push('/lending')
+	  this.$router.push('/calendar')
 	}
   }
 }

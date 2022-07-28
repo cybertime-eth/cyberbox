@@ -34,7 +34,7 @@ export default {
 		  tracker_enter: 'Mint_success_alert'
 		}
 	  })
-      this.$router.push('/carbon')
+      this.$router.push('/tracker')
 	},
     routeMyCollection() {
       this.$store.commit('changeSuccessBuyToken', false)
