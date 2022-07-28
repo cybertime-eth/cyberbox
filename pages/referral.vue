@@ -15,14 +15,14 @@
                             <div class="referral__main-info-block-withdraw-price">
                                 <div class="referral__main-info-block-withdraw-price-block">
                                     <img class="referral__main-info-block-withdraw-price-block-celo" :src="getCDNImage('celo.svg')" alt="celo">
-                                    <p class="referral__main-info-block-withdraw-price-block-value">{{ ownerInfo.refer_fee ? ownerInfo.refer_fee.toFixed(1) : 0 }}</p>
+                                    <p class="referral__main-info-block-withdraw-price-block-value">{{ formattedEarning(ownerInfo.refer_fee) }}</p>
                                 </div>
                                 <p class="referral__main-info-block-withdraw-ready">Ready for withdraw</p>
                             </div>
                         </div>
                         <div class="referral__main-info-block-total">
                             <div class="referral__main-info-block-total-status">
-                                <p class="referral__main-info-block-total-status-count">0</p>
+                                <p class="referral__main-info-block-total-status-count">-</p>
                                 <p class="referral__main-info-block-total-status-name">Total invited</p>
                             </div>
                             <div class="referral__main-info-block-total-status">
@@ -198,7 +198,7 @@ export default {
       }
     },
     formattedEarning(value) {
-      const price = value / 1000
+      const price = value / Math.pow(10, 7)
       const diff = price - Math.floor(price)
       const floatingLen = diff.toString().length - 2
       if (diff === 0) {
