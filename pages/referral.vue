@@ -87,7 +87,7 @@
                     </div>
                     <p class="referral__list-owner-position">Your position</p>
                     <div class="referral__list-owner-info">
-                        <p>115</p>
+                        <p>-</p>
                         <p><b>{{ cuttenAddress(this.address) }}</b></p>
                         <p>-</p>
                         <p>{{ ownerInfo.totalCount }}</p>

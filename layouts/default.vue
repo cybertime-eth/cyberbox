@@ -11,6 +11,7 @@
 import Header from './../components/Header'
 import Footer from './../components/Footer'
 export default {
+  middleware: ['redirectMiddleware'],
   computed: {
     message() {
       return this.$store.state.message
