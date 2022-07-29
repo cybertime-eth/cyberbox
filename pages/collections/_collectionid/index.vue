@@ -1,8 +1,5 @@
 <template>
-  <div class="page__loading" v-if="pageLoading">
-	  <img class="page__loading-img" :src="getCDNImage('loading_page_anim.webp')" alt="loading">
-  </div>
-  <section class="collection" v-else>
+  <section class="collection">
     <img :src="collection.banner" alt="banner" class="collection__banner">
     <div class="collection__content container-xl">
       <div class="collection__header">

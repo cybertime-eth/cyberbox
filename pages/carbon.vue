@@ -182,6 +182,13 @@ export default {
 	  this.updateCertificateList()
 	}
   },
+  head() {
+    return {
+      meta: [
+        { hid: 'og:image', property: 'og:image', content: this.getCDNImage('tracker-banner.webp') }
+      ]
+    }
+  },
   methods: {
 	formatCO2(value) {
 	  return value > 0 ? value.toFixed(1) : 0

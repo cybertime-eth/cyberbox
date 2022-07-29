@@ -1,7 +1,7 @@
 <template>
   <div class="page__loader">
 	<div class="page__loader-container">
-		<img class="page__loader-img" :src="getCDNImage('loading_page_anim.webp')" alt="loading">
+		<img class="page__loader-img" :src="getCDNImage('loading-page.webp')" alt="loading">
     	<p class="page__loader-info gradient-text">{{ description }}</p>
 	</div>
   </div>
