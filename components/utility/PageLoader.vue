@@ -1,7 +1,7 @@
 <template>
   <div class="page__loader">
 	<div class="page__loader-container">
-		<img class="page__loader-img" :src="getCDNImage('loading_page_anim.webp')" alt="loading">
+		<img class="page__loader-img" :src="getCDNImage('loading-page.webp')" alt="loading">
     	<p class="page__loader-info gradient-text">{{ description }}</p>
 	</div>
   </div>
@@ -62,7 +62,12 @@ export default {
 	background: linear-gradient(to right, #5578F5, #D676CF, #E092BD, #FFE884);
 	-webkit-background-clip: text;
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: 1.6rem;
+  }
+  @media(max-width: 460px) {
+    &-info {
+      font-size: 1.2rem;
+    }
   }
 }
 </style>

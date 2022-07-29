@@ -1,7 +1,4 @@
 <template>
-  <!-- <div class="page__loading" v-if="loading">
-	<img class="page__loading-img" :src="getCDNImage('loading_page_anim.webp')" alt="loading">
-  </div> -->
   <PageLoader v-if="loading"/>
   <section class="refi container-xl" v-else>
     <h1 class="refi__title">Regenerate nature with the power of NFTs</h1>
