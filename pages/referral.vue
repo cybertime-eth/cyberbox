@@ -147,6 +147,13 @@ export default {
 	  }
 	}
   },
+  head() {
+    return {
+      meta: [
+        { hid: 'og:image', property: 'og:image', content: this.getCDNImage('referral-banner.webp') }
+      ]
+    }
+  },
   computed: {
     address() {
       return this.$store.state.address

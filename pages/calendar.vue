@@ -242,6 +242,13 @@ export default {
 	  nextMintSecond: 0,
     }
   },
+  head() {
+    return {
+      meta: [
+        { hid: 'og:image', property: 'og:image', content: this.getCDNImage('calendar-banner.webp') }
+      ]
+    }
+  },
   computed: {
     address() {
       return this.$store.state.address
