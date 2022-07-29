@@ -21,7 +21,7 @@ import { RESOURCE_CDN_ROOT } from '@/config'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
-  marketCertificate: '0x3e7898C98E44bB734f43C60c782e8e7ee8854706',
+  marketCertificate: '0xD734bB58a28AAAAcbE5a738398f471B3187B2960',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   certContractAddress: '0xA4A8E345E1a88EFc9164014BB2CeBd4C2F98E986',
   user: {},
@@ -58,7 +58,8 @@ export const state = () => ({
   raritySort: null,
   pagination: null,
   collectionSetting: null,
-  multiNftSymbols: ['knoxnft', 'CBCN'],
+	multiNftSymbols: ['knoxnft', 'CBCN'],
+	availableCDNCollections: ['daos', 'nomdom'],
   multiNftNames: [
     { id: 'COMMON', name: 'Knoxer' },
     { id: 'LEGENDARY', name: 'LydianKnoxer' },
@@ -75,7 +76,7 @@ export const state = () => ({
 	  mobileImage: `${RESOURCE_CDN_ROOT}/collections/CBCN-mobile.webp`,
 	  banner: `${RESOURCE_CDN_ROOT}/collections/CBCN-banner.webp`,
 	  logo: `${RESOURCE_CDN_ROOT}/collections/CBCN-logo.webp`,
-	  website: '/lending',
+	  website: '/calendar',
 	  twitter: 'https://twitter.com/cybertime_eth',
 	  discord: 'https://discord.gg/cKcWfCux4s',
 	  telegram: 'https://t.me/cybertime_eth',
@@ -912,9 +913,6 @@ export const actions = {
 	  contractInfos: data.contractLists,
 	  multiNFTs: data.multiNFTs
 	})
-	// hide special NOM nft with wrong image temporarily
-	contractInfos = contractInfos.filter(item => item.contract !== 'nomdom' || (item.contract === 'nomdom' && item.image !== '0x73bc38119131ba6787db4dbe24ecad911df955ffb98afd02ad3cac94d28543d1'))
-
 	contractInfos = contractInfos.filter(item => !state.multiNftSymbols.includes(item.contract) || (state.multiNftSymbols.includes(item.contract) && item.list_count > 0))
 	contractInfos = contractInfos.slice(0, 12)
 	contractInfos = await dispatch('getRarirtyCollections', { contractInfos })
@@ -1159,6 +1157,57 @@ export const actions = {
 	})
 	commit('setCertificateSaleList', saleCertificates)
     commit('setCertificateList', certificates)
+  },
+
+  async getReferralData({getters}, filter) {
+	const address = getters.storedAddress
+	if (!address) return null
+
+	try {
+	  const date = new Date()
+	  const year = date.getFullYear()
+	  const month = date.getMonth() + 1
+	  let day = date.getDate()
+	  const dateFilters = []
+	  if (filter === 0) {
+		dateFilters.push(`"${year}-${month}-${day}"`)
+	  } else {
+		const filterDays = filter === 1 ? 7 : 30
+		for (let i = 0; i < filterDays; i++) {
+		  if (day - i < 0) {
+			date.setMonth(month - 2)
+		  }
+		  date.setDate(day - i)
+
+		  const filterMonth = date.getMonth() + 1		
+		  const filterDate = date.getDate()
+		  dateFilters.push(`"${year}-${filterMonth}-${filterDate}"`)
+		}
+	  }
+	  const query = gql`
+	  query Sample {
+		certReferUsers(first: 1 where: { referAddress: "${address}" }) {
+			id
+			referAddress
+			refer_fee
+			totalCount
+		}
+		certReferStatistics(first: 10 where: { referAddress_not: "${address}" date_key_in: [${dateFilters}] }) {
+			id
+			referAddress
+			refer_fee
+			totalCount
+		}
+	  }`
+	  const data = await this.$graphql.default.request(query)
+	  return {
+		userInfo: data.certReferUsers.length > 0 ? data.certReferUsers[0] : null,
+		userList: data.certReferStatistics
+	  }
+	} catch (e) {
+	  console.log(e)
+	  return null
+	}
   },
 
   // AUTHORIZATION
@@ -1431,16 +1480,20 @@ export const actions = {
 	return await redstone.getPrice('CELO')
   },
   async getCMCO2TokenPrice({commit}) {
-    const query = gql`
+	try {
+	  const query = gql`
       query Sample {
-        pairs(first: 1 where: { token0: "0x32a9fe697a32135bfd313a6ac28792dae4d9979d" token1: "0x471ece3750da237f93b8e339c536989b8978a438" }) {
-          token0Price
-        }
-      }`
-    let data = await this.$graphql.ubeswap.request(query)
-    const tokenCeloPrice = parseFloat(data.pairs[0].token0Price)
-    commit('setCMCO2TokenPrice', tokenCeloPrice)
-    return tokenCeloPrice
+		pairs(first: 1 where: { token0: "0x32a9fe697a32135bfd313a6ac28792dae4d9979d" token1: "0x471ece3750da237f93b8e339c536989b8978a438" }) {
+		  token0Price
+		}
+	  }`
+	  let data = await this.$graphql.ubeswap.request(query)
+	  const tokenCeloPrice = parseFloat(data.pairs[0].token0Price)
+	  commit('setCMCO2TokenPrice', tokenCeloPrice)
+	  return tokenCeloPrice
+	} catch {
+	  return 0
+	}
   },
 
   // GET NFT
@@ -2246,6 +2299,43 @@ export const actions = {
 	  const contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
 	  const parsePrice = ethers.utils.parseEther(String(price))
 	  const result = await contract.methods.mintMonthNFT().send({
+	    from: account,
+	    value: parsePrice,
+	    gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+	  })
+
+	  const certCollection = (state.collectionList || []).find(item => item.route === 'CBCN')
+	  provider.once(result, async () => {
+		const currMonth = new Date().toLocaleString('en-us', { month: 'long' })
+		commit('changeSuccessBuyToken', true)
+		this._vm.sendEvent({
+		  category: 'Certificates',
+		  eventName: 'mint_success',
+		  properties: {
+		    mint_success: currMonth
+		  }
+		})
+		dispatch('reportRevenue', certCollection)
+	  })
+	} catch (e) {
+	  console.log(e)
+	  commit('changeSuccessBuyToken', 'error')
+	}
+  },
+
+  async mintReferralCertificate({state, getters, commit, dispatch}, referralInfo) {
+	try {
+	  const address = getters.storedAddress
+	  if (!address) return
+	  const ethereumProvider = getters.provider
+	  const provider = new ethers.providers.Web3Provider(ethereumProvider)
+	  const web3 = new Web3(ethereumProvider)
+	  const accounts = await web3.eth.getAccounts()
+	  const account = accounts[0]
+	  const kit = ContractKit.newKitFromWeb3(web3)
+	  const contract = new kit.web3.eth.Contract(MarketCertificateABI, state.marketCertificate)
+	  const parsePrice = ethers.utils.parseEther(String(referralInfo.price))
+	  const result = await contract.methods.mintMonthNFTFromRefer(referralInfo.referrer).send({
 	    from: account,
 	    value: parsePrice,
 	    gasPrice: ethers.utils.parseUnits('0.5', 'gwei')

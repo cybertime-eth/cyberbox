@@ -62,7 +62,12 @@ export default {
 	background: linear-gradient(to right, #5578F5, #D676CF, #E092BD, #FFE884);
 	-webkit-background-clip: text;
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: 1.6rem;
+  }
+  @media(max-width: 460px) {
+    &-info {
+      font-size: 1.2rem;
+    }
   }
 }
 </style>

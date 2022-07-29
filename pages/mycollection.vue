@@ -13,7 +13,7 @@
 			</div>
 		</div>
 	  </div>
-	  <a class="my-collection-header-tracker" href="/carbon" v-if="linkShared">
+	  <a class="my-collection-header-tracker" href="/tracker" v-if="linkShared">
 		<img class="my-collection-header-tracker-img" :src="getCDNImage('carbon-tracker-gradient.svg')" alt="tracker">
 		<p class="my-collection-header-tracker-name">Offset tracker</p>
 	  </a>

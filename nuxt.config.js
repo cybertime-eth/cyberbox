@@ -54,7 +54,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cert-minter-v2-two',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/nomstronaut-uri-update',
         options: {}
       },
       ubeswap: {

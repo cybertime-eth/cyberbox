@@ -298,6 +298,15 @@ ul {
 	}
   }
 }
+
+.without-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 //FONTS
 
 @font-face {

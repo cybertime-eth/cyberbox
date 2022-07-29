@@ -173,11 +173,11 @@ export default {
 		let fileExtension = 'cwebp'
         if (notification.nftSymbol === 'nomdom') {
           contractId = notification.image
-		} else if (notification.nftSymbol === 'knoxnft') {
-		  contractId = notification.image.substring(notification.image.lastIndexOf('/') + 1).split('.')[0]
-		  fileExtension = 'webp'
+        } else if (notification.nftSymbol === 'knoxnft') {
+          contractId = notification.image.substring(notification.image.lastIndexOf('/') + 1).split('.')[0]
+          fileExtension = 'webp'
         }
-		return COLLECTION_CDN_ROOT + '280/' + notification.nftSymbol + `/${contractId}.${fileExtension}`
+        return COLLECTION_CDN_ROOT + '280/' + notification.nftSymbol + `/${contractId}.${fileExtension}`
 	  } else {
 		return CDN_ROOT + `CBCN/thumb/${notification.month}.${fileExtension}`
 	  }

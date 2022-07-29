@@ -167,15 +167,15 @@ export default {
     getCDNImageUrl() {
 	  if (this.nft.contract !== 'CBCN' && this.nft.nftSymbol !== 'CBCN') {
 		let fileExtension = 'cwebp'
-        const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
-		const cdnRoot = COLLECTION_CDN_ROOT + '280/'
+		const contractName = !this.multiNft ? this.nft.contract : this.nft.nftSymbol
 		let contractId = this.nft.contract_id
 		if (this.nft.nftSymbol === 'knoxnft') {
-          contractId = this.nft.image.substring(this.nft.image.lastIndexOf('/') + 1).split('.')[0]
-          fileExtension = 'webp'
-        } else if (this.nft.contract === 'nomdom') {
-          contractId = this.nft.image
-        }
+		  contractId = this.nft.image.substring(this.nft.image.lastIndexOf('/') + 1).split('.')[0]
+		  fileExtension = 'webp'
+		} else if (this.nft.contract === 'nomdom') {
+		  contractId = this.nft.image
+		}
+		const cdnRoot = COLLECTION_CDN_ROOT + '280/'
     	const imageURL = cdnRoot + contractName + `/${contractId}.${fileExtension}`
 		return imageURL
 	  } else {

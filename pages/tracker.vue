@@ -42,7 +42,7 @@
 					<certificate :certificate="certificate" :key="idx" v-for="(certificate, idx) of filteredCertificates"/>
 				</div>
 			</div>
-			<ExchangeBonus @closeModal="showExchangeBonus = false" :bonusAvailable="currYearCertCount === 12" @onExchange="showExchangeTokenModal" v-if="showExchangeBonus"/>
+			<ExchangeBonus @closeModal="showExchangeBonus = false" :bonusAvailable="bonusAvailable" @onExchange="showExchangeTokenModal" v-if="showExchangeBonus"/>
 			<ExchangeToken @closeModal="showExchangeToken = false" v-if="showExchangeToken"/>
 			<SuccessfullBuy v-if="showSuccessModal" :image="bonusImage" :name="certificateName" :certificate="true"/>
 		</div>
@@ -80,7 +80,7 @@ export default {
 	  totalCertCO2: 0,
 	  totalTradingCO2: 0,
 	  totalCO2Offset: 0,
-	  currYearCertCount: 0,
+	  bonusAvailable: false,
 	  showShareFrame: false,
 	  showExchangeBonus: false,
 	  showExchangeToken: false,
@@ -129,7 +129,6 @@ export default {
       return this.$store.state.successBuyToken
 	},
 	bonusImage() {
-	  const date = new Date()
 	  return this.getCDNImage('certificates/rare.webp')
 	},
 	certificateName() {
@@ -200,8 +199,6 @@ export default {
 		const date = new Date()
 		const currYear = date.getFullYear()
 		const currMonth = date.getMonth() + 1
-		let ownedCount = 0
-		let currYearCertCount = 0
 		const bonusNft = this.ownedCertificates.find(item => item.year === currYear && item.token_type === CERTIFICATE_TOKEN_TYPE.BONUS)
 		this.bonusPurchased = !!bonusNft
 		const invisibleList = []
@@ -212,10 +209,6 @@ export default {
 			  ...this.ownedCertificates[foundIndex],
 			  image: this.getCertificateImage(newList[index])
 			}
-			if (this.ownedCertificates[foundIndex].year === currYear) {
-			  currYearCertCount++
-			}
-			ownedCount++
 		  } else {
 			if (newList[index].year !== currYear || (newList[index].year === currYear && newList[index].month < currMonth)) {
 			  invisibleList.push(item)
@@ -231,6 +224,8 @@ export default {
 		  }
 		})
 		newList = newList.filter(item => !invisibleList.find(invItem => item.year === invItem.year && item.month === invItem.month))
+		const ownedCount = this.ownedCertificates.filter(item => item.year === currYear && item.token_type === CERTIFICATE_TOKEN_TYPE.MONTH).length
+		this.bonusAvailable = ownedCount === 12 && !bonusNft
 		this.ownedCertificates.forEach(oItem => {
 		  const foundIndex = newList.findIndex(item => oItem.year === item.year && oItem.month === item.month)
 		  if (foundIndex < 0) {
@@ -242,7 +237,6 @@ export default {
 		})
 		newList = newList.sort((a, b) => ((a.year + a.month) - (b.year + b.month)))
 		this.certificateList = newList
-		this.currYearCertCount = currYearCertCount
 		this.changeFilter()
 	  }
 	},
@@ -276,7 +270,7 @@ export default {
 		  minter_enter: 'Tracker_button'
 		}
 	  })
-	  this.$router.push('/lending')
+	  this.$router.push('/calendar')
 	}
   }
 }

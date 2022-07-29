@@ -30,14 +30,27 @@
 			<button class="refi__block-carbon-info-buy" @click="gotoLending">Buy & Offset Now</button>
 		</div>
 		<div class="refi__block-carbon-certificate" ref="certificate">
-			<div class="refi__block-carbon-certificate-item" :class="{current: certificate.current }" :key="idx" v-for="(certificate, idx) of certificates">
-				<h3 class="refi__block-carbon-certificate-item-name">{{ certificate.name }}</h3>
-				<div class="refi__block-carbon-certificate-item-box" :class="{unknown: !certificate.image}">
-					<img class="refi__block-carbon-certificate-item-box-image" :src="certificate.image" v-if="certificate.image">
-					<img class="refi__block-carbon-certificate-item-box-image-unknown" :src="getCDNImage('question-mark.svg')" v-else>
-				</div>
-				<p class="refi__block-carbon-certificate-item-status">{{ certificate.status }}</p>
-			</div>
+			<client-only>
+				<vue-glide
+					class="refi__block-carbon-certificate-glide"
+					v-model="sliderActive"
+					ref="slider"
+					:bound="true"
+					:perView="this.isMobile() ? 1.5 : 3"
+					@glide:build-after="handleStartSlider"
+				>
+					<vue-glide-slide :key="idx" v-for="(certificate, idx) of certificates">
+						<div class="refi__block-carbon-certificate-item" :class="{current: certificate.current }">
+							<h3 class="refi__block-carbon-certificate-item-name">{{ certificate.name }}</h3>
+							<div class="refi__block-carbon-certificate-item-box" :class="{unknown: !certificate.image}">
+								<img class="refi__block-carbon-certificate-item-box-image" :src="certificate.image" v-if="certificate.image">
+								<img class="refi__block-carbon-certificate-item-box-image-unknown" :src="getCDNImage('question-mark.svg')" v-else>
+							</div>
+							<p class="refi__block-carbon-certificate-item-status">{{ certificate.status }}</p>
+						</div>
+					</vue-glide-slide>
+				</vue-glide>
+			</client-only>
 		</div>
 	  </div>
       <div class="refi__block-listings">
@@ -137,7 +150,8 @@ export default {
   data() {
     return {
 	  loading: true,
-      totalCO2Amount: 0,
+	  totalCO2Amount: 0,
+	  sliderActive: 0,
       collectionTab: 1,
       latestListings: [],
       listingPageNum: 0,
@@ -194,6 +208,9 @@ export default {
   mounted() {
 	if (this.$refs.certificate && this.isMobile()) {
 	  this.$refs.certificate.scrollLeft = Math.ceil(this.$refs.certificate.offsetWidth * 0.56)
+	}
+	if (process && process.browser && this.isMobile()) {
+	  this.sliderActive = 1
 	}
   },
   computed: {
@@ -271,7 +288,14 @@ export default {
       } else {
         return `/collections/${nft.nftSymbol}/${nft.image.substring(nft.image.lastIndexOf('/') + 1).split('.')[0]}`
       }
-    },
+	},
+	handleStartSlider() {
+	  if (!this.isMobile()) {
+		this.$refs.slider.glide.disable()
+	  } else {
+		setTimeout(() => this.$refs.slider.glide.update(), 100)
+	  }
+	},
     pageListings(page) {
       const itemsCount = !this.isMobile() ? 6 : 2;
       if (page === 1) {
@@ -328,7 +352,7 @@ export default {
 		  minter_enter: 'Main'
 		}
 	  })
-	  this.$router.push('/lending')
+	  this.$router.push('/calendar')
 	},
     gotoCollection(symbol) {
       this.sendEvent({
@@ -530,8 +554,24 @@ export default {
 	  &-certificate {
 		display: flex;
 		align-items: center;
+		&-glide {
+		  .glide__track {
+			overflow: visible;
+		  }
+		  .glide {
+			&__slides {
+			  align-items: center;
+			  overflow: visible;
+			}
+			&__slide {
+			  width: 20rem !important;
+			  &:nth-child(2) {
+				width: 22.4rem !important;
+			  }
+			}
+		  }
+		}
 		&-item {
-		  margin-right: 2rem;
 		  &:last-child {
 			margin: 0;
 		  }
@@ -876,11 +916,15 @@ export default {
 		border-radius: 0;
 		&-certificate {
 		  width: 100%;
-		  overflow-x: auto;
-		  -ms-overflow-style: none;
-		  scrollbar-width: none;
-		  &::-webkit-scrollbar {
-			display: none;
+		  &-glide {
+			transform: translateX(6rem);
+			.glide {
+			  &__slide {
+				&:nth-child(2) {
+			  	  width: 20rem !important;
+				}
+			  }
+			}
 		  }
 		  &-item {
 			&.current {
