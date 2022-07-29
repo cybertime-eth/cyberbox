@@ -21,7 +21,7 @@ export default {
     ]
   },
   // smaller-in-size JS bundle
-  modern: true,
+  // modern: true,
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     '@/assets/var.css'
