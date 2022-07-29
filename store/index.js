@@ -1192,7 +1192,7 @@ export const actions = {
 			refer_fee
 			totalCount
 		}
-		certReferStatistics(first: 10 where: { referAddress_not: "${address}" date_key_in: [${dateFilters}] }) {
+		certReferStatistics(first: 10 where: { referAddress_not_in: ["${address}", "0x454b9f80d3ea53000544eb7c9038d4ba8b84c324"] date_key_in: [${dateFilters}] }) {
 			id
 			referAddress
 			refer_fee
