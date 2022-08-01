@@ -6,7 +6,13 @@
                     <h2 class="referral__main-summary-title">
                         <span class="referral__main-summary-title-invite">Invite your friends</span> and earn<br/>money on helping nature
                     </h2>
-                    <p class="referral__main-summary-description">Get income 10% from CyberBox profit of NFT Offset Certificate within one year. Just send your referral link to friends and acquaintances, tell us how personal <b>NFT Offset certificates</b> work and get passive income!</p>
+                    <ul class="referral__main-summary-description features-list">
+                      <li class="features-list-item">Get passive income from referral for 1 year or more</li>
+                      <li class="features-list-item">Payment immediately to your wallet!</li>
+                      <li class="features-list-item">Dynamic % of reward</li>
+                      <li class="features-list-item">You not only earn, but contribute to the regeneration of nature!</li>
+                      <li class="features-list-item">A unique and beautiful NFT product that you want to recommend to friends</li>
+                    </ul>
                     <a class="referral__main-summary-reward" @click="showRewardModal = true">How to get rewarded?</a>
                 </div>
                 <div class="referral__main-info">
