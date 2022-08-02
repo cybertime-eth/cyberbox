@@ -124,7 +124,10 @@
                         </p>
                     </div> -->
                 </div>
-                <div class="referral__list-users">
+				<div class="referral__list-loading" v-if="isLoading">
+					<img :src="getCDNImage('loading-button.svg')" alt="load">
+				</div>
+                <div class="referral__list-users" v-else-if="referralList.length > 0">
                     <div class="referral__list-users-list" :key="idx" v-for="(userInfo, idx) of referralList">
                         <div class="referral__list-users-list-item">
                             <p>{{ idx + 1 }}</p>
@@ -138,6 +141,10 @@
                         </div>
                     </div>
                 </div>
+				<div class="referral__list-empty" v-else>
+					<p>No sales yet</p>
+					<p>Be the first and get on the leaderboard</p>
+				</div>
             </div>
         </div>
 		<RewardInfoModal @closeModal="showRewardModal = false" v-if="showRewardModal"/>
@@ -177,7 +184,10 @@ export default {
 		perView: 6
 	  },
 	  showOfferBlock: false,
-	  offerDate: ''
+	  leftOfferTime: 0,
+	  offerDate: '',
+	  offerTimer: null,
+	  isLoading: false
 	}
   },
   head() {
@@ -198,6 +208,11 @@ export default {
 		this.updateReferralUrl()
       }
     },
+  },
+  beforeDestroy() {
+	if (this.offerTimer) {
+	  clearInterval(this.offerTimer)
+	}
   },
   async created() {
     this.loadReferralData()
@@ -225,17 +240,10 @@ export default {
 	  const lastSavedDate = lastOfferShownTime ? new Date(parseInt(lastOfferShownTime)).getDate() : null
 	  const currDay = date.getDay()
 	  if (currTime < offerTime && (!lastSavedDate || (date.getDay() === 1 && lastSavedDate && currDate !== lastSavedDate))) {
-		let difference = offerTime - currTime
-		const offerDay = Math.floor(difference/1000/60/60/24)
-		difference -= offerDay*1000*60*60*24
-
-		const offerHour = Math.floor(difference/1000/60/60)
-		difference -= offerHour*1000*60*60
-
-		const offerMintue = Math.floor(difference/1000/60)
-		difference -= offerMintue*1000*60
-		this.offerDate = `${this.formatTimeNumber(offerDay)}d:${this.formatTimeNumber(offerHour)}h:${this.formatTimeNumber(offerMintue)}m`
+		this.leftOfferTime = offerTime - currTime
+		this.countLeftOfferTime()
 		this.showOfferBlock = true
+		this.offerTimer = setInterval(this.countLeftOfferTime, 1000)
 	  }
 	}
   },
@@ -297,7 +305,7 @@ export default {
       if (referralData.userInfo) {
         this.ownerInfo = referralData.userInfo
       }
-      this.referralList = referralData.userList.sort((b, a) => a.refer_fee - b.refer_fee)
+	  this.referralList = referralData.userList.sort((b, a) => a.refer_fee - b.refer_fee)
     },
     copyReferralLink() {
 	  this.addressCopied = true
@@ -309,13 +317,32 @@ export default {
 	  if (process && process.browser) {
 		localStorage.setItem(LAST_OFFER_VIEWED, new Date().getTime())
 	  }
+	  clearInterval(this.offerTimer)
 	},
-    changeFilter(filter) {
+	countLeftOfferTime() {
+	  let difference = this.leftOfferTime
+	  const offerDay = Math.floor(difference/1000/60/60/24)
+	  difference -= offerDay*1000*60*60*24
+
+	  const offerHour = Math.floor(difference/1000/60/60)
+	  difference -= offerHour*1000*60*60
+
+	  const offerMintue = Math.floor(difference/1000/60)
+	  difference -= offerMintue*1000*60
+
+	  const offerSecond = Math.floor(difference/1000)
+	  this.offerDate = `${this.formatTimeNumber(offerDay)}d:${this.formatTimeNumber(offerHour)}h:${this.formatTimeNumber(offerMintue)}m:${this.formatTimeNumber(offerSecond)}s`
+
+	  this.leftOfferTime = this.leftOfferTime - 1000
+	},
+    async changeFilter(filter) {
       const oldFilter = this.activeFilter
       this.activeFilter = filter
       if (filter !== oldFilter) {
+		this.isLoading = true
         this.referralList = []
-        this.loadReferralData()
+		await this.loadReferralData()
+		this.isLoading = false
       }
     }
   }
@@ -627,7 +654,17 @@ export default {
         font-weight: 600;
         font-size: 1.6rem;
       }
-    }
+	}
+	&-loading {
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  padding-top: 8rem;
+	  img {
+		width: 6rem;
+		animation: loading 1s infinite;
+	  }
+	}
     &-users {
       padding: 0 0.8rem;
       margin-top: 2rem;
@@ -650,8 +687,19 @@ export default {
             }
           }
         }
-      }
-    }
+	  }
+	}
+	&-empty {
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  padding-top: 4rem;
+	  p {
+		text-align: center;
+		font-size: 1.2rem;
+		color: $grayLight;
+	  }
+	}
   }
   @media (max-width: 460px) {
     &__main {
