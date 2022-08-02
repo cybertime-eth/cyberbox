@@ -9,23 +9,23 @@
                     <ul class="referral__main-summary-features indent-features-list">
                       	<li class="indent-features-list-item">
 							<span class="indent-features-list-item-mark"/>
-							<p class="indent-features-list-item-text">Get passive income from referral for 1 year or more</p>
+							<p class="indent-features-list-item-text">Passive income - 1 year</p>
 						</li>
 						<li class="indent-features-list-item">
 							<span class="indent-features-list-item-mark"/>
-							<p class="indent-features-list-item-text">Payment immediately to your wallet!</p>
+							<p class="indent-features-list-item-text">Up to 100% reward</p>
 						</li>
 						<li class="indent-features-list-item">
 							<span class="indent-features-list-item-mark"/>
-							<p class="indent-features-list-item-text">Dynamic % of reward</p>
+							<p class="indent-features-list-item-text">Immediately payment  to wallet</p>
 						</li>
 						<li class="indent-features-list-item">
 							<span class="indent-features-list-item-mark"/>
-							<p class="indent-features-list-item-text">You not only earn, but contribute to the regeneration of nature!</p>
+							<p class="indent-features-list-item-text">Income + helping nature</p>
 						</li>
 						<li class="indent-features-list-item">
 							<span class="indent-features-list-item-mark"/>
-							<p class="indent-features-list-item-text">A unique and beautiful NFT product that you want to recommend to friends</p>
+							<p class="indent-features-list-item-text">Instant start</p>
 						</li>
                     </ul>
                     <a class="referral__main-summary-reward" @click="showRewardModal = true">How to get rewarded?</a>
@@ -352,7 +352,7 @@ export default {
         }
       }
       &-features {
-		margin-top: 1.6rem;
+		margin-top: 2rem;
 		.indent-features-list-item {
 		  align-items: center;
 		  &:nth-child(4), &:last-child {
@@ -369,7 +369,7 @@ export default {
       }
       &-reward {
         display: block;
-        margin-top: 1.4rem;
+        margin-top: 2rem;
         font-weight: 600;
         font-size: 1.4rem;
         color: $pink;
@@ -666,12 +666,6 @@ export default {
         &-title {
           line-height: 2.2rem;
           font-size: 2.2rem;
-        }
-        &-features {
-          margin-top: 0.8rem;
-        }
-        &-reward {
-          margin-top: 0.6rem;
         }
       }
       &-info {
