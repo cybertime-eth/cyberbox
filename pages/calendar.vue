@@ -9,7 +9,7 @@
 					</div>
 				</client-only>
                 <div class="lending__block-summary">
-                    <p class="lending__block-summary-date">{{ currentDate }}</p>
+                    <p class="lending__block-summary-date">{{ currentDateName }}</p>
                     <img class="lending__block-summary-img" :src="currentCertificateImage" alt="certificate">
                 </div>
                 <div class="lending__block-info">
@@ -207,6 +207,7 @@ import BuyToken from '@/components/modals/buyToken'
 import ExchangeBonus from '@/components/modals/exchangeBonus.vue'
 import ExchangeToken from '@/components/modals/exchangeToken.vue'
 import SuccessfullBuy from '@/components/modals/successBuy'
+import { mont } from 'bn.js';
 const CERTIFICATE_MINT_PRICE = 15
 
 export default {
@@ -223,7 +224,9 @@ export default {
 	  referralUrl: '',
 	  referralUrlCopied: false,
       showBuyToken: false,
-      certificate: {},
+	  certificate: {},
+	  currentDateName: '',
+	  currentCertificateImage: '',
       balance: 0,
       celoPrice: 0,
       priceToken: 0,
@@ -267,16 +270,6 @@ export default {
 		return 'Rare 2022'
 	  }
 	},
-    currentDate() {
-      const today = new Date()
-      const month = today.toLocaleString('en-us', { month: 'long' })
-      return `${month} ${today.getFullYear()}`
-    },
-	currentCertificateImage() {
-	  const date = new Date()
-      const currMonth = date.getMonth() + 1
-      return CDN_ROOT + `CBCN/detail/${currMonth}.png`
-	},
     ownedCertificates() {
 	  return this.$store.state.certificateList
 	},
@@ -294,16 +287,18 @@ export default {
   },
   created() {
     const today = new Date()
-    const currMonth = today.getMonth()
-    const month = today.toLocaleString('en-us', { month: 'long' })
+    const currMonth = today.getMonth() + 1
+	const month = today.toLocaleString('en-us', { month: 'long' })
+	this.currentCertificateImage = CDN_ROOT + `CBCN/detail/${currMonth}.png`
     this.certificate = {
       name: `Carbon Offset Certificate ${month} ${today.getFullYear()}`,
 	  contract: 'CBCN',
       image: this.currentCertificateImage,
       price: CERTIFICATE_MINT_PRICE,
-      nftid: currMonth + 1,
+      nftid: currMonth,
       refiOffset: CERTIFICATE_MINT_PRICE * 45 / 1000 * this.$store.state.cMCO2Price
-    }
+	}
+	this.currentDateName = `${month} ${today.getFullYear()}`
     this.certificateList = this.getCertificatesOfYear(new Date().getFullYear(), true)
 	this.loadMyCertificates()
 	this.faqList = [{
