@@ -6,46 +6,55 @@
                     <h2 class="referral__main-summary-title">
                         <span class="referral__main-summary-title-invite">Invite your friends</span> and earn<br/>money on helping nature
                     </h2>
-                    <ul class="referral__main-summary-description features-list">
-                      <li class="features-list-item">Get passive income from referral for 1 year or more</li>
-                      <li class="features-list-item">Payment immediately to your wallet!</li>
-                      <li class="features-list-item">Dynamic % of reward</li>
-                      <li class="features-list-item">You not only earn, but contribute to the regeneration of nature!</li>
-                      <li class="features-list-item">A unique and beautiful NFT product that you want to recommend to friends</li>
+                    <ul class="referral__main-summary-features indent-features-list">
+                      	<li class="indent-features-list-item">
+							<span class="indent-features-list-item-mark"/>
+							<p class="indent-features-list-item-text">Get passive income from referral for 1 year or more</p>
+						</li>
+						<li class="indent-features-list-item">
+							<span class="indent-features-list-item-mark"/>
+							<p class="indent-features-list-item-text">Payment immediately to your wallet!</p>
+						</li>
+						<li class="indent-features-list-item">
+							<span class="indent-features-list-item-mark"/>
+							<p class="indent-features-list-item-text">Dynamic % of reward</p>
+						</li>
+						<li class="indent-features-list-item">
+							<span class="indent-features-list-item-mark"/>
+							<p class="indent-features-list-item-text">You not only earn, but contribute to the regeneration of nature!</p>
+						</li>
+						<li class="indent-features-list-item">
+							<span class="indent-features-list-item-mark"/>
+							<p class="indent-features-list-item-text">A unique and beautiful NFT product that you want to recommend to friends</p>
+						</li>
                     </ul>
                     <a class="referral__main-summary-reward" @click="showRewardModal = true">How to get rewarded?</a>
                 </div>
                 <div class="referral__main-info">
                     <div class="referral__main-info-block">
-                        <div class="referral__main-info-block-withdraw">
-                            <div class="referral__main-info-block-withdraw-price">
-                                <div class="referral__main-info-block-withdraw-price-block">
-                                    <img class="referral__main-info-block-withdraw-price-block-celo" :src="getCDNImage('celo.svg')" alt="celo">
-                                    <p class="referral__main-info-block-withdraw-price-block-value">{{ formattedEarning(ownerInfo.refer_fee) }}</p>
-                                </div>
-                                <p class="referral__main-info-block-withdraw-ready">Ready for withdraw</p>
-                            </div>
-                        </div>
-                        <div class="referral__main-info-block-total">
-                            <div class="referral__main-info-block-total-status">
-                                <p class="referral__main-info-block-total-status-count">-</p>
-                                <p class="referral__main-info-block-total-status-name">Total invited</p>
-                            </div>
-                            <div class="referral__main-info-block-total-status">
-                                <p class="referral__main-info-block-total-status-count">{{ ownerInfo.totalCount }}</p>
-                                <p class="referral__main-info-block-total-status-name">Total sales</p>
-                            </div>
-                            <div class="referral__main-info-block-total-status">
-                                <p class="referral__main-info-block-total-status-count">
-                                    <img :src="getCDNImage('celo.svg')" alt="celo">
-                                    <span class="referral__main-info-block-total-status-count-amount">{{ formattedEarning(ownerInfo.refer_fee) }}</span>
-                                </p>
-                                <p class="referral__main-info-block-total-status-name">Total earned</p>
-                            </div>
-                        </div>
+                        <div class="referral__main-info-block-invited">
+							<div class="referral__main-info-block-status">
+								<p class="referral__main-info-block-status-count">{{ ownerInfo.clicksInfo['total'] }}</p>
+								<p class="referral__main-info-block-status-name">Total invited</p>
+							</div>
+							<div class="referral__main-info-block-status">
+								<p class="referral__main-info-block-status-count">{{ ownerInfo.totalCount }}</p>
+								<p class="referral__main-info-block-status-name">Total sales</p>
+							</div>
+						</div>
+						<div class="referral__main-info-block-status">
+							<p class="referral__main-info-block-status-count">
+								<img :src="getCDNImage('celo.svg')" alt="celo">
+								<span class="referral__main-info-block-status-count-amount">{{ formattedEarning(ownerInfo.refer_fee) }}</span>
+							</p>
+							<p class="referral__main-info-block-status-name">Total earned</p>
+							<div class="referral__main-info-block-status-tooltip">
+								<img class="referral__main-info-block-status-tooltip-mark" src="/question-gradient.svg" alt="question">
+							</div>
+						</div>
                     </div>
                     <div class="referral__main-info-address">
-                        <div class="referral__main-info-address-block" @click="copyReferralLink">
+                        <div class="referral__main-info-address-block gradient-block" @click="copyReferralLink">
                             <span class="referral__main-info-address-name"> {{ !this.addressCopied ? 'Referral link:' : 'Copped' }} </span>
                             <span class="referral__main-info-address-link">{{ cuttenReferralLink(this.referralUrl) }}</span>
                         </div>
@@ -53,8 +62,19 @@
                             <ShareFrame class="referral__main-info-address-share-frame" :class="{ copied: addressCopied }" @onShared="linkShared = true"/>
                         </div>
                     </div>
+					<a class="referral__main-info-link" href="/calendar">
+						Check promote page <span>&#x276F;</span>
+					</a>
                 </div>
             </div>
+			<div class="referral__offer gradient-block" v-if="showOfferBlock">
+				<a class="referral__offer-close" @click="closeOffer">&#x2715;</a>
+				<h2 class="referral__offer-title">Launch offer <img :src="getCDNImage('fire.svg')"></h2>
+				<p class="referral__offer-content">
+					Get <span class="referral__offer-content-sale">10%</span> <span class="referral__offer-content-percent">100%</span> <b>reward</b> from the sale of the referral until <b>September 1, 2022</b>
+				</p>
+				<p class="referral__offer-date">Will end in: <b>{{ offerDate }}</b></p>
+			</div>
             <div class="referral__certificates">
 				<client-only>
 					<vue-glide
@@ -95,8 +115,8 @@
                     <div class="referral__list-owner-info">
                         <p>-</p>
                         <p><b>{{ cuttenAddress(this.address) }}</b></p>
-                        <p>-</p>
-                        <p>{{ ownerInfo.totalCount }}</p>
+                        <p>{{ getClickCountFromReferer(ownerInfo) }}</p>
+                        <p>{{ ownerInfo.totalCountInDate }}</p>
                         <p class="referral__list-celo">
                             <img class="referral__list-celo-img" :src="getCDNImage('celo.svg')" alt="celo">
                             <span class="referral__list-celo-price">{{ formattedEarning(ownerInfo.refer_fee) }}</span>
@@ -109,7 +129,7 @@
                         <div class="referral__list-users-list-item">
                             <p>{{ idx + 1 }}</p>
                             <p><b>{{ cuttenAddress(userInfo.referAddress) }}</b></p>
-                            <p>-</p>
+                            <p>{{ getClickCountFromReferer(userInfo) }}</p>
                             <p>{{ userInfo.totalCount }}</p>
                             <p class="referral__list-celo">
                                 <img class="referral__list-celo-img" :src="getCDNImage('celo.svg')" alt="celo">
@@ -127,6 +147,8 @@
 <script>
 import ShareFrame from '@/components/ShareFrame.vue'
 import RewardInfoModal from '@/components/modals/rewardInfoModal.vue'
+const LAST_OFFER_VIEWED = 'last_offer_viewed'
+
 export default {
   components: {
 	ShareFrame,
@@ -143,14 +165,19 @@ export default {
       ownerInfo: {
         referAddress: '',
         refer_fee: 0,
-        totalCount: 0        
+		totalCount: 0,
+		clicksInfo: {
+		  'total': 0
+		}
       },
 	  referralList: [],
 	  sliderActive: 0,
 	  sliderOptions: {
 		// type: 'carousel'
 		perView: 6
-	  }
+	  },
+	  showOfferBlock: false,
+	  offerDate: ''
 	}
   },
   head() {
@@ -188,10 +215,34 @@ export default {
   async mounted() {
     if (process && process.browser) {
       const footerEl = document.querySelector('.footer')
-      footerEl.classList.remove('fixed')
+	  footerEl.classList.remove('fixed')
+
+	  const lastOfferShownTime = localStorage.getItem(LAST_OFFER_VIEWED)
+	  const date = new Date()
+	  const currTime = date.getTime()
+	  const offerTime = new Date(2022, 8, 1).getTime() // 20022/09/01
+	  const currDate = date.getDate()
+	  const lastSavedDate = lastOfferShownTime ? new Date(parseInt(lastOfferShownTime)).getDate() : null
+	  const currDay = date.getDay()
+	  if (currTime < offerTime && (!lastSavedDate || (date.getDay() === 1 && lastSavedDate && currDate !== lastSavedDate))) {
+		let difference = offerTime - currTime
+		const offerDay = Math.floor(difference/1000/60/60/24)
+		difference -= offerDay*1000*60*60*24
+
+		const offerHour = Math.floor(difference/1000/60/60)
+		difference -= offerHour*1000*60*60
+
+		const offerMintue = Math.floor(difference/1000/60)
+		difference -= offerMintue*1000*60
+		this.offerDate = `${this.formatTimeNumber(offerDay)}d:${this.formatTimeNumber(offerHour)}h:${this.formatTimeNumber(offerMintue)}m`
+		this.showOfferBlock = true
+	  }
 	}
   },
   methods: {
+	formatTimeNumber(number) {
+	  return number > 9 ? number : `0${number}`
+	},
     updateReferralUrl() {
       if (process && process.browser && this.address) {
 		this.referralUrl = location.origin + '/calendar' + `?referral=${this.$store.state.fullAddress}`
@@ -227,7 +278,19 @@ export default {
           return price.toFixed(floatingLen)
         }
       }
-    },
+	},
+	getClickCountFromReferer(refererInfo) {
+	  let countKey = ''
+	  switch (this.activeFilter) {
+		case 0: countKey = '24h'
+		  break
+		case 1: countKey = '7d'
+		  break
+		case 2: countKey = '30d'
+		  break
+	  }
+	  return refererInfo.clicksInfo ? (refererInfo.clicksInfo[countKey] || 0) : 0
+	},
     async loadReferralData() {
       const referralData = await this.$store.dispatch('getReferralData', this.activeFilter)
       if (!referralData) return
@@ -240,6 +303,12 @@ export default {
 	  this.addressCopied = true
 	  this.$copyText(this.referralUrl)
 	  setTimeout(() => this.addressCopied = false, 1000)
+	},
+	closeOffer() {
+	  this.showOfferBlock = false
+	  if (process && process.browser) {
+		localStorage.setItem(LAST_OFFER_VIEWED, new Date().getTime())
+	  }
 	},
     changeFilter(filter) {
       const oldFilter = this.activeFilter
@@ -255,10 +324,22 @@ export default {
 
 <style lang="scss" scoped>
 .referral {
+  .gradient-block {
+	position: relative;
+	&::after {
+	  position: absolute;
+	  top: -.15rem; bottom: -.15rem;
+	  left: -.15rem; right: -.15rem;
+	  content: '';
+	  background: linear-gradient(to right, #365BE0, #D676CF, #FFE884);
+	  z-index: -1;
+	  border-radius: 2.5rem;
+	}
+  }
   &__main {
     display: flex;
     justify-content: space-between;
-    padding: 5.3rem 12rem 8.5rem;
+    padding: 5.3rem 32.4rem 6.8rem 12rem;
     &-summary {
       max-width: 44.2rem;
       &-title {
@@ -270,18 +351,25 @@ export default {
           color: $pink;
         }
       }
-      &-description {
-        margin-top: 1.6rem;
-        line-height: 2.2rem;
-        font-size: 1.8rem;
-        color: $grayDark;
-        b {
-          font-weight: 600;
-        }
+      &-features {
+		margin-top: 1.6rem;
+		.indent-features-list-item {
+		  align-items: center;
+		  &:nth-child(4), &:last-child {
+			align-items: flex-start;
+			margin-top: 1.5rem;
+			.indent-features-list-item-text {
+			  transform: translateY(-0.7rem);
+			}
+		  }
+		  &-text {
+			max-width: 27.9rem;
+		  }
+		}
       }
       &-reward {
         display: block;
-        margin-top: 2.6rem;
+        margin-top: 1.4rem;
         font-weight: 600;
         font-size: 1.4rem;
         color: $pink;
@@ -290,81 +378,70 @@ export default {
     }
     &-info {
       &-block {
-        width: 38.7rem;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 4.3rem 2.4rem 3.4rem;
-        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
-        border-radius: 2.4rem;
-        &-withdraw {
-          &-price {
-            &-block {
-              display: flex;
-              align-items: center;
-              &-celo {
-                width: 3.4rem;
-                margin-right: 0.8rem;
-              }
-              &-value {
-                font-family: Cabin-Bold;
-                font-weight: 700;
-                font-size: 3.2rem;
-              }
-            }
-          }
-          &-ready {
-            margin-top: 0.8rem;
-            font-size: 1.2rem;
-            color: $grayLight;
-          }
-        }
-        &-total {
-          display: flex;
-          justify-content: space-between;
-          margin-top: 3.4rem;
-          padding-top: 2.6rem;
-          border-top: 1px solid $modalColor;
-          &-status {
-            text-align: center;
-            &-count {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-weight: 600;
-              font-size: 1.8rem;
-              img {
-                width: 1.6rem;
-                margin-right: 0.8rem;
-              }
-            }
-            &-name {
-              margin-top: 0.8rem;
-              font-size: 1.2rem;
-            }
-          }
-        }
+		// background: rgba(255, 255, 255, 0.9);
+		width: 28.2rem;
+		&-invited {
+		  display: flex;
+		  .referral__main-info-block-status {
+			flex: 1;
+			padding: 1.7rem 0;
+			margin: 0;
+		    &:first-child {
+			  margin-right: 1.6rem;
+			}
+			&-count {
+			  font-family: OpenSans-SemiBold;
+			  font-size: 1.8rem;
+			}
+		  }
+		}
+        &-status {
+		  background: $white;
+		  padding: 1rem 0;
+		  margin-top: 1.6rem;
+		  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+		  border-radius: 0.8rem;
+		  text-align: center;
+		  position: relative;
+		  &-tooltip {
+			position: absolute;
+			top: 0.9rem;
+			right: 0.9rem;
+			&-mark {
+			  width: 1.3rem;
+			}
+		  }
+		  &-count {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-family: Cabin-Medium;
+			font-weight: 600;
+			font-size: 3.2rem;
+			img {
+			  width: 2.4rem;
+			  margin-right: 0.8rem;
+			}
+		  }
+		  &-name {
+			margin-top: 0.8rem;
+			font-size: 1.4rem;
+			color: $grayLight;
+		  }
+		}
       }
       &-address {
         display: flex;
         align-items: center;
-        margin-top: 1.8rem;
+        margin-top: 3.6rem;
         &-block {
-          margin-right: 1.8rem;
-          position: relative;
+          margin-right: 1.6rem;
           padding: 0.8rem 1.6rem;
           background: $white;
           border: 1px solid transparent;
           border-radius: 2.5rem;
           font-size: 1.4rem;
           cursor: pointer;
-          &::after {
-            position: absolute;
-            top: -.2rem; bottom: -.2rem;
-            left: -.2rem; right: -.2rem;
-            content: '';
-            background: linear-gradient(to right, #365BE0, #D676CF, #FFE884);
-            z-index: -1;
-            border-radius: 2.5rem;
-          }
         }
         &-name {
           margin-right: 1.2rem;
@@ -373,8 +450,66 @@ export default {
           font-weight: 600;
           font-size: 1.4rem;
         }
-      }
+	  }
+	  &-link {
+		display: block;
+		margin-top: 3.6rem;
+		font-family: OpenSans-Regular;
+		font-weight: 400;
+		font-size: 1.4rem;
+		color: $grayDark;
+		span {
+		  font-size: 1.2rem;
+		}
+	  }
     }
+  }
+  &__offer {
+	width: 29.3rem;
+	margin: 0 auto 6.8rem;
+	padding: 1.6rem;
+	background: $white;
+	border-radius: 1.2rem;
+	position: relative;
+	text-align: center;
+	font-size: 1.4rem;
+	&.gradient-block::after {
+	  border-radius: 1.2rem;
+	}
+	&-close {
+	  position: absolute;
+	  top: 1.5rem;
+	  right: 1.4rem;
+	  font-size: 1.4rem;
+	  color: $border;
+	  cursor: pointer;
+	}
+	&-title {
+	  font-weight: 600;
+	  font-size: 2.2rem;
+	  color: $grayDark;
+	  img {
+		width: 2rem;
+     	transform: translateY(0.2rem);
+	  }
+	}
+	&-content {
+	  margin-top: 0.8rem;
+	  &-sale {
+		text-decoration: line-through;
+		color: $border;
+	  }
+	  &-percent {
+		font-weight: 600;
+		color: $pink;
+	  }
+	  b {
+		font-weight: 600;
+	  }
+	}
+	&-date {
+	  margin-top: 1.4rem;
+	}
   }
   &__certificates {
 	&-glide {
@@ -505,64 +640,45 @@ export default {
   @media (max-width: 460px) {
     &__main {
       display: block;
-      padding: 2.4rem 0.8rem 6rem;
+	  padding: 2.4rem 0.8rem 6rem;
+	  .gradient-block::after {
+		top: -.2rem; bottom: -.2rem;
+	  	left: -.2rem; right: -.2rem;
+	  }
       &-summary {
-        max-width: 27.8rem;
+        max-width: none;
         &-title {
           line-height: 2.2rem;
           font-size: 1.8rem;
         }
-        &-description {
+        &-features {
           margin-top: 0.8rem;
-          line-height: 2rem;
-          font-size: 1.4rem;
         }
         &-reward {
-          margin-top: 1.6rem;
+          margin-top: 0.6rem;
         }
       }
       &-info {
         &-block {
-          margin-top: 4rem;
-          padding-left: 0.8rem;
-          padding-right: 0.8rem;
-          width: calc(100% - 1.6rem);
-          &-withdraw {
-            &-price {
-              &-block {
-               &-celo {
-                width: 2.6rem;
-               }
-              }
-            }
-          }
-          &-total {
-            margin-top: 3.2rem;
-            padding-top: 2.4rem;
-          }
+          margin-top: 5.7rem;
+          width: 100%;
         }
         &-address {
-          margin-top: 2rem;
+		  margin-top: 2.8rem;
+		  margin-right: 1rem;
           &-block {
+			flex: 1;
             padding: 1rem 1.6rem;
-            margin-right: 0.8rem;
           }
-          &-share {
-            &-frame {
-              ::v-deep .dropdown-menu {
-                right: -2.4rem !important;
-              }
-              &.copied {
-                ::v-deep .dropdown-menu {
-                  right: -5.8rem !important;
-                } 
-              }
-            }
-            
-          }
-        }
+		}
+		&-link {
+		  margin-top: 2.8rem;
+		}
       }
-    }
+	}
+	&__offer {
+	  width: calc(100% - 4.8rem);
+	}
     &__certificates {
 	  &-glide {
 		transform: translateX(-2.6rem);

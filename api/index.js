@@ -16,5 +16,15 @@ export default {
         }
         const result = await axios.post(url, payload)
         return result.data?.contract_infos || []
+    },
+    async addClickHistory(address) {
+        const url = `${API_URL}/account_refers/addClickHistory?address=${address}`
+        const result = await axios.get(url)
+        return result.data?.account_refer || {}
+    },
+    async getClickCount(address) {
+        const url = `${API_URL}/account_refers/getClickCount?address=${address}`
+        const result = await axios.get(url)
+        return result.data ? JSON.parse(result.data) : {}
     }
 }

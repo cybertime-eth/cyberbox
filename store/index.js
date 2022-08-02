@@ -1166,27 +1166,29 @@ export const actions = {
 	try {
 	  const date = new Date()
 	  const year = date.getFullYear()
-	  const month = date.getMonth() + 1
+	  const month = date.getMonth()
 	  let day = date.getDate()
 	  const dateFilters = []
 	  if (filter === 0) {
-		dateFilters.push(`"${year}-${month}-${day}"`)
+		dateFilters.push(`"${date.toDateString()}"`)
 	  } else {
+		let newDay = day
 		const filterDays = filter === 1 ? 7 : 30
 		for (let i = 0; i < filterDays; i++) {
-		  if (day - i < 0) {
-			date.setMonth(month - 2)
-		  }
-		  date.setDate(day - i)
-
-		  const filterMonth = date.getMonth() + 1		
-		  const filterDate = date.getDate()
-		  dateFilters.push(`"${year}-${filterMonth}-${filterDate}"`)
+		  newDay = day - i
+		  const newDate = new Date(year, month, newDay)
+		  dateFilters.push(`"${newDate.toDateString()}"`)
 		}
 	  }
 	  const query = gql`
 	  query Sample {
 		certReferUsers(first: 1 where: { referAddress: "${address}" }) {
+			id
+			referAddress
+			refer_fee
+			totalCount
+		}
+		userStatisticInfos: certReferStatistics(first: 1 where: { referAddress: "${address}" date_key_in: [${dateFilters}] }) {
 			id
 			referAddress
 			refer_fee
@@ -1200,9 +1202,30 @@ export const actions = {
 		}
 	  }`
 	  const data = await this.$graphql.default.request(query)
+	  const userInfo = data.certReferUsers.length > 0 ? data.certReferUsers[0] : null
+	  const userStatisticInfo = data.userStatisticInfos.length > 0 ? data.userStatisticInfos[0] : null
+	  const userList = data.certReferStatistics
+	  if (userInfo) {
+		userInfo.clicksInfo = await API.getClickCount(userInfo.referAddress.toLowerCase())
+		userInfo.totalCountInDate = 0
+		if (userStatisticInfo) {
+		  userInfo.totalCountInDate = userStatisticInfo.totalCount
+		}
+	  }
+	  if (userList.length > 0) {
+		const fetchRequests = []
+		userList.forEach(referInfo => {
+		  fetchRequests.push(API.getClickCount(referInfo.referAddress.toLowerCase()))
+		})
+		const fetchResults = await Promise.all(fetchRequests)
+		userList.map((referInfo, index) => {
+		  referInfo.clicksInfo = fetchResults[index]
+		})
+	  }
+	  
 	  return {
-		userInfo: data.certReferUsers.length > 0 ? data.certReferUsers[0] : null,
-		userList: data.certReferStatistics
+		userInfo,
+		userList
 	  }
 	} catch (e) {
 	  console.log(e)

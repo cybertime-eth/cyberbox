@@ -1,7 +1,7 @@
 <template>
     <div class="share-frame">
         <dropdown-menu class="share-frame-dropdown" :right="true" v-model="showShareFrame" v-if="dropdownVisible">
-            <a class="share-frame__link dropdown-toggle"><img :src="getCDNImage('upload.svg')" alt="share"></a>
+            <a class="share-frame__link dropdown-toggle"><img src="/social-share.svg" alt="share"></a>
             <div slot="dropdown">
                 <h2 class="share-frame__title">Share link to this page</h2>
                 <div class="share-frame__block">
@@ -74,12 +74,14 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 3.6rem;
-    height: 3.6rem;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+    width: 1.3rem;
+    // background: rgba(255, 255, 255, 0.5);
+    // border-radius: 50%;
+    // box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
     cursor: pointer;
+    img {
+      width: 100%;
+    }
   }
   ::v-deep .dropdown-menu {
     top: calc(100% + 0.6rem) !important;

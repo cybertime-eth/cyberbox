@@ -203,6 +203,7 @@
 
 <script>
 import { CERTIFICATE_TOKEN_TYPE, CDN_ROOT } from '@/config'
+import API from '@/api'
 import BuyToken from '@/components/modals/buyToken'
 import ExchangeBonus from '@/components/modals/exchangeBonus.vue'
 import ExchangeToken from '@/components/modals/exchangeToken.vue'
@@ -403,6 +404,7 @@ export default {
 			...this.certificate,
 			referrer: this.$route.query.referral
 		  }
+		  API.addClickHistory(this.$route.query.referral.toLowerCase())
 		}
 		this.referralUrl = location.origin + location.pathname + `?referral=${this.$store.state.fullAddress}`
 	  }

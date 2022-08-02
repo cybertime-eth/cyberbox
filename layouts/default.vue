@@ -300,6 +300,29 @@ ul {
   }
 }
 
+.indent-features-list {
+  &-item {
+	display: flex;
+	margin-top: 0.8rem;
+	&:first-child {
+	  margin: 0;
+	}
+    &-mark {
+	  display: inline-block;
+	  width: 0.6rem;
+	  height: 0.6rem;
+	  background: $green;
+	  margin-right: 1.3rem;
+	  border-radius: 50%;
+    }
+	&-text {
+	  font-size: 1.4rem;
+	  line-height: 2rem;
+	  color: $grayDark;
+	}
+  }
+}
+
 .without-scroll {
   -ms-overflow-style: none;
   scrollbar-width: none;
