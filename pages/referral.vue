@@ -55,7 +55,7 @@
                     </div>
                     <div class="referral__main-info-address">
                         <div class="referral__main-info-address-block gradient-block" @click="copyReferralLink">
-                            <span class="referral__main-info-address-name"> {{ !this.addressCopied ? 'Referral link:' : 'Copped' }} </span>
+                            <span class="referral__main-info-address-name"> {{ !this.addressCopied ? 'Referral link:' : 'Copied' }} </span>
                             <span class="referral__main-info-address-link">{{ cuttenReferralLink(this.referralUrl) }}</span>
                         </div>
                         <div class="referral__main-info-address-share">
@@ -63,7 +63,8 @@
                         </div>
                     </div>
 					<a class="referral__main-info-link" href="/calendar">
-						Check promote page <span>&#x276F;</span>
+						<span class="referral__main-info-link-name">Check promote page</span>
+						<span class="referral__main-info-link-arrow">&#x276F;</span>
 					</a>
                 </div>
             </div>
@@ -111,7 +112,7 @@
                         <p>Sales</p>
                         <p>Earning</p>
                     </div>
-                    <p class="referral__list-owner-position">Your position</p>
+                    <!-- <p class="referral__list-owner-position">Your position</p>
                     <div class="referral__list-owner-info">
                         <p>-</p>
                         <p><b>{{ cuttenAddress(this.address) }}</b></p>
@@ -121,10 +122,9 @@
                             <img class="referral__list-celo-img" :src="getCDNImage('celo.svg')" alt="celo">
                             <span class="referral__list-celo-price">{{ formattedEarning(ownerInfo.refer_fee) }}</span>
                         </p>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="referral__list-users">
-                    <p class="referral__list-users-name">All users</p>
                     <div class="referral__list-users-list" :key="idx" v-for="(userInfo, idx) of referralList">
                         <div class="referral__list-users-list-item">
                             <p>{{ idx + 1 }}</p>
@@ -452,14 +452,24 @@ export default {
         }
 	  }
 	  &-link {
-		display: block;
+		display: flex;
+		align-items: center;
 		margin-top: 3.6rem;
-		font-family: OpenSans-Regular;
-		font-weight: 400;
-		font-size: 1.4rem;
-		color: $grayDark;
-		span {
+		&-name {
+		  margin-right: 1rem;
+		  font-family: OpenSans-Regular;
+		  font-weight: 600;
+		  font-size: 1.4rem;
+		  color: $grayLight;
+		}
+		&-arrow {
 		  font-size: 1.2rem;
+		  color: $grayLight;
+		}
+		&:hover {
+		  .referral__main-info-link-name {
+			text-decoration: underline;
+		  }
 		}
 	  }
     }
@@ -533,7 +543,7 @@ export default {
 	}
   }
   &__list {
-    padding: 7.8rem 12rem;
+    padding: 8.8rem 12rem;
     &-filter {
       display: flex;
       align-items: center;
@@ -556,7 +566,13 @@ export default {
           padding: 0.6rem 3.1rem;
           font-size: 1.4rem;
           border: 1px solid $modalColor;
-          cursor: pointer;
+		  cursor: pointer;
+		  &:first-child {
+			border-radius: 2.5rem 0 0 2.5rem;
+		  }
+		  &:last-child {
+			border-radius: 0 2.5rem 2.5rem 0;
+		  }
           &.active {
             background: $lightGreen;
             border-color: transparent;
@@ -614,7 +630,7 @@ export default {
     }
     &-users {
       padding: 0 0.8rem;
-      margin-top: 1.6rem;
+      margin-top: 2rem;
       &-name {
         font-weight: 600;
         font-size: 1.2rem;
@@ -649,7 +665,7 @@ export default {
         max-width: none;
         &-title {
           line-height: 2.2rem;
-          font-size: 1.8rem;
+          font-size: 2.2rem;
         }
         &-features {
           margin-top: 0.8rem;

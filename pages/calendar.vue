@@ -54,12 +54,12 @@
 						</div>
 						<div class="lending__block-referral-box">
 							<div class="lending__block-referral-box-info" @click="copyReferralLink">
-								<p class="lending__block-referral-box-info-name">{{ referralUrlCopied ? 'Copped' : 'Referral Link:' }}</p>
+								<p class="lending__block-referral-box-info-name">{{ referralUrlCopied ? 'Copied' : 'Referral Link:' }}</p>
 								<p class="lending__block-referral-box-info-url">{{ cuttenReferralLink(this.referralUrl) }}</p>
 							</div>
 							<a class="lending__block-referral-box-link" href="/referral">
 								<span class="lending__block-referral-box-link-name">Referral program</span>
-								<img class="lending__block-referral-box-link-icon" src="/array-right.svg" alt="right">
+								<span class="lending__block-referral-box-link-arrow">&#x276F;</span>
 							</a>
 						</div>
 					</div>
@@ -676,11 +676,13 @@ export default {
 		  cursor: pointer;
 		  &-name {
 			margin-right: 1rem;
+			font-weight: 600;
 			font-size: 1.4rem;
 			color: $grayLight;
 		  }
-		  &-icon {
-			width: 0.5rem;
+		  &-arrow {
+			font-size: 1.2rem;
+			color: $grayLight;
 		  }
 		  &:hover {
 			.lending__block-referral-box-link-name {

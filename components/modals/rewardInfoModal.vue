@@ -11,9 +11,9 @@
                         <p class="modal__reward-main-info-steps-step">3</p>
                     </div>
                     <div class="modal__reward-main-info-items">
-                        <p class="modal__reward-main-info-items-item"><b>Share</b> your referral link</p>
-                        <p class="modal__reward-main-info-items-item"><b>Invite your friends</b> to buy a carbon certificate on the mint page</p>
-                        <p class="modal__reward-main-info-items-item"><b>Earn CELO</b> for each purchased certificate through your referral link</p>
+                        <p class="modal__reward-main-info-items-item"><b>Send your link</b> to friends or post on social networks</p>
+                        <p class="modal__reward-main-info-items-item"><b>Your friends buy NFT,</b> offset carbon and help nature</p>
+                        <p class="modal__reward-main-info-items-item"><b>You receive income</b> directly to your wallet immediately after a successful NFT purchase!</p>
                     </div>
                 </div>
             </div>
@@ -71,7 +71,7 @@ export default {
             align-items: center;
             justify-content: center;
             background: $white;
-            margin-top: 3.4rem;
+            margin-top: 4rem;
             border-radius: 50%;
             font-weight: 600;
             font-size: 1.4rem;
@@ -90,7 +90,7 @@ export default {
               }
               &::before {
                 top: 0;
-                height: 3.4rem;
+                height: 4rem;
                 transform: translateY(-100%);
               }
               &::after {
@@ -109,7 +109,7 @@ export default {
             font-size: 1.6rem;
             color: $grayDark;
             &:nth-child(2) {
-              padding-top: 3.7rem;
+              padding-top: 2.2rem;
               padding-bottom: 3.3rem;
             }
           }
@@ -138,7 +138,21 @@ export default {
           &-steps {
             margin-right: 1.6rem;
             &-step {
-              
+			  margin-top: 2.8rem;
+              &:first-child {
+                margin-top: 1rem;
+              }
+              &:nth-child(2) {
+				&::before {
+				  height: 2.8rem;
+				}
+				&::after {
+					height: 4.4rem;
+				}
+			  }
+			  &:last-child {
+				margin-top: 4.4rem;
+			  }
             }
           }
           &-items {
@@ -146,7 +160,7 @@ export default {
             &-item {
               font-size: 1.4rem;
               &:nth-child(2) {
-                padding-bottom: 3.8rem;
+                padding-bottom: 3.4rem;
               }
             }
           }

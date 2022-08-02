@@ -8,7 +8,7 @@
 		<div class="my-collection-header-address">
 			<h1 class="my-collection-header-address-highlight">{{ cuttenAddress }}</h1>
 			<div class="my-collection-header-address-copy-box">
-				<p class="my-collection-header-address-copy" @click="copyAddress">{{ !addressCopied ? cuttenAddress : 'Copped' }}</p>
+				<p class="my-collection-header-address-copy" @click="copyAddress">{{ !addressCopied ? cuttenAddress : 'Copied' }}</p>
 				<ShareFrame class="my-collection-header-share" :class="{ copied: addressCopied }" @onShared="linkShared = true"/>
 			</div>
 		</div>
