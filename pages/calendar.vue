@@ -251,7 +251,7 @@ export default {
     return {
       meta: [
 		{ hid: 'og:image', property: 'og:image', content: this.getCDNImage('calendar-banner.webp') },
-		{ hid: 'twitter:image', property: 'twitter:image', content: this.getCDNImage('calendar-banner.webp') }
+		{ hid: 'twitter:image', name: 'twitter:image', content: this.getCDNImage('calendar-banner.webp') }
       ]
     }
   },

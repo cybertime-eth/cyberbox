@@ -16,8 +16,8 @@ export default {
       {vmid: 'og:image', hid: 'og:image', property: 'og:image', content: '/cyberbox.webp'},
       {name: 'og:image:width', property: 'og:image:width', content: '1200'},
       {name: 'og:image:height', property: 'og:image:height', content: '630'},
-      {name: 'twitter:card', property: 'twitter:card', content: 'summary_large_image'},
-      {vmid: 'twitter:image', hid: 'twitter:image', property: 'twitter:image', content: '/cyberbox.webp'},
+      {name: 'twitter:card', name: 'twitter:card', content: 'summary_large_image'},
+      {vmid: 'twitter:image', hid: 'twitter:image', name: 'twitter:image', content: '/cyberbox.webp'},
       {name: 'format-detection', content: 'telephone=no'}
     ],
     link: [

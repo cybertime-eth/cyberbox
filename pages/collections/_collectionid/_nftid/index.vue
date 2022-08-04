@@ -473,7 +473,7 @@ export default {
         { hid: 'description', name: 'description', content: this.description },
         { hid: 'og:description', property: 'og:description', content: this.description },
         { hid: 'og:image', property: 'og:image', content: this.metaIcon },
-        { hid: 'twitter:image', property: 'twitter:image', content: this.metaIcon }
+        { hid: 'twitter:image', name: 'twitter:image', content: this.metaIcon }
       ]
     }
   },
