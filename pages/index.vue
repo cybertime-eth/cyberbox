@@ -1,56 +1,47 @@
 <template>
   <PageLoader v-if="loading"/>
-  <section class="refi container-xl" v-else>
-    <h1 class="refi__title">Regenerate nature with the power of NFTs</h1>
-    <h3 class="refi__subtitle">Cyberbox is a ReFi NFT marketplace that allows you to trade NFTs and automatically offset CO2</h3>
+  <section class="refi" v-else>
+	<div class="refi__main">
+		<client-only>
+			<img class="refi__main-img" :src="backgroundImage" alt="background">
+		</client-only>
+    	<h1 class="refi__title">Regenerate nature with the power of NFTs</h1>
+    	<h3 class="refi__subtitle">Cyberbox is a ReFi NFT marketplace that allows you to trade NFTs and<br/>automatically offset CO2</h3>
+		<div class="refi__main-buttons">
+          <button class="refi__main-button explorer" @click="gotoExplorer('Top_button')">Explorer NFT</button>
+          <button class="refi__main-button top ranking" @click="gotoRankings('Top_button')">Rankings</button>
+        </div>
+		<div class="refi__main-live" v-if="totalCO2Amount > 0">
+		  <div class="refi__main-live-box gradient-box">
+			<h3 class="refi__main-live-title">LIVE <span/> Carbon Offsetting</h3>
+			<div class="refi__main-live-co2">
+				<h3 class="refi__main-live-co2-count">{{ totalCO2Amount }}</h3>
+				<p class="refi__main-live-co2-description">Offset, tCO2 <img :src="getCDNImage('plant.svg')" alt="plant"></p>
+			</div>
+		  </div>
+        </div>
+	</div>
     <div class="refi__block">
-      <div class="refi__block-info">
-        <div class="refi__block-info-buttons">
-          <button class="refi__block-info-button explorer" @click="gotoExplorer('Top_button')">Explorer NFT</button>
-          <button class="refi__block-info-button top ranking" @click="gotoRankings('Top_button')">Rankings</button>
-        </div>
-        <img class="refi__block-info-picture" :src="getCDNImage('earth.webp')" alt="earth">
-        <div class="refi__block-info-live" v-if="totalCO2Amount > 0">
-          <h3 class="refi__block-info-live-title">LIVE <span/> Carbon Offsetting</h3>
-          <div class="refi__block-info-live-co2 gradient-box">
-            <h3 class="refi__block-info-live-co2-count">{{ totalCO2Amount }}</h3>
-            <p class="refi__block-info-live-co2-description">Ton CO2 <img :src="getCDNImage('plant.svg')" alt="plant"></p>
-          </div>
-        </div>
-      </div>
 	  <div class="refi__block-carbon">
 		<div class="refi__block-carbon-info">
-			<h2 class="refi__block-carbon-info-title">NFT Carbon Offset Certificate</h2>
-			<p class="refi__block-carbon-info-content">Buy a personal NFT certificate to become carbon neutral</p>
+			<h2 class="refi__block-carbon-info-title">NFT Offset Calendar 2022</h2>
+			<p class="refi__block-carbon-info-content">Buy NFT every month, change your<br/>carbon footprint and track progress</p>
 			<ul class="refi__block-carbon-info-list features-list">
-				<li class="features-list-item">Unique NFT certificate every month</li>
-				<li class="features-list-item">1 NFT = 1 ton CO2 offset</li>
-				<li class="features-list-item">Collect or sell on the marketplace</li>
+				<li class="features-list-item">On-chain confirmation of your offset</li>
+				<li class="features-list-item">Unique design every month</li>
+				<li class="features-list-item">~1 tCO2 in offset tracker</li>
+				<li class="features-list-item">Chance to get into the ReFi DAO club</li>
 			</ul>
 			<button class="refi__block-carbon-info-buy" @click="gotoLending">Buy & Offset Now</button>
 		</div>
-		<div class="refi__block-carbon-certificate" ref="certificate">
-			<client-only>
-				<vue-glide
-					class="refi__block-carbon-certificate-glide"
-					v-model="sliderActive"
-					ref="slider"
-					:bound="true"
-					:perView="this.isMobile() ? 1.5 : 3"
-					@glide:build-after="handleStartSlider"
-				>
-					<vue-glide-slide :key="idx" v-for="(certificate, idx) of certificates">
-						<div class="refi__block-carbon-certificate-item" :class="{current: certificate.current }">
-							<h3 class="refi__block-carbon-certificate-item-name">{{ certificate.name }}</h3>
-							<div class="refi__block-carbon-certificate-item-box" :class="{unknown: !certificate.image}">
-								<img class="refi__block-carbon-certificate-item-box-image" :src="certificate.image" v-if="certificate.image">
-								<img class="refi__block-carbon-certificate-item-box-image-unknown" :src="getCDNImage('question-mark.svg')" v-else>
-							</div>
-							<p class="refi__block-carbon-certificate-item-status">{{ certificate.status }}</p>
-						</div>
-					</vue-glide-slide>
-				</vue-glide>
-			</client-only>
+		<div class="refi__block-carbon-certificate">
+			<div class="refi__block-carbon-certificate-item" :class="{ active: idx === activeCertificate }" :key="idx" v-for="(certificate, idx) of certificates">
+				<h3 class="refi__block-carbon-certificate-item-name">{{ certificate.name }}</h3>
+				<div class="refi__block-carbon-certificate-item-box" :class="{unknown: !certificate.image}">
+					<img class="refi__block-carbon-certificate-item-box-image" :src="certificate.image" v-if="certificate.image">
+					<img class="refi__block-carbon-certificate-item-box-image-unknown" :src="getCDNImage('question-mark.svg')" v-else>
+				</div>
+			</div>
 		</div>
 	  </div>
       <div class="refi__block-listings">
@@ -77,12 +68,12 @@
         <div class="refi__block-collections-header">
           <h3 class="refi__block-collections-header-title">Hot collections <img :src="getCDNImage('star-filled.svg')" alt="star"></h3>
           <div class="refi__block-collections-header-tab">
-            <div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 1}"  @click="updateCollectionTab(1)"><img class="refi__block-collections-header-tab-item-img" :src="getCDNImage('chart.svg')" alt="chart"> Volume</div>
-            <div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 2}" @click="updateCollectionTab(2)"><img class="refi__block-collections-header-tab-item-img" :src="getCDNImage('plant.svg')" alt="plant"> Carbon</div>
+            <div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 1}" @click="updateCollectionTab(1)"><img class="refi__block-collections-header-tab-item-img" :src="getCDNImage('plant.svg')" alt="plant"> Carbon</div>
+			<div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 2}"  @click="updateCollectionTab(2)"><img class="refi__block-collections-header-tab-item-img" :src="getCDNImage('chart.svg')" alt="chart"> Volume</div>
           </div>
         </div>
-        <p class="refi__block-collections-description" v-if="collectionTab === 2">Amount of CO2 offseting through NFT trading</p>
-        <div class="refi__block-collections-items" :class="{ carbon: collectionTab === 2 }">
+        <p class="refi__block-collections-description" v-if="collectionTab === 1">Amount of CO2 offseting through NFT trading</p>
+        <div class="refi__block-collections-items" :class="{ carbon: collectionTab === 1 }">
           <div class="refi__block-collections-items-group" :key="idx" v-for="(group, idx) in hotCollections">
             <div class="refi__block-collections-items-group-item" :key="collection.id" v-for="collection of group" @click="gotoCollection(collection.nftSymbol)">
               <div class="refi__block-collections-items-group-item-info">
@@ -93,9 +84,9 @@
                 </div>
                 <p class="refi__block-collections-items-group-item-info-name">{{ collection.name }}</p>
               </div>
-              <div class="refi__block-collections-items-group-item-carbon" v-if="collectionTab === 2">
+              <div class="refi__block-collections-items-group-item-carbon" v-if="collectionTab === 1">
                 <p class="refi__block-collections-items-group-item-carbon-value">{{collection.co2Celo}}</p>
-                <p class="refi__block-collections-items-group-item-carbon-unit">Ton CO2</p>
+                <p class="refi__block-collections-items-group-item-carbon-unit">Offset, tCO2</p>
               </div>
               <p class="refi__block-collections-items-group-item-amount" v-else><img :src="getCDNImage('celo.svg')" alt="celo"> {{collection.volumeCelo}}</p>
             </div>
@@ -103,7 +94,7 @@
         </div>
       </div>
       <div class="refi__block-footer">
-        <button class="refi__block-footer-button refi__block-info-button gradient-button ranking" @click="gotoRankings('Bottom_button')">Go to Rankings</button>
+        <button class="refi__block-footer-button refi__main-button gradient-button ranking" @click="gotoRankings('Bottom_button')">Go to Rankings</button>
         <h2 class="refi__block-footer-title">ReFi NFT Marketplace</h2>
         <div class="refi__block-footer-info">
           <div class="refi__block-footer-info-box">
@@ -128,7 +119,7 @@
             <p class="refi__block-footer-info-box-description">Flexible royalty system, ability to set % for Carbon offset, all the benefits of Celo chain, access to 200k of users via Valora app.</p>
           </div>
         </div>
-        <button class="refi__block-footer-button refi__block-info-button explorer" @click="gotoExplorer('Bottom_button')">Explorer NFT</button>
+        <button class="refi__block-footer-button refi__main-button explorer" @click="gotoExplorer('Bottom_button')">Explorer NFT</button>
         <div class="refi__block-info-support">
           <h3 class="refi__block-info-support-title">Supported & Powered by</h3>
           <client-only>
@@ -151,15 +142,18 @@ export default {
     return {
 	  loading: true,
 	  totalCO2Amount: 0,
+	  activeCertificate: 0,
 	  sliderActive: 0,
       collectionTab: 1,
       latestListings: [],
       listingPageNum: 0,
       collectionList: [],
-      hotCollections: []
+	  hotCollections: [],
+	  certificateTimer: null
     }
   },
   async created() {
+	this.certificateTimer = setInterval(this.startCertificateAnimation, 3000)
 	// Latest 12 Listings
 	setTimeout(() => this.loading = false, 5000)
     const newListings = await this.$store.dispatch('getLatestListings')
@@ -205,15 +199,22 @@ export default {
 
 	this.loading = false
   },
+  beforeDestroy() {
+	clearInterval(this.certificateTimer)
+  },
   mounted() {
-	if (this.$refs.certificate && this.isMobile()) {
-	  this.$refs.certificate.scrollLeft = Math.ceil(this.$refs.certificate.offsetWidth * 0.56)
-	}
 	if (process && process.browser && this.isMobile()) {
 	  this.sliderActive = 1
 	}
   },
   computed: {
+	backgroundImage() {
+	  if (!this.isMobile()) {
+		return this.getCDNImage('home-bg.webp')
+	  } else {
+		return this.getCDNImage('home-bg-mobile.webp')
+	  }
+	},
     pageSubTitle() {
       if (!this.isMobile()) {
         return 'CyberBox is the first NFT marketplace with ReFi integration'
@@ -265,7 +266,7 @@ export default {
 		  	break
     }
 		list.push({
-		  name: `${month} ${currYear}`,
+		  name: `${month} 22`,
 		  image: this.getCDNImage(`certificates/${i}.webp`),
 		  status,
 		  current: i === currMonth
@@ -289,11 +290,12 @@ export default {
         return `/collections/${nft.nftSymbol}/${nft.image.substring(nft.image.lastIndexOf('/') + 1).split('.')[0]}`
       }
 	},
-	handleStartSlider() {
-	  if (!this.isMobile()) {
-		this.$refs.slider.glide.disable()
+	startCertificateAnimation() {
+	  const newCertifiate = this.activeCertificate + 1
+	  if (newCertifiate < 3) {
+		this.activeCertificate = newCertifiate
 	  } else {
-		setTimeout(() => this.$refs.slider.glide.update(), 100)
+		this.activeCertificate = 0
 	  }
 	},
     pageListings(page) {
@@ -318,9 +320,9 @@ export default {
     updateHotCollections() {
       let collections = JSON.parse(JSON.stringify(this.collectionList))
       if (this.collectionTab === 1) {
-        collections = collections.sort((a, b) => b.volumeCelo - a.volumeCelo).slice(0, 12)
+		collections = collections.filter(item => item.co2Celo > 0).sort((a, b) => b.co2Celo - a.co2Celo).slice(0, 12)        
       } else {
-        collections = collections.filter(item => item.co2Celo > 0).sort((a, b) => b.co2Celo - a.co2Celo).slice(0, 12)        
+		collections = collections.sort((a, b) => b.volumeCelo - a.volumeCelo).slice(0, 12)
       }
       collections.map((item, index) => item.index = index + 1)
       if (!this.isMobile()) {
@@ -408,72 +410,65 @@ export default {
   }
 }
 .refi {
-  padding: 6.7rem 6rem 16.3rem;
-  &__title {
-    text-align: center;
-    font-family: Cabin-Bold;
-    font-size: 4.8rem;
-  }
-  &__subtitle {
-    padding-top: 1.6rem;
-    text-align: center;
-    font-weight: 500;
-    font-size: 1.8rem;
-  }
-  &__block {
-    padding-top: 4.4rem;
-    &-info {
+  &__main {
+	position: relative;
+	width: 100%;
+	padding-top: 23.4rem;
+	padding-bottom: 25.1rem;
+	&-img {
+	  position: absolute;
+	  left: 0;
+	  top: 0;
+	  width: 100%;
+	  height: 100%;
+	  z-index: -1;
+	}
+	&-buttons {
       display: flex;
-      flex-direction: column;
+	  flex-direction: column;
       align-items: center;
-      &-buttons {
-        display: flex;
-		flex-direction: column;
-        align-items: center;
+	  margin-top: 4.4rem;
+    }
+    &-button {
+      width: 20rem;
+      height: 5.8rem;
+      background: transparent;
+      font-weight: 700;
+      font-size: 1.6rem;
+      border-radius: 3rem;
+      color: $grayDark;
+      &.explorer {
+        background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
+        color: $white;
       }
-      &-button {
-        width: 20rem;
-        height: 5.8rem;
-        background: $white;
-        font-weight: 700;
-        font-size: 1.6rem;
-        border-radius: 3rem;
-        color: $textColor;
-        &.explorer {
-          background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
-          color: $white;
-        }
-        &.ranking {
-		  &.top {
-			width: auto;
-			height: auto;
-			margin-top: 2.6rem;
-		  }
-          &::after {
-            background: linear-gradient(to right, #C074B5, #E5C282);
-            border-radius: 3rem;
-          }
+      &.ranking {
+		&.top {
+		  width: auto;
+		  height: auto;
+		  margin-top: 2.6rem;
+		}
+        &::after {
+          background: linear-gradient(to right, #C074B5, #E5C282);
+          border-radius: 3rem;
         }
       }
-      &-picture {
-        width: 29.8rem;
-        margin-top: 7rem;
-      }
-      &-support {
-        padding-top: 15.7rem;
-        &-title {
-          font-weight: 400;
-          font-size: 1.8rem;
-          text-align: center;
-          color: $grayLight;
-        }
-        &-investors {
-          width: 64.4rem;
-          margin-top: 2.1rem;
-        }
-      }
-      &-live {
-        padding-top: 11.4rem;
+	}
+	&-live {
+		position: absolute;
+		left: 50%;;
+		bottom: -12.5rem;
+		transform: translateX(-50%);
+		&-box {
+		  display: flex;
+		  flex-direction: column;
+		  align-items: center;
+		  justify-content: center;
+		  width: 42.4rem;
+		  height: 25rem;
+		  background: $white;
+		  border-radius: 2.3rem;
+		  position: relative;
+		}
         &-title {
           text-align: center;
           font-family: Cabin-Medium;
@@ -489,26 +484,51 @@ export default {
           }
         }
         &-co2 {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          width: 42.4rem;
-          height: 24.9rem;
-          margin-top: 4.2rem;
-          border-radius: 2.3rem;
+		  margin-top: 2rem;
+		  text-align: center;
           &-count {
             font-family: Cabin-Medium;
             font-weight: 500;
             font-size: 6.4rem;
           }
           &-description {
-            font-family: Cabin-Medium;
+            font-family: Cabin-Regular;
             font-weight: 400;
-            padding-top: 0.8rem;
+            padding-top: 2rem;
             font-size: 2.4rem;
             color: $grayLight;
           }
+        }
+      }
+  }
+  &__title {
+    text-align: center;
+    font-family: Cabin-Bold;
+    font-size: 5rem;
+  }
+  &__subtitle {
+    padding-top: 1.6rem;
+    text-align: center;
+    font-weight: 500;
+    font-size: 2rem;
+  }
+  &__block {
+    padding: 20.4rem 6rem 34.8rem;
+    &-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      &-support {
+        padding-top: 15.7rem;
+        &-title {
+          font-weight: 400;
+          font-size: 1.8rem;
+          text-align: center;
+          color: $grayLight;
+        }
+        &-investors {
+          width: 64.4rem;
+          margin-top: 2.1rem;
         }
       }
     }
@@ -516,16 +536,10 @@ export default {
 	  display: flex;
       align-items: center;
 	  justify-content: space-between;
-	  background: $white2;
-      padding: 6.7rem 11.1rem 7.2rem;
-      margin: 10.2rem auto 9.8rem;
-	  border-radius: 8px;
+	  background: #F9F7FF;
+      padding: 4.8rem 18rem;
+	  border-radius: 3rem;
 	  &-info {
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-end;
-		width: 28.3rem;
-    	margin-right: 11.2rem;
 		&-title {
 		  font-family: Cabin-Medium;
 		  font-weight: 500;
@@ -534,7 +548,7 @@ export default {
 		}
 		&-content {
 		  margin-top: 1.2rem;
-		  font-size: 1.4rem;
+		  font-size: 1.6rem;
 		  color: $grayDark;
 		}
 		&-list {
@@ -552,77 +566,34 @@ export default {
 		}
 	  }
 	  &-certificate {
-		display: flex;
-		align-items: center;
-		&-glide {
-		  .glide__track {
-			overflow: visible;
-		  }
-		  .glide {
-			&__slides {
-			  align-items: center;
-			  overflow: visible;
-			}
-			&__slide {
-			  width: 20rem !important;
-			  &:nth-child(2) {
-				width: 22.4rem !important;
-			  }
-			}
-		  }
-		}
+		position: relative;
+		width: 35rem;
+		height: 39rem;
 		&-item {
-		  &:last-child {
-			margin: 0;
-		  }
+		  position: absolute;
+		  left: 0;
+		  top: 0;
+		  opacity: 0;
+		  webkit-transition: opacity 1.5s ease;
+		  -moz-transition: opacity 1.5s ease;
+		  -o-transition: opacity 1.5s ease;
+		  transition: opacity 1.5s ease;
 		  &-name {
 			text-align: center;
 			font-weight: 600;
-			font-size: 1.6rem;
-			color: $border;
+			font-size: 1.4rem;
 		  }
 		  &-box {
 			margin-top: 1.6rem;
-			border-radius: 0.4rem;
+			border-radius: 0.6rem;
 			&-image {
-			  width: 20rem;
-			  height: 20rem;
-			  border-radius: 0.4rem;
-			  opacity: 0.7;
-			}
-			&.unknown {
-			  display: flex;
-			  align-items: center;
-			  justify-content: center;
-			  width: 20rem;
-			  height: 20rem;
-			  background: linear-gradient(0deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), linear-gradient(46.74deg, #365BE0 -17.17%, #D676CF 48.99%, #FFE884 113%);
+			  width: 35rem;
+			  height: 35rem;
+			  border-radius: 0.6rem;
 			}
 		  }
-		  &-status {
-			margin-top: 2rem;
-			text-align: center;
-			font-weight: 600;
-			font-size: 1.2rem;
-			color: $border;
-		  }
-		  &.current {
-			.refi__block-carbon-certificate-item-name {
-			  color: $textColor;
-			}
-			.refi__block-carbon-certificate-item-box {
-			  &-image {
-				width: 22.4rem;
-				height: 22.4rem;
-				border: 4px solid $green;
-				border-radius: 0.6rem;
-				object-fit: cover;
-				opacity: 1;
-			  }
-			}
-			.refi__block-carbon-certificate-item-status {
-			  color: $green;
-			}
+		  &.active {
+			opacity: 1;
 		  }
 		}
 	  }
@@ -632,6 +603,7 @@ export default {
 	  }
 	}
     &-listings {
+	  margin-top: 9.2rem;
       &-title {
         font-family: OpenSans-SemiBold;
         font-size: 2.2rem;
@@ -692,7 +664,13 @@ export default {
             border: 1px solid $modalColor;
             text-align: center;
             font-size: 1.4rem;
-            cursor: pointer;
+			cursor: pointer;
+			&:first-child {
+			  border-radius: 2.5rem 0 0 2.5rem;
+			}
+			&:last-child {
+			  border-radius: 0 2.5rem 2.5rem 0;
+			}
             &.active {
               background: $lightGreen;
               border-color: transparent;
@@ -777,7 +755,8 @@ export default {
                 font-size: 1.6rem;
               }
               &-unit {
-                margin-top: 0.4rem;
+				margin-top: 0.4rem;
+				white-space: nowrap;
                 font-weight: 400;
                 font-size: 1.4rem;
                 color: $textColor3;
@@ -791,9 +770,9 @@ export default {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 6.6rem;
+      padding-top: 6.2rem;
       &-title {
-        padding-top: 8.6rem;
+        padding-top: 14.3rem;
         padding-bottom: 3.2rem;
         font-family: Cabin-Medium;
         font-weight: 500;
@@ -801,7 +780,9 @@ export default {
         font-size: 3.2rem;
       }
       &-button {
-        width: 42.4rem;
+		&.ranking {
+		  background: $white;
+		}
         &.explorer {
           margin-top: 6.6rem;
         }
@@ -840,40 +821,67 @@ export default {
     }
   }
   @media(max-width: 460px) {
-    padding: 2.4rem 0.8rem 13.4rem;
+	&__main {
+	  padding-top: 18rem;
+	  padding-bottom: 16.5rem;
+	  &-buttons {
+		margin-top: 2.4rem;
+	  }
+	  &-button {
+		width: 14.8rem;
+		height: 3.6rem;
+		font-weight: 600;
+		font-size: 1.4rem;
+		&.top {
+		  &.ranking {
+			margin-top: 1.6rem;
+			color: $textColor;
+		  }
+		}
+	  }
+	  &-live {
+		bottom: -7.1rem;
+		&-box {
+		  width: 22.7rem;
+		  height: 14.2rem;
+		}
+		&-title {
+		  font-size: 1.6rem;
+		  span {
+			width: 0.4rem;
+			height: 0.4rem;
+		  }
+		}
+		&-co2 {
+  		  margin-top: 0.8rem;
+		  &-count {
+			font-size: 3.2rem;
+		  }
+		  &-description {
+			padding-top: 0.8rem;
+			font-size: 1.4rem;
+			img {
+			  width: 1.5rem;
+			  transform: translateY(0.1rem);
+			}
+		  }
+		}
+	  }
+	}
     &__title {
       font-family: Cabin-Medium;
       font-weight: 600;
       font-size: 2.8rem;
     }
     &__subtitle {
-      padding: 1rem 2.4rem 0;
+      padding-top: 1rem;
       font-size: 1.4rem;
-    }
+	}
     &__block {
-      padding-top: 2.4rem;
+      padding: 14.4rem 0.8rem 5.4rem;
       &-info {
-        &-button {
-          display: block;
-          width: 14.8rem;
-          height: 4.8rem;
-		  font-size: 1.4rem;
-          &.explorer {
-            margin-right: 0;
-          }
-          &.ranking {
-            margin-top: 0.8rem;
-			&.top {
-			  margin-top: 1.6rem;
-			}
-          }
-        }
-        &-picture {
-          width: 19.9rem;
-          margin-top: 3.8rem;
-        }
         &-support {
-          padding-top: 5.8rem;
+          padding-top: 6rem;
           &-title {
             font-size: 1.2rem;
           }
@@ -882,57 +890,22 @@ export default {
             margin-top: 1.8rem;
           }
         }
-        &-live {
-          padding-top: 7rem;
-          &-title {
-            font-size: 1.6rem;
-            span {
-              width: 0.4rem;
-              height: 0.4rem;
-            }
-          }
-          &-co2 {
-            width: 17.6rem;
-            height: 11.2rem;
-            margin-top: 2.1rem;
-            &-count {
-              font-size: 3.2rem;
-            }
-            &-description {
-              font-size: 1.4rem;
-              img {
-                width: 1.5rem;
-                transform: translateY(0.1rem);
-              }
-            }
-          }
-		}
 	  }
 	  &-carbon {
-		width: 100%;
+		width: calc(100% + 0.8rem);
 		flex-direction: column-reverse;
-		padding: 2.4rem 0.8rem;
-		margin: 4rem -0.8rem 4.5rem;
+		padding: 3.2rem 0.8rem;
+		margin-left: -0.8rem;
 		border-radius: 0;
 		&-certificate {
 		  width: 100%;
-		  &-glide {
-			transform: translateX(6rem);
-			.glide {
-			  &__slide {
-				&:nth-child(2) {
-			  	  width: 20rem !important;
-				}
-			  }
-			}
-		  }
+		  height: 33.5rem;
 		  &-item {
-			&.current {
-			  .refi__block-carbon-certificate-item-box {
-				&-image {
-				  width: 20rem;
-				  height: 20rem;
-				}
+			&-box {
+			  margin-top: 1.2rem;
+			  &-image {
+				width: 30.4rem;
+				height: 30.4rem;
 			  }
 			}
 		  }
@@ -940,12 +913,17 @@ export default {
 		&-info {
 		  width: 100%;
 		  margin: 0;
-		  padding-top: 2.8rem;
+		  padding-top: 2.4rem;
 		  &-title {
 			font-family: OpenSans-SemiBold;
 			font-weight: 600;
 			font-size: 1.8rem;
 			line-height: 2.2rem;
+		  }
+		  &-content {
+			margin-top: 1.2rem;
+			font-weight: 600;
+			font-size: 1.4rem;
 		  }
 		  &-list {
 			margin-top: 1.6rem;
@@ -958,6 +936,7 @@ export default {
 		}
 	  }
       &-listings {
+		margin-top: 4.5rem;
         &-title {
           font-size: 1.6rem;
           img {
@@ -969,7 +948,7 @@ export default {
           &-slide {
             grid-template-columns: 1fr 1fr;
             grid-column-gap: 1.6rem;
-            height: 35rem;
+            height: 31rem;
             .collection__item {
               height: 30rem;
               &-image {
@@ -997,7 +976,7 @@ export default {
         }
       }
       &-collections {
-        padding-top: 3.7rem;
+        padding-top: 6rem;
         &-header {
           display: block;
           &-title {
@@ -1091,7 +1070,7 @@ export default {
           }
         }
         &-title {
-          padding-top: 5.6rem;
+          padding-top: 9.2rem;
           padding-bottom: 2.6rem;
           font-size: 2.2rem;
         }

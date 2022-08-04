@@ -4,8 +4,8 @@
             <div class="lending__block">
 				<client-only>
 					<div v-if="isMobile()">
-						<p class="lending__block-info-name">NFT Carbon Offset Certificate</p>
-						<p class="lending__block-info-description">Buy a personal NFT certificate to become carbon neutral</p>
+						<p class="lending__block-info-name">NFT Offset Calendar 2022</p>
+						<p class="lending__block-info-description">Buy NFT every month, change your carbon footprint and track progress</p>
 					</div>
 				</client-only>
                 <div class="lending__block-summary">
@@ -15,15 +15,16 @@
                 <div class="lending__block-info">
                     <client-only>
 						<div v-if="!isMobile()">
-							<p class="lending__block-info-name">NFT Carbon Offset Certificate</p>
-							<p class="lending__block-info-description">Buy a personal NFT certificate to become carbon neutral</p>
+							<p class="lending__block-info-name">NFT Offset Calendar 2022</p>
+							<p class="lending__block-info-description">Buy NFT every month, change your carbon footprint and track progress</p>
 						</div>
-						<p class="lending__block-info-detail" v-else>This NFT Certificate confirms your contribution to the regeneration of nature and to your carbon negativity status</p>
+						<p class="lending__block-info-detail" v-else>The NFT certificate confirms your contribution the regeneration of nature you carbon negative status</p>
                     </client-only>
 					<ul class="lending__block-info-features features-list">
-						<li class="features-list-item">Unique NFT certificate every month</li>
-						<li class="features-list-item">1 NFT = 1 ton CO2 offset</li>
-						<li class="features-list-item">Collect or sell on the marketplace</li>
+						<li class="features-list-item">On-chain confirmation of your offset</li>
+						<li class="features-list-item">Unique design every month</li>
+						<li class="features-list-item">1 tCO2 in offset tracker</li>
+						<li class="features-list-item">Chance to get into the ReFi DAO club</li>
 					</ul>
                     <div class="lending__block-info-price" v-if="!bought">
                         <div class="lending__block-info-price-detail">
@@ -107,8 +108,8 @@
                 </div>
 				<div class="lending__list-exclusive">
 					<div class="lending__list-exclusive-info">
-						<h2 class="lending__list-exclusive-info-title">13th Exclusive NFT</h2>
-						<p class="lending__list-exclusive-info-description">Exchange all 12 NFTs for a unique NFT and get a chance to get into the closed ReFi DAO club</p>
+						<h2 class="lending__list-exclusive-info-title">Access to ReFi DAO club</h2>
+						<p class="lending__list-exclusive-info-description">Those who have collected the entire collection have a choice, keep them for themselves or burn them! By burning, you get new NFT with access to the private ReFi DAO club</p>
 						<p class="lending__list-exclusive-info-read" @click="showExchangeBonus=true">Read more &#x276F;</p>
 					</div>
 					<img class="lending__list-exclusive-img" :src="getCDNImage('certificates/rare.webp')" alt="bonus">
@@ -530,6 +531,7 @@ export default {
 		font-size: 3.2rem;
 	  }
       &-description {
+		max-width: 35.9rem;
 		padding-top: 0.8rem;
         font-size: 1.4rem;
 	  }
@@ -707,7 +709,7 @@ export default {
 	  position: relative;
 	  display: flex;
 	  justify-content: space-between;
-	  width: 60.2rem;
+	  width: 65rem;
 	  background: $white;
 	  margin: 8.9rem auto;
 	  padding: 2.4rem;
@@ -723,7 +725,7 @@ export default {
 		border-radius: 1.2rem;
 	  }
 	  &-info {
-		width: 25.7rem;
+		max-width: 34.4rem;
 		&-title {
 		  font-family: Cabin-Bold;
 		  font-weight: 700;
@@ -735,6 +737,7 @@ export default {
 		}
 		&-read {
 		  font-weight: 600;
+		  font-size: 1.4rem;
 		  color: $pink;
 		  cursor: pointer;
 		}
@@ -1001,7 +1004,7 @@ export default {
 		  font-size: 1.75rem;
         }
         &-description {
-		  max-width: 75%;
+		  max-width: 27.8rem;
     	  margin: 0 auto;
 		  padding-bottom: 2.4rem;
 		  text-align: center;
@@ -1070,7 +1073,7 @@ export default {
 	  &-exclusive {
 		display: block;
 		width: calc(100% - 1.6rem);
-		margin-top: 3.6rem;
+		margin-top: 3.5rem;
 		margin-bottom: 4.8rem;
 		padding-left: 0.8rem;
 		padding-right: 0.8rem;
@@ -1098,8 +1101,7 @@ export default {
       text-align: left;
     }
     &__collection {
-      padding-top: 3.2rem;
-      padding-bottom: 4.4rem;
+      padding-top: 4.5rem;
       &-description {
         margin-top: 0.8rem;
         text-align: left;
