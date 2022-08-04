@@ -193,7 +193,8 @@ export default {
         { hid: 'og:title', property: 'og:title', content: this.pageTitle },
         { hid: 'description', name: 'description', content: this.description },
         { hid: 'og:description', property: 'og:description', content: this.description },
-        { hid: 'og:image', property: 'og:image', content: this.metaIcon }
+        { hid: 'og:image', property: 'og:image', content: this.metaIcon },
+        { hid: 'twitter:image', property: 'twitter:image', content: this.metaIcon }
       ]
     }
   },

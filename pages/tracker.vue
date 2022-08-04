@@ -184,7 +184,8 @@ export default {
   head() {
     return {
       meta: [
-        { hid: 'og:image', property: 'og:image', content: this.getCDNImage('tracker-banner.webp') }
+				{ hid: 'og:image', property: 'og:image', content: this.getCDNImage('tracker-banner.webp') },
+				{ hid: 'twitter:image', property: 'twitter:image', content: this.getCDNImage('tracker-banner.webp') }
       ]
     }
   },
