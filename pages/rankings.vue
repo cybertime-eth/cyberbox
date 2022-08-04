@@ -56,7 +56,7 @@
           <div class="rankings__table-detail-group">
             <div class="rankings__table-content-item-volume">
               <p class="rankings__table-content-item-volume-title" v-if="isVolumeSection"><img :src="getCDNImage('celo.svg')" alt="celo">{{ item.volumeCelo }}</p>
-              <p class="rankings__table-content-item-volume-title" v-else>{{ item.co2Celo }} {{ !isMobile() ? 'Offset, tCO2' : '' }}</p>
+              <p class="rankings__table-content-item-volume-title" v-else>{{ item.co2Celo }} {{ !isMobile() ? 'tCO2' : '' }}</p>
               <p class="rankings__table-content-item-volume-price" v-if="isVolumeSection">{{ item.volumePrice }}</p>
             </div>
             <!-- <h3 class="rankings__table-content-item-items">{{ item.items }}</h3> -->
@@ -64,7 +64,7 @@
             <h3 class="rankings__table-content-item-week  rankings__table-content-item-percent-info"  :class="{ positive: item.percentPer7d > 0, negative: item.percentPer7d < 0 }">{{ contractPercentInfo(item.percentPer7d) }}</h3>
             <div class="rankings__table-content-item-floor">
               <p class="rankings__table-content-item-floor-title" v-if="isVolumeSection"><img class="rankings__table-content-item-floor-icon" :src="getCDNImage('celo.svg')" alt="celo" v-if="item.floorPriceCelo !== '-'"> {{ item.floorPriceCelo }}</p>
-              <p class="rankings__table-content-item-floor-title" v-else>{{ item.floorCO2Celo }} {{ !isMobile() ? 'Offset, tCO2' : '' }}</p>
+              <p class="rankings__table-content-item-floor-title" v-else>{{ item.floorCO2Celo }} {{ !isMobile() ? 'tCO2' : '' }}</p>
               <p class="rankings__table-content-item-floor-price" v-if="isVolumeSection">{{ item.floorPrice }}</p>
             </div>
             <!-- <h3 class="rankings__table-content-item-owners">-</h3> -->
@@ -72,8 +72,8 @@
           </div>
           <div class="rankings__table-content-item-price-box">
             <h3 class="rankings__table-content-item-prices" v-if="isVolumeSection"><img :src="getCDNImage('celo.svg')" alt="celo">{{ item.volumeCelo }}</h3>
-            <h3 class="rankings__table-content-item-prices" v-else>{{ item.co2Celo }} {{ !isMobile() ? 'Offset, tCO2' : '' }}</h3>
-            <p class="rankings__table-content-item-percent" :class="{ negative: item.percentPer24h < 0, zero: item.percentPer24h <= -100 || item.percentPer24h === 0 }">{{ isVolumeSection ? contractPercentInfo(item.percentPer24h) : 'Offset, tCO2' }}</p>
+            <h3 class="rankings__table-content-item-prices" v-else>{{ item.co2Celo }} {{ !isMobile() ? 'tCO2' : '' }}</h3>
+            <p class="rankings__table-content-item-percent" :class="{ negative: item.percentPer24h < 0, zero: item.percentPer24h <= -100 || item.percentPer24h === 0 }">{{ isVolumeSection ? contractPercentInfo(item.percentPer24h) : 'tCO2' }}</p>
           </div>
           <div class="rankings__table-content-item-detail-box" v-if="item.expanded">
             <div class="rankings__table-content-item-detail-box-info">
