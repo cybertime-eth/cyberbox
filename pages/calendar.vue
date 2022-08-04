@@ -615,7 +615,7 @@ export default {
 	  }
     }
 	&-referral {
-	  width: 100%;
+	  width: calc(100% - 3.2rem);
 	  margin-top: 3.2rem;
 	  padding: 1.6rem;
 	  border: 1px solid $modalColor;
@@ -657,6 +657,7 @@ export default {
 		&-info {
 		  display: flex;
 		  align-items: center;
+		  max-width: 30.8rem;
 		  padding: 0.8rem 1.6rem;
 		  border: 1px solid $modalColor;
 		  border-radius: 2.5rem;
@@ -668,6 +669,9 @@ export default {
 			font-size: 1.4rem;
 		  }
 		  &-url {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 			font-size: 1.4rem;
 			font-weight: 600;
 		  }

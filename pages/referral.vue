@@ -55,8 +55,10 @@
                     </div>
                     <div class="referral__main-info-address">
                         <div class="referral__main-info-address-block gradient-block" @click="copyReferralLink">
-                            <span class="referral__main-info-address-name"> {{ !this.addressCopied ? 'Referral link:' : 'Copied' }} </span>
-                            <span class="referral__main-info-address-link">{{ cuttenReferralLink(this.referralUrl) }}</span>
+							<div class="referral__main-info-address-block-box" @click="copyReferralLink">
+								<span class="referral__main-info-address-name">{{ !this.addressCopied ? 'Referral link:' : 'Copied' }}</span>
+								<span class="referral__main-info-address-link">{{ cuttenReferralLink(this.referralUrl) }}</span>
+							</div>
                         </div>
                         <div class="referral__main-info-address-share">
                             <ShareFrame class="referral__main-info-address-share-frame" :class="{ copied: addressCopied }" @onShared="linkShared = true"/>
@@ -382,16 +384,16 @@ export default {
 		margin-top: 2rem;
 		.indent-features-list-item {
 		  align-items: center;
-		  &:nth-child(4), &:last-child {
-			align-items: flex-start;
-			margin-top: 1.5rem;
-			.indent-features-list-item-text {
-			  transform: translateY(-0.7rem);
-			}
-		  }
-		  &-text {
-			max-width: 27.9rem;
-		  }
+		//   &:nth-child(4), &:last-child {
+		// 	align-items: flex-start;
+		// 	margin-top: 1.5rem;
+		// 	.indent-features-list-item-text {
+		// 	  transform: translateY(-0.7rem);
+		// 	}
+		//   }
+		//   &-text {
+		// 	max-width: 27.9rem;
+		//   }
 		}
       }
       &-reward {
@@ -467,8 +469,14 @@ export default {
           background: $white;
           border: 1px solid transparent;
           border-radius: 2.5rem;
-          font-size: 1.4rem;
           cursor: pointer;
+		  &-box {
+			max-width: 22rem;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			font-size: 1.4rem;
+		  }
         }
         &-name {
           margin-right: 1.2rem;
@@ -727,6 +735,9 @@ export default {
           &-block {
 			flex: 1;
             padding: 1rem 1.6rem;
+			&-box {
+			  max-width: 23.2rem;
+			}
           }
 		}
 		&-link {
