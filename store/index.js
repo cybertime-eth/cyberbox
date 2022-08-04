@@ -77,9 +77,9 @@ export const state = () => ({
 	  banner: `${RESOURCE_CDN_ROOT}/collections/CBCN-banner.webp`,
 	  logo: `${RESOURCE_CDN_ROOT}/collections/CBCN-logo.webp`,
 	  website: '/calendar',
-	  twitter: 'https://twitter.com/cybertime_eth',
+	  twitter: 'https://twitter.com/CyberboxArt',
 	  discord: 'https://discord.gg/cKcWfCux4s',
-	  telegram: 'https://t.me/cybertime_eth',
+	  telegram: 'https://t.me/cyberboxArt',
 	  description: "Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands."
 	},
 	{
@@ -140,9 +140,9 @@ export const state = () => ({
       banner: `${RESOURCE_CDN_ROOT}/collections/daopolis-banner.webp`,
       logo: `${RESOURCE_CDN_ROOT}/collections/daopolis-logo.webp`,
       website: 'https://www.daopolis.city',
-      twitter: 'https://twitter.com/cybertime_eth',
+      twitter: 'https://twitter.com/CyberboxArt',
       discord: 'https://discord.gg/cKcWfCux4s',
-      telegram: 'https://t.me/cybertime_eth',
+      telegram: 'https://t.me/cyberboxArt',
       description: "Automatically generated 9192 NFT's. Born in the CyberTime era, Daopolis citizens will be the foundation of a new gaming metaverse on Celo. Find your digital avatar, gain access to a private club and participate in unique NFT games!"
     },
     {
