@@ -21,9 +21,9 @@
 						<p class="lending__block-info-detail" v-else>The NFT certificate confirms your contribution the regeneration of nature you carbon negative status</p>
                     </client-only>
 					<ul class="lending__block-info-features features-list">
-						<li class="features-list-item">On-chain confirmation of your offset</li>
-						<li class="features-list-item">Unique design every month</li>
-						<li class="features-list-item">1 tCO2 in offset tracker</li>
+						<li class="features-list-item">On-chain offset confirmation</li>
+						<li class="features-list-item">Unique art every month</li>
+						<li class="features-list-item">1 tCO2 offset & added to tracker</li>
 						<li class="features-list-item">Chance to get into the ReFi DAO club</li>
 					</ul>
                     <div class="lending__block-info-price" v-if="!bought">
@@ -34,7 +34,7 @@
                             </div>
                             <p class="lending__block-info-price-detail-value">Price (${{ priceToken }})</p>
                         </div>
-                        <button class="lending__block-info-price-buy" @click="clickBuyToken">Buy & Offset now</button>
+                        <button class="lending__block-info-price-buy" @click="clickBuyToken">Mint & Offset now</button>
                     </div>
 					<div class="lending__block-info-minted" v-else>
 						<p class="lending__block-info-minted-description">Congratulations!<br/>You have already bought an NFT Carbon Offset Certificate this month.</p>

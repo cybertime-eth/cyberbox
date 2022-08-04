@@ -6,7 +6,7 @@
 			<img class="refi__main-img" :src="backgroundImage" alt="background">
 		</client-only>
     	<h1 class="refi__title">Regenerate nature with the power of NFTs</h1>
-    	<h3 class="refi__subtitle">Cyberbox is a ReFi NFT marketplace that allows you to trade NFTs and<br/>automatically offset CO2</h3>
+    	<h3 class="refi__subtitle">ReFi NFT Marketplace that allows trade NFT,<br/>offset CO2 and track the process</h3>
 		<div class="refi__main-buttons">
           <button class="refi__main-button explorer" @click="gotoExplorer('Top_button')">Explorer NFT</button>
           <button class="refi__main-button top ranking" @click="gotoRankings('Top_button')">Rankings</button>
@@ -25,14 +25,14 @@
 	  <div class="refi__block-carbon">
 		<div class="refi__block-carbon-info">
 			<h2 class="refi__block-carbon-info-title">NFT Offset Calendar 2022</h2>
-			<p class="refi__block-carbon-info-content">Buy NFT every month, change your<br/>carbon footprint and track progress</p>
+			<p class="refi__block-carbon-info-content">Mint NFT, offset 1 tCO2 every month and regenerate nature</p>
 			<ul class="refi__block-carbon-info-list features-list">
-				<li class="features-list-item">On-chain confirmation of your offset</li>
-				<li class="features-list-item">Unique design every month</li>
-				<li class="features-list-item">~1 tCO2 in offset tracker</li>
+				<li class="features-list-item">On-chain offset confirmation</li>
+				<li class="features-list-item">Unique art every month</li>
+				<li class="features-list-item">1 tCO2 offset & added to tracker</li>
 				<li class="features-list-item">Chance to get into the ReFi DAO club</li>
 			</ul>
-			<button class="refi__block-carbon-info-buy" @click="gotoLending">Buy & Offset Now</button>
+			<button class="refi__block-carbon-info-buy" @click="gotoLending">Mint & Offset Now</button>
 		</div>
 		<div class="refi__block-carbon-certificate">
 			<div class="refi__block-carbon-certificate-item" :class="{ active: idx === activeCertificate }" :key="idx" v-for="(certificate, idx) of certificates">
@@ -68,7 +68,7 @@
         <div class="refi__block-collections-header">
           <h3 class="refi__block-collections-header-title">Hot collections <img :src="getCDNImage('star-filled.svg')" alt="star"></h3>
           <div class="refi__block-collections-header-tab">
-            <div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 1}" @click="updateCollectionTab(1)"><img class="refi__block-collections-header-tab-item-img" :src="getCDNImage('plant.svg')" alt="plant"> Carbon</div>
+            <div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 1}" @click="updateCollectionTab(1)"><img class="refi__block-collections-header-tab-item-img" :src="getCDNImage('plant.svg')" alt="plant"> Offset</div>
 			<div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 2}"  @click="updateCollectionTab(2)"><img class="refi__block-collections-header-tab-item-img" :src="getCDNImage('chart.svg')" alt="chart"> Volume</div>
           </div>
         </div>
@@ -86,7 +86,7 @@
               </div>
               <div class="refi__block-collections-items-group-item-carbon" v-if="collectionTab === 1">
                 <p class="refi__block-collections-items-group-item-carbon-value">{{collection.co2Celo}}</p>
-                <p class="refi__block-collections-items-group-item-carbon-unit">Offset, tCO2</p>
+                <p class="refi__block-collections-items-group-item-carbon-unit">tCO2</p>
               </div>
               <p class="refi__block-collections-items-group-item-amount" v-else><img :src="getCDNImage('celo.svg')" alt="celo"> {{collection.volumeCelo}}</p>
             </div>
