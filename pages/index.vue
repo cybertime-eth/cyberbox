@@ -72,7 +72,6 @@
 			<div class="refi__block-collections-header-tab-item" :class="{active: collectionTab === 2}"  @click="updateCollectionTab(2)"><img class="refi__block-collections-header-tab-item-img" :src="getCDNImage('chart.svg')" alt="chart"> Volume</div>
           </div>
         </div>
-        <p class="refi__block-collections-description" v-if="collectionTab === 1">Amount of CO2 offseting through NFT trading</p>
         <div class="refi__block-collections-items" :class="{ carbon: collectionTab === 1 }">
           <div class="refi__block-collections-items-group" :key="idx" v-for="(group, idx) in hotCollections">
             <div class="refi__block-collections-items-group-item" :key="collection.id" v-for="collection of group" @click="gotoCollection(collection.nftSymbol)">
@@ -694,9 +693,6 @@ export default {
         grid-template-columns: 1fr 1fr 1fr;
         grid-column-gap: 2.4rem;
         padding-top: 4rem;
-        &.carbon {
-          padding-top: 2rem;
-        }
         &-group {
           &-item {
             display: flex;
@@ -1009,9 +1005,6 @@ export default {
           scrollbar-width: none;
           &::-webkit-scrollbar {
             display: none;
-          }
-          &.carbon {
-            padding-top: 1.6rem;
           }
           &-group {
             width: 24.4rem;
