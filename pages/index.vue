@@ -13,7 +13,7 @@
         </div>
 		<div class="refi__main-live" v-if="totalCO2Amount > 0">
 		  <div class="refi__main-live-box gradient-box">
-			<h3 class="refi__main-live-title">LIVE <span/> Carbon Offsetting</h3>
+			<h3 class="refi__main-live-title">LIVE <span/> Regeneration</h3>
 			<div class="refi__main-live-co2">
 				<h3 class="refi__main-live-co2-count">{{ totalCO2Amount }}</h3>
 				<p class="refi__main-live-co2-description">Offset, tCO2 <img :src="getCDNImage('plant.svg')" alt="plant"></p>
@@ -24,7 +24,7 @@
     <div class="refi__block">
 	  <div class="refi__block-carbon">
 		<div class="refi__block-carbon-info">
-			<h2 class="refi__block-carbon-info-title">NFT Offset Calendar 2022</h2>
+			<h2 class="refi__block-carbon-info-title">ReFi Calendar 2022</h2>
 			<p class="refi__block-carbon-info-content">Mint NFT, offset 1 tCO2 every month and regenerate nature</p>
 			<ul class="refi__block-carbon-info-list features-list">
 				<li class="features-list-item">On-chain offset confirmation</li>
@@ -86,7 +86,7 @@
               </div>
               <div class="refi__block-collections-items-group-item-carbon" v-if="collectionTab === 1">
                 <p class="refi__block-collections-items-group-item-carbon-value">{{collection.co2Celo}}</p>
-                <p class="refi__block-collections-items-group-item-carbon-unit">tCO2</p>
+                <p class="refi__block-collections-items-group-item-carbon-unit">Offset, tCO2</p>
               </div>
               <p class="refi__block-collections-items-group-item-amount" v-else><img :src="getCDNImage('celo.svg')" alt="celo"> {{collection.volumeCelo}}</p>
             </div>

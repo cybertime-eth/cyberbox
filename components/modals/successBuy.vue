@@ -6,7 +6,7 @@
       <h3 class="modal__success">You successfully purchased</h3>
       <h3 class="modal__name">{{ name }}</h3>
       <p class="modal__link">View on Celo Explorer <img src="/share.svg" alt="share"></p>
-	  <p class="modal__carbon" v-if="refiOffset"><img class="modal__carbon-img" src="/plant.svg" alt="plant">We added <span class="modal__carbon-amount">{{ refiOffset }} ton co2</span> offset to your <img class="modal__carbon-tracker" src="/carbon-tracker.svg" alt="tracker"> Offset Tracker</p>
+	  <p class="modal__carbon" v-if="refiOffset"><img class="modal__carbon-img" src="/plant.svg" alt="plant">We added <span class="modal__carbon-amount">{{ refiOffset }} tCO2</span> offset to your <img class="modal__carbon-tracker" src="/carbon-tracker.svg" alt="tracker"> Offset Tracker</p>
       <div class="modal__buy-footer">
 		<button class="modal__button modal__buy-footer-carbon" @click="routeCarbonTracker">Offset Tracker</button>
 		<button class="modal__button" @click="routeMyCollection">My collection</button>

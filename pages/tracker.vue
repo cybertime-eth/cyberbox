@@ -9,15 +9,15 @@
 				<!-- <CustomSelect class="carbon__tracker-picker" :options="dateOptions" @change="filterByYear"/> -->
 				<div class="carbon__tracker-info">
 					<h2 class="carbon__tracker-info-title">{{ formatCO2(totalCO2Offset) }}</h2>
-					<p class="carbon__tracker-info-description">Total CO2 offset (ton CO2) <img class="carbon__tracker-info-description-img" :src="getCDNImage('plant.svg')" alt="plant"></p>
+					<p class="carbon__tracker-info-description">Total CO2 offset (tCO2) <img class="carbon__tracker-info-description-img" :src="getCDNImage('plant.svg')" alt="plant"></p>
 					<div class="carbon__tracker-info-block">
 						<div class="carbon__tracker-info-block-item">
 							<p class="carbon__tracker-info-block-item-value">{{ formatCO2(totalCertCO2) }}</p>
-							<p class="carbon__tracker-info-block-item-name">Carbon certificates<br/>(ton CO2)</p>
+							<p class="carbon__tracker-info-block-item-name">Carbon certificates<br/>(tCO2)</p>
 						</div>
 						<div class="carbon__tracker-info-block-item">
 							<p class="carbon__tracker-info-block-item-value">{{ formatCO2(totalTradingCO2) }}</p>
-							<p class="carbon__tracker-info-block-item-name">Traiding CO2 offset<br/>(ton CO2)</p>
+							<p class="carbon__tracker-info-block-item-name">Traiding CO2 offset<br/>(tCO2)</p>
 						</div>
 					</div>
 				</div>

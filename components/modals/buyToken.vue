@@ -19,7 +19,7 @@
       </div>
       <div class="modal__refi">
         <p class="modal__refi-info">
-          <img src="/plant.svg" alt="plant" class="modal__refi-info-img">We will add<span class="modal__refi-info-amount">{{ refiOffset }} ton CO2</span>offset to your<img src="/carbon-tracker.svg" alt="tracker" class="modal__refi-info-carbon">Offset Tracker
+          <img src="/plant.svg" alt="plant" class="modal__refi-info-img">We will add<span class="modal__refi-info-amount">{{ refiOffset }} tCO2</span>offset to your<img src="/carbon-tracker.svg" alt="tracker" class="modal__refi-info-carbon">Offset Tracker
         </p>
       </div>
       <div class="modal__buttons">

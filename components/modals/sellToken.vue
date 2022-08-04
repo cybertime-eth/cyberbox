@@ -22,7 +22,7 @@
               <p class="modal__sell-form-unit">${{ dollarPrice }}</p>
               <div class="modal__sell-form-refioffset">
 			  	<p class="modal__sell-form-refioffset-total">
-                	<img src="/plant.svg" alt="plant" class="modal__sell-form-refioffset-total-carbon"> Total carbon offset = <span class="modal__sell-form-refioffset-total-amount">{{ refiOffset }} ton CO2</span>
+                	<img src="/plant.svg" alt="plant" class="modal__sell-form-refioffset-total-carbon"> Total carbon offset = <span class="modal__sell-form-refioffset-total-amount">{{ refiOffset }} tCO2</span>
 				</p>
 				<p class="modal__sell-form-refioffset-description">
                 	Sell NFT and we add 50% of total offset to your <img src="/carbon-tracker.svg" alt="tracker" class="modal__sell-form-refioffset-description-carbon"> Carbon Tracker

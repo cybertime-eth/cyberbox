@@ -4,8 +4,8 @@
             <div class="lending__block">
 				<client-only>
 					<div v-if="isMobile()">
-						<p class="lending__block-info-name">NFT Offset Calendar 2022</p>
-						<p class="lending__block-info-description">Buy NFT every month, change your carbon footprint and track progress</p>
+						<p class="lending__block-info-name">ReFi Calendar 2022</p>
+						<p class="lending__block-info-description">Mint NFT, offset 1 tCO2 every month and regenerate nature</p>
 					</div>
 				</client-only>
                 <div class="lending__block-summary">
@@ -15,8 +15,8 @@
                 <div class="lending__block-info">
                     <client-only>
 						<div v-if="!isMobile()">
-							<p class="lending__block-info-name">NFT Offset Calendar 2022</p>
-							<p class="lending__block-info-description">Buy NFT every month, change your carbon footprint and track progress</p>
+							<p class="lending__block-info-name">ReFi Calendar 2022</p>
+							<p class="lending__block-info-description">Mint NFT, offset 1 tCO2 every month and regenerate nature</p>
 						</div>
 						<p class="lending__block-info-detail" v-else>The NFT certificate confirms your contribution the regeneration of nature you carbon negative status</p>
                     </client-only>
@@ -370,7 +370,7 @@ export default {
 	  if (certificate.owner || this.certificateMinted(certificate)) {
 		return 'Minted'
 	  } else {
-		return certificate.offset ? 'Minting' : 'Comming soon'
+		return certificate.offset ? 'Minting' : 'Coming soon'
 	  }
 	},
 	getCertificatePrice(certificate) {
@@ -383,7 +383,7 @@ export default {
 	getCertificateOffset(certificate) {
 	  if (certificate.owner || certificate.offset || this.certificateMinted(certificate)) {
 		const offset = 15 * (55 / 1000) * this.$store.state.cMCO2Price
-		return `${offset.toFixed(1)} ton CO2`
+		return `${offset.toFixed(1)} tCO2`
 	  } else {
 		return '-'
 	  }
