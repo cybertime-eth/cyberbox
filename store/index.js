@@ -70,7 +70,7 @@ export const state = () => ({
   collectionList: [
 	{
 	  id: 22,
-	  name: 'NFT Carbon Offset Certificate',
+	  name: 'ReFi Calendar',
 	  route: 'CBCN',
 	  image: `${RESOURCE_CDN_ROOT}/collections/CBCN.webp`,
 	  mobileImage: `${RESOURCE_CDN_ROOT}/collections/CBCN-mobile.webp`,

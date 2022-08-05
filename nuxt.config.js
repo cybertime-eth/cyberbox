@@ -14,6 +14,10 @@ export default {
       {vmid: 'description', hid: 'description', name: 'description', content: 'Regenerate nature by trading NFTs on the Celo blockchain. Buy or gift NFT carbon offset certificates. Track your carbon status in realtime.'},
       {vmid: 'og:description', hid: 'og:description', property: 'og:description', content: 'Regenerate nature by trading NFTs on the Celo blockchain. Buy or gift NFT carbon offset certificates. Track your carbon status in realtime.'},
       {vmid: 'og:image', hid: 'og:image', property: 'og:image', content: '/cyberbox.webp'},
+      {name: 'og:image:width', property: 'og:image:width', content: '1200'},
+      {name: 'og:image:height', property: 'og:image:height', content: '630'},
+      {name: 'twitter:card', name: 'twitter:card', content: 'summary_large_image'},
+      {vmid: 'twitter:image', hid: 'twitter:image', name: 'twitter:image', content: '/cyberbox.webp'},
       {name: 'format-detection', content: 'telephone=no'}
     ],
     link: [

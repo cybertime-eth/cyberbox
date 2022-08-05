@@ -2,23 +2,30 @@
     <div class="modal">
         <div class="modal__reward">
             <a class="modal__reward-close" @click="closeModal"><img src="/close.svg" alt="close"></a>
-            <div class="modal__reward-main">
-                <h2 class="modal__reward-main-title">How to get rewarded?</h2>
-                <div class="modal__reward-main-info">
-                    <div class="modal__reward-main-info-steps">
-                        <p class="modal__reward-main-info-steps-step">1</p>
-                        <p class="modal__reward-main-info-steps-step">2</p>
-                        <p class="modal__reward-main-info-steps-step">3</p>
-                    </div>
-                    <div class="modal__reward-main-info-items">
-                        <p class="modal__reward-main-info-items-item"><b>Send your link</b> to friends or post on social networks</p>
-                        <p class="modal__reward-main-info-items-item"><b>Your friends buy NFT,</b> offset carbon and help nature</p>
-                        <p class="modal__reward-main-info-items-item"><b>You receive income</b> directly to your wallet immediately after a successful NFT purchase!</p>
-                    </div>
-                </div>
-            </div>
-            <img class="modal__reward-picture" :src="getCDNImage('reward.webp')" alt="reward" v-if="!isMobile()">
-            <img class="modal__reward-picture" :src="getCDNImage('reward-mobile.webp')" alt="reward" v-else>
+			<client-only>
+				<h2 class="modal__reward-main-title" v-if="isMobile()">How to get rewarded?</h2>
+			</client-only>
+			<div class="modal__reward-content">
+				<div class="modal__reward-main">
+					<client-only>
+						<h2 class="modal__reward-main-title" v-if="!isMobile()">How to get rewarded?</h2>
+					</client-only>
+					<div class="modal__reward-main-info">
+						<div class="modal__reward-main-info-steps">
+							<p class="modal__reward-main-info-steps-step">1</p>
+							<p class="modal__reward-main-info-steps-step">2</p>
+							<p class="modal__reward-main-info-steps-step">3</p>
+						</div>
+						<div class="modal__reward-main-info-items">
+							<p class="modal__reward-main-info-items-item"><b>Send your link</b> to friends or post on social networks</p>
+							<p class="modal__reward-main-info-items-item"><b>Your friends buy NFT,</b> offset carbon and help nature</p>
+							<p class="modal__reward-main-info-items-item"><b>You receive income</b> directly to your wallet immediately after a successful NFT purchase!</p>
+						</div>
+					</div>
+				</div>
+				<img class="modal__reward-picture" :src="getCDNImage('reward.webp')" alt="reward" v-if="!isMobile()">
+				<img class="modal__reward-picture" :src="getCDNImage('reward-mobile.webp')" alt="reward" v-else>
+			</div>
         </div>
     </div>
 </template>
@@ -37,9 +44,6 @@ export default {
 .modal {
   &__reward {
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     width: 75.2rem;
     background: linear-gradient(0deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
     padding: 3.2rem 6rem;
@@ -51,6 +55,11 @@ export default {
       right: 2.8rem;
       cursor: pointer;
     }
+	&-content {
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	}
     &-main {
       max-width: 34.9rem;
       &-title {
@@ -120,21 +129,25 @@ export default {
       width: 31.2rem;
     }
     @media (max-width: 360px) {
-      display: block;
       width: calc(100% - 3.2rem);
       padding: 4.8rem 0.8rem;
       &-close {
         top: 2rem;
         right: 1.2rem;
       }
+	  &-content {
+		display: block;
+	  }
       &-main {
         max-width: none;
         &-title {
+		  padding-bottom: 2.4rem;
           font-family: OpenSans-SemiBold;
           font-weight: 600;
           font-size: 2.2rem;
         }
         &-info {
+		  margin: 0;
           &-steps {
             margin-right: 1.6rem;
             &-step {
@@ -172,6 +185,12 @@ export default {
         margin: 3.2rem auto 0;
       }
     }
+	@media (max-width: 460px) and (max-height: 50rem) {
+	  &-content {
+		max-height: 60vh;
+		overflow-y: auto;
+	  }
+	}
   }
 }
 </style>

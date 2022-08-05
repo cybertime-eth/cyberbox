@@ -3,26 +3,26 @@
 		<div class="carbon">
 			<div class="carbon__tracker">
 				<img class="carbon__tracker-bg" :src="trackerBGImage" alt="background">
-				<h2 class="carbon__title">Personal carbon offset tracker</h2>
+				<h2 class="carbon__title">Carbon offset tracker</h2>
 				<p class="carbon__address" v-if="linkShared">by {{ walletAddress }}</p>
 				<p class="carbon__tracker-year" :class="{shared: linkShared}">2022</p>
 				<!-- <CustomSelect class="carbon__tracker-picker" :options="dateOptions" @change="filterByYear"/> -->
 				<div class="carbon__tracker-info">
 					<h2 class="carbon__tracker-info-title">{{ formatCO2(totalCO2Offset) }}</h2>
-					<p class="carbon__tracker-info-description">Total CO2 offset (ton CO2) <img class="carbon__tracker-info-description-img" :src="getCDNImage('plant.svg')" alt="plant"></p>
+					<p class="carbon__tracker-info-description">Total offset (tCO2) <img class="carbon__tracker-info-description-img" :src="getCDNImage('plant.svg')" alt="plant"></p>
 					<div class="carbon__tracker-info-block">
 						<div class="carbon__tracker-info-block-item">
 							<p class="carbon__tracker-info-block-item-value">{{ formatCO2(totalCertCO2) }}</p>
-							<p class="carbon__tracker-info-block-item-name">Carbon certificates<br/>(ton CO2)</p>
+							<p class="carbon__tracker-info-block-item-name">ReFi Calendar<br/>(tCO2)</p>
 						</div>
 						<div class="carbon__tracker-info-block-item">
 							<p class="carbon__tracker-info-block-item-value">{{ formatCO2(totalTradingCO2) }}</p>
-							<p class="carbon__tracker-info-block-item-name">Traiding CO2 offset<br/>(ton CO2)</p>
+							<p class="carbon__tracker-info-block-item-name">Traiding<br/>(tCO2)</p>
 						</div>
 					</div>
 				</div>
 				<div class="carbon__tracker-buttons">
-					<button class="carbon__tracker-buttons-button buy gradient-button" @click="gotoLending">Buy NFT Certificate</button>
+					<button class="carbon__tracker-buttons-button buy gradient-button" @click="gotoLending">Mint ReFi Calendar</button>
 					<button class="carbon__tracker-buttons-button bonus" @click="showExchangeBonus=true" v-if="!bonusPurchased">Get a Bonus</button>
 				</div>
 				<div class="carbon__tracker-share">
@@ -34,7 +34,7 @@
 				</div>
 			</div>
 			<div class="carbon__certificates">
-				<h2 class="carbon__title">NFT Carbon Offset Certificates</h2>
+				<h2 class="carbon__title">ReFi Calendar Collection</h2>
 				<!-- <div class="carbon__certificates-header">
 					<CustomSwitch class="carbon__certificates-header-switch" label="My Certificates" :value="myCertificate" @onChange="changeMyCertificateStatus"/>
 				</div> -->
@@ -184,7 +184,8 @@ export default {
   head() {
     return {
       meta: [
-        { hid: 'og:image', property: 'og:image', content: this.getCDNImage('tracker-banner.webp') }
+				{ hid: 'og:image', property: 'og:image', content: this.getCDNImage('tracker-banner.webp') },
+				{ hid: 'twitter:image', name: 'twitter:image', content: this.getCDNImage('tracker-banner.webp') }
       ]
     }
   },
@@ -336,7 +337,7 @@ export default {
 	}
 	&-info {
 	  background: $white;
-	  width: 38rem;
+	  width: 34rem;
 	  margin-top: 3.2rem;
 	  padding: 2.4rem 2.2rem;
 	  border-radius: 2.4rem;
@@ -359,7 +360,7 @@ export default {
 		display: flex;
 		justify-content: space-between;
 		margin-top: 2rem;
-		padding: 2.2rem 2.9rem 0;
+		padding: 2.2rem 3.4rem 0;
 		border-top: 1px solid $modalColor;
 		&-item {
 		  text-align: center;
@@ -452,8 +453,6 @@ export default {
 	  &-info {
 		width: calc(100% - 6rem);
 		&-block {
-		  padding-left: 0;
-		  padding-right: 0;
 		  &-item {
 			&-name {
 			  font-size: 1rem;

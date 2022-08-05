@@ -54,7 +54,7 @@
                 <button class="nft__block-info-buy" @click="handleClickBuyNow">Buy now</button>
               </div>
               <div class="nft__block-info-refi" v-if="nft.market_status === 'LISTED' && nft.price">
-			  	<p class="nft__block-info-refi-total"><img class="nft__block-info-refi-total-carbon" :src="getCDNImage('plant.svg')" alt="plant">Total carbon offset = <span class="nft__block-info-refi-total-amount">{{ refiOffset }} ton co2</span></p>
+			  	<p class="nft__block-info-refi-total"><img class="nft__block-info-refi-total-carbon" :src="getCDNImage('plant.svg')" alt="plant">Total carbon offset = <span class="nft__block-info-refi-total-amount">{{ refiOffset }} tCO2</span></p>
 				<p class="nft__block-info-refi-offset">Buy NFT and we add 50% of total offset to your <img class="nft__block-info-refi-offset-carbon" :src="getCDNImage('carbon-tracker.svg')" alt="tracker"> Offset Tracker</p>
               </div>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
@@ -130,7 +130,7 @@
                 </div>
               </div>
 			  <div class="nft__block-info-refi listed" v-if="nft.market_status === 'LISTED' && nft.price">
-			  	<p class="nft__block-info-refi-total"><img class="nft__block-info-refi-total-carbon" :src="getCDNImage('plant.svg')" alt="plant">Total carbon offset = <span class="nft__block-info-refi-total-amount">{{ refiOffset }} ton co2</span></p>
+			  	<p class="nft__block-info-refi-total"><img class="nft__block-info-refi-total-carbon" :src="getCDNImage('plant.svg')" alt="plant">Total carbon offset = <span class="nft__block-info-refi-total-amount">{{ refiOffset }} tCO2</span></p>
 				<p class="nft__block-info-refi-offset">Buy NFT and we add 50% of total offset to your <img class="nft__block-info-refi-offset-carbon" :src="getCDNImage('carbon-tracker.svg')" alt="tracker"> Offset Tracker</p>
               </div>
               <p class="nft__block-info-description" v-if="nft.description">{{ nft.description }}</p>
@@ -472,7 +472,8 @@ export default {
         { hid: 'og:title', property: 'og:title', content: this.pageTitle },
         { hid: 'description', name: 'description', content: this.description },
         { hid: 'og:description', property: 'og:description', content: this.description },
-        { hid: 'og:image', property: 'og:image', content: this.metaIcon }
+        { hid: 'og:image', property: 'og:image', content: this.metaIcon },
+        { hid: 'twitter:image', name: 'twitter:image', content: this.metaIcon }
       ]
     }
   },

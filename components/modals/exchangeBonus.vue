@@ -4,25 +4,37 @@
             <a class="exchange__bonus-close" @click="$emit('closeModal')">
                 <img class="exchange__bonus-close-icon" src="/close.svg" alt="close">
             </a>
-			<div class="exchange__bonus-box">
-				<div class="exchange__bonus-info">
-					<div class="exchange__bonus-info-block">
-						<h2 class="exchange__bonus-guide-title">Get an exclusive NFT for the entire 2022 collection</h2>
-						<div class="exchange__bonus-guide">
-							<p class="exchange__bonus-guide-description">Collect all 12 carbon certificates in a year and exchange them for a secret super rare unique NFT.</p>
-							<button class="exchange__bonus-get" :class="{disabled: !bonusAvailable}" @click="$emit('onExchange')" v-if="webVersion">Get a bouns</button>
-							<p class="exchange__bonus-guide-sub-description">Exclusive NFT gives you a chance to get into the closed ReFi DAO club</p>
-						</div>
+			<h2 class="exchange__bonus-guide-title" v-if="!webVersion">Access to ReFi DAO club</h2>
+			<div class="exchange__bonus-content">
+				<div class="exchange__bonus-box">
+					<div class="exchange__bonus-info">
+						<h2 class="exchange__bonus-guide-title" v-if="webVersion">Access to ReFi DAO club</h2>
+						<p class="exchange__bonus-guide-description">Participants get the opportunity to:</p>
+						<ul class="exchange__bonus-info-features indent-features-list">
+							<li class="indent-features-list-item">
+								<span class="indent-features-list-item-mark"/>
+								<p class="indent-features-list-item-text">Vote for the distribution of the DAO fund</p>
+							</li>
+							<li class="indent-features-list-item">
+								<span class="indent-features-list-item-mark"/>
+								<p class="indent-features-list-item-text">Participate in the development of ReFi initiatives</p>
+							</li>
+							<li class="indent-features-list-item">
+								<span class="indent-features-list-item-mark"/>
+								<p class="indent-features-list-item-text">Define tokens for offset for a period</p>
+							</li>
+							<li class="indent-features-list-item">
+								<span class="indent-features-list-item-mark"/>
+								<p class="indent-features-list-item-text">Participate in the development<br/>of CyberBox</p>
+							</li>
+						</ul>
+						<button class="exchange__bonus-get" :class="{disabled: !bonusAvailable}" @click="$emit('onExchange')" v-if="webVersion">Get a bouns</button>
 					</div>
 					<div class="exchange__bonus-picture">
 						<img class="exchange__bonus-picture-img" :src="bonusImage" alt="unknown">
 					</div>
-					<button class="exchange__bonus-get" :class="{disabled: !bonusAvailable}" @click="$emit('onExchange')" v-if="!webVersion">Get a bouns</button>
 				</div>
-				<div class="exchange__bonus-content">
-					<p class="exchange__bonus-guide-tip"><span>Attention!</span> To get 1 exclusive NFT you need to <b>burn</b> a collection of <b>12 monthly NFTs</b></p>
-					<p class="exchange__bonus-guide-footprint">If you missed a month, you can buy a certificate on the secondary market, but this certificate will no longer cover your carbon footprint</p>
-				</div>
+				<button class="exchange__bonus-get" :class="{disabled: !bonusAvailable}" @click="$emit('onExchange')" v-if="!webVersion">Get a bouns</button>
 			</div>
         </div>
     </div>
@@ -50,8 +62,8 @@ export default {
 
 <style lang="scss" scoped>
 .exchange__bonus {
-  width: 62.6rem;
-  padding: 7.8rem 1.6rem 3.6rem 2.4rem;
+  width: 68.6rem;
+  padding: 6.4rem 2.4rem 2.9rem 2.4rem;
   background: $white;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
   border-radius: 0.8rem;
@@ -63,58 +75,37 @@ export default {
     right: 2.8rem;
     cursor: pointer;
   }
-  &-info {
+  &-box {
 	display: flex;
-	justify-content: flex-end;
-	padding-bottom: 3.1rem;
-	&-block {
-	  flex: 1;
-	  margin-right: 2.4rem;
+	justify-content: space-between;
+  }
+  &-info {
+	&-features {
+	  max-width: 31rem;
+	  margin-top: 1rem;
+	  .indent-features-list-item {
+		align-items: center;
+		color: $textColor;
+	  }
 	}
   }
   &-guide {
     flex: 1;
-	max-width: 30.2rem;
 	&-title {
-	  max-width: 30.2rem;
 	  font-family: Cabin-Bold;
 	  font-size: 3.2rem;
       line-height: 3.6rem;
 	}
-    &-description, &-sub-description {
+    &-description {
+	  margin-top: 2.4rem;
       font-weight: 600;
-      font-size: 1.4rem;
-      color: $grayDark;
+      font-size: 1.6rem;
 	}
-	&-description {
-	  margin-top: 1.2rem;
-	}
-	&-sub-description {
-	  background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
-	  -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-	}
-    &-tip {
-	  flex: 1;
-	  margin-right: 2.4rem;
-      font-weight: 400;
-	  font-size: 1.4rem;
-	  color: $textColor;
-      span {
-		font-weight: 600;
-		color: $pink;
-	  }
-    }
-    &-footprint {
-	  max-width: 26.3rem;
-      font-size: 1.4rem;
-      color: $grayLight;
-    }
   }
   &-get {
     background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
-    margin: 2.3rem 0;
-	padding: 0.8rem 1.7em;
+    margin-top: 2.8rem;
+	padding: 0.8rem 3rem;
     font-weight: 700;
     font-size: 1.6rem;
     color: $white;
@@ -128,9 +119,9 @@ export default {
 	}
   }
   &-picture {
-    min-width: 26.3rem;
-	max-width: 26.3rem;
-    height: 26.3rem;
+    min-width: 30.5rem;
+	max-width: 30.5rem;
+    height: 30.5rem;
     background: linear-gradient(0deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), linear-gradient(46.74deg, #365BE0 -17.17%, #D676CF 48.99%, #FFE884 113%);
     border-radius: 0.4rem;
 	overflow: hidden;
@@ -139,46 +130,35 @@ export default {
 	  height: 100%;
     }
   }
-  &-content {
-    display: flex;
-    justify-content: flex-end;
-	padding-top: 3rem;
-	border-top: 1px solid $modalColor;
-  }
 
   @media (max-width: 460px) {
-	padding: 2.4rem 0.8rem;
-	&-info {
+	padding: 4.8rem 0.8rem 2.4rem;
+	&-close {
+	  top: 2rem;
+	  right: 2rem;
+	}
+	&-box {
 	  display: block;
-	  padding-bottom: 0;
-	  &-block {
-		margin: 0;
-	  }
 	}
 	&-guide {
 	  max-height: 70vh;
 	  overflow-y: auto;
 	  &-title {
-		margin-right: 7rem;
 		font-size: 2.2rem;
 		line-height: 2.4rem;
 	  }
 	  &-description {
-		margin-right: 1rem;
-	  }
-	  &-sub-description {
-		margin-top: 1.2rem;
-	  }
-	  &-tip {
-		margin: 0;
-	  }
-	  &-footprint {
-		max-width: none;
 		margin-top: 1.6rem;
+		font-size: 1.4rem;
 	  }
+	}
+	&-features {
+	  max-width: 100%;
+	  margin-top: 1.2rem;
 	}
 	&-get {
 	  width: 100%;
+	  margin-top: 2.4rem;
 	  font-size: 1.4rem;
 	}
 	&-picture {
@@ -188,16 +168,10 @@ export default {
 	  height: 28.8rem;
 	  margin-top: 2.4rem;
 	}
-	&-content {
-	  display: block;
-	  padding: 0;
-	  border: 0;
-	}
   }
   @media (max-width: 460px) and (max-height: 50rem) {
-	&-box {
-	  max-height: 48rem;
-	  overflow-x: hidden;
+	&-content {
+	  max-height: 70vh;
 	  overflow-y: auto;
 	}
   }

@@ -32,7 +32,7 @@
 				</div>
 				<div class="collection__header-info-block" ref="refiInfo">
 					<h3 class="collection__header-info-block-title">{{ refiCO2Price }}</h3>
-					<h3 class="collection__header-info-block-subtitle">Ton CO2 <img src="/plant.svg" alt="plant"></h3>
+					<h3 class="collection__header-info-block-subtitle">Offset, tCO2 <img src="/plant.svg" alt="plant"></h3>
 				</div>
 			</div>
 		</div>
@@ -193,7 +193,8 @@ export default {
         { hid: 'og:title', property: 'og:title', content: this.pageTitle },
         { hid: 'description', name: 'description', content: this.description },
         { hid: 'og:description', property: 'og:description', content: this.description },
-        { hid: 'og:image', property: 'og:image', content: this.metaIcon }
+        { hid: 'og:image', property: 'og:image', content: this.metaIcon },
+        { hid: 'twitter:image', name: 'twitter:image', content: this.metaIcon }
       ]
     }
   },

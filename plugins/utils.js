@@ -113,10 +113,8 @@ Vue.mixin({
 	},
 	cuttenReferralLink(referralUrl) {
 	  if (referralUrl) {
-		const splits = referralUrl.split(/^https?:\/\//)
-		// const urlSuffix = !this.isMobile() ? splits[1].substr(-11) : splits[1].substr(-4)
-		// const resultUrl = location.protocol + '//' + splits[1].substr(0, 2) + '...' + urlSuffix
-		const resultUrl = location.host + '/...'
+		const splits = referralUrl.split('referral=')
+		const resultUrl = location.host + '/calendar?referral=' + (splits.legnth > 1 ? splits[1] : '')
 		return resultUrl
 	  } else {
 		return ''

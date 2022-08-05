@@ -48,15 +48,27 @@
 								<span class="referral__main-info-block-status-count-amount">{{ formattedEarning(ownerInfo.refer_fee) }}</span>
 							</p>
 							<p class="referral__main-info-block-status-name">Total earned</p>
-							<div class="referral__main-info-block-status-tooltip">
-								<img class="referral__main-info-block-status-tooltip-mark" src="/question-gradient.svg" alt="question">
-							</div>
+							<dropdown-menu class="referral__main-info-block-status-dropdown" :hover="true" :right="true" v-model="showTotalEarned" v-if="showTooltipDropdown">
+								<div class="referral__main-info-block-status-dropdown-tooltip">
+									<img class="referral__main-info-block-status-dropdown-tooltip-mark" src="/question-gradient.svg" alt="question">
+								</div>
+								<div slot="dropdown" class="referral__main-info-block-status-dropdown-menu">
+									<p class="referral__main-info-block-status-dropdown-tooltip-content">Tokens that you have earned through<br/>
+										the referral system are displayed here.<br/>
+										They are automatically credited to your<br/>
+										wallet.
+									</p>
+								</div>
+							</dropdown-menu>
+							
 						</div>
                     </div>
                     <div class="referral__main-info-address">
                         <div class="referral__main-info-address-block gradient-block" @click="copyReferralLink">
-                            <span class="referral__main-info-address-name"> {{ !this.addressCopied ? 'Referral link:' : 'Copied' }} </span>
-                            <span class="referral__main-info-address-link">{{ cuttenReferralLink(this.referralUrl) }}</span>
+							<div class="referral__main-info-address-block-box" @click="copyReferralLink">
+								<span class="referral__main-info-address-name">{{ !this.addressCopied ? 'Referral link:' : 'Copied' }}</span>
+								<span class="referral__main-info-address-link">{{ cuttenReferralLink(this.referralUrl) }}</span>
+							</div>
                         </div>
                         <div class="referral__main-info-address-share">
                             <ShareFrame class="referral__main-info-address-share-frame" :class="{ copied: addressCopied }" @onShared="linkShared = true"/>
@@ -164,11 +176,13 @@ export default {
   data() {
     return {
       addressCopied: false,
-      linkShared: false,
-      showRewardModal: false,
+	  linkShared: false,
+	  showTotalEarned: false,
+	  showRewardModal: false,
+	  showTooltipDropdown: false,
       activeFilter: 0,
       referralUrl: '',
-      certificates: [],
+	  certificates: [],
       ownerInfo: {
         referAddress: '',
         refer_fee: 0,
@@ -193,7 +207,8 @@ export default {
   head() {
     return {
       meta: [
-        { hid: 'og:image', property: 'og:image', content: this.getCDNImage('referral-banner.webp') }
+		{ hid: 'og:image', property: 'og:image', content: this.getCDNImage('referral-banner.webp') },
+		{ hid: 'twitter:image', name: 'twitter:image', content: this.getCDNImage('referral-banner.webp') }
       ]
     }
   },
@@ -228,6 +243,7 @@ export default {
 	this.certificates = images
   },
   async mounted() {
+	this.showTooltipDropdown = true
     if (process && process.browser) {
       const footerEl = document.querySelector('.footer')
 	  footerEl.classList.remove('fixed')
@@ -382,16 +398,16 @@ export default {
 		margin-top: 2rem;
 		.indent-features-list-item {
 		  align-items: center;
-		  &:nth-child(4), &:last-child {
-			align-items: flex-start;
-			margin-top: 1.5rem;
-			.indent-features-list-item-text {
-			  transform: translateY(-0.7rem);
-			}
-		  }
-		  &-text {
-			max-width: 27.9rem;
-		  }
+		//   &:nth-child(4), &:last-child {
+		// 	align-items: flex-start;
+		// 	margin-top: 1.5rem;
+		// 	.indent-features-list-item-text {
+		// 	  transform: translateY(-0.7rem);
+		// 	}
+		//   }
+		//   &-text {
+		// 	max-width: 27.9rem;
+		//   }
 		}
       }
       &-reward {
@@ -430,12 +446,28 @@ export default {
 		  border-radius: 0.8rem;
 		  text-align: center;
 		  position: relative;
-		  &-tooltip {
+		  &-dropdown {
 			position: absolute;
 			top: 0.9rem;
 			right: 0.9rem;
-			&-mark {
-			  width: 1.3rem;
+			&-tooltip {
+			  &-mark {
+				width: 1.3rem;
+			  }
+			  &-content {
+				text-align: left;
+				font-size: 1.2rem;
+				color: $white;
+			  }
+			}
+			::v-deep .dropdown-menu {
+			  top: -1rem !important;
+			  width: 23.4rem;
+			  padding: 0.8rem;
+			  background: rgba(0, 0, 0, 0.57);
+			  backdrop-filter: blur(13px);
+			  border-radius: 4px;
+			  transform: translateY(-100%);
 			}
 		  }
 		  &-count {
@@ -467,8 +499,14 @@ export default {
           background: $white;
           border: 1px solid transparent;
           border-radius: 2.5rem;
-          font-size: 1.4rem;
           cursor: pointer;
+		  &-box {
+			max-width: 22rem;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			font-size: 1.4rem;
+		  }
         }
         &-name {
           margin-right: 1.2rem;
@@ -727,6 +765,9 @@ export default {
           &-block {
 			flex: 1;
             padding: 1rem 1.6rem;
+			&-box {
+			  max-width: 23.2rem;
+			}
           }
 		}
 		&-link {

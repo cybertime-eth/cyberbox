@@ -4,8 +4,8 @@
             <div class="lending__block">
 				<client-only>
 					<div v-if="isMobile()">
-						<p class="lending__block-info-name">NFT Carbon Offset Certificate</p>
-						<p class="lending__block-info-description">Buy a personal NFT certificate to become carbon neutral</p>
+						<p class="lending__block-info-name">ReFi Calendar 2022</p>
+						<p class="lending__block-info-description">Mint NFT, offset 1 tCO2 every month and regenerate nature</p>
 					</div>
 				</client-only>
                 <div class="lending__block-summary">
@@ -15,15 +15,15 @@
                 <div class="lending__block-info">
                     <client-only>
 						<div v-if="!isMobile()">
-							<p class="lending__block-info-name">NFT Carbon Offset Certificate</p>
-							<p class="lending__block-info-description">Buy a personal NFT certificate to become carbon neutral</p>
+							<p class="lending__block-info-name">ReFi Calendar 2022</p>
+							<p class="lending__block-info-description">Mint NFT, offset 1 tCO2 every month and regenerate nature</p>
 						</div>
-						<p class="lending__block-info-detail" v-else>This NFT Certificate confirms your contribution to the regeneration of nature and to your carbon negativity status</p>
                     </client-only>
 					<ul class="lending__block-info-features features-list">
-						<li class="features-list-item">Unique NFT certificate every month</li>
-						<li class="features-list-item">1 NFT = 1 ton CO2 offset</li>
-						<li class="features-list-item">Collect or sell on the marketplace</li>
+						<li class="features-list-item">On-chain offset confirmation</li>
+						<li class="features-list-item">Unique art every month</li>
+						<li class="features-list-item">1 tCO2 offset & added to tracker</li>
+						<li class="features-list-item">Chance to get into the ReFi DAO club</li>
 					</ul>
                     <div class="lending__block-info-price" v-if="!bought">
                         <div class="lending__block-info-price-detail">
@@ -33,7 +33,7 @@
                             </div>
                             <p class="lending__block-info-price-detail-value">Price (${{ priceToken }})</p>
                         </div>
-                        <button class="lending__block-info-price-buy" @click="clickBuyToken">Buy & Offset now</button>
+                        <button class="lending__block-info-price-buy" @click="clickBuyToken">Mint & Offset now</button>
                     </div>
 					<div class="lending__block-info-minted" v-else>
 						<p class="lending__block-info-minted-description">Congratulations!<br/>You have already bought an NFT Carbon Offset Certificate this month.</p>
@@ -82,7 +82,14 @@
                     <h2 class="lending__title">Collect the  entire  collection for 2022</h2>
                     <h2 class="lending__collection-description">Save for the future, sell on our marketplace or exchange 12 NFTs for 1 exclusive NFT</h2>
                     <div class="lending__collection-list">
-                        <div class="lending__collection-item" :class="{available: certificateBuyAvailable(certificate), last: !certificateOwner(certificate) && !certificate.offset && !certificate.future}" :key="idx" v-for="(certificate, idx) of certificateList">
+                        <div class="lending__collection-item"
+							:key="idx"
+							:class="{available: certificateBuyAvailable(certificate), active: certificate.active}"
+							@mouseenter="handleHoverOnCertificate(idx)"
+							@mouseleave="handleLeaveOnCertificate(idx)"
+							@click="handleClickCertificate(idx)"
+							v-for="(certificate, idx) of certificateList"
+						>
                             <p class="lending__collection-item-date">{{ certificateName(certificate) }}</p>
                             <div class="lending__collection-item-box no-bg">
                                 <img class="lending__collection-item-box-img" :src="certificate.image" alt="certificate">
@@ -107,8 +114,8 @@
                 </div>
 				<div class="lending__list-exclusive">
 					<div class="lending__list-exclusive-info">
-						<h2 class="lending__list-exclusive-info-title">13th Exclusive NFT</h2>
-						<p class="lending__list-exclusive-info-description">Exchange all 12 NFTs for a unique NFT and get a chance to get into the closed ReFi DAO club</p>
+						<h2 class="lending__list-exclusive-info-title">Access to ReFi DAO club</h2>
+						<p class="lending__list-exclusive-info-description">Those who have collected the entire collection have a choice, keep them for themselves or burn them! By burning, you get new NFT with access to the private ReFi DAO club</p>
 						<p class="lending__list-exclusive-info-read" @click="showExchangeBonus=true">Read more &#x276F;</p>
 					</div>
 					<img class="lending__list-exclusive-img" :src="getCDNImage('certificates/rare.webp')" alt="bonus">
@@ -249,7 +256,8 @@ export default {
   head() {
     return {
       meta: [
-        { hid: 'og:image', property: 'og:image', content: this.getCDNImage('calendar-banner.webp') }
+		{ hid: 'og:image', property: 'og:image', content: this.getCDNImage('calendar-banner.webp') },
+		{ hid: 'twitter:image', name: 'twitter:image', content: this.getCDNImage('calendar-banner.webp') }
       ]
     }
   },
@@ -364,11 +372,10 @@ export default {
 	  return certificate.year < currYear || (certificate.year === currYear && certificate.month < currMonth)
 	},
 	getCertificateStatus(certificate) {
-	  
 	  if (certificate.owner || this.certificateMinted(certificate)) {
 		return 'Minted'
 	  } else {
-		return certificate.offset ? 'Minting' : 'Comming soon'
+		return certificate.offset ? 'Minting' : 'Coming soon'
 	  }
 	},
 	getCertificatePrice(certificate) {
@@ -381,7 +388,7 @@ export default {
 	getCertificateOffset(certificate) {
 	  if (certificate.owner || certificate.offset || this.certificateMinted(certificate)) {
 		const offset = 15 * (55 / 1000) * this.$store.state.cMCO2Price
-		return `${offset.toFixed(1)} ton CO2`
+		return `${offset.toFixed(1)} tCO2`
 	  } else {
 		return '-'
 	  }
@@ -459,6 +466,21 @@ export default {
 		this.nextMintTimer = setInterval(this.countNextMintTime, 1000)
 	  }
 	},
+	handleHoverOnCertificate(index) {
+	  const newList = JSON.parse(JSON.stringify(this.certificateList))
+	  newList[index].active = true
+	  this.certificateList = newList
+	},
+	handleLeaveOnCertificate(index) {
+	  const newList = JSON.parse(JSON.stringify(this.certificateList))
+	  newList[index].active = false
+	  this.certificateList = newList
+	},
+	handleClickCertificate(index) {
+	  const newList = JSON.parse(JSON.stringify(this.certificateList))
+	  newList[index].active = !newList[index].active
+	  this.certificateList = newList
+	},
 	countNextMintTime() {
 	  let difference = this.leftMintTime
 	  this.nextMintDay = Math.floor(difference/1000/60/60/24)
@@ -530,6 +552,7 @@ export default {
 		font-size: 3.2rem;
 	  }
       &-description {
+		max-width: 35.9rem;
 		padding-top: 0.8rem;
         font-size: 1.4rem;
 	  }
@@ -541,7 +564,7 @@ export default {
         align-items: center;
         justify-content: space-between;
         background: $white;
-        padding: 1.4rem 0.8rem;
+        padding: 1.4rem 1.6rem;
         margin-top: 3.2rem;
         border-radius: 8px;
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
@@ -564,11 +587,11 @@ export default {
           }
         }
         &-buy {
-          width: 16.8rem;
-          height: 4.8rem;
+          width: 17.4rem;
+          height: 3.6rem;
           background: linear-gradient(to right, #365BE0, #D676CF, #FFE884);
           font-weight: 700;
-          font-size: 1.6rem;
+          font-size: 1.4rem;
           color: $white;
         }
 	  }
@@ -613,7 +636,7 @@ export default {
 	  }
     }
 	&-referral {
-	  width: 100%;
+	  width: calc(100% - 3.2rem);
 	  margin-top: 3.2rem;
 	  padding: 1.6rem;
 	  border: 1px solid $modalColor;
@@ -655,6 +678,7 @@ export default {
 		&-info {
 		  display: flex;
 		  align-items: center;
+		  max-width: 27.6rem;
 		  padding: 0.8rem 1.6rem;
 		  border: 1px solid $modalColor;
 		  border-radius: 2.5rem;
@@ -666,6 +690,9 @@ export default {
 			font-size: 1.4rem;
 		  }
 		  &-url {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 			font-size: 1.4rem;
 			font-weight: 600;
 		  }
@@ -707,7 +734,7 @@ export default {
 	  position: relative;
 	  display: flex;
 	  justify-content: space-between;
-	  width: 60.2rem;
+	  width: 65rem;
 	  background: $white;
 	  margin: 8.9rem auto;
 	  padding: 2.4rem;
@@ -723,7 +750,7 @@ export default {
 		border-radius: 1.2rem;
 	  }
 	  &-info {
-		width: 25.7rem;
+		max-width: 34.4rem;
 		&-title {
 		  font-family: Cabin-Bold;
 		  font-weight: 700;
@@ -735,6 +762,7 @@ export default {
 		}
 		&-read {
 		  font-weight: 600;
+		  font-size: 1.4rem;
 		  color: $pink;
 		  cursor: pointer;
 		}
@@ -827,13 +855,6 @@ export default {
 			}
 		  }
 		}
-		&:hover, &:focus-within {
-		  .lending__collection-item-box-status {
-			display: flex;
-			flex-direction: column;
-			justify-content: flex-end;
-		  }
-		}
 	  }
 	  &.available {
 		.lending__collection-item-date {
@@ -842,6 +863,13 @@ export default {
 		.lending__collection-item-box-img {
 		  border-radius: 0.8rem;
 		  border: 4px solid $green;
+		}
+	  }
+	  &.active {
+		.lending__collection-item-box-status {
+		  display: flex;
+		  flex-direction: column;
+		  justify-content: flex-end;
 		}
 	  }
     }
@@ -998,10 +1026,10 @@ export default {
         &-name {
 		  text-align: center;
 		  font-family: OpenSans-Bold;
-		  font-size: 1.75rem;
+		  font-size: 2.2rem;
         }
         &-description {
-		  max-width: 75%;
+		  max-width: 27.8rem;
     	  margin: 0 auto;
 		  padding-bottom: 2.4rem;
 		  text-align: center;
@@ -1032,6 +1060,9 @@ export default {
               margin-top: 1rem;
             }
           }
+		  &-buy {
+			font-weight: 600;
+		  }
 		}
 		&-minted {
 		  &-next {
@@ -1070,7 +1101,7 @@ export default {
 	  &-exclusive {
 		display: block;
 		width: calc(100% - 1.6rem);
-		margin-top: 3.6rem;
+		margin-top: 3.5rem;
 		margin-bottom: 4.8rem;
 		padding-left: 0.8rem;
 		padding-right: 0.8rem;
@@ -1098,8 +1129,7 @@ export default {
       text-align: left;
     }
     &__collection {
-      padding-top: 3.2rem;
-      padding-bottom: 4.4rem;
+      padding-top: 4.5rem;
       &-description {
         margin-top: 0.8rem;
         text-align: left;

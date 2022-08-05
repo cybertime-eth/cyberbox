@@ -19,6 +19,9 @@
           <li class="header__list">
             <nuxt-link class="header__link" active-class="gradient-text" to="/tracker" @click="sendTrackerEvent" exact>Tracker</nuxt-link>
           </li>
+          <li class="header__list">
+            <nuxt-link class="header__link" active-class="gradient-text" to="/referral" @click="sendReferralEvent" exact>Referral</nuxt-link>
+          </li>
         </ul>
       </nav>
       <client-only>
@@ -253,6 +256,15 @@ export default {
 		  tracker_enter: 'Menu'
 		}
 	  })
+	},
+	sendReferralEvent() {
+	  this.sendEvent({
+		category: 'Browse',
+		eventName: 'referral_enter',
+		properties: {
+		  referral_enter: 'Menu'
+		}
+	  })
 	}
   }
 }
@@ -269,7 +281,7 @@ header {
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 6.4rem 23.6rem 28rem 50.2rem 24rem;
+  grid-template-columns: 6.4rem 23.6rem 36rem 42.2rem 24rem;
   align-items: center;
   position: relative;
   &__back {

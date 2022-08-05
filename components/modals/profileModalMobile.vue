@@ -26,7 +26,8 @@
       <div class="menu-mobile-list-links">
         <nuxt-link to="/explorer" active-class="gradient-text" class="menu-mobile-list-link" @click="sendExplorerEvent">Explorer</nuxt-link>
         <nuxt-link to="/rankings" active-class="gradient-text" class="menu-mobile-list-link" @click="sendRankingEvent">Rankings</nuxt-link>
-        <nuxt-link to="/tracker" active-class="gradient-text" class="menu-mobile-list-link">Offset Tracker</nuxt-link>
+        <nuxt-link to="/tracker" active-class="gradient-text" class="menu-mobile-list-link">Tracker</nuxt-link>
+        <nuxt-link to="/referral" active-class="gradient-text" class="menu-mobile-list-link">Referral</nuxt-link>
 		<nuxt-link to="/mycollection" active-class="gradient-text" class="menu-mobile-list-link">My collection</nuxt-link>
       </div>
       <client-only>
