@@ -48,11 +48,11 @@
 								<span class="referral__main-info-block-status-count-amount">{{ formattedEarning(ownerInfo.refer_fee) }}</span>
 							</p>
 							<p class="referral__main-info-block-status-name">Total earned</p>
-							<dropdown-menu class="referral__main-info-block-status-dropdown" :hover="true" :right="true" v-model="showTotalEarned">
+							<dropdown-menu class="referral__main-info-block-status-dropdown" :hover="true" :right="true" v-model="showTotalEarned" v-if="showTooltipDropdown">
 								<div class="referral__main-info-block-status-dropdown-tooltip">
 									<img class="referral__main-info-block-status-dropdown-tooltip-mark" src="/question-gradient.svg" alt="question">
 								</div>
-								<div slot="dropdown">
+								<div slot="dropdown" class="referral__main-info-block-status-dropdown-menu">
 									<p class="referral__main-info-block-status-dropdown-tooltip-content">Tokens that you have earned through<br/>
 										the referral system are displayed here.<br/>
 										They are automatically credited to your<br/>
@@ -178,10 +178,11 @@ export default {
       addressCopied: false,
 	  linkShared: false,
 	  showTotalEarned: false,
-      showRewardModal: false,
+	  showRewardModal: false,
+	  showTooltipDropdown: false,
       activeFilter: 0,
       referralUrl: '',
-      certificates: [],
+	  certificates: [],
       ownerInfo: {
         referAddress: '',
         refer_fee: 0,
@@ -242,6 +243,7 @@ export default {
 	this.certificates = images
   },
   async mounted() {
+	this.showTooltipDropdown = true
     if (process && process.browser) {
       const footerEl = document.querySelector('.footer')
 	  footerEl.classList.remove('fixed')

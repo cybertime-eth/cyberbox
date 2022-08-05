@@ -18,7 +18,6 @@
 							<p class="lending__block-info-name">ReFi Calendar 2022</p>
 							<p class="lending__block-info-description">Mint NFT, offset 1 tCO2 every month and regenerate nature</p>
 						</div>
-						<p class="lending__block-info-detail" v-else>The NFT certificate confirms your contribution the regeneration of nature you carbon negative status</p>
                     </client-only>
 					<ul class="lending__block-info-features features-list">
 						<li class="features-list-item">On-chain offset confirmation</li>
