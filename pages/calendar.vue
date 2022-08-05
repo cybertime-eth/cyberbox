@@ -83,7 +83,14 @@
                     <h2 class="lending__title">Collect the  entire  collection for 2022</h2>
                     <h2 class="lending__collection-description">Save for the future, sell on our marketplace or exchange 12 NFTs for 1 exclusive NFT</h2>
                     <div class="lending__collection-list">
-                        <div class="lending__collection-item" :class="{available: certificateBuyAvailable(certificate), last: !certificateOwner(certificate) && !certificate.offset && !certificate.future}" :key="idx" v-for="(certificate, idx) of certificateList">
+                        <div class="lending__collection-item"
+							:key="idx"
+							:class="{available: certificateBuyAvailable(certificate), active: certificate.active}"
+							@mouseenter="handleHoverOnCertificate(idx)"
+							@mouseleave="handleLeaveOnCertificate(idx)"
+							@click="handleClickCertificate(idx)"
+							v-for="(certificate, idx) of certificateList"
+						>
                             <p class="lending__collection-item-date">{{ certificateName(certificate) }}</p>
                             <div class="lending__collection-item-box no-bg">
                                 <img class="lending__collection-item-box-img" :src="certificate.image" alt="certificate">
@@ -366,7 +373,6 @@ export default {
 	  return certificate.year < currYear || (certificate.year === currYear && certificate.month < currMonth)
 	},
 	getCertificateStatus(certificate) {
-	  
 	  if (certificate.owner || this.certificateMinted(certificate)) {
 		return 'Minted'
 	  } else {
@@ -461,6 +467,21 @@ export default {
 		this.nextMintTimer = setInterval(this.countNextMintTime, 1000)
 	  }
 	},
+	handleHoverOnCertificate(index) {
+	  const newList = JSON.parse(JSON.stringify(this.certificateList))
+	  newList[index].active = true
+	  this.certificateList = newList
+	},
+	handleLeaveOnCertificate(index) {
+	  const newList = JSON.parse(JSON.stringify(this.certificateList))
+	  newList[index].active = false
+	  this.certificateList = newList
+	},
+	handleClickCertificate(index) {
+	  const newList = JSON.parse(JSON.stringify(this.certificateList))
+	  newList[index].active = !newList[index].active
+	  this.certificateList = newList
+	},
 	countNextMintTime() {
 	  let difference = this.leftMintTime
 	  this.nextMintDay = Math.floor(difference/1000/60/60/24)
@@ -544,7 +565,7 @@ export default {
         align-items: center;
         justify-content: space-between;
         background: $white;
-        padding: 1.4rem 0.8rem;
+        padding: 1.4rem 1.6rem;
         margin-top: 3.2rem;
         border-radius: 8px;
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
@@ -567,11 +588,11 @@ export default {
           }
         }
         &-buy {
-          width: 16.8rem;
-          height: 4.8rem;
+          width: 17.4rem;
+          height: 3.6rem;
           background: linear-gradient(to right, #365BE0, #D676CF, #FFE884);
           font-weight: 700;
-          font-size: 1.6rem;
+          font-size: 1.4rem;
           color: $white;
         }
 	  }
@@ -658,7 +679,7 @@ export default {
 		&-info {
 		  display: flex;
 		  align-items: center;
-		  max-width: 30.8rem;
+		  max-width: 27.6rem;
 		  padding: 0.8rem 1.6rem;
 		  border: 1px solid $modalColor;
 		  border-radius: 2.5rem;
@@ -835,13 +856,6 @@ export default {
 			}
 		  }
 		}
-		&:hover, &:focus-within {
-		  .lending__collection-item-box-status {
-			display: flex;
-			flex-direction: column;
-			justify-content: flex-end;
-		  }
-		}
 	  }
 	  &.available {
 		.lending__collection-item-date {
@@ -850,6 +864,13 @@ export default {
 		.lending__collection-item-box-img {
 		  border-radius: 0.8rem;
 		  border: 4px solid $green;
+		}
+	  }
+	  &.active {
+		.lending__collection-item-box-status {
+		  display: flex;
+		  flex-direction: column;
+		  justify-content: flex-end;
 		}
 	  }
     }
@@ -1006,7 +1027,7 @@ export default {
         &-name {
 		  text-align: center;
 		  font-family: OpenSans-Bold;
-		  font-size: 1.75rem;
+		  font-size: 2.2rem;
         }
         &-description {
 		  max-width: 27.8rem;
@@ -1040,6 +1061,9 @@ export default {
               margin-top: 1rem;
             }
           }
+		  &-buy {
+			font-weight: 600;
+		  }
 		}
 		&-minted {
 		  &-next {

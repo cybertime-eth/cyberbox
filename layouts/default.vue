@@ -316,6 +316,7 @@ ul {
 	  border-radius: 50%;
     }
 	&-text {
+      flex: 1;
 	  font-size: 1.4rem;
 	  line-height: 2rem;
 	  color: $grayDark;

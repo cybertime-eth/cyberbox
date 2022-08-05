@@ -152,9 +152,8 @@ export default {
     }
   },
   async created() {
-	this.certificateTimer = setInterval(this.startCertificateAnimation, 3000)
 	// Latest 12 Listings
-	setTimeout(() => this.loading = false, 5000)
+	setTimeout(() => this.stopLoading(), 5000)
     const newListings = await this.$store.dispatch('getLatestListings')
     newListings.map(item => {
       if (item.price) {
@@ -196,7 +195,7 @@ export default {
 	  eventName: 'site_visit'
 	})
 
-	this.loading = false
+	this.stopLoading()
   },
   beforeDestroy() {
 	clearInterval(this.certificateTimer)
@@ -246,32 +245,15 @@ export default {
 	},
 	certificates() {
 	  const date = new Date()
-	  const currYear = date.getFullYear()
-	  const currMonth = date.getMonth() + 1
-      const startMonth = currMonth > 1 ? currMonth - 1 : currMonth
-      const endMonth = currMonth < 12 ? currMonth + 1 : 12
 	  const list = []
-
-	  for (let i = startMonth; i <= endMonth; i++) {
+	  for (let i = 1; i <= 12; i++) {
 		date.setMonth(i - 1)
 		const month = date.toLocaleString('en-us', { month: 'long' })
-		let status = ''
-		switch (i) {
-		  case (currMonth - 1): status = 'Last'
-		  	break
-		  case currMonth: status = 'Available'
-			break
-		  case (currMonth + 1): status = 'Next'
-		  	break
-    }
 		list.push({
 		  name: `${month} 22`,
-		  image: this.getCDNImage(`certificates/${i}.webp`),
-		  status,
-		  current: i === currMonth
+		  image: this.getCDNImage(`certificates/detail/${i}.webp`)
 		})
 	  }
-
 	  return list
 	}
   },
@@ -289,9 +271,15 @@ export default {
         return `/collections/${nft.nftSymbol}/${nft.image.substring(nft.image.lastIndexOf('/') + 1).split('.')[0]}`
       }
 	},
+	stopLoading() {
+	  this.loading = false
+	  if (!this.certificateTimer) {
+		this.certificateTimer = setInterval(this.startCertificateAnimation, 3000)
+	  }
+	},
 	startCertificateAnimation() {
 	  const newCertifiate = this.activeCertificate + 1
-	  if (newCertifiate < 3) {
+	  if (newCertifiate < 12) {
 		this.activeCertificate = newCertifiate
 	  } else {
 		this.activeCertificate = 0
@@ -546,6 +534,7 @@ export default {
 		  font-size: 3.2rem;
 		}
 		&-content {
+		  max-width: 30.3rem;
 		  margin-top: 1.2rem;
 		  font-size: 1.6rem;
 		  color: $grayDark;
@@ -913,11 +902,12 @@ export default {
 		  &-title {
 			font-family: OpenSans-SemiBold;
 			font-weight: 600;
-			font-size: 1.8rem;
-			line-height: 2.2rem;
+			font-size: 2.2rem;
+			line-height: 2.4rem;
 		  }
 		  &-content {
 			margin-top: 1.2rem;
+			font-family: OpenSans-SemiBold;
 			font-weight: 600;
 			font-size: 1.4rem;
 		  }

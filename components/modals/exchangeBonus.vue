@@ -4,37 +4,38 @@
             <a class="exchange__bonus-close" @click="$emit('closeModal')">
                 <img class="exchange__bonus-close-icon" src="/close.svg" alt="close">
             </a>
-			<div class="exchange__bonus-box">
-				<div class="exchange__bonus-info">
-					<div class="exchange__bonus-info-block">
-						<h2 class="exchange__bonus-guide-title">Access to ReFi DAO club</h2>
+			<h2 class="exchange__bonus-guide-title" v-if="!webVersion">Access to ReFi DAO club</h2>
+			<div class="exchange__bonus-content">
+				<div class="exchange__bonus-box">
+					<div class="exchange__bonus-info">
+						<h2 class="exchange__bonus-guide-title" v-if="webVersion">Access to ReFi DAO club</h2>
 						<p class="exchange__bonus-guide-description">Participants get the opportunity to:</p>
+						<ul class="exchange__bonus-info-features indent-features-list">
+							<li class="indent-features-list-item">
+								<span class="indent-features-list-item-mark"/>
+								<p class="indent-features-list-item-text">Vote for the distribution of the DAO fund</p>
+							</li>
+							<li class="indent-features-list-item">
+								<span class="indent-features-list-item-mark"/>
+								<p class="indent-features-list-item-text">Participate in the development of ReFi initiatives</p>
+							</li>
+							<li class="indent-features-list-item">
+								<span class="indent-features-list-item-mark"/>
+								<p class="indent-features-list-item-text">Define tokens for offset for a period</p>
+							</li>
+							<li class="indent-features-list-item">
+								<span class="indent-features-list-item-mark"/>
+								<p class="indent-features-list-item-text">Participate in the development<br/>of CyberBox</p>
+							</li>
+						</ul>
+						<button class="exchange__bonus-get" :class="{disabled: !bonusAvailable}" @click="$emit('onExchange')" v-if="webVersion">Get a bouns</button>
 					</div>
-					<ul class="exchange__bonus-info-features indent-features-list">
-						<li class="indent-features-list-item">
-							<span class="indent-features-list-item-mark"/>
-							<p class="indent-features-list-item-text">Vote for the distribution of the DAO fund</p>
-						</li>
-						<li class="indent-features-list-item">
-							<span class="indent-features-list-item-mark"/>
-							<p class="indent-features-list-item-text">Participate in the development of ReFi initiatives</p>
-						</li>
-						<li class="indent-features-list-item">
-							<span class="indent-features-list-item-mark"/>
-							<p class="indent-features-list-item-text">Define tokens for offset for a period</p>
-						</li>
-						<li class="indent-features-list-item">
-							<span class="indent-features-list-item-mark"/>
-							<p class="indent-features-list-item-text">Participate in the development<br/>of CyberBox</p>
-						</li>
-					</ul>
-					<button class="exchange__bonus-get" :class="{disabled: !bonusAvailable}" @click="$emit('onExchange')" v-if="webVersion">Get a bouns</button>
+					<div class="exchange__bonus-picture">
+						<img class="exchange__bonus-picture-img" :src="bonusImage" alt="unknown">
+					</div>
 				</div>
-				<div class="exchange__bonus-picture">
-					<img class="exchange__bonus-picture-img" :src="bonusImage" alt="unknown">
-				</div>
+				<button class="exchange__bonus-get" :class="{disabled: !bonusAvailable}" @click="$emit('onExchange')" v-if="!webVersion">Get a bouns</button>
 			</div>
-			<button class="exchange__bonus-get" :class="{disabled: !bonusAvailable}" @click="$emit('onExchange')" v-if="!webVersion">Get a bouns</button>
         </div>
     </div>
 </template>
@@ -79,9 +80,6 @@ export default {
 	justify-content: space-between;
   }
   &-info {
-	&-block {
-	  flex: 1;
-	}
 	&-features {
 	  max-width: 31rem;
 	  margin-top: 1rem;
@@ -132,12 +130,6 @@ export default {
 	  height: 100%;
     }
   }
-  &-content {
-    display: flex;
-    justify-content: flex-end;
-	padding-top: 3rem;
-	border-top: 1px solid $modalColor;
-  }
 
   @media (max-width: 460px) {
 	padding: 4.8rem 0.8rem 2.4rem;
@@ -176,16 +168,10 @@ export default {
 	  height: 28.8rem;
 	  margin-top: 2.4rem;
 	}
-	&-content {
-	  display: block;
-	  padding: 0;
-	  border: 0;
-	}
   }
   @media (max-width: 460px) and (max-height: 50rem) {
-	&-box {
-	  max-height: 48rem;
-	  overflow-x: hidden;
+	&-content {
+	  max-height: 70vh;
 	  overflow-y: auto;
 	}
   }

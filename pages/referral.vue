@@ -48,9 +48,19 @@
 								<span class="referral__main-info-block-status-count-amount">{{ formattedEarning(ownerInfo.refer_fee) }}</span>
 							</p>
 							<p class="referral__main-info-block-status-name">Total earned</p>
-							<div class="referral__main-info-block-status-tooltip">
-								<img class="referral__main-info-block-status-tooltip-mark" src="/question-gradient.svg" alt="question">
-							</div>
+							<dropdown-menu class="referral__main-info-block-status-dropdown" :hover="true" :right="true" v-model="showTotalEarned">
+								<div class="referral__main-info-block-status-dropdown-tooltip">
+									<img class="referral__main-info-block-status-dropdown-tooltip-mark" src="/question-gradient.svg" alt="question">
+								</div>
+								<div slot="dropdown">
+									<p class="referral__main-info-block-status-dropdown-tooltip-content">Tokens that you have earned through<br/>
+										the referral system are displayed here.<br/>
+										They are automatically credited to your<br/>
+										wallet.
+									</p>
+								</div>
+							</dropdown-menu>
+							
 						</div>
                     </div>
                     <div class="referral__main-info-address">
@@ -166,7 +176,8 @@ export default {
   data() {
     return {
       addressCopied: false,
-      linkShared: false,
+	  linkShared: false,
+	  showTotalEarned: false,
       showRewardModal: false,
       activeFilter: 0,
       referralUrl: '',
@@ -433,12 +444,28 @@ export default {
 		  border-radius: 0.8rem;
 		  text-align: center;
 		  position: relative;
-		  &-tooltip {
+		  &-dropdown {
 			position: absolute;
 			top: 0.9rem;
 			right: 0.9rem;
-			&-mark {
-			  width: 1.3rem;
+			&-tooltip {
+			  &-mark {
+				width: 1.3rem;
+			  }
+			  &-content {
+				text-align: left;
+				font-size: 1.2rem;
+				color: $white;
+			  }
+			}
+			::v-deep .dropdown-menu {
+			  top: -1rem !important;
+			  width: 23.4rem;
+			  padding: 0.8rem;
+			  background: rgba(0, 0, 0, 0.57);
+			  backdrop-filter: blur(13px);
+			  border-radius: 4px;
+			  transform: translateY(-100%);
 			}
 		  }
 		  &-count {

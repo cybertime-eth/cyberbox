@@ -113,9 +113,6 @@ Vue.mixin({
 	},
 	cuttenReferralLink(referralUrl) {
 	  if (referralUrl) {
-		// const splits = referralUrl.split(/^https?:\/\//)
-		// const urlSuffix = !this.isMobile() ? splits[1].substr(-11) : splits[1].substr(-4)
-		// const resultUrl = location.protocol + '//' + splits[1].substr(0, 2) + '...' + urlSuffix
 		const splits = referralUrl.split('referral=')
 		const resultUrl = location.host + '/calendar?referral=' + (splits.legnth > 1 ? splits[1] : '')
 		return resultUrl
@@ -124,39 +121,39 @@ Vue.mixin({
 	  }
 	},
 	sendEvent(event) {
-		// try {
-		// 	let properties = {}
-		// 	if (event.properties) {
-		// 		properties = Object.assign({}, event.properties, properties);
-		// 	}
-		// 	const identify = new amplitude.Identify()
-		// 	let userProperties = {}
-		// 	if (!this.isMobile()) {
-		// 		userProperties = {
-		// 			utm_campaign: 'cyberbox_analytics',
-		// 			referring_domain: 'cyberbox.vercel.app'
-		// 		}
-		// 	}
-		// 	if (event.eventName === 'connect') {
-		// 		userProperties.auth_type = properties.connect
-		//   	}
-		// 	amplitude.setUserProperties(userProperties)
-		// 	amplitude.identify(identify)
-		// 	amplitude.logEvent(event.eventName, properties)
-		// } catch(error) {
-		// 	console.log(error)
-		// }
+		try {
+			let properties = {}
+			if (event.properties) {
+				properties = Object.assign({}, event.properties, properties);
+			}
+			const identify = new amplitude.Identify()
+			let userProperties = {}
+			if (!this.isMobile()) {
+				userProperties = {
+					utm_campaign: 'cyberbox_analytics',
+					referring_domain: 'cyberbox.vercel.app'
+				}
+			}
+			if (event.eventName === 'connect') {
+				userProperties.auth_type = properties.connect
+		  	}
+			amplitude.setUserProperties(userProperties)
+			amplitude.identify(identify)
+			amplitude.logEvent(event.eventName, properties)
+		} catch(error) {
+			console.log(error)
+		}
 	},
 	sendRevenueEvent(productId, price, priceTotal, collection) {
-		// try {
-		// 	const revenue = new amplitude.Revenue().setProductId(productId).setPrice(price)
-		// 	amplitude.logRevenueV2(revenue)
+		try {
+			const revenue = new amplitude.Revenue().setProductId(productId).setPrice(price)
+			amplitude.logRevenueV2(revenue)
 
-		// 	const collectionRevenue = new amplitude.Revenue().setPrice(priceTotal).setEventProperties({ collection })
-		// 	amplitude.logRevenueV2(collectionRevenue)
-		// } catch(error) {
-		// 	console.log(error)
-		// }
+			const collectionRevenue = new amplitude.Revenue().setPrice(priceTotal).setEventProperties({ collection })
+			amplitude.logRevenueV2(collectionRevenue)
+		} catch(error) {
+			console.log(error)
+		}
 	}
   }
 })
