@@ -3,7 +3,7 @@
 		<div class="carbon">
 			<div class="carbon__tracker">
 				<img class="carbon__tracker-bg" :src="trackerBGImage" alt="background">
-				<h2 class="carbon__title">ReFi Calendar</h2>
+				<h2 class="carbon__title">Carbon offset tracker</h2>
 				<p class="carbon__address" v-if="linkShared">by {{ walletAddress }}</p>
 				<p class="carbon__tracker-year" :class="{shared: linkShared}">2022</p>
 				<!-- <CustomSelect class="carbon__tracker-picker" :options="dateOptions" @change="filterByYear"/> -->
@@ -34,7 +34,7 @@
 				</div>
 			</div>
 			<div class="carbon__certificates">
-				<h2 class="carbon__title">NFT Carbon Offset Certificates</h2>
+				<h2 class="carbon__title">ReFi Calendar Collection</h2>
 				<!-- <div class="carbon__certificates-header">
 					<CustomSwitch class="carbon__certificates-header-switch" label="My Certificates" :value="myCertificate" @onChange="changeMyCertificateStatus"/>
 				</div> -->

@@ -85,7 +85,7 @@
               </div>
               <div class="refi__block-collections-items-group-item-carbon" v-if="collectionTab === 1">
                 <p class="refi__block-collections-items-group-item-carbon-value">{{collection.co2Celo}}</p>
-                <p class="refi__block-collections-items-group-item-carbon-unit">Offset, tCO2</p>
+                <p class="refi__block-collections-items-group-item-carbon-unit">tCO2</p>
               </div>
               <p class="refi__block-collections-items-group-item-amount" v-else><img :src="getCDNImage('celo.svg')" alt="celo"> {{collection.volumeCelo}}</p>
             </div>
@@ -99,23 +99,23 @@
           <div class="refi__block-footer-info-box">
             <div class="refi__block-footer-info-box-header">
               <img class="refi__block-footer-info-box-header-icon" :src="getCDNImage('refi-rankings.svg')" alt="rankings">
-              <h3 class="refi__block-footer-info-box-header-title">Carbon Offset Integration</h3>
+              <h3 class="refi__block-footer-info-box-header-title">Automatic offset СO2</h3>
             </div>
-            <p class="refi__block-footer-info-box-description">When trading NFTs on our marketplace, carbon offset users do not have to do anything!</p>
+            <p class="refi__block-footer-info-box-description">Any collection added to our marketplace will automatically offset carbon by 0.5% fee from each transaction. Collection creators can also set 2 types of fees up to 30%: resale income and carbon offset.</p>
           </div>
           <div class="refi__block-footer-info-box">
             <div class="refi__block-footer-info-box-header">
               <img class="refi__block-footer-info-box-header-icon" :src="getCDNImage('refi-integration.svg')" alt="integration">
-              <h3 class="refi__block-footer-info-box-header-title">NFT Carbon Certificates</h3>
+              <h3 class="refi__block-footer-info-box-header-title">Offset calendar & tracker</h3>
             </div>
-            <p class="refi__block-footer-info-box-description">Buy a unique NFT certificate every month at the expense of carbon offset.</p>
+            <p class="refi__block-footer-info-box-description">Everything is simple - every month mint NFT, offset 1 tCO2 and regenerate nature! Track your offset on our platform in the tracker. Opportunity to follow the carbon footprint on-chain</p>
           </div>
           <div class="refi__block-footer-info-box">
             <div class="refi__block-footer-info-box-header">
               <img class="refi__block-footer-info-box-header-icon" :src="getCDNImage('refi-setting.svg')" alt="settings">
-              <h3 class="refi__block-footer-info-box-header-title">Unique opportunities for NFT creators</h3>
+              <h3 class="refi__block-footer-info-box-header-title">Offset boxes</h3>
             </div>
-            <p class="refi__block-footer-info-box-description">Flexible royalty system, ability to set % for Carbon offset, all the benefits of Celo chain, access to 200k of users via Valora app.</p>
+            <p class="refi__block-footer-info-box-description">Offset Boxes work like Mystery Boxes. For companies, the opportunity to conduct a branded company through the NFT, increase loyalty, return up to 100% of offset costs. For collection creators, the ability to run your collection without knowing the code!</p>
           </div>
         </div>
         <button class="refi__block-footer-button refi__main-button explorer" @click="gotoExplorer('Bottom_button')">Explorer NFT</button>
