@@ -918,9 +918,6 @@ export default {
 		  top: 16rem;
 		  left: 50%;
 		  transform: translateX(-50%);
-		  &.certificate {
-			top: 22rem;
-		  }
 		}
 	  }
       &-info {
