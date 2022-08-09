@@ -865,13 +865,13 @@ export default {
 		  border: 4px solid $green;
 		}
 	  }
-	  &.active {
-		.lending__collection-item-box-status {
-		  display: flex;
-		  flex-direction: column;
-		  justify-content: flex-end;
-		}
-	  }
+	//   &.active {
+	// 	.lending__collection-item-box-status {
+	// 	  display: flex;
+	// 	  flex-direction: column;
+	// 	  justify-content: flex-end;
+	// 	}
+	//   }
     }
   }
   &__market {
