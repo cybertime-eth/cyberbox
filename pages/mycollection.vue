@@ -114,12 +114,11 @@ export default {
     }
   },
   beforeDestroy() {
-    window.removeEventListener('scroll', this.addCurrentPage)
+    window.removeEventListener('scroll', this.handleDebouncedScroll)
   },
   async created() {
     if (process.browser) {
       this.showFixedFooter(true)
-      window.addEventListener('scroll', this.addCurrentPage)
     }
 
     if (this.address) {
@@ -205,6 +204,12 @@ export default {
         this.showFixedFooter(true)
       }
     }
+  },
+  mounted() {
+	if (process && process.browser) {
+	  this.handleDebouncedScroll = _.debounce(this.addCurrentPage, 100)
+	  window.addEventListener('scroll', this.handleDebouncedScroll)
+	}
   },
   methods: {
     isMultiNft(nft) {

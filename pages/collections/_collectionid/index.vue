@@ -529,11 +529,8 @@ export default {
       this.loading = false
     }
   },
-  beforeMount() {
-    window.addEventListener('scroll', this.addCurrentPage)
-  },
   beforeDestroy() {
-    window.removeEventListener('scroll', this.addCurrentPage)
+    window.removeEventListener('scroll', this.handleDebouncedScroll)
   },
   async created() {
     setTimeout(() => this.pageLoading = false, 5000)
@@ -575,6 +572,10 @@ export default {
     if (this.isMobile() && this.$refs.itemsInfo) {
       this.$refs.itemsInfo.parentNode.insertBefore(this.$refs.refiInfo, this.$refs.itemsInfo.nextSibling)
     }
+    if (process && process.browser) {
+	  this.handleDebouncedScroll = _.debounce(this.addCurrentPage, 100)
+	  window.addEventListener('scroll', this.handleDebouncedScroll)
+	}
   }
 }
 </script>
