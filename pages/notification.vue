@@ -179,7 +179,7 @@ export default {
         }
         return COLLECTION_CDN_ROOT + '280/' + notification.nftSymbol + `/${contractId}.${fileExtension}`
 	  } else {
-		return CDN_ROOT + `CBCN/thumb/${notification.month}.${fileExtension}`
+		return CDN_ROOT + `CBCN/thumb/${notification.month}.png`
 	  }
       
 	},

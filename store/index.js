@@ -1481,12 +1481,17 @@ export const actions = {
   async getBalance({state, getters, commit}) {
 	const address = getters.storedAddress
 	if (!address || state.chainId !== 42220) return 0
-	const web3 = new Web3(getters.provider)
-	const kit = ContractKit.newKitFromWeb3(web3)
-	const res = await kit.getTotalBalance(address)
-	const balance = res.CELO.c[0] / 10000
-	commit('setBalance', balance)
-	return balance
+	try {
+	  const web3 = new Web3(getters.provider)
+	  const kit = ContractKit.newKitFromWeb3(web3)
+	  const res = await kit.getTotalBalance(address)
+	  const balance = res.CELO.c[0] / 10000
+	  commit('setBalance', balance)
+	  return balance
+	} catch(e) {
+	  console.log(e)
+	  return 0
+	}
   },
   async getPriceToken() {
 	return await redstone.getPrice('CELO')
@@ -1680,9 +1685,9 @@ export const actions = {
   // SELL NFT
 
   async approveToken({commit, state, getters}, submitApprove = true) {
-    const provider = new ethers.providers.Web3Provider(getters.provider)
-    const signer = provider.getSigner()
     try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+	  const signer = provider.getSigner()
 	  let resultAddress = state.marketNom
 	  if (state.nft.contract === 'CBCN') {
 		resultAddress = state.marketCertificate
@@ -1843,16 +1848,20 @@ export const actions = {
   // BUY NFT
 
   async checkBuyTokenApproved({state, getters, commit}, price) {
-    if (!price || !state.fullAddress) return
-    const ethereumProvider = getters.provider
-    const web3 = new Web3(ethereumProvider)
-    const accounts = await web3.eth.getAccounts()
-    const account = accounts[0]
-    const kit = ContractKit.newKitFromWeb3(web3)
-    const goldToken = await kit._web3Contracts.getGoldToken();
-    const tokenPrice = web3.utils.toBN(web3.utils.toWei(String(price)))
-	const allowanceAmount = web3.utils.toBN(await goldToken.methods.allowance(account, account).call())
-    commit('changeBuyTokenApproved', allowanceAmount.gte(tokenPrice))
+	if (!price || !state.fullAddress) return
+	try {
+	  const ethereumProvider = getters.provider
+	  const web3 = new Web3(ethereumProvider)
+	  const accounts = await web3.eth.getAccounts()
+	  const account = accounts[0]
+	  const kit = ContractKit.newKitFromWeb3(web3)
+	  const goldToken = await kit._web3Contracts.getGoldToken();
+	  const tokenPrice = web3.utils.toBN(web3.utils.toWei(String(price)))
+	  const allowanceAmount = web3.utils.toBN(await goldToken.methods.allowance(account, account).call())
+	  commit('changeBuyTokenApproved', allowanceAmount.gte(tokenPrice))
+	} catch(e) {
+	  console.log(e)
+	}
   },
 
   async approveBuyToken({state, commit, getters}, token) {
@@ -2130,15 +2139,10 @@ export const actions = {
 
   async removeNft({commit, state, getters}, nft) {
     const payloadNft = nft || state.nft
-    const provider = new ethers.providers.Web3Provider(getters.provider)
-    const signer = provider.getSigner()
-    let contract = null
-    if (payloadNft.contract !== 'nomdom') {
-      
-    } else {
-      
-    }
     try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+	  const signer = provider.getSigner()
+	  let contract = null
 	  if (payloadNft.contract === 'CBCN') {
 		contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
 		await contract.delistToken(payloadNft.contract_id, { gasPrice: ethers.utils.parseUnits('0.5', 'gwei') })
