@@ -1915,7 +1915,7 @@ export const actions = {
 		}
 		contracts(first: 1 where: { nftSymbol: "CBCN" }) {
 		  mint_count
-		})
+		}
       }`
 	let data = await this.$graphql.default.request(query)
 	let totalSold = 0
