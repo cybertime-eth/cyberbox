@@ -34,7 +34,7 @@
                     <div class="referral__main-info-block">
                         <div class="referral__main-info-block-invited">
 							<div class="referral__main-info-block-status">
-								<p class="referral__main-info-block-status-count">{{ ownerInfo.clicksInfo['total'] }}</p>
+								<p class="referral__main-info-block-status-count">{{ ownerInfo.clicksInfo['total'] || '-' }}</p>
 								<p class="referral__main-info-block-status-name">Total invited</p>
 							</div>
 							<div class="referral__main-info-block-status">
@@ -188,7 +188,7 @@ export default {
         refer_fee: 0,
 		totalCount: 0,
 		clicksInfo: {
-		  'total': 0
+		  'total': '-'
 		}
       },
 	  referralList: [],
@@ -313,7 +313,7 @@ export default {
 		case 2: countKey = '30d'
 		  break
 	  }
-	  return refererInfo.clicksInfo ? (refererInfo.clicksInfo[countKey] || 0) : 0
+	  return refererInfo.clicksInfo ? (refererInfo.clicksInfo[countKey] || '-') : '-'
 	},
     async loadReferralData() {
       const referralData = await this.$store.dispatch('getReferralData', this.activeFilter)
