@@ -354,7 +354,7 @@ export default {
         }
       } else {
 		if (this.nft.contract === 'knoxnft') {
-		  return this.$store.state.multiNftNames.find(item => item.id === this.$route.params.nftid).name
+		  return this.$store.state.multiNftNames.find(item => item.id === this.$route.params.nftid)?.name
 		} else {
 		  return ''
 		}
