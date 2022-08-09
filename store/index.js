@@ -825,7 +825,11 @@ export const actions = {
           owner
           contract_name
           image
-          updatedAt
+		  updatedAt
+		  tag_element0
+		  tag_element1
+		  tag_element2
+		  tag_element3
 		},
 		addressInfos: contractInfos(first: 1000 orderBy: price where: { contract: "${state.nft.contract}" image: "${state.nft.image}" contract_id_not: ${state.nft.contract_id} }) {
 		  id
@@ -848,7 +852,11 @@ export const actions = {
           name
           image
           description
-          updatedAt
+		  updatedAt
+		  tag_element0
+		  tag_element1
+		  tag_element2
+		  tag_element3
         }
       }`
 	const data = await this.$graphql.default.request(query)
@@ -1293,13 +1301,15 @@ export const actions = {
         alert("please use web3 enabled browser.");
       }
     } catch (error) {
-	  this._vm.sendEvent({
-		category: 'Connect',
-		eventName: 'connect_status',
-		properties: {
-		  connect_status: 'Error'
-		}
-	  })
+	  if (this._vm && this._vm.sendEvent) {
+		this._vm.sendEvent({
+		  category: 'Connect',
+		  eventName: 'connect_status',
+		  properties: {
+			connect_status: 'Error'
+		  }
+		})
+	  }
       console.log(error)
     }
   },

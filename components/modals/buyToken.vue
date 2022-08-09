@@ -62,7 +62,13 @@ export default {
   props: ['nft', 'priceToken', 'balance', 'multiNft'],
   computed: {
     nftName() {
-      return `${this.nft.name}${this.nft.contract !== 'nomdom' ? '' : '.nom'}`
+      if (!this.multiNft) {
+        return `${this.nft.name}${this.nft.contract !== 'nomdom' ? '' : '.nom'}`
+      } else if (this.nft.contract === 'knoxnft') {
+		return this.nft.name || this.nft.contract_name
+	  } else {
+        return this.getCertificateName(this.nft)
+      }
     },
     collectionName() {
       return this.$route.params.collectionid

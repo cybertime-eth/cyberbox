@@ -556,9 +556,6 @@ export default {
     updateRefiOffset() {
       if (this.$store.state.cMCO2Price) {
 		let producerFee = this.nft.producerFee
-		if (this.nft.contract === 'CBCN') {
-		  producerFee = 55
-		}
         this.nft = {
           ...this.nft,
           refiOffset: (this.nft.market_status === 'LISTED' ? this.nft.price : 1) * (producerFee / 1000) * this.$store.state.cMCO2Price

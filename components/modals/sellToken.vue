@@ -99,8 +99,14 @@ export default {
       return foundCollection?.name
     },
     sellDescription() {
-      const nameSuffix = this.nft.contract !== 'nomdom' ? '' : '.nom'
-      return `${this.nft.name}${nameSuffix}`
+      if (!this.$store.state.multiNftSymbols.includes(this.nft.contract)) {
+        const nameSuffix = this.nft.contract !== 'nomdom' ? '' : '.nom'
+        return `${this.nft.name}${nameSuffix}`
+      } else if (this.nft.contract === 'knoxnft') {
+		return this.nft.name || this.nft.contract_name
+	  } else {
+      	return this.getCertificateName(this.nft)
+	  }
     },
     dollarPrice() {
       return this.nftPrice ? (this.nftPrice * this.celoPrice).toFixed(1) : 0
