@@ -213,9 +213,11 @@ export default {
       e.stopPropagation()
 	},
 	closeTransfer(e) {
-	  this.showTransferModal = false
-	  e.preventDefault()
-      e.stopPropagation()
+      this.showTransferModal = false
+      if (e) {
+		e.preventDefault()
+    	e.stopPropagation()
+      }
 	},
 	closeSucceedTransfer(e) {
 	  this.closeTransfer()
