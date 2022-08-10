@@ -17,7 +17,7 @@
 						</div>
 						<div class="carbon__tracker-info-block-item">
 							<p class="carbon__tracker-info-block-item-value">{{ formatCO2(totalTradingCO2) }}</p>
-							<p class="carbon__tracker-info-block-item-name">Traiding<br/>(tCO2)</p>
+							<p class="carbon__tracker-info-block-item-name">Trading<br/>(tCO2)</p>
 						</div>
 					</div>
 				</div>
