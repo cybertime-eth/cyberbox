@@ -3,7 +3,7 @@
 	<dropdown-menu class="collection__item-dropdown" v-model="showMoreMenu" v-if="moreButtonVisible">
     <img :src="getCDNImage('more.webp')" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
 		<div slot="dropdown" class="collection__item-modal">
-			<div class="collection__item-modal-button">
+			<div class="collection__item-modal-button" @click="routeNft">
 				<img :src="getCDNImage('outline-sell.svg')" alt="sell">
 				<h3>{{ visitMenuName }}</h3>
 			</div>

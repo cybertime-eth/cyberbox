@@ -3,7 +3,7 @@
         <div class="listing" v-if="nftList && nftList.length > 0 && contentVisible" :class="{mobile: !contentVisible}">
             <div class="listing__table">
                 <div class="listing__table-header">
-                    <h3>Quantitity</h3>
+                    <h3>Quantity</h3>
                     <h3>Price</h3>
                     <h3>From</h3>
                     <h3>Date</h3>

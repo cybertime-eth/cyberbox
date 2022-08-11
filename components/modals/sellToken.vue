@@ -161,16 +161,10 @@ export default {
 	  }
 	}
     this.$store.commit('changelistToken', '')
-    const collectionInfo = await this.$store.dispatch('getCollectionInfo')
-	if (collectionInfo.nftSymbol !== 'CBCN') {
-	  this.nftServiceFee = collectionInfo.marketFee / 10
-	  this.nftRoyalty = collectionInfo.createrFee / 10
-	  this.nftProducerFee = collectionInfo.producerFee / 10
-	} else {
-	  this.nftServiceFee = 2
-	  this.nftRoyalty = 5
-	  this.nftProducerFee = 5.5
-	}
+	const collectionInfo = await this.$store.dispatch('getCollectionInfo')
+	this.nftServiceFee = collectionInfo.marketFee / 10
+	this.nftRoyalty = collectionInfo.createrFee / 10
+	this.nftProducerFee = collectionInfo.producerFee / 10
     if (this.nft.market_status === 'LISTED') {
       this.nftPrice = this.nft.price
 	}
