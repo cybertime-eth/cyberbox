@@ -8,7 +8,7 @@
         <div class="modal__sell">
           <div class="modal__sell-block" :class="{'not-approved': !approved}" v-if="!showSuccessModal">
             <div class="modal__sell-info">
-              <img class="modal__image" :src="getNFTImage(nft)">
+              <img class="modal__image" :src="getNFTImage(nft, false, true)">
               <div class="modal__sell-nft">
                 <p class="modal__sell-collection">{{ collectionName }}</p>
                 <p class="modal__sell-description">{{ sellDescription }}</p>

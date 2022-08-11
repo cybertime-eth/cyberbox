@@ -8,7 +8,7 @@
         <div class="modal__transfer">
           <div v-if="!successTransferToken">
             <div class="modal__transfer-info">
-              <img class="modal__image" :src="getNFTImage(nft)">
+              <img class="modal__image" :src="getNFTImage(nft, false, true)">
               <div class="modal__transfer-nft">
                 <p class="modal__transfer-collection">{{ collectionName }}</p>
                 <p class="modal__transfer-description">{{ transferDescription }}</p>

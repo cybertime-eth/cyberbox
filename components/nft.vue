@@ -208,15 +208,19 @@ export default {
 	  e.preventDefault()
       e.stopPropagation()
 	},
-	closeTransfer(e) {
-      this.showTransferModal = false
+	closeTransfer(e, delay = false) {
+	  if (delay) {
+		this.showTransferModal = false
+	  } else {
+		setTimeout(() => this.showTransferModal = false, 100)
+	  }
       if (e) {
 		e.preventDefault()
     	e.stopPropagation()
       }
 	},
 	closeSucceedTransfer(e) {
-	  this.closeTransfer()
+	  this.closeTransfer(e, true)
 	  location.reload()
 	},
     copyLink(e) {
