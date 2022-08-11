@@ -295,16 +295,15 @@ export default {
 	await this.loadNft()
 	const imageURL = this.getNFTImage(this.nft, true, true)
     if (imageURL && !this.nftImageLoaded) {
-      const img = new Image(imageURL)
-      if (img.complete) {
+	  const img = new Image()
+	  img.onload = () => {
 		this.nftImageLoaded = true
 		this.isCloudImage = true
-      } else {
-        img.onload = () => {
-		  this.nftImageLoaded = true
-		  this.isCloudImage = true
-        }
-      }
+	  }
+	  img.onerror = () => {
+		this.nftImageLoaded = true
+	  }
+	  img.src = imageURL
 	}
 
     await this.loadBalance()

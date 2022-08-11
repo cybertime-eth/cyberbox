@@ -186,19 +186,15 @@ export default {
       if (this.nft.image || this.nft.contract === 'CBCN') {
         const imageURL = this.getCDNImageUrl()
         this.cdnImage = imageURL
-        const img = new Image()
-        img.src= imageURL
-        if (img.complete) {
-          this.nftImageLoaded = true
-        } else {
-          img.onload = () => {
-            this.nftImageLoaded = true
-          }
-          img.onerror = (e) => {
-            this.cdnImage = null
-            this.nftImageLoaded = true
-          }
-        }
+		const img = new Image()
+		img.src= imageURL
+		img.onload = () => {
+		  this.nftImageLoaded = true
+		}
+		img.onerror = () => {
+		  this.cdnImage = null
+		  this.nftImageLoaded = true
+		}
       } else {
         this.nftImageLoaded = true
       }
