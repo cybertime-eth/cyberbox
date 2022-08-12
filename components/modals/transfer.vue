@@ -23,7 +23,7 @@
           <div class="modal__transfer-success" v-else>
             <p class="modal__transfer-description">{{ transferDescription }}</p>
             <img class="modal__transfer-success-icon" src="/success.svg" alt="success">
-            <p class="modal__transfer-link">Viev on explorer.celo.org <img src="/share.svg" alt="share"></p>
+            <p class="modal__transfer-link">View on explorer.celo.org <img src="/share.svg" alt="share"></p>
           </div>
           <div class="modal__transfer-buttons">
             <button class="modal__transfer-buttons-button modal__transfer-buttons-button-done" @click="closeSuccessModal" v-if="successTransferToken">Done</button>
