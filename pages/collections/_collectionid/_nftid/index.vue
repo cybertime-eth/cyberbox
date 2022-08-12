@@ -63,7 +63,7 @@
               <div class="nft__block-info-address" v-else-if="nft.contract_address">
                 <h3 class="nft__block-info-address-title">Contract Address</h3>
                 <a
-                  :href="`https://explorer.celo.org/address/${nft.contract_address}`"
+                  :href="`https://explorer.celo.org/address/${contractAddress}`"
                   target="_blank"
                   class="nft__block-info-address-subtitle"
                 >
@@ -139,7 +139,7 @@
               <div class="nft__block-info-address" v-else-if="nft.contract_address">
                 <h3 class="nft__block-info-address-title">Contract Address</h3>
                 <a
-                  :href="`https://explorer.celo.org/address/${nft.contract_address}`"
+                  :href="`https://explorer.celo.org/address/${contractAddress}`"
                   target="_blank"
                   class="nft__block-info-address-subtitle"
                 >
@@ -360,9 +360,12 @@ export default {
 		}
         
       }
-    },
+	},
+	contractAddress() {
+	  return !this.isCertificateNft ? this.nft.contract_address : this.$store.state.certContractAddress
+	},
     cutContractAddress() {
-      const address = !this.isCertificateNft ? this.nft.contract_address : this.$store.state.certContractAddress
+      const address = this.contractAddress
       if (address) {
         const startID = address.split("").slice(0, 6);
         const endID = address.split("").slice(-4);
