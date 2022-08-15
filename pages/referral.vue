@@ -90,18 +90,16 @@
 			</div>
             <div class="referral__certificates">
 				<client-only>
-					<vue-glide
-						class="referral__certificates-glide"
-						v-model="sliderActive"
+					<splide
+						class="referral__certificates-splide"
 						ref="slider"
-						type="carousel"
-						:perView="this.isMobile() ? 2.5 : 7"
-						:autoplay="1000"
+						:options="splideOptions"
+						:extensions="splideExtensions"
 					>
-						<vue-glide-slide v-for="(certificate, idx) in certificates" :key="idx">
+						<splide-slide v-for="(certificate, idx) in certificates" :key="idx">
 							<img class="referral__certificates-img" :src="certificate" alt="certificate">
-						</vue-glide-slide>
-					</vue-glide>
+						</splide-slide>
+					</splide>
 				</client-only>
             </div>
             <div class="referral__list">
@@ -166,6 +164,7 @@
 <script>
 import ShareFrame from '@/components/ShareFrame.vue'
 import RewardInfoModal from '@/components/modals/rewardInfoModal.vue'
+import { AutoScroll } from '@splidejs/splide-extension-auto-scroll'
 const LAST_OFFER_VIEWED = 'last_offer_viewed'
 
 export default {
@@ -215,6 +214,23 @@ export default {
   computed: {
     address() {
       return this.$store.state.address
+	},
+	splideOptions() {
+	  return {
+		type: 'loop',
+		rewind: true,
+		perPage: this.isMobile() ? 3 : 7,
+		gap: '0.8rem',
+		drag: 'free',
+		arrows: false,
+		pagination: false,
+		autoScroll: {
+		  speed: 2
+		}
+	  }
+	},
+	splideExtensions() {
+	  return { AutoScroll }
 	}
   },
   watch: {
@@ -587,18 +603,12 @@ export default {
 	}
   }
   &__certificates {
-	&-glide {
-	  transform: translateX(-1.2rem);
-	  .glide {
-		::v-deep &__track {
-		  overflow: visible;
-		}
-		&__slide {
-		  width: 20rem !important;
-		  height: 20rem !important;
-		  transition: all 0.3s;
-		  border-radius: 0.4rem;
-		}
+	&-splide {
+	  .splide__slide {
+		width: 20rem !important;
+		height: 20rem !important;
+		transition: all 0.3s;
+		border-radius: 0.4rem;
 	  }
 	}
 	&-img {
@@ -779,13 +789,10 @@ export default {
 	  width: calc(100% - 4.8rem);
 	}
     &__certificates {
-	  &-glide {
-		transform: translateX(-2.6rem);
-		.glide {
-		  &__slide {
-			width: 13.5rem !important;
-			height: 13.5rem !important;
-		  }
+	  &-splide {
+		.splide__slide {
+		  width: 13.5rem !important;
+		  height: 13.5rem !important;
 		}
 	  }
       &-img {
