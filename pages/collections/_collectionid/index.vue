@@ -175,8 +175,8 @@ export default {
       loading: false,
       nftLoading: false,
       showTraitsFilter: false,
-      filter: 'All',
-      activeRequest: 'getGraphData',
+      filter: 'listed',
+      activeRequest: 'getGraphDataListed',
       sort: '',
       myNft: false,
       collectionInfo: {},
@@ -552,7 +552,7 @@ export default {
       await this.$store.dispatch(this.activeRequest)
       this.$store.dispatch('loadTraitFilters')
 	}
-	const collectionResult = await this.$store.dispatch('getCollectionInfo')
+	const collectionResult = await this.$store.dispatch(this.activeRequest)
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
 	if (this.$store.state.cMCO2Price > 0

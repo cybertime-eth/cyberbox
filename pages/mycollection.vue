@@ -126,7 +126,6 @@ export default {
     } else {
       this.listNft = []
       this.filteredNft = false
-      this.loading = false
 	}
 	this.sendEvent({
 	  category: 'Browse',

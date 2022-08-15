@@ -44,7 +44,7 @@
 			</div>
 		</div>
 	  </div>
-      <div class="refi__block-listings">
+      <!-- <div class="refi__block-listings">
         <h3 class="refi__block-listings-title">Latest Listings <img :src="getCDNImage('fire.svg')" alt="fire"></h3>
         <div class="refi__block-listings-items">
           <client-only>
@@ -63,7 +63,7 @@
             <img :src="getCDNImage('navigate-right.svg')" alt="right">
           </button>
         </div>
-      </div>
+      </div> -->
       <div class="refi__block-collections">
         <div class="refi__block-collections-header">
           <h3 class="refi__block-collections-header-title">Hot collections <img :src="getCDNImage('star-filled.svg')" alt="star"></h3>
@@ -152,16 +152,16 @@ export default {
     }
   },
   async created() {
-	// Latest 12 Listings
 	setTimeout(() => this.stopLoading(), 5000)
-    const newListings = await this.$store.dispatch('getLatestListings')
-    newListings.map(item => {
-      if (item.price) {
-        item.price = item.price / 1000
-      }
-      item.market_status = 'LISTED'
-    })
-    this.latestListings = newListings
+	// Latest 12 Listings
+    // const newListings = await this.$store.dispatch('getLatestListings')
+    // newListings.map(item => {
+    //   if (item.price) {
+    //     item.price = item.price / 1000
+    //   }
+    //   item.market_status = 'LISTED'
+    // })
+    // this.latestListings = newListings
 
     // Hot Collections
     let cmco2Price = this.$store.state.cMCO2Price
