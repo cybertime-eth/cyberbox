@@ -552,7 +552,7 @@ export default {
       await this.$store.dispatch(this.activeRequest)
       this.$store.dispatch('loadTraitFilters')
 	}
-	const collectionResult = await this.$store.dispatch(this.activeRequest)
+	const collectionResult = await this.$store.dispatch('getCollectionInfo')
     collectionResult ? this.collectionInfo = collectionResult : this.collectionInfo = {}
     this.floorPrice = await this.$store.dispatch('getFloorPrice', this.$route.params.collectionid)
 	if (this.$store.state.cMCO2Price > 0
