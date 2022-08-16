@@ -3,7 +3,7 @@
     <div class="menu-mobile-header container-xl">
       <img :src="getCDNImage('logo.svg')" alt="logo" class="menu-mobile-header-logo" @click="gotoHome">
       <div class="menu-mobile-header-walletbox">
-		<dropdown-menu class="header__wallet-dropdown" :right="true" v-model="showCeloDropdown">
+		<dropdown-menu class="header__wallet-dropdown" :right="true" interactive="interactive" v-model="showCeloDropdown">
 			<div class="header__wallet" v-if="address">
 				<h3 class="header__wallet-balance">{{ balance }} CELO</h3>
 				<h3 class="header__wallet-address">{{ address }}</h3>
@@ -15,15 +15,15 @@
 			</div>
 			<div slot="dropdown">
 				<a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
-					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" :src="getCDNImage('celo.svg')" alt="celo"> CELO on Ubeswap</span>
+					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" :src="getCDNImage('celo.svg')" alt="celo"> CELO</span>
 				</a>
 			</div>
 		</dropdown-menu>
         <img :src="closeIcon" alt="close" class="menu-mobile-header-close" @click="closeModal">
       </div>
     </div>
-    <div class="menu-mobile-list container-xl" @click="closeModal">
-      <div class="menu-mobile-list-links">
+    <div class="menu-mobile-list container-xl">
+      <div class="menu-mobile-list-links" @click="closeModal">
         <nuxt-link to="/explorer" active-class="gradient-text" class="menu-mobile-list-link" @click="sendExplorerEvent">Explorer</nuxt-link>
         <nuxt-link to="/rankings" active-class="gradient-text" class="menu-mobile-list-link" @click="sendRankingEvent">Rankings</nuxt-link>
         <nuxt-link to="/tracker" active-class="gradient-text" class="menu-mobile-list-link">Tracker</nuxt-link>

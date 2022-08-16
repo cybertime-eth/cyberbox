@@ -41,7 +41,7 @@
 					<div class="lending__block-referral" v-if="address">
 						<div class="lending__block-referral-info">
 							<p class="lending__block-referral-info-name">Earn passive income by helping nature</p>
-							<dropdown-menu class="lending__block-referral-info-dropdown" :hover="true" :right="true" v-model="showReferralInfo">
+							<dropdown-menu class="lending__block-referral-info-dropdown" :hover="true" :right="true" interactive="interactive" v-model="showReferralInfo">
 								<img class="lending__block-referral-info-trigger" src="/question.svg" alt="question" @click="handleClickReferralInfo">
 								<div slot="dropdown">
 									<p class="lending__block-referral-info-content">
@@ -54,7 +54,7 @@
 						</div>
 						<div class="lending__block-referral-box">
 							<div class="lending__block-referral-box-info" @click="copyReferralLink">
-								<p class="lending__block-referral-box-info-name">{{ referralUrlCopied ? 'Copied' : 'Referral Link:' }}</p>
+								<p class="lending__block-referral-box-info-name" :class="{ copied: referralUrlCopied }">{{ referralUrlCopied ? 'Copied!' : 'Referral Link:' }}</p>
 								<p class="lending__block-referral-box-info-url">{{ cuttenReferralLink(this.referralUrl) }}</p>
 							</div>
 							<a class="lending__block-referral-box-link" href="/referral">
@@ -66,13 +66,13 @@
 					<div class="lending__block-info-minted-next" v-if="nextMintVisible">
 						<p class="lending__block-info-minted-next-name">Mint the next NFT in:</p>
 						<div class="lending__block-info-minted-next-timer">
-							<p class="lending__block-info-minted-next-timer-clock">{{ formatClockTime(nextMintDay) }}</p>
+							<p class="lending__block-info-minted-next-timer-clock">{{ formatClockTime(nextMintDay) }}d</p>
 							<p class="lending__block-info-minted-next-timer-separator">:</p>
-							<p class="lending__block-info-minted-next-timer-clock">{{ formatClockTime(nextMintHour) }}</p>
+							<p class="lending__block-info-minted-next-timer-clock">{{ formatClockTime(nextMintHour) }}h</p>
 							<p class="lending__block-info-minted-next-timer-separator">:</p>
-							<p class="lending__block-info-minted-next-timer-clock">{{ formatClockTime(nextMintMinute) }}</p>
+							<p class="lending__block-info-minted-next-timer-clock">{{ formatClockTime(nextMintMinute) }}m</p>
 							<p class="lending__block-info-minted-next-timer-separator">:</p>
-							<p class="lending__block-info-minted-next-timer-clock">{{ formatClockTime(nextMintSecond) }}</p>
+							<p class="lending__block-info-minted-next-timer-clock">{{ formatClockTime(nextMintSecond) }}s</p>
 						</div>
 					</div>
                 </div>
@@ -616,14 +616,14 @@ export default {
 			padding-top: 1.4rem;
 			&-clock, &-separator {
 			  font-weight: 600;
-			  font-size: 2rem;
+			  font-size: 1.8rem;
 			}
 			&-clock {
 			  display: flex;
 			  align-items: center;
 			  justify-content: center;
-			  width: 4.4rem;
-			  height: 4.4rem;
+			  width: 5.4rem;
+			  height: 4rem;
 			  background: $white;
 			  border: 2px solid $modalColor;
 			  border-radius: 0.4rem;
@@ -688,6 +688,9 @@ export default {
 			margin-right: 1.6rem;
 			white-space: nowrap;
 			font-size: 1.4rem;
+			&.copied {
+			  color: $green;
+			}
 		  }
 		  &-url {
 			white-space: nowrap;

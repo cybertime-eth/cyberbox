@@ -28,6 +28,7 @@
 								<p class="indent-features-list-item-text">Participate in the development<br/>of CyberBox</p>
 							</li>
 						</ul>
+						<p class="exchange__bonus-info-hint">Collect all 12 certificates!</p>
 						<button class="exchange__bonus-get" :class="{disabled: !bonusAvailable}" @click="$emit('onExchange')" v-if="webVersion">Get a bouns</button>
 					</div>
 					<div class="exchange__bonus-picture">
@@ -87,6 +88,12 @@ export default {
 		align-items: center;
 		color: $textColor;
 	  }
+	}
+	&-hint {
+	  margin-top: 2.8rem;
+	  font-weight: 600;
+	  font-size: 1.4rem;
+	  color: $green;
 	}
   }
   &-guide {
@@ -152,9 +159,15 @@ export default {
 		font-size: 1.4rem;
 	  }
 	}
-	&-features {
-	  max-width: 100%;
-	  margin-top: 1.2rem;
+	&-info {
+	  &-features {
+		max-width: 100%;
+		margin-top: 1.2rem;
+	  }
+	  &-hint {
+		width: 100%;
+		text-align: center;
+	  }
 	}
 	&-get {
 	  width: 100%;

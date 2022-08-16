@@ -102,6 +102,7 @@ export default {
     &.sidemenu {
       position: static;
       top: auto;
+      padding: 0 0 2.5rem;
       box-shadow: none;
       border: 0;
       border-radius: 0;

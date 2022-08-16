@@ -42,7 +42,7 @@
 					<img class="dropdown-item-nav" src="/array-right.svg" alt="right">
 				</a> -->
 				<a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
-					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" :src="getCDNImage('celo.svg')" alt="celo"> CELO on Ubeswap</span>
+					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" :src="getCDNImage('celo.svg')" alt="celo"> CELO</span>
 				</a>
 			</div>
 		  </dropdown-menu>
@@ -384,7 +384,7 @@ header {
 	  .dropdown-menu {
 		top: calc(100% + 1.2rem) !important;
 		right: 1rem !important;
-		width: 23.4rem;
+		width: 12.4rem;
 	  }
 	  .dropdown-item {
 		cursor: pointer;
@@ -564,12 +564,11 @@ header {
 	  }
 	  &-dropdown {
 		.dropdown-menu {
-		  width: 21.2rem;
+		  width: 12.3rem;
 		  z-index: 3;
 		  .dropdown-item {
 			&-name {
 			  font-size: 1.4rem;
-			  flex-wrap: wrap;
 			}
 			&-cards {
 			  margin-left: 0;

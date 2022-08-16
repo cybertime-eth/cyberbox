@@ -8,7 +8,7 @@
 		<div class="my-collection-header-address">
 			<h1 class="my-collection-header-address-highlight">{{ cuttenAddress }}</h1>
 			<div class="my-collection-header-address-copy-box">
-				<p class="my-collection-header-address-copy" @click="copyAddress">{{ !addressCopied ? cuttenAddress : 'Copied' }}</p>
+				<p class="my-collection-header-address-copy" :class="{ copied: addressCopied }" @click="copyAddress">{{ !addressCopied ? cuttenAddress : 'Copied!' }}</p>
 				<ShareFrame class="my-collection-header-share" :class="{ copied: addressCopied }" @onShared="linkShared = true"/>
 			</div>
 		</div>
@@ -471,7 +471,10 @@ export default {
         border-radius: 2.5rem;
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
         font-size: 1.6rem;
-        cursor: pointer;
+		cursor: pointer;
+		&-copied {
+		  color: $green;
+		}
         img {
           width: 1.3rem;
           margin-left: 2rem;

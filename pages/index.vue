@@ -916,7 +916,9 @@ export default {
 		  }
 		  &-buy {
 			display: block;
+			height: 3.6rem;
 			margin: 2.4rem auto 0;
+			padding: 0;
 			font-size: 1.4rem;
 		  }
 		}

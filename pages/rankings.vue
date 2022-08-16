@@ -321,7 +321,9 @@ export default {
     padding-top: 1rem;
     text-align: center;
     font-family: OpenSans-SemiBold;
+    font-weight: 600;
     font-size: 1.6rem;
+    color: $textColor3;
   }
   &__navigation {
     display: flex;
@@ -560,6 +562,8 @@ export default {
       font-size: 1.8rem;
     }
     &__subtitle {
+      font-family: OpenSans-Regular;
+      font-weight: 400;
       font-size: 1.4rem;
     }
     &__navigation {
