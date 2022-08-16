@@ -62,7 +62,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/add-users-co2-state-four',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/add-users-co2-state-five',
         options: {}
       },
       ubeswap: {
