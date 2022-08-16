@@ -76,7 +76,6 @@ export default {
 	  filteredCertificates: [],
 	  yearFilter: 2022,
 	  progressSize: 0,
-	  certificateOccupancy: 0,
 	  trackingInfo: {},
 	  totalCertCO2: 0,
 	  totalTradingCO2: 0,
@@ -157,11 +156,9 @@ export default {
 	}
 
 	const trackingInfo = await this.$store.dispatch('getCarbonData')
-	this.trackingInfo = trackingInfo
-	this.totalTradingCO2 = trackingInfo.totalTradingCelo * trackingInfo.producerFee / 1000 * this.refiPrice
+	this.totalTradingCO2 = trackingInfo.totalTradingCelo
 	this.totalCertCO2 = trackingInfo.totalCount
-	this.totalCO2Offset = this.totalCertCO2 + this.totalTradingCO2
-	this.certificateOccupancy = Math.round(this.totalCertCO2 / MAX_TON_AMOUNT * 100)
+	this.totalCO2Offset = parseFloat(this.totalCertCO2.toFixed(1)) + parseFloat(this.totalTradingCO2.toFixed(1))
 	this.$store.dispatch('getCertificates')
   },
   mounted() {
@@ -181,11 +178,6 @@ export default {
 	},
 	ownedCertificates() {
 	  this.updateCertificateList()
-	},
-	refiPrice() {
-	  if (this.$store.state.cMCO2Price) {
-		this.totalTradingCO2 = this.trackingInfo.totalTradingCelo * this.trackingInfo.producerFee / 1000 * this.$store.state.cMCO2Price
-	  }
 	}
   },
   head() {

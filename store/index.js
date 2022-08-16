@@ -1073,31 +1073,30 @@ export const actions = {
 
 	const query = gql`
       query Sample {
-		contracts(first: 1 where: { nftSymbol: "CBCN" }) {
-		  producerFee
-		}
 		co2Owners(first: 1 where: { owner: "${address}" }) {
 		  mint_count
 		  total_co2
 		}
-        ownerTrackers(first: 1 where: { address: "${address}" }) {
-		  id
-		  sellCount
-		  buyCount
-		  totalSell
-		  totalBuy
+        co2Generators(first: 1 where: { owner: "${address}" }) {
+		  mint_count
+		  total_celo
+		  total_co2
 		}
 	  }`
 	const data = await this.$graphql.default.request(query)
 	if (data.co2Owners.length > 0) {
-	  const certificateInfo =  data.co2Owners[0]
-	  const producerFee = data.contracts.length > 0 ? data.contracts[0].producerFee : 0
-	  const ownerTrackerInfo = data.ownerTrackers.length > 0 ? data.ownerTrackers[0] : {}
-	  return {
-		totalCount: (certificateInfo.total_co2 || 0) / Math.pow(10, 7),
-		totalTradingCelo: ((ownerTrackerInfo.totalSell + ownerTrackerInfo.totalBuy) || 0) / 1000 / 2,
-		producerFee
+	  try {
+		const certificateInfo =  data.co2Owners[0]
+		const ownerTrackerInfo =  data.co2Generators[0]
+		return {
+			totalCount: (certificateInfo.total_co2 || 0) / Math.pow(10, 7),
+			totalTradingCelo: ownerTrackerInfo.total_co2 / Math.pow(10, 5),
+		}	
+	  } catch (e) {
+		console.log(e)
+		return initialCarbonInfo
 	  }
+	  
 	} else {
 	  return initialCarbonInfo
 	}

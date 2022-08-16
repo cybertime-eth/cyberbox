@@ -90,18 +90,18 @@
 			</div>
             <div class="referral__certificates">
 				<client-only>
-					<vue-glide
-						class="referral__certificates-glide"
-						v-model="sliderActive"
+					<div
+						class="referral__certificates-splide splide"
 						ref="slider"
-						type="carousel"
-						:perView="this.isMobile() ? 2.5 : 7"
-						:autoplay="1000"
 					>
-						<vue-glide-slide v-for="(certificate, idx) in certificates" :key="idx">
-							<img class="referral__certificates-img" :src="certificate" alt="certificate">
-						</vue-glide-slide>
-					</vue-glide>
+						<div class="splide__track">
+							<ul class="splide__list">
+								<li class="splide__slide" v-for="(certificate, idx) in certificates" :key="idx">
+									<img class="referral__certificates-img" :src="certificate" alt="certificate">
+								</li>
+							</ul>
+						</div>
+					</div>
 				</client-only>
             </div>
             <div class="referral__list">
@@ -166,6 +166,8 @@
 <script>
 import ShareFrame from '@/components/ShareFrame.vue'
 import RewardInfoModal from '@/components/modals/rewardInfoModal.vue'
+import Splide from '@splidejs/splide'
+import { AutoScroll } from '@splidejs/splide-extension-auto-scroll'
 const LAST_OFFER_VIEWED = 'last_offer_viewed'
 
 export default {
@@ -261,6 +263,17 @@ export default {
 		this.showOfferBlock = true
 		this.offerTimer = setInterval(this.countLeftOfferTime, 1000)
 	  }
+	  setTimeout(() => new Splide('.splide', {
+		type: 'loop',
+		rewind: true,
+		perPage: !this.isMobile() ? 7 : 3,
+		gap: !this.isMobile() ? '0.8rem' : '0.4rem',
+		pagination: false,
+		arrows: false,
+		autoScroll: {
+		  speed: 1
+		}
+	  }).mount( { AutoScroll } ))
 	}
   },
   methods: {
@@ -366,6 +379,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 .referral {
   .gradient-block {
 	position: relative;
@@ -587,18 +601,12 @@ export default {
 	}
   }
   &__certificates {
-	&-glide {
-	  transform: translateX(-1.2rem);
-	  .glide {
-		::v-deep &__track {
-		  overflow: visible;
-		}
-		&__slide {
-		  width: 20rem !important;
-		  height: 20rem !important;
-		  transition: all 0.3s;
-		  border-radius: 0.4rem;
-		}
+	&-splide {
+	  .splide__slide {
+		width: 20rem !important;
+		height: 20rem !important;
+		transition: all 0.3s;
+		border-radius: 0.4rem;
 	  }
 	}
 	&-img {
@@ -779,13 +787,10 @@ export default {
 	  width: calc(100% - 4.8rem);
 	}
     &__certificates {
-	  &-glide {
-		transform: translateX(-2.6rem);
-		.glide {
-		  &__slide {
-			width: 13.5rem !important;
-			height: 13.5rem !important;
-		  }
+	  &-splide {
+		.splide__slide {
+		  width: 13.5rem !important;
+		  height: 13.5rem !important;
 		}
 	  }
       &-img {
