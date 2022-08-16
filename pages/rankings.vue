@@ -229,7 +229,7 @@ export default {
         const mintCountDiff = Math.ceil(item.mint_count / 1000) - (item.mint_count / 1000)
 		let co2Celo = (item.sell_refi_price / 1000) * (item.producerFee / 1000) * cmco2Price
 		if (item.nftSymbol === 'CBCN') {
-		  co2Celo = (0.009 * item.sell_total_price / 1000 * cmco2Price) + (item.total_co2 / Math.pow(10, 7))
+		  co2Celo = (0.009 * item.sell_total_price / 1000 * cmco2Price) + (item.total_co2 / 1000)
 		}
         const co2CeloDiff = Math.ceil(co2Celo) - co2Celo
         this.list.push({
