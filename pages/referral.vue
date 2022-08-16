@@ -235,12 +235,8 @@ export default {
     this.loadReferralData()
     this.updateReferralUrl()
     const images = []
-    for (let i = 0; i < 13; i++) {
-      if (i !== 12) {
-        images.push(this.getCDNImage(`certificates/${i + 1}.webp`))
-      } else {
-        images.push(this.getCDNImage('certificates/rare.webp'))
-      }
+    for (let i = 0; i < 12; i++) {
+      images.push(this.getCDNImage(`certificates/${i + 1}.webp`))
     }
 	this.certificates = images
   },
