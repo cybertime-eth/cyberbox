@@ -271,7 +271,7 @@ export default {
 		pagination: false,
 		arrows: false,
 		autoScroll: {
-		  speed: 1
+		  speed: 0.5
 		}
 	  }).mount( { AutoScroll } ))
 	}
