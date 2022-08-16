@@ -48,7 +48,7 @@
 								<span class="referral__main-info-block-status-count-amount">{{ formattedEarning(ownerInfo.refer_fee) }}</span>
 							</p>
 							<p class="referral__main-info-block-status-name">Total earned</p>
-							<dropdown-menu class="referral__main-info-block-status-dropdown" :hover="true" :right="true" v-model="showTotalEarned" v-if="showTooltipDropdown">
+							<dropdown-menu class="referral__main-info-block-status-dropdown" :hover="true" :right="true" interactive="interactive" v-model="showTotalEarned" v-if="showTooltipDropdown">
 								<div class="referral__main-info-block-status-dropdown-tooltip">
 									<img class="referral__main-info-block-status-dropdown-tooltip-mark" src="/question-gradient.svg" alt="question">
 								</div>
@@ -66,7 +66,7 @@
                     <div class="referral__main-info-address">
                         <div class="referral__main-info-address-block gradient-block" @click="copyReferralLink">
 							<div class="referral__main-info-address-block-box" @click="copyReferralLink">
-								<span class="referral__main-info-address-name">{{ !this.addressCopied ? 'Referral link:' : 'Copied' }}</span>
+								<span class="referral__main-info-address-name" :class="{ copied: addressCopied }">{{ !addressCopied ? 'Referral link:' : 'Copied!' }}</span>
 								<span class="referral__main-info-address-link">{{ cuttenReferralLink(this.referralUrl) }}</span>
 							</div>
                         </div>
@@ -182,7 +182,7 @@ export default {
 	  showTotalEarned: false,
 	  showRewardModal: false,
 	  showTooltipDropdown: false,
-      activeFilter: 0,
+      activeFilter: 2,
       referralUrl: '',
 	  certificates: [],
       ownerInfo: {
@@ -519,7 +519,10 @@ export default {
 		  }
         }
         &-name {
-          margin-right: 1.2rem;
+		  margin-right: 1.2rem;
+		  &.copied {
+			color: $green;
+		  }
         }
         &-link {
           font-weight: 600;
