@@ -299,7 +299,7 @@ export default {
       }
     },
     formattedEarning(value) {
-      const price = value / Math.pow(10, 7)
+      const price = value / 1000
       const diff = price - Math.floor(price)
       const floatingLen = diff.toString().length - 2
       if (diff === 0) {
@@ -325,12 +325,14 @@ export default {
 	  return refererInfo.clicksInfo ? (refererInfo.clicksInfo[countKey] || '-') : '-'
 	},
     async loadReferralData() {
+	  this.isLoading = true
       const referralData = await this.$store.dispatch('getReferralData', this.activeFilter)
       if (!referralData) return
       if (referralData.userInfo) {
         this.ownerInfo = referralData.userInfo
       }
 	  this.referralList = referralData.userList.sort((b, a) => a.refer_fee - b.refer_fee)
+	  this.isLoading = false
     },
     copyReferralLink() {
 	  this.addressCopied = true
@@ -364,10 +366,8 @@ export default {
       const oldFilter = this.activeFilter
       this.activeFilter = filter
       if (filter !== oldFilter) {
-		this.isLoading = true
         this.referralList = []
 		await this.loadReferralData()
-		this.isLoading = false
       }
     }
   }
