@@ -137,15 +137,14 @@ export default {
 	owner() {
 	  return !this.$store.state.sharedWallet || (this.$store.state.sharedWallet && this.$store.state.sharedWallet.toLowerCase() === this.$store.state.fullAddress.toLowerCase())
 	},
+	sharedWallet() {
+	  return this.$store.state.sharedWallet
+	},
     address() {
-	  if (this.$route.query.wallet) {
-		return this.$route.query.wallet
-	  } else {
-		return this.$store.state.fullAddress
-	  }
+	  return this.sharedWallet || this.$store.state.fullAddress
 	},
 	sharedTrackerUrl() {
-	  return this.linkShared ? `/tracker?wallet=${this.address}` : ''
+	  return this.linkShared ? `/tracker?wallet=${this.sharedWallet}` : ''
 	},
     cuttenAddress() {
 	  const address = this.address
@@ -269,7 +268,7 @@ export default {
         footerEl.classList.remove('fixed')
       }
 	},
-	updateSharedWallet(routeChanged = false) {
+	updateSharedWallet(routeChanged = true) {
 	  const oldLinkShared = this.linkShared
 	  if (this.$route.query.wallet) {
 		this.linkShared = true
@@ -278,8 +277,10 @@ export default {
 		this.linkShared = false
 		this.$store.commit('setSharedWallet', null)
 	  }
-	  if (routeChanged && this.linkShared !== oldLinkShared) {
-		this.reloadMyCollection()
+	  if (routeChanged && this.linkShared != oldLinkShared) {
+		this.listNft = []
+		this.filteredNft = false
+		this.collectionFilters = []
 	  }
 	},
     async addMyCollection(isReplace = true) {

@@ -110,7 +110,7 @@ export default {
 	  return `/mycollection?wallet=${this.sharedWallet}`
 	},
 	walletAddress() {
-	  const address = this.$store.state.fullAddress
+	  const address = this.sharedWallet ? this.sharedWallet : this.$store.state.fullAddress
       if (address) {
         const startID = address.split("").slice(0, 6);
         const endID = address.split("").slice(-4);
