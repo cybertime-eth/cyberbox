@@ -26,11 +26,11 @@
 					<button class="carbon__tracker-buttons-button bonus" @click="showExchangeBonus=true" v-if="!bonusPurchased">Get a Bonus</button>
 				</div>
 				<div class="carbon__tracker-share">
-					<a class="carbon__tracker-share-profile" href="/mycollection" v-if="linkShared">
+					<a class="carbon__tracker-share-profile" :href="sharedCollectionUrl" v-if="linkShared">
 						<img class="carbon__tracker-share-profile-img" :src="getCDNImage('earth-small.svg')" alt="earth">
 						<span class="carbon__tracker-share-profile-name">Profile</span>
 					</a>
-					<ShareFrame class="carbon__tracker-share-frame" @onShared="linkShared = true"/>
+					<ShareFrame class="carbon__tracker-share-frame"/>
 				</div>
 			</div>
 			<div class="carbon__certificates">
@@ -39,7 +39,7 @@
 					<CustomSwitch class="carbon__certificates-header-switch" label="My Certificates" :value="myCertificate" @onChange="changeMyCertificateStatus"/>
 				</div> -->
 				<div class="carbon__certificates-list">
-					<certificate :certificate="certificate" :key="idx" v-for="(certificate, idx) of filteredCertificates"/>
+					<certificate :certificate="certificate" :sharedWallet="sharedWallet" :key="idx" v-for="(certificate, idx) of filteredCertificates"/>
 				</div>
 			</div>
 			<ExchangeBonus @closeModal="showExchangeBonus = false" :bonusAvailable="bonusAvailable" @onExchange="showExchangeTokenModal" v-if="showExchangeBonus"/>
@@ -103,6 +103,12 @@ export default {
 	address() {
 	  return this.$store.state.address
 	},
+	sharedWallet() {
+	  return this.$store.state.sharedWallet
+	},
+	sharedCollectionUrl() {
+	  return `/mycollection?wallet=${this.sharedWallet}`
+	},
 	walletAddress() {
 	  const address = this.$store.state.fullAddress
       if (address) {
@@ -142,6 +148,7 @@ export default {
 	this.$nextTick(function() {
 	  this.webVersion = !this.isMobile()
 	})
+	this.updateSharedWallet()
 	this.$store.commit('changeSuccessBuyToken', false)
 	this.yearFilter = new Date().getFullYear()
 	if (process.broswer) {
@@ -155,11 +162,10 @@ export default {
 	  this.myCertificate = true
 	}
 
-	const trackingInfo = await this.$store.dispatch('getCarbonData')
-	this.totalTradingCO2 = trackingInfo.totalTradingCelo
-	this.totalCertCO2 = trackingInfo.totalCount
-	this.totalCO2Offset = parseFloat(this.totalCertCO2.toFixed(1)) + parseFloat(this.totalTradingCO2.toFixed(1))
-	this.$store.dispatch('getCertificates')
+	this.reloadPageData()
+  },
+  beforeDestroy() {
+	this.$store.commit('setSharedWallet', null)
   },
   mounted() {
 	this.updateCertificateList()
@@ -168,6 +174,9 @@ export default {
 	}
   },
   watch: {
+	$route() {
+      this.updateSharedWallet(true)
+    },
 	address() {
 	  if (this.$store.state.address) {
 		this.$store.dispatch('checkBuyTokenApproved', 1.0)
@@ -191,6 +200,26 @@ export default {
   methods: {
 	formatCO2(value) {
 	  return value > 0 ? value.toFixed(1) : 0
+	},
+	async reloadPageData() {
+	  const trackingInfo = await this.$store.dispatch('getCarbonData')
+	  this.totalTradingCO2 = trackingInfo.totalTradingCelo
+	  this.totalCertCO2 = trackingInfo.totalCount
+	  this.totalCO2Offset = parseFloat(this.totalCertCO2.toFixed(1)) + parseFloat(this.totalTradingCO2.toFixed(1))
+	  this.$store.dispatch('getCertificates')
+	},
+	updateSharedWallet(routeChanged = false) {
+	  const oldLinkShared = this.linkShared
+	  if (this.$route.query.wallet) {
+		this.linkShared = true
+		this.$store.commit('setSharedWallet', this.$route.query.wallet)
+	  } else {
+		this.linkShared = false
+		this.$store.commit('setSharedWallet', null)
+	  }
+	  if (routeChanged && this.linkShared !== oldLinkShared) {
+		this.reloadPageData()
+	  }
 	},
 	updateCertificateList() {
 	  if (this.$store.state.address) {

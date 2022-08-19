@@ -37,7 +37,7 @@
 <script>
 import transfer from '@/components/modals/transfer'
 export default {
-  props: ['certificate'],
+  props: ['certificate', 'sharedWallet'],
   components: {
 	transfer
   },
@@ -60,7 +60,7 @@ export default {
       }
 	},
     owner() {
-      return this.$store.state.fullAddress === this.certificate.owner
+      return !this.sharedWallet && this.$store.state.fullAddress === this.certificate.owner
 	},
 	priceVisible() {
       return this.certificate.price > 0 || this.certificate.offset
@@ -72,7 +72,7 @@ export default {
       return !this.owner && this.certificate.price > 0
 	},
 	saleAvailable() {
-	  return this.certificate.offset
+	  return !this.sharedWallet && this.certificate.offset
 	},
     certificateDescription() {
       return this.owner || !this.saleAvailable ? 'Not for sale' : '-'

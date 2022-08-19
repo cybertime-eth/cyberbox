@@ -45,6 +45,7 @@ export default {
     sharingUrlForSocial(socialName) {
       if (!process.browser) return ''
       let sharingUrl = ''
+      const pageUrl = location.origin + '/' + location.pathname + '?wallet=' + this.$store.state.fullAddress
       switch (socialName) {
         case 'facebook': sharingUrl = 'https://www.facebook.com/sharer/sharer.php?u='
           break
@@ -53,7 +54,7 @@ export default {
         case 'twitter': sharingUrl = 'https://twitter.com/intent/tweet?url='
           break
       }
-      sharingUrl += encodeURIComponent(location.href)
+      sharingUrl += encodeURIComponent(pageUrl)
       return sharingUrl
     },
     shareLink() {
@@ -61,7 +62,8 @@ export default {
     },
     copyLink() {
       if (!process.browser || this.isCopied) return
-      this.$copyText(location.href)
+      const pageUrl = location.origin + location.pathname + '?wallet=' + this.$store.state.fullAddress
+      this.$copyText(pageUrl)
       this.isCopied = true
     }
   }

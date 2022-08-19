@@ -9,11 +9,11 @@
 			<h1 class="my-collection-header-address-highlight">{{ cuttenAddress }}</h1>
 			<div class="my-collection-header-address-copy-box">
 				<p class="my-collection-header-address-copy" :class="{ copied: addressCopied }" @click="copyAddress">{{ !addressCopied ? cuttenAddress : 'Copied!' }}</p>
-				<ShareFrame class="my-collection-header-share" :class="{ copied: addressCopied }" @onShared="linkShared = true"/>
+				<ShareFrame class="my-collection-header-share" :class="{ copied: addressCopied }"/>
 			</div>
 		</div>
 	  </div>
-	  <a class="my-collection-header-tracker" href="/tracker" v-if="linkShared">
+	  <a class="my-collection-header-tracker" :href="sharedTrackerUrl" v-if="linkShared">
 		<img class="my-collection-header-tracker-img" :src="getCDNImage('carbon-tracker-gradient.svg')" alt="tracker">
 		<p class="my-collection-header-tracker-name">Offset tracker</p>
 	  </a>
@@ -68,7 +68,7 @@
     </div>
     <p class="my-collection-collection-filter" v-if="activeFilter !== 'all' && activeFilter !== 'sale'">{{ currCollectionFilter }}</p>
     <div class="my-collection__items">
-      <nft :nft="nft" :key="idx" :route="nftRoute(nft)" :seller="true" :multiNft="isMultiNft(nft)" from="MyNFT" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
+      <nft :nft="nft" :key="idx" :route="nftRoute(nft)" :seller="owner" :multiNft="isMultiNft(nft)" from="MyNFT" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
     </div>
 	<TraitsFilterModal
       :show="showTraitsFilter"
@@ -114,14 +114,15 @@ export default {
     }
   },
   beforeDestroy() {
+	this.$store.commit('setSharedWallet', null)
     window.removeEventListener('scroll', this.handleDebouncedScroll)
   },
   async created() {
     if (process.browser) {
       this.showFixedFooter(true)
     }
-
-    if (this.address) {
+	this.updateSharedWallet()
+    if (this.address || this.linkShared) {
       this.reloadMyCollection()
     } else {
       this.listNft = []
@@ -133,9 +134,19 @@ export default {
 	})
   },
   computed: {
+	owner() {
+	  return !this.$store.state.sharedWallet || (this.$store.state.sharedWallet && this.$store.state.sharedWallet.toLowerCase() === this.$store.state.fullAddress.toLowerCase())
+	},
     address() {
-      return this.$store.state.fullAddress
-    },
+	  if (this.$route.query.wallet) {
+		return this.$route.query.wallet
+	  } else {
+		return this.$store.state.fullAddress
+	  }
+	},
+	sharedTrackerUrl() {
+	  return this.linkShared ? `/tracker?wallet=${this.address}` : ''
+	},
     cuttenAddress() {
 	  const address = this.address
 	  if (address) {
@@ -188,6 +199,9 @@ export default {
     }
   },
   watch: {
+	$route() {
+      this.updateSharedWallet(true)
+    },
     address() {
       this.reloadMyCollection()
     },
@@ -254,7 +268,20 @@ export default {
       } else {
         footerEl.classList.remove('fixed')
       }
-    },
+	},
+	updateSharedWallet(routeChanged = false) {
+	  const oldLinkShared = this.linkShared
+	  if (this.$route.query.wallet) {
+		this.linkShared = true
+		this.$store.commit('setSharedWallet', this.$route.query.wallet)
+	  } else {
+		this.linkShared = false
+		this.$store.commit('setSharedWallet', null)
+	  }
+	  if (routeChanged && this.linkShared !== oldLinkShared) {
+		this.reloadMyCollection()
+	  }
+	},
     async addMyCollection(isReplace = true) {
 	  let traitFilterInfo = null
 	  if (this.traitFilters && this.traitFilters.length > 0) {

@@ -28,6 +28,7 @@ export const state = () => ({
   chainId: null,
   address: null,
   balance: 0,
+  sharedWallet: null,
   walletUri: null,
   walletConnected: false,
   wrongNetwork: false,
@@ -759,6 +760,7 @@ export const actions = {
   async getCollectionCountNft({state}, contract) {
     if (!state.fullAddress) return 0
 
+	const address = state.sharedWallet ? state.sharedWallet : state.fullAddress
     let countCondition = `contract: "${contract}"`
     let nftSymbol = ''
     if (contract === 'all') {
@@ -771,7 +773,7 @@ export const actions = {
     }
     const query = gql`
       query Sample {
-        contractInfos(first: 1000 where: { owner: "${state.fullAddress.toLowerCase()}" ${countCondition} }) {
+        contractInfos(first: 1000 where: { owner: "${address.toLowerCase()}" ${countCondition} }) {
 			    id
           contract
         }
@@ -1060,12 +1062,15 @@ export const actions = {
 	}
   },
 
-  async getCarbonData({getters}) {
-	const address = getters.storedAddress
+  async getCarbonData({state, getters}) {
+	let address = getters.storedAddress
 	const initialCarbonInfo = {
 	  totalCount: 0,
 	  totalTradingCelo: 0,
 	  producerFee: 0
+	}
+	if (state.sharedWallet) {
+	  address = state.sharedWallet
 	}
 	if (!address) {
 	  return initialCarbonInfo
@@ -1102,8 +1107,11 @@ export const actions = {
 	}
   },
 
-  async getCertificates({getters, commit}) {
-	const address = getters.storedAddress
+  async getCertificates({state, getters, commit}) {
+	let address = getters.storedAddress
+	if (state.sharedWallet) {
+	  address = state.sharedWallet
+	}
 	if (!address) return
 
 	const query = gql`
@@ -2456,6 +2464,9 @@ export const mutations = {
   setAddressByNom(state, nomAddress) {
     state.address = `${nomAddress}.nom`
   },
+  setSharedWallet(state, wallet) {
+	state.sharedWallet = wallet
+  },
   setWalletConnected(state, connected) {
     state.walletConnected = connected
   },
@@ -2577,6 +2588,9 @@ export const mutations = {
 	  if (!address && process.browser) {
 		address = localStorage.getItem('address')
 	  }
+	  if (state.sharedWallet) {
+		address = state.sharedWallet
+	  }
 	  if (type.includes('myNft') && address) {
 		if (type === 'myNft') {
 		  myNftSort = `where: { owner: "${address.toLowerCase()}"}`
@@ -2669,6 +2683,9 @@ export const mutations = {
 	  } else {
 		address = ''
 	  }
+	}
+	if (state.sharedWallet) {
+	  address = state.sharedWallet
 	}
 
 	const mintNumFilter = option && option.mintNum ? `mint_key_contains: "${option.mintNum}"` : ''
