@@ -1654,6 +1654,13 @@ export const actions = {
       multiNft: multiNftCollection,
       producerFee: data.contracts.length > 0 ? data.contracts[0].producerFee : 0
 	}
+	let price = nftInfo.price
+	if (price > 0 || nftInfo.market_status === 'LISTED') {
+	  price = price / 1000
+	} else {
+	  price = 1
+	}
+	nftInfo.refiOffset = price * (nftInfo.producerFee / 1000) * state.cMCO2Price
     commit('setNewNft', nftInfo)
     return nftInfo
   },
