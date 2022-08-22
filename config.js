@@ -9,7 +9,7 @@ const editionSize = 8640; // this will print 100 copies : (use if you already ha
 const CDN_ROOT = 'https://cdn.cyberbox.art/'
 const RESOURCE_CDN_ROOT = 'https://d3l21udha0g2ci.cloudfront.net'
 const COLLECTION_CDN_ROOT = 'https://d12dnfv3y3wpc7.cloudfront.net/'
-const AMPLITUDE_API_KEY = '06a79e76e64715fc4c6577fa883553ea'
+const AMPLITUDE_API_KEY = 'a2ccaf05b6accc4819ef3ea8fd9fba80'
 
 const CERTIFICATE_TOKEN_TYPE = {
   MONTH: 0,

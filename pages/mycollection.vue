@@ -135,7 +135,7 @@ export default {
   },
   computed: {
 	owner() {
-	  return !this.$store.state.sharedWallet || (this.$store.state.sharedWallet && this.$store.state.sharedWallet.toLowerCase() === this.$store.state.fullAddress.toLowerCase())
+	  return !this.$store.state.sharedWallet || (this.$store.state.sharedWallet && this.$store.state.fullAddress && this.$store.state.sharedWallet.toLowerCase() === this.$store.state.fullAddress.toLowerCase())
 	},
 	sharedWallet() {
 	  return this.$store.state.sharedWallet
