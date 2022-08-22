@@ -25,13 +25,13 @@
 					<button class="carbon__tracker-buttons-button buy gradient-button" @click="gotoLending">Mint ReFi Calendar</button>
 					<button class="carbon__tracker-buttons-button bonus" @click="showExchangeBonus=true" v-if="!bonusPurchased">Get a Bonus</button>
 				</div>
-				<!-- <div class="carbon__tracker-share">
+				<div class="carbon__tracker-share">
 					<a class="carbon__tracker-share-profile" :href="sharedCollectionUrl" v-if="linkShared">
 						<img class="carbon__tracker-share-profile-img" :src="getCDNImage('earth-small.svg')" alt="earth">
 						<span class="carbon__tracker-share-profile-name">Profile</span>
 					</a>
 					<ShareFrame class="carbon__tracker-share-frame"/>
-				</div> -->
+				</div>
 			</div>
 			<div class="carbon__certificates">
 				<h2 class="carbon__title">ReFi Calendar Collection</h2>
@@ -107,10 +107,10 @@ export default {
 	  return this.$store.state.sharedWallet
 	},
 	sharedCollectionUrl() {
-	  return `/mycollection?wallet=${this.sharedWallet}`
+	  return `/mycollection?wallet=${this.$store.state.sharedWallet}`
 	},
 	walletAddress() {
-	  const address = this.sharedWallet ? this.sharedWallet : this.$store.state.fullAddress
+	  const address = this.$store.state.sharedWallet ? this.$store.state.sharedWallet : this.$store.state.fullAddress
       if (address) {
         const startID = address.split("").slice(0, 6);
         const endID = address.split("").slice(-4);
