@@ -1,6 +1,6 @@
 <template>
   <section class="my-collection container-xl">
-    <div class="my-collection-header" v-if="address">
+    <div class="my-collection-header" v-if="realAddress">
 	  <div class="my-collection-header-info">
 		<div class="my-collection-header-avatar">
 			<img :src="getCDNImage('earth.webp')" alt="earth">
