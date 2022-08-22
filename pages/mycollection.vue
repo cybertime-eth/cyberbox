@@ -13,10 +13,10 @@
 			</div>
 		</div>
 	  </div>
-	  <a class="my-collection-header-tracker" :href="sharedTrackerUrl" v-if="linkShared">
+	  <!-- <a class="my-collection-header-tracker" :href="sharedTrackerUrl" v-if="linkShared">
 		<img class="my-collection-header-tracker-img" :src="getCDNImage('carbon-tracker-gradient.svg')" alt="tracker">
 		<p class="my-collection-header-tracker-name">Offset tracker</p>
-	  </a>
+	  </a> -->
     </div>
     <div class="my-collection__loading" v-if="!filteredNft && loading">
       <img :src="getCDNImage('loading-button.svg')" alt="load">
