@@ -1089,7 +1089,7 @@ export const actions = {
 		const certificateInfo =  data.co2Owners[0]
 		const ownerTrackerInfo =  data.co2Generators[0]
 		return {
-			totalCount: (certificateInfo.total_co2 || 0) / Math.pow(10, 7),
+			totalCount: (certificateInfo.total_co2 || 0) / Math.pow(10, 5),
 			totalTradingCelo: ownerTrackerInfo.total_co2 / Math.pow(10, 5),
 		}	
 	  } catch (e) {
