@@ -25,7 +25,7 @@ export default {
     ]
   },
   // smaller-in-size JS bundle
-  // modern: true,
+  modern: true,
   // redirect
   router: {
     middleware: ['redirectMiddleware']
