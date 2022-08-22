@@ -282,14 +282,12 @@ export default {
 		this.linkShared = false
 		this.$store.commit('setSharedWallet', null)
 	  }
-	  if (routeChanged && this.linkShared != oldLinkShared) {
+	  if ((this.filtered || routeChanged) && this.linkShared != oldLinkShared) {
 		this.listNft = []
 		this.filteredNft = false
 		this.collectionFilters = []
-		if (this.address) {
-		  this.reloadMyCollection()
-		}
 	  }
+	  this.reloadMyCollection()
 	},
     async addMyCollection(isReplace = true) {
 	  let traitFilterInfo = null
