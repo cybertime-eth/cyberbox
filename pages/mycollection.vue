@@ -5,13 +5,13 @@
 		<div class="my-collection-header-avatar">
 			<img :src="getCDNImage('earth.webp')" alt="earth">
 		</div>
-		<!-- <div class="my-collection-header-address">
+		<div class="my-collection-header-address">
 			<h1 class="my-collection-header-address-highlight">{{ cuttenAddress }}</h1>
 			<div class="my-collection-header-address-copy-box">
 				<p class="my-collection-header-address-copy" :class="{ copied: addressCopied }" @click="copyAddress">{{ !addressCopied ? cuttenAddress : 'Copied!' }}</p>
 				<ShareFrame class="my-collection-header-share" :class="{ copied: addressCopied }"/>
 			</div>
-		</div> -->
+		</div>
 	  </div>
 	  <a class="my-collection-header-tracker" :href="sharedTrackerUrl" v-if="linkShared">
 		<img class="my-collection-header-tracker-img" :src="getCDNImage('carbon-tracker-gradient.svg')" alt="tracker">
@@ -138,7 +138,7 @@ export default {
 	  return this.$store.state.sharedWallet
 	},
     address() {
-	  return this.$store.state.sharedWallet || this.$store.state.fullAddress
+	  return this.$store.state.fullAddress
 	},
 	owner() {
 	  return !this.$store.state.sharedWallet || (this.$store.state.sharedWallet && this.$store.state.fullAddress && this.$store.state.sharedWallet.toLowerCase() === this.$store.state.fullAddress.toLowerCase())
@@ -200,9 +200,16 @@ export default {
   watch: {
 	$route() {
       this.updateSharedWallet(true)
+	},
+	sharedWallet() {
+	  if (this.linkShared) {
+		this.reloadMyCollection()
+	  }
     },
     address() {
-      this.reloadMyCollection()
+	  if (!this.linkShared) {
+		this.reloadMyCollection()
+	  }
     },
     successTransfer() {
       if (this.$store.state.successTransferToken) {
