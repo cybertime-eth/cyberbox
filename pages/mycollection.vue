@@ -202,7 +202,7 @@ export default {
   },
   watch: {
 	$route() {
-      this.updateSharedWallet(true)
+	  this.updateSharedWallet(true)
 	},
     address(newVal) {
 	  if (newVal && !this.linkShared) {
@@ -273,7 +273,7 @@ export default {
         footerEl.classList.remove('fixed')
       }
 	},
-	updateSharedWallet(routeChanged = true) {
+	updateSharedWallet(routeChanged = false) {
 	  const oldLinkShared = this.linkShared
 	  if (this.$route.query.wallet) {
 		this.linkShared = true
@@ -286,6 +286,9 @@ export default {
 		this.listNft = []
 		this.filteredNft = false
 		this.collectionFilters = []
+		if (routeChanged) {
+		  this.reloadMyCollection()
+		}
 	  }
 	},
     async addMyCollection(isReplace = true) {
