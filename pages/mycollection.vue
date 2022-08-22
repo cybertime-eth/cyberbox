@@ -148,7 +148,7 @@ export default {
 	  return !this.$store.state.sharedWallet || (this.$store.state.sharedWallet && this.$store.state.fullAddress && this.$store.state.sharedWallet.toLowerCase() === this.$store.state.fullAddress.toLowerCase())
 	},
 	sharedTrackerUrl() {
-	  return this.linkShared ? `/tracker?wallet=${this.sharedWallet}` : ''
+	  return this.linkShared ? `/tracker?wallet=${this.$store.state.sharedWallet}` : ''
 	},
     cuttenAddress() {
 	  const address = this.realAddress
