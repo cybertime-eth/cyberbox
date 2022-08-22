@@ -204,11 +204,6 @@ export default {
 	$route() {
       this.updateSharedWallet(true)
 	},
-	sharedWallet(newVal) {
-	  if (newVal && this.linkShared) {
-		this.reloadMyCollection()
-	  }
-    },
     address(newVal) {
 	  if (newVal && !this.linkShared) {
 		this.reloadMyCollection()
@@ -291,6 +286,9 @@ export default {
 		this.listNft = []
 		this.filteredNft = false
 		this.collectionFilters = []
+		if (this.address) {
+		  this.reloadMyCollection()
+		}
 	  }
 	},
     async addMyCollection(isReplace = true) {
