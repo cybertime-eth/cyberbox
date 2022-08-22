@@ -147,7 +147,7 @@ export default {
 	  return this.linkShared ? `/tracker?wallet=${this.sharedWallet}` : ''
 	},
     cuttenAddress() {
-	  const address = this.address
+	  const address = this.$store.state.fullAddress
 	  if (address) {
 		const startID = address.split("").slice(0, 6);
 		const endID = address.split("").slice(-4);
@@ -269,6 +269,7 @@ export default {
       }
 	},
 	updateSharedWallet(routeChanged = true) {
+		console.log('00000')
 	  const oldLinkShared = this.linkShared
 	  if (this.$route.query.wallet) {
 		this.linkShared = true
