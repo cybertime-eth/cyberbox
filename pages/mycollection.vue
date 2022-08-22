@@ -141,6 +141,9 @@ export default {
     address() {
 	  return this.$store.state.fullAddress
 	},
+	realAddress() {
+	  return this.sharedWallet || this.address
+	},
 	owner() {
 	  return !this.$store.state.sharedWallet || (this.$store.state.sharedWallet && this.$store.state.fullAddress && this.$store.state.sharedWallet.toLowerCase() === this.$store.state.fullAddress.toLowerCase())
 	},
@@ -148,7 +151,7 @@ export default {
 	  return this.linkShared ? `/tracker?wallet=${this.sharedWallet}` : ''
 	},
     cuttenAddress() {
-	  const address = this.$store.state.sharedWallet || this.$store.state.fullAddress
+	  const address = this.realAddress
 	  if (address) {
 		const startID = address.split("").slice(0, 6);
 		const endID = address.split("").slice(-4);

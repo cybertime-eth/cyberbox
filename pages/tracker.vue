@@ -106,11 +106,14 @@ export default {
 	sharedWallet() {
 	  return this.$store.state.sharedWallet
 	},
+	realAddress() {
+	  return this.sharedWallet || this.address
+	},
 	sharedCollectionUrl() {
 	  return `/mycollection?wallet=${this.$store.state.sharedWallet}`
 	},
 	walletAddress() {
-	  const address = this.$store.state.sharedWallet ? this.$store.state.sharedWallet : this.$store.state.fullAddress
+	  const address = this.realAddress
       if (address) {
         const startID = address.split("").slice(0, 6);
         const endID = address.split("").slice(-4);
