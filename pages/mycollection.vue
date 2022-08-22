@@ -1,6 +1,6 @@
 <template>
   <section class="my-collection container-xl">
-    <div class="my-collection-header" v-if="address">
+    <!-- <div class="my-collection-header" v-if="address">
 	  <div class="my-collection-header-info">
 		<div class="my-collection-header-avatar">
 			<img :src="getCDNImage('earth.webp')" alt="earth">
@@ -17,7 +17,7 @@
 		<img class="my-collection-header-tracker-img" :src="getCDNImage('carbon-tracker-gradient.svg')" alt="tracker">
 		<p class="my-collection-header-tracker-name">Offset tracker</p>
 	  </a>
-    </div>
+    </div> -->
     <div class="my-collection__loading" v-if="!filteredNft && loading">
       <img :src="getCDNImage('loading-button.svg')" alt="load">
     </div>
@@ -25,7 +25,7 @@
       <h3 class="my-collection__empty-title">You don't have NFT yet</h3>
       <button class="gradient-button my-collection__empty-button" @click="$router.push('/')">Buy</button>
     </div>
-    <!-- <div class="my-collection-filters-container" v-if="filteredNft">
+    <div class="my-collection-filters-container" v-if="filteredNft">
       <div class="my-collection-filters">
         <div class="my-collection-filters-item" @click="filter('all')" :class="{'my-collection-filters-item-active': activeFilter === 'all'}">
           <p class="my-collection-filters-item-text">All</p>
@@ -69,15 +69,15 @@
     <p class="my-collection-collection-filter" v-if="activeFilter !== 'all' && activeFilter !== 'sale'">{{ currCollectionFilter }}</p>
     <div class="my-collection__items">
       <nft :nft="nft" :key="idx" :route="nftRoute(nft)" :seller="owner" :multiNft="isMultiNft(nft)" from="MyNFT" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
-    </div> -->
-	<!-- <TraitsFilterModal
+    </div>
+	<TraitsFilterModal
       :show="showTraitsFilter"
       :mintCount="activeMintCount"
       :filtersCount="filtersCount"
       @updateFilter="updateTraitFilter"
       @close="showTraitsFilter = false"
       v-if="showTraitsFilter"
-    /> -->
+    />
   </section>
 </template>
 <script>
