@@ -67,9 +67,9 @@
       </div>
     </div>
     <p class="my-collection-collection-filter" v-if="activeFilter !== 'all' && activeFilter !== 'sale'">{{ currCollectionFilter }}</p>
-    <div class="my-collection__items">
+    <!-- <div class="my-collection__items">
       <nft :nft="nft" :key="idx" :route="nftRoute(nft)" :seller="owner" :multiNft="isMultiNft(nft)" from="MyNFT" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
-    </div>
+    </div> -->
 	<TraitsFilterModal
       :show="showTraitsFilter"
       :mintCount="activeMintCount"
