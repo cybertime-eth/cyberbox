@@ -1,6 +1,6 @@
 <template>
   <section class="my-collection container-xl">
-    <!-- <div class="my-collection-header" v-if="address">
+    <div class="my-collection-header" v-if="address">
 	  <div class="my-collection-header-info">
 		<div class="my-collection-header-avatar">
 			<img :src="getCDNImage('earth.webp')" alt="earth">
@@ -13,11 +13,11 @@
 			</div>
 		</div>
 	  </div>
-	  <a class="my-collection-header-tracker" :href="sharedTrackerUrl" v-if="linkShared">
+	  <!-- <a class="my-collection-header-tracker" :href="sharedTrackerUrl" v-if="linkShared">
 		<img class="my-collection-header-tracker-img" :src="getCDNImage('carbon-tracker-gradient.svg')" alt="tracker">
 		<p class="my-collection-header-tracker-name">Offset tracker</p>
-	  </a>
-    </div> -->
+	  </a> -->
+    </div>
     <div class="my-collection__loading" v-if="!filteredNft && loading">
       <img :src="getCDNImage('loading-button.svg')" alt="load">
     </div>
@@ -134,14 +134,14 @@ export default {
 	})
   },
   computed: {
-	owner() {
-	  return !this.$store.state.sharedWallet || (this.$store.state.sharedWallet && this.$store.state.fullAddress && this.$store.state.sharedWallet.toLowerCase() === this.$store.state.fullAddress.toLowerCase())
-	},
 	sharedWallet() {
 	  return this.$store.state.sharedWallet
 	},
     address() {
-	  return this.sharedWallet || this.$store.state.fullAddress
+	  return this.$store.state.sharedWallet || this.$store.state.fullAddress
+	},
+	owner() {
+	  return !this.$store.state.sharedWallet || (this.$store.state.sharedWallet && this.$store.state.fullAddress && this.$store.state.sharedWallet.toLowerCase() === this.$store.state.fullAddress.toLowerCase())
 	},
 	sharedTrackerUrl() {
 	  return this.linkShared ? `/tracker?wallet=${this.sharedWallet}` : ''
