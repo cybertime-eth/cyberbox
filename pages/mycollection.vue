@@ -25,7 +25,7 @@
       <h3 class="my-collection__empty-title">You don't have NFT yet</h3>
       <button class="gradient-button my-collection__empty-button" @click="$router.push('/')">Buy</button>
     </div>
-    <div class="my-collection-filters-container" v-if="filteredNft">
+    <!-- <div class="my-collection-filters-container" v-if="filteredNft">
       <div class="my-collection-filters">
         <div class="my-collection-filters-item" @click="filter('all')" :class="{'my-collection-filters-item-active': activeFilter === 'all'}">
           <p class="my-collection-filters-item-text">All</p>
@@ -67,17 +67,17 @@
       </div>
     </div>
     <p class="my-collection-collection-filter" v-if="activeFilter !== 'all' && activeFilter !== 'sale'">{{ currCollectionFilter }}</p>
-    <!-- <div class="my-collection__items">
+    <div class="my-collection__items">
       <nft :nft="nft" :key="idx" :route="nftRoute(nft)" :seller="owner" :multiNft="isMultiNft(nft)" from="MyNFT" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
     </div> -->
-	<TraitsFilterModal
+	<!-- <TraitsFilterModal
       :show="showTraitsFilter"
       :mintCount="activeMintCount"
       :filtersCount="filtersCount"
       @updateFilter="updateTraitFilter"
       @close="showTraitsFilter = false"
       v-if="showTraitsFilter"
-    />
+    /> -->
   </section>
 </template>
 <script>
