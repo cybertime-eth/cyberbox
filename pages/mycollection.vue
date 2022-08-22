@@ -204,13 +204,13 @@ export default {
 	$route() {
       this.updateSharedWallet(true)
 	},
-	sharedWallet() {
-	  if (this.linkShared) {
+	sharedWallet(newVal) {
+	  if (newVal && this.linkShared) {
 		this.reloadMyCollection()
 	  }
     },
-    address() {
-	  if (!this.linkShared) {
+    address(newVal) {
+	  if (newVal && !this.linkShared) {
 		this.reloadMyCollection()
 	  }
     },
