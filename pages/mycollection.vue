@@ -1,6 +1,6 @@
 <template>
   <section class="my-collection container-xl">
-    <div class="my-collection-header" v-if="sharedWallet || address">
+    <div class="my-collection-header" v-if="headerVisible">
 	  <div class="my-collection-header-info">
 		<div class="my-collection-header-avatar">
 			<img :src="getCDNImage('earth.webp')" alt="earth">
@@ -95,7 +95,8 @@ export default {
   data() {
     return {
       showTransfer: false,
-      showPurchased: false,
+	  showPurchased: false,
+	  headerVisible: false,
 	  loading: true,
 	  addressCopied: false,
 	  linkShared: false,
@@ -147,7 +148,7 @@ export default {
 	  return this.linkShared ? `/tracker?wallet=${this.sharedWallet}` : ''
 	},
     cuttenAddress() {
-	  const address = this.sharedWallet || this.address
+	  const address = this.$store.state.sharedWallet || this.$store.state.fullAddress
 	  if (address) {
 		const startID = address.split("").slice(0, 6);
 		const endID = address.split("").slice(-4);
@@ -203,6 +204,7 @@ export default {
 	},
     address(newVal) {
 	  if (newVal && !this.linkShared) {
+		this.headerVisible = true
 		this.reloadMyCollection()
 	  }
     },
@@ -275,6 +277,7 @@ export default {
 	  if (this.$route.query.wallet) {
 		this.linkShared = true
 		this.$store.commit('setSharedWallet', this.$route.query.wallet)
+		this.headerVisible = true
 	  } else {
 		this.linkShared = false
 		this.$store.commit('setSharedWallet', null)
