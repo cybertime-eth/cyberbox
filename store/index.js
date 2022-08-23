@@ -1205,6 +1205,7 @@ export const actions = {
 		}
 		certReferStatistics(first: 10 where: { referAddress_not: "0x454b9f80d3ea53000544eb7c9038d4ba8b84c324" date_key_in: [${dateFilters}] }) {
 			id
+			date_key
 			referAddress
 			refer_fee
 			totalCount
@@ -1212,7 +1213,23 @@ export const actions = {
 	  }`
 	  const data = await this.$graphql.default.request(query)
 	  const userInfo = data.certReferUsers.length > 0 ? data.certReferUsers[0] : null
-	  const userList = data.certReferStatistics
+	  let statistics = data.certReferStatistics
+	  const referAddresses = statistics.map(item => item.referAddress)
+	  const userList = statistics.filter((item, index) => referAddresses.indexOf(item.referAddress) === index)
+	  userList.map(item => {
+		const referList = statistics.filter(referItem => item.referAddress === referItem.referAddress && item.date_key !== referItem.date_key)
+		if (referList.length > 0) {
+		  let totalReferFees = item.refer_fee
+		  let totalCount = item.totalCount
+		  referList.forEach(rItem => {
+			totalReferFees += rItem.refer_fee
+			totalCount += rItem.totalCount
+		  })
+		  item.refer_fee = totalReferFees
+		  item.totalCount = totalCount
+		}
+		return item
+	  })
 	  if (userInfo) {
 		userInfo.clicksInfo = await API.getClickCount(userInfo.referAddress.toLowerCase())
 	  }

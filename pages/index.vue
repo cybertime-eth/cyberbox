@@ -6,7 +6,9 @@
 			<img class="refi__main-img" :src="backgroundImage" alt="background">
 		</client-only>
     	<h1 class="refi__title">Regenerate nature with the power of NFTs</h1>
-    	<h3 class="refi__subtitle">ReFi NFT Marketplace that allows trade NFT,<br/>offset CO2 and track the process</h3>
+		<client-only>
+    		<h3 class="refi__subtitle">ReFi NFT Marketplace that helps anyone become carbon neutral by<br v-if="!isMobile()"/>offsetting carbon (CO2) through NFT trading</h3>
+		</client-only>
 		<div class="refi__main-buttons">
           <button class="refi__main-button explorer" @click="gotoExplorer('Top_button')">Explorer NFT</button>
           <button class="refi__main-button top ranking" @click="gotoRankings('Top_button')">Rankings</button>
@@ -859,8 +861,9 @@ export default {
       font-size: 2.8rem;
     }
     &__subtitle {
-      padding-top: 1rem;
-      font-size: 1.4rem;
+	  padding-top: 1rem;
+	  margin: 0 0.8rem;
+	  font-size: 1.4rem;
 	}
     &__block {
       padding: 14.4rem 0.8rem 5.4rem;
