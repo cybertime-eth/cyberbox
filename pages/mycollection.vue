@@ -1,6 +1,6 @@
 <template>
   <section class="my-collection container-xl">
-    <div class="my-collection-header" v-if="headerVisible()">
+    <div class="my-collection-header" v-if="linkShared || address">
 	  <div class="my-collection-header-info">
 		<div class="my-collection-header-avatar">
 			<img :src="getCDNImage('earth.webp')" alt="earth">
@@ -140,9 +140,6 @@ export default {
     address() {
 	  return this.$store.state.fullAddress
 	},
-	realAddress() {
-	  return this.sharedWallet || this.address
-	},
 	owner() {
 	  return !this.$store.state.sharedWallet || (this.$store.state.sharedWallet && this.$store.state.fullAddress && this.$store.state.sharedWallet.toLowerCase() === this.$store.state.fullAddress.toLowerCase())
 	},
@@ -150,7 +147,7 @@ export default {
 	  return this.linkShared ? `/tracker?wallet=${this.$store.state.sharedWallet}` : ''
 	},
     cuttenAddress() {
-	  const address = this.realAddress
+	  const address = this.sharedWallet || this.address
 	  if (address) {
 		const startID = address.split("").slice(0, 6);
 		const endID = address.split("").slice(-4);
@@ -229,9 +226,6 @@ export default {
 	}
   },
   methods: {
-	headerVisible() {
-	  return this.sharedWallet || this.address
-	},
     isMultiNft(nft) {
       return this.$store.state.multiNftSymbols.includes(nft.nftSymbol)
     },
