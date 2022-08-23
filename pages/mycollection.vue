@@ -198,8 +198,10 @@ export default {
     }
   },
   watch: {
-	$route() {
-	  this.updateSharedWallet(true)
+	$route(from, to) {
+	  if (to !== from) {
+		this.updateSharedWallet(true)
+	  }
 	},
     address(newVal) {
 	  if (newVal && !this.linkShared) {

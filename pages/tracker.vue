@@ -4,7 +4,7 @@
 			<div class="carbon__tracker">
 				<img class="carbon__tracker-bg" :src="trackerBGImage" alt="background">
 				<h2 class="carbon__title">Carbon offset tracker</h2>
-				<!-- <p class="carbon__address" v-if="linkShared">by {{ walletAddress }}</p> -->
+				<p class="carbon__address" v-show="linkShared">by {{ walletAddress }}</p>
 				<p class="carbon__tracker-year" :class="{shared: linkShared}">2022</p>
 				<!-- <CustomSelect class="carbon__tracker-picker" :options="dateOptions" @change="filterByYear"/> -->
 				<div class="carbon__tracker-info">
@@ -26,7 +26,7 @@
 					<button class="carbon__tracker-buttons-button bonus" @click="showExchangeBonus=true" v-if="!bonusPurchased">Get a Bonus</button>
 				</div>
 				<div class="carbon__tracker-share">
-					<a class="carbon__tracker-share-profile" :href="sharedCollectionUrl" v-if="linkShared">
+					<a class="carbon__tracker-share-profile" :href="sharedCollectionUrl" v-show="linkShared">
 						<img class="carbon__tracker-share-profile-img" :src="getCDNImage('earth-small.svg')" alt="earth">
 						<span class="carbon__tracker-share-profile-name">Profile</span>
 					</a>
@@ -164,9 +164,6 @@ export default {
 
 	this.reloadPageData()
   },
-  beforeDestroy() {
-	this.$store.commit('setSharedWallet', null)
-  },
   mounted() {
 	this.updateCertificateList()
 	if (this.$refs.trackerProgress) {
@@ -174,8 +171,10 @@ export default {
 	}
   },
   watch: {
-	$route() {
-      this.updateSharedWallet(true)
+	$route(from, to) {
+	  if (to !== from) {
+		this.updateSharedWallet(true)
+	  }
     },
 	address() {
 	  if (this.$store.state.address) {
