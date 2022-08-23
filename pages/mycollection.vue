@@ -1,23 +1,23 @@
 <template>
   <section class="my-collection container-xl">
-    <div class="my-collection-header" v-if="headerVisible">
+    <!-- <div class="my-collection-header" v-if="headerVisible">
 	  <div class="my-collection-header-info">
 		<div class="my-collection-header-avatar">
 			<img :src="getCDNImage('earth.webp')" alt="earth">
 		</div>
-		<!-- <div class="my-collection-header-address">
+		<div class="my-collection-header-address">
 			<h1 class="my-collection-header-address-highlight">{{ cuttenAddress }}</h1>
 			<div class="my-collection-header-address-copy-box">
 				<p class="my-collection-header-address-copy" :class="{ copied: addressCopied }" @click="copyAddress">{{ !addressCopied ? cuttenAddress : 'Copied!' }}</p>
 				<ShareFrame class="my-collection-header-share" :class="{ copied: addressCopied }"/>
 			</div>
-		</div> -->
+		</div>
 	  </div>
-	  <!-- <a class="my-collection-header-tracker" :href="sharedTrackerUrl" v-if="linkShared">
+	  <a class="my-collection-header-tracker" :href="sharedTrackerUrl" v-if="linkShared">
 		<img class="my-collection-header-tracker-img" :src="getCDNImage('carbon-tracker-gradient.svg')" alt="tracker">
 		<p class="my-collection-header-tracker-name">Offset tracker</p>
-	  </a> -->
-    </div>
+	  </a>
+    </div> -->
     <div class="my-collection__loading" v-if="!filteredNft && loading">
       <img :src="getCDNImage('loading-button.svg')" alt="load">
     </div>
