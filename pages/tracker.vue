@@ -4,7 +4,7 @@
 			<div class="carbon__tracker">
 				<img class="carbon__tracker-bg" :src="trackerBGImage" alt="background">
 				<h2 class="carbon__title">Carbon offset tracker</h2>
-				<p class="carbon__address" v-if="linkShared">by {{ walletAddress }}</p>
+				<!-- <p class="carbon__address" v-if="linkShared">by {{ walletAddress }}</p> -->
 				<p class="carbon__tracker-year" :class="{shared: linkShared}">2022</p>
 				<!-- <CustomSelect class="carbon__tracker-picker" :options="dateOptions" @change="filterByYear"/> -->
 				<div class="carbon__tracker-info">
@@ -106,14 +106,11 @@ export default {
 	sharedWallet() {
 	  return this.$store.state.sharedWallet
 	},
-	realAddress() {
-	  return this.sharedWallet || this.address
-	},
 	sharedCollectionUrl() {
-	  return `/mycollection?wallet=${this.$store.state.sharedWallet}`
+	  return `/mycollection?wallet=${this.sharedWallet}`
 	},
 	walletAddress() {
-	  const address = this.realAddress
+	  const address = this.sharedWallet || this.address
       if (address) {
         const startID = address.split("").slice(0, 6);
         const endID = address.split("").slice(-4);
