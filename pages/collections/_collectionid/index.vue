@@ -189,12 +189,12 @@ export default {
   head() {
     return {
       meta: [
-        { hid: 'title', name: 'title', content: this.pageTitle },
-        { hid: 'og:title', property: 'og:title', content: this.pageTitle },
-        { hid: 'description', name: 'description', content: this.description },
-        { hid: 'og:description', property: 'og:description', content: this.description },
-        { hid: 'og:image', property: 'og:image', content: this.metaIcon },
-        { hid: 'twitter:image', name: 'twitter:image', content: this.metaIcon }
+        { hid: 'title', name: 'title', content: this.pageTitle() },
+        { hid: 'og:title', property: 'og:title', content: this.pageTitle() },
+        { hid: 'description', name: 'description', content: this.description() },
+        { hid: 'og:description', property: 'og:description', content: this.description() },
+        { hid: 'og:image', property: 'og:image', content: this.metaIcon() },
+        { hid: 'twitter:image', name: 'twitter:image', content: this.metaIcon() }
       ]
     }
   },
@@ -205,26 +205,6 @@ export default {
 	CustomSwitch
   },
   computed: {
-    pageTitle() {
-      return `${this.collection.name} | Cyberbox ReFi NFT Marketplace`
-    },
-    description() {
-      return this.collection.description
-    },
-    metaIcon() {
-			let imageSrc = ''
-      switch (this.$route.params.collectionid) {
-        case 'cpunk': imageSrc = this.getCDNImage('collections/Media_punks.webp')
-          break
-        case 'ctoadz': imageSrc = this.getCDNImage('collections/Media_toadz.webp')
-          break
-        case 'knoxnft': imageSrc = this.getCDNImage('collections/KnoxersDAO.webp')
-          break
-        default: imageSrc = this.collection.image
-          break
-      }
-      return imageSrc
-    },
     isMultiNftCollection() {
       return this.$store.state.multiNftSymbols.includes(this.$route.params.collectionid)
 	},
@@ -315,6 +295,26 @@ export default {
     }
   },
   methods: {
+	pageTitle() {
+      return `${this.collection.name} | Cyberbox ReFi NFT Marketplace`
+    },
+    description() {
+      return this.collection.description
+    },
+    metaIcon() {
+	  let imageSrc = ''
+      switch (this.$route.params.collectionid) {
+        case 'cpunk': imageSrc = this.getCDNImage('collections/Media_punks.png')
+          break
+        case 'ctoadz': imageSrc = this.getCDNImage('collections/Media_toadz.png')
+          break
+        case 'knoxnft': imageSrc = this.getCDNImage('collections/KnoxersDAO.png')
+          break
+        default: imageSrc = this.collection.image
+          break
+      }
+      return imageSrc
+    },
     nftRoute(nft) {
       if (!this.isMultiNftCollection) {
         return `/collections/${nft.contract}/${nft.contract !== 'nomdom' ? nft.contract_id : nft.image}`
