@@ -222,7 +222,7 @@ export default {
     }
   },
   mounted() {
-	if (process && process.browser) {
+	if (process.client) {
 	  this.handleDebouncedScroll = _.debounce(this.addCurrentPage, 100)
 	  window.addEventListener('scroll', this.handleDebouncedScroll)
 	}
