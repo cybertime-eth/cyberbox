@@ -189,10 +189,10 @@ export default {
   head() {
     return {
       meta: [
-        { hid: 'title', name: 'title', content: this.pageTitle() },
-        { hid: 'og:title', property: 'og:title', content: this.pageTitle() },
-        { hid: 'description', name: 'description', content: this.description() },
-        { hid: 'og:description', property: 'og:description', content: this.description() },
+        // { hid: 'title', name: 'title', content: this.pageTitle() },
+        // { hid: 'og:title', property: 'og:title', content: this.pageTitle() },
+        // { hid: 'description', name: 'description', content: this.description() },
+        // { hid: 'og:description', property: 'og:description', content: this.description() },
         { hid: 'og:image', property: 'og:image', content: this.metaIcon() },
         { hid: 'twitter:image', name: 'twitter:image', content: this.metaIcon() }
       ]
