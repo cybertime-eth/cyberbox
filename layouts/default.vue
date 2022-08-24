@@ -12,13 +12,58 @@ import Header from './../components/Header'
 import Footer from './../components/Footer'
 export default {
   middleware: ['redirectMiddleware'],
+  head() {
+    if (this.$route.params.collectionid) {
+      return {
+        meta: [
+          { hid: 'title', name: 'title', content: this.pageTitle },
+          { hid: 'og:title', property: 'og:title', content: this.pageTitle },
+          { hid: 'description', name: 'description', content: this.description },
+          { hid: 'og:description', property: 'og:description', content: this.description },
+          { hid: 'og:image', property: 'og:image', content: this.metaIcon },
+          { hid: 'twitter:image', name: 'twitter:image', content: this.metaIcon }
+        ]
+      }
+    } else {
+	  return {}
+	}
+  },
   computed: {
     message() {
       return this.$store.state.message
     },
     address() {
       return this.$store.state.address
-    }
+	},
+	collection() {
+	  if (this.$route.params.collectionid) {
+		const collectionId = this.$route.params.collectionid
+		const collection = this.$store.state.collectionList.find(item => item.route === collectionId)
+		return collection || {}
+	  } else {
+		return {}
+	  }
+	},
+	pageTitle() {
+      return `${this.collection.name} | Cyberbox ReFi NFT Marketplace`
+    },
+    description() {
+      return this.collection.description
+    },
+    metaIcon() {
+	  let imageSrc = ''
+      switch (this.$route.params.collectionid) {
+        case 'cpunk': imageSrc = this.getCDNImage('collections/Media_punks.png')
+          break
+        case 'ctoadz': imageSrc = this.getCDNImage('collections/Media_toadz.png')
+          break
+        case 'knoxnft': imageSrc = this.getCDNImage('collections/KnoxersDAO.png')
+          break
+        default: imageSrc = this.collection.image
+          break
+      }
+      return imageSrc
+    },
   },
   components: {
     Header,
