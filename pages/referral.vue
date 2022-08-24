@@ -210,8 +210,8 @@ export default {
   head() {
     return {
       meta: [
-		{ hid: 'og:image', property: 'og:image', content: this.getCDNImage('referral-banner.webp') },
-		{ hid: 'twitter:image', name: 'twitter:image', content: this.getCDNImage('referral-banner.webp') }
+		{ hid: 'og:image', property: 'og:image', content: this.getCDNImage('referral-banner.png') },
+		{ hid: 'twitter:image', name: 'twitter:image', content: this.getCDNImage('referral-banner.png') }
       ]
     }
   },
