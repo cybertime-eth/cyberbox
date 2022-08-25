@@ -84,6 +84,32 @@ export const state = () => ({
 	  description: "Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands."
 	},
 	{
+		id: 4,
+		name: 'Daopolis',
+		route: 'daos',
+		image: `${RESOURCE_CDN_ROOT}/collections/daopolis.webp`,
+		banner: `${RESOURCE_CDN_ROOT}/collections/daopolis-banner.webp`,
+		logo: `${RESOURCE_CDN_ROOT}/collections/daopolis-logo.webp`,
+		website: 'https://www.daopolis.city',
+		twitter: 'https://twitter.com/CyberboxArt',
+		discord: 'https://discord.gg/cKcWfCux4s',
+		telegram: 'https://t.me/cyberboxArt',
+		description: "Automatically generated 9192 NFT's. Born in the CyberTime era, Daopolis citizens will be the foundation of a new gaming metaverse on Celo. Find your digital avatar, gain access to a private club and participate in unique NFT games!"
+	},
+	{
+		id: 2,
+		name: 'Celostrials',
+		route: 'nfet',
+		image: `${RESOURCE_CDN_ROOT}/collections/celostrials.webp`,
+		banner: `${RESOURCE_CDN_ROOT}/collections/celostrials-banner.webp`,
+		logo: `${RESOURCE_CDN_ROOT}/collections/celostrials-logo.webp`,
+		website: 'https://celostrials.com/#/',
+		twitter: 'https://mobile.twitter.com/celostrials',
+		discord: 'https://discord.gg/HvvtgPuWHe',
+		instagram: 'https://www.instagram.com/celostrials/',
+		description: 'Celostrials are an intergalactic collection of unique beings, found exclusively on the Celo Blockchain. Their features are algorithmically generated resulting in an interstellar collectible completely unique to you!'
+	},
+	{
 	  id: 20,
 	  name: 'KnoxerDAO',
 	  route: 'knoxnft',
@@ -94,6 +120,33 @@ export const state = () => ({
 	  twitter: 'https://twitter.com/KnoxEdgeDAO?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
 	  discord: 'https://discord.gg/Ec5ZwdzZ?utm_source=tofuNFT.com&utm_medium=web&utm_campaign=collection',
 	  description: 'Knoxers are Celorians with wisdom beyond those of the same kind :and the ability to see the future:. According to ancient Celorian myths some Knoxers even possess diamond hands and laser eyes'
+	},
+	{
+		id: 3,
+		name: 'ChinChilla Gang',
+		route: 'gang',
+		image: `${RESOURCE_CDN_ROOT}/collections/gang.webp`,
+		banner: `${RESOURCE_CDN_ROOT}/collections/gang-banner.webp`,
+		logo: `${RESOURCE_CDN_ROOT}/collections/gang-logo.webp`,
+		wallet: '0xAfd1dEE2Ac3790aA28d679E82Aaad6Fb9aba24f1',
+		website: 'https://www.chinchillagang.com/',
+		twitter: 'https://twitter.com/Chinchilla_Gang',
+		telegram: 'https://t.co/E8XPvASIrz',
+		description: `The ChinChilla Gang collection is composed by 8888 ultra HD NFTs living on Celo blockchain.`
+	},
+	{
+		id: 5,
+		name: 'CeloPunks',
+		route: 'cpunk',
+		image: `${RESOURCE_CDN_ROOT}/collections/Celopunks.webp`,
+		banner: `${RESOURCE_CDN_ROOT}/collections/CeloPunks-banner.webp`,
+		logo: `${RESOURCE_CDN_ROOT}/collections/CeloPunks-logo.webp`,
+		wallet: '0x29a6520A99656e5b17A34471D5d458eFD3696695',
+		website: 'https://celopunks.club/',
+		twitter: 'https://twitter.com/CeloPunks',
+		discord: 'https://discord.com/invite/Dzukufsrqe',
+		telegram: 'https://t.me/celopunksclub',
+		description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
 	},
     {
       id: 1,
@@ -106,59 +159,6 @@ export const state = () => ({
       twitter: 'https://twitter.com/nomspace_nom',
       discord: 'https://discord.gg/byMNXabAxZ',
       description: 'Nomspace is a cross-chain name resolution service. Users can reserve a .nom from any supported chain'
-    },
-    {
-      id: 2,
-      name: 'Celostrials',
-      route: 'nfet',
-      image: `${RESOURCE_CDN_ROOT}/collections/celostrials.webp`,
-      banner: `${RESOURCE_CDN_ROOT}/collections/celostrials-banner.webp`,
-      logo: `${RESOURCE_CDN_ROOT}/collections/celostrials-logo.webp`,
-      website: 'https://celostrials.com/#/',
-      twitter: 'https://mobile.twitter.com/celostrials',
-      discord: 'https://discord.gg/HvvtgPuWHe',
-      instagram: 'https://www.instagram.com/celostrials/',
-      description: 'Celostrials are an intergalactic collection of unique beings, found exclusively on the Celo Blockchain. Their features are algorithmically generated resulting in an interstellar collectible completely unique to you!'
-    },
-    {
-      id: 3,
-      name: 'ChinChilla Gang',
-      route: 'gang',
-      image: `${RESOURCE_CDN_ROOT}/collections/gang.webp`,
-      banner: `${RESOURCE_CDN_ROOT}/collections/gang-banner.webp`,
-      logo: `${RESOURCE_CDN_ROOT}/collections/gang-logo.webp`,
-      wallet: '0xAfd1dEE2Ac3790aA28d679E82Aaad6Fb9aba24f1',
-      website: 'https://www.chinchillagang.com/',
-      twitter: 'https://twitter.com/Chinchilla_Gang',
-      telegram: 'https://t.co/E8XPvASIrz',
-      description: `The ChinChilla Gang collection is composed by 8888 ultra HD NFTs living on Celo blockchain.`
-    },
-    {
-      id: 4,
-      name: 'Daopolis',
-      route: 'daos',
-      image: `${RESOURCE_CDN_ROOT}/collections/daopolis.webp`,
-      banner: `${RESOURCE_CDN_ROOT}/collections/daopolis-banner.webp`,
-      logo: `${RESOURCE_CDN_ROOT}/collections/daopolis-logo.webp`,
-      website: 'https://www.daopolis.city',
-      twitter: 'https://twitter.com/CyberboxArt',
-      discord: 'https://discord.gg/cKcWfCux4s',
-      telegram: 'https://t.me/cyberboxArt',
-      description: "Automatically generated 9192 NFT's. Born in the CyberTime era, Daopolis citizens will be the foundation of a new gaming metaverse on Celo. Find your digital avatar, gain access to a private club and participate in unique NFT games!"
-    },
-    {
-      id: 5,
-      name: 'CeloPunks',
-      route: 'cpunk',
-      image: `${RESOURCE_CDN_ROOT}/collections/Celopunks.webp`,
-      banner: `${RESOURCE_CDN_ROOT}/collections/CeloPunks-banner.webp`,
-      logo: `${RESOURCE_CDN_ROOT}/collections/CeloPunks-logo.webp`,
-      wallet: '0x29a6520A99656e5b17A34471D5d458eFD3696695',
-      website: 'https://celopunks.club/',
-      twitter: 'https://twitter.com/CeloPunks',
-      discord: 'https://discord.com/invite/Dzukufsrqe',
-      telegram: 'https://t.me/celopunksclub',
-      description: 'CeloPunks is the first NFT Punks tribute on the Celo Blockchain. Only 10000 Punks will be minted with new and unique traits! Not affiliated with LarvaLabs'
     },
     {
       id: 6,
