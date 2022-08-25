@@ -188,8 +188,10 @@ export default {
     })
     this.updateHotCollections()
 
-    // Total CO2 Amount
-	this.totalCO2Amount = totalCO2Amount.toLocaleString('en-US')
+	if (process.client) {
+	  // Total CO2 Amount
+	  this.totalCO2Amount = totalCO2Amount.toFixed(2).toLocaleString(navigator ? navigator.language : 'en-US')
+	}
 	
 	// Send visit event
 	this.sendEvent({
