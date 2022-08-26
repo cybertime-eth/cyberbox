@@ -4,7 +4,7 @@
             <div class="referral__main">
                 <div class="referral__main-summary">
                     <h2 class="referral__main-summary-title">
-                        <span class="referral__main-summary-title-invite">Invite your friends</span> and earn<br/>money on helping nature
+                        <span class="referral__main-summary-title-invite">Invite your friends</span> and earn<br/>Money for helping nature
                     </h2>
                     <ul class="referral__main-summary-features indent-features-list">
                       	<li class="indent-features-list-item">
@@ -17,7 +17,7 @@
 						</li>
 						<li class="indent-features-list-item">
 							<span class="indent-features-list-item-mark"/>
-							<p class="indent-features-list-item-text">Immediately payment  to wallet</p>
+							<p class="indent-features-list-item-text">Immediately receive payment on wallet</p>
 						</li>
 						<li class="indent-features-list-item">
 							<span class="indent-features-list-item-mark"/>
@@ -63,7 +63,7 @@
 							
 						</div>
                     </div>
-                    <div class="referral__main-info-address" v-if="address">
+                    <div class="referral__main-info-address">
                         <div class="referral__main-info-address-block gradient-block" @click="copyReferralLink">
 							<div class="referral__main-info-address-block-box" @click="copyReferralLink">
 								<span class="referral__main-info-address-name" :class="{ copied: addressCopied }">{{ !addressCopied ? 'Referral link:' : 'Copied!' }}</span>
@@ -74,7 +74,6 @@
                             <ShareFrame class="referral__main-info-address-share-frame" :class="{ copied: addressCopied }" @onShared="linkShared = true"/>
                         </div>
                     </div>
-					<p class="referral__main-info-connect" v-else>Connect wallet to see your referral link</p>
 					<a class="referral__main-info-link" href="/calendar">
 						<span class="referral__main-info-link-name">Check promote page</span>
 						<span class="referral__main-info-link-arrow">&#x276F;</span>
@@ -210,8 +209,8 @@ export default {
   head() {
     return {
       meta: [
-		{ hid: 'og:image', property: 'og:image', content: this.getCDNImage('referral-banner.png') },
-		{ hid: 'twitter:image', name: 'twitter:image', content: this.getCDNImage('referral-banner.png') }
+		{ hid: 'og:image', property: 'og:image', content: this.getCDNImage('referral-banner.webp') },
+		{ hid: 'twitter:image', name: 'twitter:image', content: this.getCDNImage('referral-banner.webp') }
       ]
     }
   },
@@ -247,7 +246,7 @@ export default {
       const footerEl = document.querySelector('.footer')
 	  footerEl.classList.remove('fixed')
 
-	  const lastOfferShownTime = localStorage.getItem(LAST_OFFER_VIEWED)
+	  const lastOfferShownTime = localStorage ? localStorage.getItem(LAST_OFFER_VIEWED) : null
 	  const date = new Date()
 	  const currTime = date.getTime()
 	  const offerTime = new Date(2022, 8, 1).getTime() // 20022/09/01
@@ -530,12 +529,6 @@ export default {
           font-size: 1.4rem;
         }
 	  }
-	  &-connect {
-		margin-top: 4.3rem;
-		font-weight: 600;
-		font-size: 1.4rem;
-		color: $red;
-	  }
 	  &-link {
 		display: flex;
 		align-items: center;
@@ -783,9 +776,6 @@ export default {
 			  max-width: 23.2rem;
 			}
           }
-		}
-		&-connect {
-		  margin-top: 3.5rem;
 		}
 		&-link {
 		  margin-top: 2.8rem;

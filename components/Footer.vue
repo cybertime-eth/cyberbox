@@ -20,7 +20,7 @@
 							<img class="footer__links-social-link-icon" :src="getCDNImage('socials/discord-gray.svg')" alt="discord">
 						</a>
 					</div>
-					<a class="footer__links-link" href="https://docs.cybertime.finance/	" target="_blank">
+					<a class="footer__links-link" href="https://docs.cyberbox.art/	" target="_blank">
 						<img class="footer__links-link-icon" :src="getCDNImage('help.svg')" alt="help">
 					</a>
 				</div>

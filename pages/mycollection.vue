@@ -238,12 +238,14 @@ export default {
 	  setTimeout(() => this.addressCopied = false, 1000)
     },
     async reloadMyCollection() {
-      if (process.browser && !localStorage.getItem('move_back')) {
+      if (process.browser && localStorage && !localStorage.getItem('move_back')) {
 		this.$store.commit('setTraitFilters', [])
         await this.fetchMyCollection()
         this.loadNftCounts()
       } else {
-        localStorage.removeItem('move_back')
+		if (localStorage) {
+		  localStorage.removeItem('move_back')
+		}
         this.loading = true
         this.loadNftCounts()
 
@@ -265,7 +267,8 @@ export default {
       }
     },
     showFixedFooter(show) {
-      const footerEl = document.querySelector('.footer')
+			const footerEl = document.querySelector('.footer')
+			if (!footerEl) return
       if (show) {
         footerEl.classList.add('fixed')
       } else {
