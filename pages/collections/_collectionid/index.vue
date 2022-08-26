@@ -327,6 +327,7 @@ export default {
     },
     showFixedFooter(show) {
       const footerEl = document.querySelector('.footer')
+      if (!footerEl) return
       if (show) {
         footerEl.classList.add('fixed')
       } else {

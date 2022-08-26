@@ -375,14 +375,19 @@ let magic = null
 
 export const getters = {
   walletConnectProvider() {
-    return new WalletConnectProvider({
-      rpc: {
-        42220: "https://forno.celo.org",
-      },
-      qrcodeModalOptions: {
-        mobileLinks: !window.ethereum ? ['metamask', 'valora'] : []
-      }
-    })
+	try {
+	  return new WalletConnectProvider({
+		rpc: {
+			42220: "https://forno.celo.org",
+		},
+		qrcodeModalOptions: {
+			mobileLinks: !window.ethereum ? ['metamask', 'valora'] : []
+		}
+	  })
+	} catch(e) {
+	  console.log(e)
+	  return null
+	}
   },
   provider(state, getters) {
     return state.walletConnected ? getters.walletConnectProvider : (window.ethereum || getters.walletConnectProvider)
@@ -410,7 +415,7 @@ export const getters = {
 	let address = state.fullAddress
 	if (!address) {
 	  if (process.browser) {
-		address = localStorage.getItem('address') || ''
+		address = localStorage ? (localStorage.getItem('address') || '') : ''
 	  } else {
 		address = ''
 	  }
@@ -762,25 +767,27 @@ export const actions = {
 
 	const address = state.sharedWallet ? state.sharedWallet : state.fullAddress
     let countCondition = `contract: "${contract}"`
-    let nftSymbol = ''
+	let nftSymbol = ''
+	let contractQuery = ''
     if (contract === 'all') {
       countCondition = ''
     } else if (contract === 'sale') {
       countCondition = 'market_status: "LISTED"'
     } else {
       nftSymbol = contract ? contract.nftSymbol : ''
-      countCondition = `contract: "${nftSymbol}"`
+	  countCondition = `contract: "${nftSymbol}"`
+	  contractQuery = `contracts(first: 1 where: { nftSymbol: "${nftSymbol}" }) {
+		id
+		mint_count
+	  }`
     }
     const query = gql`
       query Sample {
         contractInfos(first: 1000 where: { owner: "${address.toLowerCase()}" ${countCondition} }) {
-			    id
+		  id
           contract
         }
-        contracts(first: 1 where: { nftSymbol: "${nftSymbol}" }) {
-			    id
-          mint_count
-        }
+        ${contractQuery}
       }`
     const data = await this.$graphql.default.request(query)
     if (nftSymbol) {
@@ -1357,7 +1364,8 @@ export const actions = {
     })
   },
   async createWalletConnect({state, getters, commit, dispatch}, isValora) {
-    const provider = getters.walletConnectProvider
+	const provider = getters.walletConnectProvider
+	if (!provider) return
     const wc = provider.wc
     dispatch('addEventHandlerForWalletProvider', provider)
     removeLocal(mobileLinkChoiceKey)
@@ -1413,12 +1421,14 @@ export const actions = {
     let walletProvider = provider
     if (!walletProvider) {
       walletProvider = getters.walletConnectProvider
-    }
+	}
+	if (!walletProvider) return
     walletProvider.wc._handshakeTopic = ""
     walletProvider.isConnecting = false
   },
   async walletConnect({getters, dispatch}, isConnect) {
 	const provider = getters.walletConnectProvider
+	if (!provider) return
     try {
       dispatch('addEventHandlerForWalletProvider', provider)
 
@@ -1519,7 +1529,7 @@ export const actions = {
 	  const web3 = new Web3(getters.provider)
 	  const kit = ContractKit.newKitFromWeb3(web3)
 	  const res = await kit.getTotalBalance(address)
-	  const balance = res.CELO.c[0] / 10000
+	  const balance = res.CELO.c.length < 2 ? 0 : res.CELO.c[0] / 10000
 	  commit('setBalance', balance)
 	  return balance
 	} catch(e) {

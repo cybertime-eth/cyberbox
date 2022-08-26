@@ -159,7 +159,7 @@ export default {
     },
     notificationCount() {
       let totalCount = 0
-      if (process.browser) {
+      if (process.browser && localStorage) {
         totalCount = parseInt(localStorage.getItem('notification_max_id') || '0')
       }
       let count = 0

@@ -246,7 +246,7 @@ export default {
       const footerEl = document.querySelector('.footer')
 	  footerEl.classList.remove('fixed')
 
-	  const lastOfferShownTime = localStorage.getItem(LAST_OFFER_VIEWED)
+	  const lastOfferShownTime = localStorage ? localStorage.getItem(LAST_OFFER_VIEWED) : null
 	  const date = new Date()
 	  const currTime = date.getTime()
 	  const offerTime = new Date(2022, 8, 1).getTime() // 20022/09/01
