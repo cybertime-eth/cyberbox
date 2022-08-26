@@ -142,11 +142,12 @@ export default {
       }
 	},
     transferToken() {
-      if (this.receiver.length === 42) {
+      const receiver = this.receiver.trim()
+      if (receiver.length === 42) {
         this.pending = true
         this.$store.dispatch('transferNFT', {
           nft: this.nft,
-          toAddress: this.receiver
+          toAddress: receiver
         })
       } else {
         alert('Please input correct address.')
