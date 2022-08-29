@@ -1529,7 +1529,7 @@ export const actions = {
 	  const web3 = new Web3(getters.provider)
 	  const kit = ContractKit.newKitFromWeb3(web3)
 	  const res = await kit.getTotalBalance(address)
-	  const balance = res.CELO.c.length < 2 ? 0 : res.CELO.c[0] / 10000
+	  const balance = (res.CELO.c.length < 2 && res.CELO.e < 18) ? 0 : res.CELO.c[0] / 10000
 	  commit('setBalance', balance)
 	  return balance
 	} catch(e) {
