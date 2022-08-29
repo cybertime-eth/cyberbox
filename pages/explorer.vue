@@ -22,7 +22,7 @@ export default {
     }
   },
   created() {
-    if (process.browser) {
+    if (process && process.client) {
       localStorage.removeItem('move_back')
     }
     this.$store.commit('updateCollectionSetting', null)

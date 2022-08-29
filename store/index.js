@@ -413,12 +413,17 @@ export const getters = {
   },
   storedAddress(state) {
 	let address = state.fullAddress
-	if (!address) {
-	  if (process.browser) {
-		address = localStorage ? (localStorage.getItem('address') || '') : ''
-	  } else {
-		address = ''
+	try {
+	  if (!address) {
+		if (process.client) {
+			address = localStorage ? (localStorage.getItem('address') || '') : ''
+		} else {
+			address = ''
+		}
 	  }
+	} catch(e) {
+	  console.log(e)
+	  return null
 	}
 	return address.toLowerCase()
   },
@@ -1280,7 +1285,7 @@ export const actions = {
 	if (!ethereum) return
 
 	const provider = new ethers.providers.Web3Provider(ethereum)
-    if (process.browser && localStorage.getItem('address') && !localStorage.getItem('walletconnect') && ethereum) {
+    if (process.client && localStorage.getItem('address') && !localStorage.getItem('walletconnect') && ethereum) {
       try {
 		const signer = await provider.getSigner()
 		const address = await signer.getAddress()
