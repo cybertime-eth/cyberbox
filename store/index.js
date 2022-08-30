@@ -730,9 +730,6 @@ export const actions = {
 		  ]
 		  contractIds = contractInfos.map(cItem => cItem.contract_id)
 		})
-		if (traitFilters.length > 0) {
-		  contractInfos = contractInfos.sort((a, b) => a.contract_id - b.contract_id)
-		}
 		commit('setFilteredTraits', traitFilterList)
 	  } else {
 		commit('setFilteredTraits', null)
@@ -992,7 +989,6 @@ export const actions = {
 		  ]
 		  contractIds = contractLists.map(cItem => cItem.contract_id)
 		})
-		contractLists = contractLists.sort((a, b) => a.contract_id - b.contract_id)
 		commit('setFilteredTraits', traitFilters)
 	  } else {
 		commit('setFilteredTraits', null)
@@ -1060,7 +1056,6 @@ export const actions = {
 		  ]
 		  contractIds = contractSells.map(cItem => cItem.contract_id)
 		})
-		contractSells = contractSells.sort((a, b) => a.contract_id - b.contract_id)
 		commit('setFilteredTraits', traitFilters)
 	  } else {
 		commit('setFilteredTraits', null)
