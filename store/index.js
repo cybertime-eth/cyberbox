@@ -1210,7 +1210,7 @@ export const actions = {
 			refer_fee
 			totalCount
 		}
-		certReferStatistics(first: 10 where: { referAddress_not: "0x454b9f80d3ea53000544eb7c9038d4ba8b84c324" date_key_in: [${dateFilters}] }) {
+		certReferStatistics(first: 100 where: { referAddress_not: "0x454b9f80d3ea53000544eb7c9038d4ba8b84c324" date_key_in: [${dateFilters}] }) {
 			id
 			date_key
 			referAddress
@@ -1222,7 +1222,7 @@ export const actions = {
 	  const userInfo = data.certReferUsers.length > 0 ? data.certReferUsers[0] : null
 	  let statistics = data.certReferStatistics
 	  const referAddresses = statistics.map(item => item.referAddress)
-	  const userList = statistics.filter((item, index) => referAddresses.indexOf(item.referAddress) === index)
+	  let userList = statistics.filter((item, index) => referAddresses.indexOf(item.referAddress) === index)
 	  userList.map(item => {
 		const referList = statistics.filter(referItem => item.referAddress === referItem.referAddress && item.date_key !== referItem.date_key)
 		if (referList.length > 0) {
@@ -1237,6 +1237,7 @@ export const actions = {
 		}
 		return item
 	  })
+	  userList = userList.slice(0, 10)
 	  if (userInfo) {
 		userInfo.clicksInfo = await API.getClickCount(userInfo.referAddress.toLowerCase())
 	  }

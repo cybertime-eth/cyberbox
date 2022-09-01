@@ -209,7 +209,6 @@ export default {
 				return value >= 0.01 ? value.toFixed(1) : '<0.01'
 			}
 		}
-	  
 	},
 	async reloadPageData() {
 	  const trackingInfo = await this.$store.dispatch('getCarbonData')
