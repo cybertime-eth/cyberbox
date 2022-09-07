@@ -158,14 +158,18 @@ export default {
       return this.$route.params.nftid
     },
     notificationCount() {
-      let totalCount = 0
-      if (process.browser && localStorage) {
-        totalCount = parseInt(localStorage.getItem('notification_max_id') || '0')
-      }
-      let count = 0
-      this.$store.state.notificationList.forEach(info => {
-        count += info.items.filter(item => totalCount > 0 ? parseInt(item.id) > totalCount : true).length
-      })
+	  let totalCount = 0
+	  let count = 0
+      try {
+        if (process.client) {
+          totalCount = parseInt(localStorage.getItem('notification_max_id') || '0')
+        }
+        this.$store.state.notificationList.forEach(info => {
+          count += info.items.filter(item => totalCount > 0 ? parseInt(item.id) > totalCount : true).length
+        })
+      } catch(e) {
+		console.log(e)
+	  }
       return count
     }
   },

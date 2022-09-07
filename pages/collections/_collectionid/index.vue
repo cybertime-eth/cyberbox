@@ -503,7 +503,7 @@ export default {
   },
   async created() {
     setTimeout(() => this.pageLoading = false, 5000)
-    if (process.browser && localStorage.getItem('move_back')) {
+    if (process && process.client && localStorage.getItem('move_back')) {
       localStorage.removeItem('move_back')
       const collectionSetting = this.$store.state.collectionSetting
       if (collectionSetting) {

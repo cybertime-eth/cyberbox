@@ -413,12 +413,17 @@ export const getters = {
   },
   storedAddress(state) {
 	let address = state.fullAddress
-	if (!address) {
-	  if (process.browser) {
-		address = localStorage ? (localStorage.getItem('address') || '') : ''
-	  } else {
-		address = ''
+	try {
+	  if (!address) {
+		if (process.client) {
+			address = localStorage ? (localStorage.getItem('address') || '') : ''
+		} else {
+			address = ''
+		}
 	  }
+	} catch(e) {
+	  console.log(e)
+	  return null
 	}
 	return address.toLowerCase()
   },
@@ -725,9 +730,6 @@ export const actions = {
 		  ]
 		  contractIds = contractInfos.map(cItem => cItem.contract_id)
 		})
-		if (traitFilters.length > 0) {
-		  contractInfos = contractInfos.sort((a, b) => a.contract_id - b.contract_id)
-		}
 		commit('setFilteredTraits', traitFilterList)
 	  } else {
 		commit('setFilteredTraits', null)
@@ -987,7 +989,6 @@ export const actions = {
 		  ]
 		  contractIds = contractLists.map(cItem => cItem.contract_id)
 		})
-		contractLists = contractLists.sort((a, b) => a.contract_id - b.contract_id)
 		commit('setFilteredTraits', traitFilters)
 	  } else {
 		commit('setFilteredTraits', null)
@@ -1055,7 +1056,6 @@ export const actions = {
 		  ]
 		  contractIds = contractSells.map(cItem => cItem.contract_id)
 		})
-		contractSells = contractSells.sort((a, b) => a.contract_id - b.contract_id)
 		commit('setFilteredTraits', traitFilters)
 	  } else {
 		commit('setFilteredTraits', null)
@@ -1210,7 +1210,7 @@ export const actions = {
 			refer_fee
 			totalCount
 		}
-		certReferStatistics(first: 10 where: { referAddress_not: "0x454b9f80d3ea53000544eb7c9038d4ba8b84c324" date_key_in: [${dateFilters}] }) {
+		certReferStatistics(first: 100 where: { referAddress_not: "0x454b9f80d3ea53000544eb7c9038d4ba8b84c324" date_key_in: [${dateFilters}] }) {
 			id
 			date_key
 			referAddress
@@ -1222,7 +1222,7 @@ export const actions = {
 	  const userInfo = data.certReferUsers.length > 0 ? data.certReferUsers[0] : null
 	  let statistics = data.certReferStatistics
 	  const referAddresses = statistics.map(item => item.referAddress)
-	  const userList = statistics.filter((item, index) => referAddresses.indexOf(item.referAddress) === index)
+	  let userList = statistics.filter((item, index) => referAddresses.indexOf(item.referAddress) === index)
 	  userList.map(item => {
 		const referList = statistics.filter(referItem => item.referAddress === referItem.referAddress && item.date_key !== referItem.date_key)
 		if (referList.length > 0) {
@@ -1237,6 +1237,7 @@ export const actions = {
 		}
 		return item
 	  })
+	  userList = userList.slice(0, 10)
 	  if (userInfo) {
 		userInfo.clicksInfo = await API.getClickCount(userInfo.referAddress.toLowerCase())
 	  }
@@ -1280,7 +1281,7 @@ export const actions = {
 	if (!ethereum) return
 
 	const provider = new ethers.providers.Web3Provider(ethereum)
-    if (process.browser && localStorage.getItem('address') && !localStorage.getItem('walletconnect') && ethereum) {
+    if (process.client && localStorage.getItem('address') && !localStorage.getItem('walletconnect') && ethereum) {
       try {
 		const signer = await provider.getSigner()
 		const address = await signer.getAddress()
@@ -1529,7 +1530,7 @@ export const actions = {
 	  const web3 = new Web3(getters.provider)
 	  const kit = ContractKit.newKitFromWeb3(web3)
 	  const res = await kit.getTotalBalance(address)
-	  const balance = res.CELO.c.length < 2 ? 0 : res.CELO.c[0] / 10000
+	  const balance = (res.CELO.c.length < 2 && res.CELO.e < 18) ? 0 : res.CELO.c[0] / 10000
 	  commit('setBalance', balance)
 	  return balance
 	} catch(e) {

@@ -238,13 +238,17 @@ export default {
 	  setTimeout(() => this.addressCopied = false, 1000)
     },
     async reloadMyCollection() {
-      if (process.browser && localStorage && !localStorage.getItem('move_back')) {
+      if (process.client && !localStorage.getItem('move_back')) {
 		this.$store.commit('setTraitFilters', [])
         await this.fetchMyCollection()
         this.loadNftCounts()
       } else {
-		if (localStorage) {
-		  localStorage.removeItem('move_back')
+		try {
+		  if (process.client) {
+			localStorage.removeItem('move_back')
+		  }
+		} catch(e) {
+		  console.log(e)
 		}
         this.loading = true
         this.loadNftCounts()

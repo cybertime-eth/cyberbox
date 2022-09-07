@@ -4,7 +4,7 @@
             <div class="referral__main">
                 <div class="referral__main-summary">
                     <h2 class="referral__main-summary-title">
-                        <span class="referral__main-summary-title-invite">Invite your friends</span> and earn<br/>Money for helping nature
+                        <span class="referral__main-summary-title-invite">Invite your friends</span> and earn<br/>money for helping nature
                     </h2>
                     <ul class="referral__main-summary-features indent-features-list">
                       	<li class="indent-features-list-item">

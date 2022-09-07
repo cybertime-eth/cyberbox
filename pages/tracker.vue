@@ -198,7 +198,17 @@ export default {
   },
   methods: {
 	formatCO2(value) {
-	  return value > 0 ? value.toFixed(1) : 0
+		if (value === 0) {
+			return '0.0'
+		} else {
+			const diff = value - Math.floor(value)
+			const floatingLen = diff.toString().length - 2
+			if (floatingLen > 1) {
+				return value >= 0.01 ? value.toFixed(2) : '<0.01'
+			} else {
+				return value >= 0.01 ? value.toFixed(1) : '<0.01'
+			}
+		}
 	},
 	async reloadPageData() {
 	  const trackingInfo = await this.$store.dispatch('getCarbonData')

@@ -7,7 +7,7 @@
 		</client-only>
     	<h1 class="refi__title">Regenerate nature with the power of NFTs</h1>
 		<client-only>
-    		<h3 class="refi__subtitle">ReFi NFT Marketplace that helps anyone become carbon neutral by<br v-if="!isMobile()"/>offsetting carbon (CO2) through NFT trading</h3>
+    		<h3 class="refi__subtitle">ReFi NFT Marketplace that helps anyone become carbon neutral by <br v-if="!isMobile()"/>offsetting carbon (CO2) through NFT trading</h3>
 		</client-only>
 		<div class="refi__main-buttons">
           <button class="refi__main-button explorer" @click="gotoExplorer('Top_button')">Explorer NFT</button>
