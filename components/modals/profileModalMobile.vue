@@ -3,7 +3,7 @@
     <div class="menu-mobile-header container-xl">
       <img :src="getCDNImage('logo.svg')" alt="logo" class="menu-mobile-header-logo" @click="gotoHome">
       <div class="menu-mobile-header-walletbox">
-		<dropdown-menu class="header__wallet-dropdown" :right="true" interactive="interactive" v-model="showCeloDropdown">
+		<!-- <dropdown-menu class="header__wallet-dropdown" :right="true" interactive="interactive" v-model="showCeloDropdown">
 			<div class="header__wallet" v-if="address">
 				<h3 class="header__wallet-balance">{{ balance }} CELO</h3>
 				<h3 class="header__wallet-address">{{ address }}</h3>
@@ -18,7 +18,7 @@
 					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" :src="getCDNImage('celo.svg')" alt="celo"> CELO</span>
 				</a>
 			</div>
-		</dropdown-menu>
+		</dropdown-menu> -->
         <img :src="closeIcon" alt="close" class="menu-mobile-header-close" @click="closeModal">
       </div>
     </div>
@@ -27,11 +27,10 @@
         <nuxt-link to="/explorer" active-class="gradient-text" class="menu-mobile-list-link" @click="sendExplorerEvent">Explorer</nuxt-link>
         <nuxt-link to="/rankings" active-class="gradient-text" class="menu-mobile-list-link" @click="sendRankingEvent">Rankings</nuxt-link>
         <nuxt-link to="/tracker" active-class="gradient-text" class="menu-mobile-list-link">Tracker</nuxt-link>
-        <nuxt-link to="/referral" active-class="gradient-text" class="menu-mobile-list-link">Referral</nuxt-link>
-		<nuxt-link to="/mycollection" active-class="gradient-text" class="menu-mobile-list-link">My collection</nuxt-link>
+        <nuxt-link to="/offsetbox" active-class="gradient-text" class="menu-mobile-list-link">Offset Box</nuxt-link>
       </div>
       <client-only>
-        <profileModal :sideMenu="true" v-if="isMobile()"/>
+        <profileModal :sideMenu="true" @closeModal="closeModal" v-if="isMobile()"/>
       </client-only>
       <!-- <a href="https://forms.gle/R7LmANz7iqsCA88X8" target="_blank" class="menu-mobile-list-link">Launchpad</a> -->
     </div>
@@ -134,6 +133,7 @@ export default {
     &-link {
       width: 100%;
       padding-bottom: 2.5rem;
+      font-family: OpenSans-Regular;
     }
   }
   @media (max-width: 460px) {

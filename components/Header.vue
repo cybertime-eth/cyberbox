@@ -20,13 +20,15 @@
             <nuxt-link class="header__link" active-class="gradient-text" to="/tracker" @click="sendTrackerEvent" exact>Tracker</nuxt-link>
           </li>
           <li class="header__list">
-            <nuxt-link class="header__link" active-class="gradient-text" to="/referral" @click="sendReferralEvent" exact>Referral</nuxt-link>
+            <nuxt-link class="header__link" active-class="gradient-text" to="/offsetbox" @click="sendReferralEvent" exact>Offset Box</nuxt-link>
           </li>
         </ul>
       </nav>
       <client-only>
         <div class="header__box" v-if="address && !isMobile()">
-          <nuxt-link class="header__link" active-class="gradient-text" to="/mycollection" exact>My NFT</nuxt-link>
+          <nuxt-link class="header__link header__createbox" active-class="gradient-text" to="/createbox" exact>
+		  	<button class="gradient-button">Create Box</button>
+		  </nuxt-link>
           <nuxt-link class="header__notification" to="/notification" exact>
             <img :src="getCDNImage('lightning.svg')" alt="lightning">
             <span class="header__notification-count" v-if="notificationCount">{{ notificationCount }}</span>
@@ -34,39 +36,32 @@
         </div>
         <button v-else class="header__null"></button>
         <div class="header__wallet" v-if="address && !isMobile()">
-		  <dropdown-menu class="header__wallet-dropdown" :right="true" v-model="showCeloDropdown">
-          	<h3 class="header__wallet-balance dropdown-toggle">{{ balance }} CELO</h3>
-			<div slot="dropdown">
-				<!-- <a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
-					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" src="/celo.svg" alt="celo"> CELO by Credit Card <img class="dropdown-item-cards" src="/payable-cards.svg" alt="cards"></span>
-					<img class="dropdown-item-nav" src="/array-right.svg" alt="right">
-				</a> -->
-				<a class="dropdown-item" href="https://app.ubeswap.org/#/swap?inputCurrency=ETH&outputCurrency=0x471ece3750da237f93b8e339c536989b8978a438" target="_blank">
-					<span class="dropdown-item-name">Buy <img class="dropdown-item-celo" :src="getCDNImage('celo.svg')" alt="celo"> CELO</span>
-				</a>
-			</div>
-		  </dropdown-menu>
-		  <h3 class="header__wallet-address" ref="wallet" @click="showProfileMenu = !showProfileMenu">{{ address }}</h3>
-		  <div class="header__wallet-avatar-box">
-			<div class="header__wallet-avatar gradient-button">
+		  <dropdown-menu class="header__wallet-dropdown" :right="true" interactive="interactive" v-model="showCeloDropdown">
+			<div class="header__wallet-avatar gradient-button dropdown-toggle">
 				<img :src="getCDNImage('celo.svg')" alt="avatar">
 			</div>
-		  </div>
+			<div slot="dropdown">
+				<ProfileDropdown @onMyCollection="showCeloDropdown = false"/>
+			</div>
+		  </dropdown-menu>
         </div>
       </client-only>
       <button class="gradient-button header__connect" v-if="!address" @click="showConnectModal = true">Connect Wallet</button>
       <div class="header__mobile">
+		<img :src="getCDNImage('search-mobile.svg')" alt="search" class="header__mobile-search" @click="showSearchView = true">
         <client-only>
           <nuxt-link class="header__notification" to="/notification" exact v-if="mobileMenuVisible">
             <img :src="getCDNImage('lightning.svg')" alt="lightning">
             <span class="header__notification-count" v-if="notificationCount">{{ notificationCount }}</span>
           </nuxt-link>
-          <div class="header__box" v-if="address && mobileMenuVisible">
-            <nuxt-link class="header__link header__mycollection" active-class="gradient-text" to="/mycollection" exact><img :src="getCDNImage('mycollection.svg')" alt="mycollection"></nuxt-link>
-          </div>
+          <dropdown-menu class="header__wallet-dropdown" :right="true" interactive="interactive" v-model="showProfileDropdown" v-if="address && mobileMenuVisible">
+			<img class="dropdown-toggle" src="/profile-mobile.svg" alt="avatar">
+			<div slot="dropdown">
+				<ProfileDropdown @onMyCollection="showProfileDropdown = false"/>
+			</div>
+		  </dropdown-menu>
         </client-only>
         <button class="gradient-button header__mobile-connect" v-if="!address"  @click="showConnectModal = true">Connect</button>
-        <img :src="getCDNImage('search-mobile.svg')" alt="search" class="header__mobile-search" @click="showSearchView = true">
         <img :src="getCDNImage('burger.svg')" alt="burger" class="header__mobile-menu" @click="showMobileMenu">
 		<img :src="getCDNImage('close.svg')" alt="close" class="header__mobile-close" @click="closeSellModal">
       </div>
@@ -80,7 +75,6 @@
 	<valoraConnect @closeModal="closeModal" v-if="showValoraModal"/>
 	<socialConnect @showConnect="openConnectModal" @closeModal="closeModal" v-if="showEmailModal"/>
     <wrongNetwork v-if="showWrongNetworkModal" @closeModal="showWrongNetworkModal = false"/>
-    <profileModal v-if="showProfileMenu" @closeModal="closeModal"/>
     <profileModalMobile v-if="showProfileMenuMobile" :balance="balance" @closeModal="closeModal"/>
     <searchView v-if="showSearchView" @close="showSearchView = false"/>
   </header>
@@ -95,6 +89,7 @@ import profileModalMobile from '@/components/modals/profileModalMobile'
 import wrongNetwork from '@/components/modals/wrongNetwork'
 import searchInput from '@/components/search/searchInput'
 import searchView from '@/components/search/searchView'
+import ProfileDropdown from '@/components/ProfileDropdown'
 export default {
   data() {
     return {
@@ -105,7 +100,7 @@ export default {
 	  showValoraModal: false,
 	  showEmailModal: false,
 	  showCeloDropdown: false,
-      showProfileMenu: false,
+	  showProfileDropdown: false,
       showProfileMenuMobile: false,
       showWrongNetwork: false,
       showWrongNetworkModal: false,
@@ -139,7 +134,8 @@ export default {
     profileModal,
     profileModalMobile,
     searchInput,
-    searchView
+	searchView,
+	ProfileDropdown
   },
   computed: {
     chainId() {
@@ -174,22 +170,11 @@ export default {
     }
   },
   async created() {
-    if (process.browser) {
-      window.addEventListener('click', this.handleClickWindow)
-	}
 	this.$nextTick(function() {
 	  this.mobileMenuVisible = this.isMobile()
     })
   },
-  beforeDestroy() {
-    window.removeEventListener('click', this.handleClickWindow)
-  },
   methods: {
-    handleClickWindow(e) {
-      if (this.$refs.wallet && !this.$refs.wallet.contains(e.target)) {
-        this.showProfileMenu = false
-      }
-    },
     handleClickBack() {
       localStorage.setItem('move_back', true)
       this.$router.go(-1)
@@ -226,7 +211,6 @@ export default {
 	  this.showWalletModal = payload
 	  this.showValoraModal = payload
 	  this.showEmailModal = payload
-      this.showProfileMenu = payload
       this.showProfileMenuMobile = payload
       if (this.isMobile()) {
         const footerEl = document.querySelector('.footer')
@@ -285,7 +269,7 @@ header {
 .header {
   height: 9.5rem;
   display: grid;
-  grid-template-columns: 6.4rem 23.6rem 36rem 42.2rem 24rem;
+  grid-template-columns: 6.4rem 23.6rem 36rem 61.8rem 4.4rem;
   align-items: center;
   position: relative;
   &__back {
@@ -316,6 +300,14 @@ header {
 	justify-self: end;
 	padding-right: 1.2rem;
   }
+  &__createbox {
+	button {
+	  padding: 1.1rem 1.6rem;
+	  font-weight: 600;
+	  font-size: 1.6rem;
+	  color: $textColor;
+	}
+  }
   &__notification {
     position: relative;
     display: flex;
@@ -324,7 +316,7 @@ header {
     width: 4.4rem;
     height: 4.4rem;
     background: $white;
-    margin-left: 2.8rem;
+    margin-left: 2.4rem;
     border-radius: 50%;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
     img {
@@ -367,7 +359,6 @@ header {
 	display: flex;
     align-items: center;
 	width: 24rem;
-    justify-self: end;
 	position: relative;
     cursor: pointer;
     z-index: 1;
@@ -386,28 +377,11 @@ header {
 	}
 	&-dropdown {
 	  .dropdown-menu {
-		top: calc(100% + 1.2rem) !important;
-		right: 1rem !important;
-		width: 12.4rem;
-	  }
-	  .dropdown-item {
-		cursor: pointer;
-		&:hover {
-			background: $lightGreen;
-		}
-		&-name {
-			display: flex;
-			align-items: center;
-			font-weight: 600;
-			font-size: 1.6rem;
-		}
-		&-celo {
-			width: 1.6rem;
-			margin: 0 0.4rem;
-		}
-		&-cards {
-			margin-left: 1.6rem;
-		}
+		top: calc(100% + 2.6rem) !important;
+		width: 32rem;
+		padding: 0 2.2rem 0 1.6rem;
+		box-shadow: 0px 4px 25px rgb(28 19 39 / 16%) !important;
+		border-radius: 0.8rem !important;
 	  }
 	}
 	&-address {
@@ -415,11 +389,6 @@ header {
 	  padding: 1.1rem 1.2rem 1.1rem 3rem;
 	  border-radius: 0 2.5rem 2.5rem 0;
     }
-	&-avatar-box {
-	  position: absolute;
-	  left: 50%;
-	  transform: translateX(-55%);
-	}
     &-avatar {
       width: 4rem;
       height: 4rem;
@@ -505,7 +474,7 @@ header {
       width: 2.4rem;
       height: 2.4rem;
       margin-left: 0;
-	  margin-right: 1.9rem;
+	  margin-right: 1.6rem;
 	  transform: translateY(0.1rem);
       img {
         width: 0.9rem;
@@ -567,8 +536,17 @@ header {
 		}
 	  }
 	  &-dropdown {
+		.dropdown-toggle {
+		  width: 2.4rem;
+		  height: 2.4rem;
+		  margin-right: 1.6rem;
+		  border-radius: 50%;
+		}
 		.dropdown-menu {
-		  width: 12.3rem;
+		  position: fixed !important;
+		  top: 6.5rem !important;
+		  left: 0.2rem;
+		  width: calc(100vw - 4.2rem);
 		  z-index: 3;
 		  .dropdown-item {
 			&-name {
@@ -597,7 +575,7 @@ header {
         display: block;
         justify-self: flex-end;
         width: 1.8rem;
-      }
+	  }
       &-connect {
         display: block;
         width: 10.1rem;
