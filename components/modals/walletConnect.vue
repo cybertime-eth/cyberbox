@@ -3,34 +3,38 @@
     <div class="modal__wallet">
 	  <div class="modal__wallet-header">
 		<!-- <img class="modal__wallet-header-back" src="/arrow-left-black.svg" alt="back" @click="showConnectModal"> -->
-      	<h2 class="modal__wallet-header-title">Connect Wallet</h2>
+      	<h2 class="modal__wallet-header-title">Connect your wallet</h2>
 		<img class="modal__wallet-header-close" :src="getCDNImage('close.svg')" alt="close" @click="closeModal">
 	  </div>
 	  <div class="modal__wallet-buttons">
 		<button	class="modal__wallet-buttons-button" @click="connectMetaTrust">
-			<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/metamask.svg')" alt="metamask">
 			<p class="modal__wallet-buttons-button-name">Metamask</p>
+			<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/metamask.svg')" alt="metamask">
 		</button>
 		<client-only v-if="!isMobile()">
 			<button	class="modal__wallet-buttons-button" @click="connectWallet">
-				<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/wallet-connect.svg')" alt="wallet">
 				<p class="modal__wallet-buttons-button-name">WalletConnect</p>
+				<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/wallet-connect.svg')" alt="wallet">
 			</button>
 			<button	class="modal__wallet-buttons-button" @click="connectValora">
-				<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/valora.svg')" alt="valora">
 				<p class="modal__wallet-buttons-button-name">Valora</p>
+				<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/valora.svg')" alt="valora">
 			</button>
 		</client-only>
 		<client-only v-else>
 			<button	class="modal__wallet-buttons-button" @click="connectValora">
-				<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/valora.svg')" alt="valora">
 				<p class="modal__wallet-buttons-button-name">Valora</p>
+				<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/valora.svg')" alt="valora">
 			</button>
 			<button	class="modal__wallet-buttons-button" @click="connectWallet">
-				<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/wallet-connect.svg')" alt="wallet">
 				<p class="modal__wallet-buttons-button-name">WalletConnect</p>
+				<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/wallet-connect.svg')" alt="wallet">
 			</button>
 		</client-only>
+		<button	class="modal__wallet-buttons-button" @click="connectMetaTrust">
+			<p class="modal__wallet-buttons-button-name">Brave</p>
+			<img class="modal__wallet-buttons-button-image" src="auth/brave.svg" alt="brave">
+		</button>
 	  </div>
     </div>
   </div>  
@@ -105,51 +109,48 @@ export default {
 .modal {
   &__wallet {
 	background: $white;
-	padding: 3.4rem 1.6rem 4.1rem;
+	padding: 5.6rem 6.9rem 4rem;
 	border-radius: 0.8rem;
+	position: relative;
 	&-header {
-	  display: flex;
-	  align-items: center;
-	  justify-content: space-between;
-	  position: relative;
 	  &-title {
-		flex: 1;
+		width: 100%;
 		text-align: center;
+		line-height: 1;
 		font-weight: 600;
 		font-size: 2rem;
 		color: $titleColor;
 	  }
 	  &-close {
 		position: absolute;
-		top: 0.2rem;
-		right: 0.4rem;
+		top: 2.1rem;
+		right: 2.1rem;
 		cursor: pointer;
 	  }
 	}
 	&-buttons {
-	  display: flex;
-	  margin-top: 4.2rem;
+	  margin-top: 3.2rem;
 	  &-button {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		flex-direction: column;
-		width: 14.3rem;
-		height: 10.7rem;
+		width: 30.2rem;
+		height: 4.8rem;
 		background: $white;
-		padding-top: 1.6rem;
-		padding-bottom: 0.8rem;
+		padding: 1.3rem;
 		border: 1px solid $modalColor;
-		border-radius: 4px;
-		margin-right: 0.8rem;
+		border-radius: 0.4rem;
+		margin-bottom: 1.6rem;
 		&:last-child {
 		  margin: 0;
 		}
 		&-image {
-		  width: 4rem;
+		  width: 2.4rem;
 		}
 		&-name {
-		  font-size: 1.4rem;
+		  font-family: OpenSans-Regular;
+		  font-weight: 600;
+		  font-size: 1.6rem;
 		}
 	  }
 	}
@@ -157,7 +158,8 @@ export default {
   @media screen and (max-width: 460px) {
 	&__wallet {
 	  width: 100%;
-	  padding: 3.4rem 0.8rem 2.4rem;
+	  padding-left: 0.8rem;
+	  padding-right: 0.8rem;
 	  &-header {
 		&-title {
 		  font-size: 1.8rem;
@@ -166,19 +168,14 @@ export default {
 	  &-buttons {
 		flex-wrap: wrap;
 		&-button {
-		  flex: 1;
-		  width: auto;
-		  height: 8rem;
-		  padding-top: 1.2rem;
+		  width: 28.8rem;
+		  height: 4.8rem;
 		  &:nth-child(2) {
 			margin: 0;
 		  }
 		  &:last-child {
 			margin-top: 0.8rem;
 			min-width: 100%;
-		  }
-		  &-image {
-			width: 3.2rem;
 		  }
 		}
 	  }
