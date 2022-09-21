@@ -1,22 +1,22 @@
 <template>
-  <section class="create-box">
-    <div class="container-xl">
-      <Navigation :step="step" />
-      <CreateBoxStep v-if="step === 1" @changeStep="changeStep"/>
-      <AddLoginStep v-if="step === 2" @routeBack="changeStep"/>
-    </div>
-    <LaunchStep v-if="step === 3" @changeStep="changeStep"/>
+	<section class="create-box">
+      <!-- <CreateBoxStep v-if="step === 1" @changeStep="changeStep"/> -->
+      <!-- <PrepareBoxStep v-if="step === 1" @changeStep="changeStep"/> -->
+      <!-- <SuccessfullBoxStep v-if="step === 1" @changeStep="changeStep"/> -->
+      <CollectionTypeStep v-if="step === 1" @changeStep="changeStep"/>
   </section>
 </template>
 <script>
-import Navigation from "../components/createbox/Navigation";
-import CreateBoxStep from "../components/createbox/CreateBoxStep";
-import AddLoginStep from "../components/createbox/AddLogicStep";
-import LaunchStep from "../components/createbox/LaunchStep";
+import CreateBoxStep from "../components/createbox/CreateBoxStep"
+import PrepareBoxStep from "../components/createbox/PrepareBoxStep"
+import SuccessfullBoxStep from "../components/createbox/SuccessfullBoxStep"
+import CollectionTypeStep from "../components/createbox/CollectionTypeStep"
+
 export default {
   data() {
     return {
-      step: 1,
+	  step: 1,
+      showCreateContent: false
     }
   },
   methods: {
@@ -28,10 +28,10 @@ export default {
     }
   },
   components: {
-    Navigation,
     CreateBoxStep,
-    AddLoginStep,
-    LaunchStep
+    PrepareBoxStep,
+    SuccessfullBoxStep,
+    CollectionTypeStep
   }
 }
 </script>

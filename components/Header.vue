@@ -26,7 +26,7 @@
       </nav>
       <client-only>
         <div class="header__box" v-if="address && !isMobile()">
-          <nuxt-link class="header__link header__createbox" active-class="gradient-text" to="/createbox" exact>
+          <nuxt-link class="header__link header__createbox" to="/createbox" exact>
 		  	<button class="gradient-button">Create Box</button>
 		  </nuxt-link>
           <nuxt-link class="header__notification" to="/notification" exact>

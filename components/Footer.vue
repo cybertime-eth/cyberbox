@@ -1,5 +1,5 @@
 <template>
-	<section class="footer" :class="{ fixed: footerFixed }">
+	<section class="footer" :class="{ fixed: footerFixed, hidden: footerHidden }">
 		<div class="footer__container container-xl">
 			<a class="footer__logo" href="/">
 				<img :src="getCDNImage('footer-logo.svg')" alt="logo" >
@@ -36,7 +36,8 @@
 export default {
 	data() {
 	  return {
-		footerFixed: true
+		footerFixed: true,
+		footerHidden: false
 	  }
 	},
 	computed: {
@@ -54,9 +55,13 @@ export default {
 	},
 	methods: {
 	  updateLayout() {
-			const nonFixedRoutes = ['index', 'explorer', 'tracker', 'calendar']
+		const nonFixedRoutes = ['index', 'explorer', 'tracker', 'calendar']
 		if (nonFixedRoutes.includes(this.routeName) || (this.routeName !== 'index' && process.browser && window.innerWidth <= 460)) {
 		  this.footerFixed = false
+		}
+		const hiddenRotues = ['createbox']
+		if (hiddenRotues.includes(this.routeName)) {
+		  this.footerHidden = true
 		}
 	  },
 	  gotoTop() {
@@ -76,6 +81,9 @@ export default {
 		left: 0;
 		right: 0;
 		bottom: 0;
+	}
+	&.hidden {
+	  	display: none;
 	}
 	&__container {
 		display: flex;

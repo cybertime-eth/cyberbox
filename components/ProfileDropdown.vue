@@ -11,10 +11,10 @@
             <div class="dropdown-item-address">
                 <div class="dropdown-item-address-balance">
                     <p class="dropdown-item-address-balance-name">Ballance</p>
-                    <h3 class="dropdown-item-address-balance-celo">142 CELO</h3>
+                    <h3 class="dropdown-item-address-balance-celo">{{ balance || 0 }} CELO</h3>
                 </div>
                 <div class="dropdown-item-address-info">
-                    <p class="dropdown-item-address-info-wallet">0x029...2323</p>
+                    <p class="dropdown-item-address-info-wallet">{{ cuttenAddress }}</p>
                     <span class="dropdown-item-address-info-status"/>
                 </div>
             </div>
@@ -33,6 +33,29 @@
 
 <script>
 export default {
+  computed: {
+	balance() {
+	  return this.$store.state.balance.toFixed(1)
+	},
+	cuttenAddress() {
+	  const address = this.$store.state.address
+	  if (address) {
+		if (!address.includes('.nom')) {
+		  const startID = ['0x']
+		  const endID = address.split("").slice(-4)
+		  const dotArr = [".", ".", "."]
+		  return startID
+			.concat(dotArr)
+			.concat(endID)
+			.join("")
+		} else {
+		  return address
+		}
+	  } else {
+        return ''
+      }
+	}
+  },
   methods: {
     gotoMyCollection() {
       this.$router.push('/mycollection')

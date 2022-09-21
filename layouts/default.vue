@@ -119,6 +119,16 @@ export default {
   }
 }
 
+.gradient-border-button {
+  background: $white;
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)), linear-gradient(93.06deg, #FC2EF5 8.21%, #5489D8 50.57%, #2CFF64 100%);
+  box-shadow: 0.2rem 1000px 1px #fff inset;
+  border: 0.2rem solid transparent;
+  border-radius: 0.8rem;
+}
+
 .gradient-text {
   background: linear-gradient(93.06deg, #FC2EF5 8.21%, #5489D8 50.57%, #2CFF64 100%);
   -webkit-background-clip: text;
@@ -127,6 +137,9 @@ export default {
 
 //DEFAULT STYLES
 
+* {
+  font-family: OpenSans-Regular;
+}
 html,
 body {
   margin: 0;
