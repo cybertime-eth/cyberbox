@@ -1,12 +1,10 @@
 <template>
   <div class="step-second">
-    <CreateRarity v-if="createRarity" @changePage="changePage" @routeBack="changeStep" @nextStep="changeStep" />
     <AddNft v-if="addNftInBox" @changePage="changePage"/>
   </div>
 </template>
 <script>
 import AddNft from './step2/AddNft'
-import CreateRarity from './step2/CreateRarity'
 export default {
   data() {
     return {
@@ -32,8 +30,7 @@ export default {
     }
   },
   components: {
-    AddNft,
-    CreateRarity
+    AddNft
   }
 }
 </script>

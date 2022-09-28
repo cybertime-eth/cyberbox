@@ -3,7 +3,7 @@
         <h2 class="collection-type-step-title">Select collection type</h2>
         <p class="collection-type-step-subtitle">You can create a collection with legendary, rare, epic and common NFT, or create a simple collection.</p>
         <div class="collection-type-step-box">
-            <div class="collection-type-step-box-card">
+            <div class="collection-type-step-box-card" @click="selectCollectionType(1)">
                 <div class="collection-type-step-box-card-frame">
                     <div class="collection-type-step-box-card-frame-raritybg"></div>
                     <div class="collection-type-step-box-card-frame-line1"></div>
@@ -14,7 +14,7 @@
                 </div>
                 <h2 class="collection-type-step-box-card-title">Create with rarity</h2>
             </div>
-            <div class="collection-type-step-box-card">
+            <div class="collection-type-step-box-card" @click="selectCollectionType(2)">
                 <div class="collection-type-step-box-card-frame">
                     <div class="collection-type-step-box-card-frame-simplebg"></div>
                     <div class="collection-type-step-box-card-frame-line1"></div>
@@ -25,6 +25,16 @@
         </div>
     </div>
 </template>
+
+<script>
+export default {
+  methods: {
+    selectCollectionType(type) {
+      this.$emit('changeStep', 5, type)
+    }
+  }
+}
+</script>
 
 <style lang="scss" scoped>
 .collection-type-step {

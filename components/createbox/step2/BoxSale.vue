@@ -1,5 +1,9 @@
 <template>
   <div class="createbox__nft">
+	<div class="createbox__nft-steps">
+		<p class="createbox__nft-steps-step active">1</p>
+		<p class="createbox__nft-steps-step">2</p>
+	</div>
     <div class="createbox__nft-header">
 		<h2 class="createbox__nft-header-title">Add NFT for Box collection</h2>
 		<p class="createbox__nft-header-description">Decide how many carbon tokens you want to burn and add nft to each rarity. Rarity is calculated based on the number of burned tokens.</p>
@@ -156,6 +160,39 @@ export default {
 <style lang="scss">
 .createbox__nft {
   padding: 3.2rem 6rem;
+  &-steps {
+	display: flex;
+	width: fit-content;
+	margin: 0 auto;
+	&-step {
+	  width: 2.4rem;
+	  height: 2.4rem;
+	  border: 2px solid $border2;
+	  border-radius: 50%;
+	  text-align: center;
+	  line-height: 2.4rem;
+	  font-size: 1.2rem;
+	  color: $border2;
+	  position: relative;
+	  &:first-child {
+		margin-right: 15rem;
+		&::after {
+		  content: "";
+		  position: absolute;
+		  top: 50%;
+		  left: calc(100% + 2px);
+		  width: 15rem;
+		  height: 2px;
+		  background: $border2;
+		  z-index: -1;
+		}
+	  }
+	  &.active {
+		border-color: $pink;
+		color: $pink;
+	  }
+	}
+  }
   &-header {
 	max-width: 42.4rem;
 	margin: 4.8rem auto 0;
