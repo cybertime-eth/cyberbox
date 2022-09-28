@@ -1,10 +1,11 @@
 <template>
 	<section class="create-box">
-      <CreateBoxStep v-if="step === 1" @changeStep="changeStep"/>
+      <!-- <CreateBoxStep v-if="step === 1" @changeStep="changeStep"/>
       <PrepareBoxStep v-if="step === 2" @changeStep="changeStep"/>
       <SuccessfullBoxStep v-if="step === 3" @changeStep="changeStep"/>
-      <CollectionTypeStep v-if="step === 4" @changeStep="changeStep"/>
-      <CreateNftStep v-if="step === 5" @changeStep="changeStep" :rarity="collectionType === 1"/>
+      <CollectionTypeStep v-if="step === 4" @changeStep="changeStep"/> -->
+      <!-- <CreateNftStep v-if="step === 5" @changeStep="changeStep" :rarity="collectionType === 1"/> -->
+	  <CreateNftStep v-if="step === 1" @changeStep="changeStep" :rarity="collectionType === 1"/>
   </section>
 </template>
 <script>

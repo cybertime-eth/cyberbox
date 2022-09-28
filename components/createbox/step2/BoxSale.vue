@@ -1,146 +1,142 @@
 <template>
-  <div class="createbox__nft">
-	<div class="createbox__nft-steps">
-		<p class="createbox__nft-steps-step active">1</p>
-		<p class="createbox__nft-steps-step">2</p>
-	</div>
-    <div class="createbox__nft-header">
-		<h2 class="createbox__nft-header-title">Add NFT for Box collection</h2>
-		<p class="createbox__nft-header-description">Decide how many carbon tokens you want to burn and add nft to each rarity. Rarity is calculated based on the number of burned tokens.</p>
+  <div class="box__sale">
+    <div class="box__sale-header">
+		<h2 class="box__sale-header-title">Add NFT for Box collection</h2>
+		<p class="box__sale-header-description">Decide how many carbon tokens you want to burn and add nft to each rarity. Rarity is calculated based on the number of burned tokens.</p>
     </div>
-    <div class="createbox__nft-setting">
-		<div class="createbox__nft-setting-token">
-			<div class="createbox__nft-setting-step">
-				<p class="createbox__nft-setting-step-num">1</p>
-				<p class="createbox__nft-setting-step-name">Enter the number of carbon tokens you are going to burn by creating a box</p>
+    <div class="box__sale-setting">
+		<div class="box__sale-setting-token">
+			<div class="box__sale-setting-step">
+				<p class="box__sale-setting-step-num">1</p>
+				<p class="box__sale-setting-step-name">Enter the number of carbon tokens you are going to burn by creating a box</p>
 			</div>
-			<div class="createbox__nft-setting-token-detail">
-				<p class="createbox__nft-setting-token-detail-info">Enter the number of carbon tokens to burn</p>
-				<div class="createbox__nft-setting-token-detail-inputblock">
-					<div class="createbox__nft-setting-token-detail-inputbox">
-						<input class="createbox__nft-setting-token-detail-input" placeholder="0">
+			<div class="box__sale-setting-token-detail">
+				<p class="box__sale-setting-token-detail-info">Enter the number of carbon tokens to burn</p>
+				<div class="box__sale-setting-token-detail-inputblock">
+					<div class="box__sale-setting-token-detail-inputbox">
+						<input class="box__sale-setting-token-detail-input" placeholder="0">
 					</div>
-					<a class="createbox__nft-setting-token-detail-buy">Buy cMCO2</a>
+					<a class="box__sale-setting-token-detail-buy">Buy cMCO2</a>
 				</div>
 			</div>
-			<div class="createbox__nft-setting-token-units">
-				<p class="createbox__nft-setting-token-units-unit">1000</p>
-				<p class="createbox__nft-setting-token-units-unit">10000</p>
-				<p class="createbox__nft-setting-token-units-unit">30000</p>
-				<p class="createbox__nft-setting-token-units-unit">100000</p>
+			<div class="box__sale-setting-token-units">
+				<p class="box__sale-setting-token-units-unit">1000</p>
+				<p class="box__sale-setting-token-units-unit">10000</p>
+				<p class="box__sale-setting-token-units-unit">30000</p>
+				<p class="box__sale-setting-token-units-unit">100000</p>
 			</div>
-			<p class="createbox__nft-setting-token-balance">Balance: <b>1034 cMCO2</b></p>
+			<p class="box__sale-setting-token-balance">Balance: <b>1034 cMCO2</b></p>
 		</div>
-		<div class="createbox__nft-setting-nfts">
-			<div class="createbox__nft-setting-stepbox">
-				<div class="createbox__nft-setting-step">
-					<p class="createbox__nft-setting-step-num">2</p>
-					<p class="createbox__nft-setting-step-name">Load your nft into each window according to rarity</p>
+		<div class="box__sale-setting-nfts">
+			<div class="box__sale-setting-stepbox">
+				<div class="box__sale-setting-step">
+					<p class="box__sale-setting-step-num">2</p>
+					<p class="box__sale-setting-step-name">Load your nft into each window according to rarity</p>
 				</div>
-				<img class="createbox__nft-setting-step-info" src="/question.svg">
+				<img class="box__sale-setting-step-info" src="/question.svg">
 			</div>
-			<div class="createbox__nft-setting-nfts-file">
-				<p class="createbox__nft-setting-nfts-file-label">Upload file for NFTs</p>
-				<p class="createbox__nft-setting-nfts-file-kinds">JPEG, PNG, GIF, MP4. Max 50 MB</p>
+			<div class="box__sale-setting-nfts-file">
+				<p class="box__sale-setting-nfts-file-label">Upload file for NFTs</p>
+				<p class="box__sale-setting-nfts-file-kinds">JPEG, PNG, GIF, MP4. Max 50 MB</p>
 			</div>
-			<div class="createbox__nft-setting-nfts-add">
-				<div class="createbox__nft-setting-nfts-add-block">
-					<input class="createbox__nft-setting-nfts-add-block-input" placeholder="Enter name">
-					<div class="createbox__nft-setting-nfts-add-block-category">
-						<div class="createbox__nft-setting-nfts-add-block-category-plus">
-							<button class="createbox__nft-setting-nfts-add-block-category-plus-button">
-								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
+			<div class="box__sale-setting-nfts-add">
+				<div class="box__sale-setting-nfts-add-block">
+					<input class="box__sale-setting-nfts-add-block-input" placeholder="Enter name">
+					<div class="box__sale-setting-nfts-add-block-category">
+						<div class="box__sale-setting-nfts-add-block-category-plus">
+							<button class="box__sale-setting-nfts-add-block-category-plus-button">
+								<img class="box__sale-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
 							</button>
-							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
+							<p class="box__sale-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
 						</div>
-						<div class="createbox__nft-setting-nfts-add-block-category-type">
-							<img class="createbox__nft-setting-nfts-add-block-category-type-icon legendary" src="/diamond.svg">
-							<p class="createbox__nft-setting-nfts-add-block-category-type-name">Legendary</p>
+						<div class="box__sale-setting-nfts-add-block-category-type">
+							<img class="box__sale-setting-nfts-add-block-category-type-icon legendary" src="/diamond.svg">
+							<p class="box__sale-setting-nfts-add-block-category-type-name">Legendary</p>
 						</div>
 					</div>
 				</div>
-				<div class="createbox__nft-setting-nfts-add-buttonbox">
-					<button class="createbox__nft-setting-nfts-add-button">
-						<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
-						<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
+				<div class="box__sale-setting-nfts-add-buttonbox">
+					<button class="box__sale-setting-nfts-add-button">
+						<p class="box__sale-setting-nfts-add-button-name">Add NFT</p>
+						<img class="box__sale-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
 					</button>
-					<div class="createbox__nft-setting-nfts-add-detail" v-if="!rarity">
-						<p class="createbox__nft-setting-nfts-add-detail-count">Total NFT’s: 1</p>
-						<p class="createbox__nft-setting-nfts-add-detail-quantity">Total quantity: 1</p>
+					<div class="box__sale-setting-nfts-add-detail" v-if="!rarity">
+						<p class="box__sale-setting-nfts-add-detail-count">Total NFT’s: 1</p>
+						<p class="box__sale-setting-nfts-add-detail-quantity">Total quantity: 1</p>
 					</div>
 				</div>
 			</div>
-			<div class="createbox__nft-setting-nfts-add" v-if="rarity">
-				<div class="createbox__nft-setting-nfts-add-block">
-					<input class="createbox__nft-setting-nfts-add-block-input" placeholder="Enter name">
-					<div class="createbox__nft-setting-nfts-add-block-category">
-						<div class="createbox__nft-setting-nfts-add-block-category-plus">
-							<button class="createbox__nft-setting-nfts-add-block-category-plus-button">
-								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
+			<div class="box__sale-setting-nfts-add" v-if="rarity">
+				<div class="box__sale-setting-nfts-add-block">
+					<input class="box__sale-setting-nfts-add-block-input" placeholder="Enter name">
+					<div class="box__sale-setting-nfts-add-block-category">
+						<div class="box__sale-setting-nfts-add-block-category-plus">
+							<button class="box__sale-setting-nfts-add-block-category-plus-button">
+								<img class="box__sale-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
 							</button>
-							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
+							<p class="box__sale-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
 						</div>
-						<div class="createbox__nft-setting-nfts-add-block-category-type">
-							<img class="createbox__nft-setting-nfts-add-block-category-type-icon epic" src="/fire-filled-grey.svg">
-							<p class="createbox__nft-setting-nfts-add-block-category-type-name">Epic</p>
+						<div class="box__sale-setting-nfts-add-block-category-type">
+							<img class="box__sale-setting-nfts-add-block-category-type-icon epic" src="/fire-filled-grey.svg">
+							<p class="box__sale-setting-nfts-add-block-category-type-name">Epic</p>
 						</div>
 					</div>
 				</div>
-				<button class="createbox__nft-setting-nfts-add-button">
-					<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
-					<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
+				<button class="box__sale-setting-nfts-add-button">
+					<p class="box__sale-setting-nfts-add-button-name">Add NFT</p>
+					<img class="box__sale-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
 				</button>
 			</div>
-			<div class="createbox__nft-setting-nfts-add" v-if="rarity">
-				<div class="createbox__nft-setting-nfts-add-block">
-					<input class="createbox__nft-setting-nfts-add-block-input" placeholder="Enter name">
-					<div class="createbox__nft-setting-nfts-add-block-category">
-						<div class="createbox__nft-setting-nfts-add-block-category-plus">
-							<button class="createbox__nft-setting-nfts-add-block-category-plus-button">
-								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
+			<div class="box__sale-setting-nfts-add" v-if="rarity">
+				<div class="box__sale-setting-nfts-add-block">
+					<input class="box__sale-setting-nfts-add-block-input" placeholder="Enter name">
+					<div class="box__sale-setting-nfts-add-block-category">
+						<div class="box__sale-setting-nfts-add-block-category-plus">
+							<button class="box__sale-setting-nfts-add-block-category-plus-button">
+								<img class="box__sale-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
 							</button>
-							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
+							<p class="box__sale-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
 						</div>
-						<div class="createbox__nft-setting-nfts-add-block-category-type">
-							<img class="createbox__nft-setting-nfts-add-block-category-type-icon" src="/snow.svg">
-							<p class="createbox__nft-setting-nfts-add-block-category-type-name">Rare</p>
+						<div class="box__sale-setting-nfts-add-block-category-type">
+							<img class="box__sale-setting-nfts-add-block-category-type-icon" src="/snow.svg">
+							<p class="box__sale-setting-nfts-add-block-category-type-name">Rare</p>
 						</div>
 					</div>
 				</div>
-				<button class="createbox__nft-setting-nfts-add-button">
-					<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
-					<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
+				<button class="box__sale-setting-nfts-add-button">
+					<p class="box__sale-setting-nfts-add-button-name">Add NFT</p>
+					<img class="box__sale-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
 				</button>
 			</div>
-			<div class="createbox__nft-setting-nfts-add" v-if="rarity">
-				<div class="createbox__nft-setting-nfts-add-block">
-					<input class="createbox__nft-setting-nfts-add-block-input" placeholder="Enter name">
-					<div class="createbox__nft-setting-nfts-add-block-category">
-						<div class="createbox__nft-setting-nfts-add-block-category-plus">
-							<button class="createbox__nft-setting-nfts-add-block-category-plus-button">
-								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
+			<div class="box__sale-setting-nfts-add" v-if="rarity">
+				<div class="box__sale-setting-nfts-add-block">
+					<input class="box__sale-setting-nfts-add-block-input" placeholder="Enter name">
+					<div class="box__sale-setting-nfts-add-block-category">
+						<div class="box__sale-setting-nfts-add-block-category-plus">
+							<button class="box__sale-setting-nfts-add-block-category-plus-button">
+								<img class="box__sale-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
 							</button>
-							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
+							<p class="box__sale-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
 						</div>
-						<div class="createbox__nft-setting-nfts-add-block-category-type">
-							<p class="createbox__nft-setting-nfts-add-block-category-type-name">Common</p>
+						<div class="box__sale-setting-nfts-add-block-category-type">
+							<p class="box__sale-setting-nfts-add-block-category-type-name">Common</p>
 						</div>
 					</div>
 				</div>
-				<button class="createbox__nft-setting-nfts-add-button">
-					<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
-					<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
+				<button class="box__sale-setting-nfts-add-button">
+					<p class="box__sale-setting-nfts-add-button-name">Add NFT</p>
+					<img class="box__sale-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
 				</button>
 			</div>
-			<div class="createbox__nft-setting-nfts-total">
-				<p class="createbox__nft-setting-nfts-total-count">Total NFT's: 4</p>
-				<p class="createbox__nft-setting-nfts-total-quantity">Total quantity: 0</p>
+			<div class="box__sale-setting-nfts-total">
+				<p class="box__sale-setting-nfts-total-count">Total NFT's: 4</p>
+				<p class="box__sale-setting-nfts-total-quantity">Total quantity: 0</p>
 			</div>
 		</div>
 	</div>
-	<button class="createbox__nft-next">
+	<button class="box__sale-next">
 		Next step
-		<img class="createbox__nft-next-icon" src="/arrow-right.svg">
+		<img class="box__sale-next-icon" src="/arrow-right.svg">
 	</button>
   </div>
 </template>
@@ -158,8 +154,8 @@ export default {
 }
 </script>
 <style lang="scss">
-.createbox__nft {
-  padding: 3.2rem 6rem;
+.box__sale {
+  padding: 0 6rem;
   &-steps {
 	display: flex;
 	width: fit-content;
@@ -239,7 +235,7 @@ export default {
 	  display: flex;
 	  align-items: center;
 	  justify-content: space-between;
-	  .createbox__nft-setting-step {
+	  .box__sale-setting-step {
 		&-num {
 		  background: transparent;
 		  border: 1px solid $border;
@@ -403,7 +399,7 @@ export default {
 		  align-items: center;
 		  justify-content: space-between;
 		  margin-top: 1.4rem;
-		  .createbox__nft-setting-nfts-add-button {
+		  .box__sale-setting-nfts-add-button {
 			margin: 0;
 		  }
 		}

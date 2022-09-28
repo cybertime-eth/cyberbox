@@ -1,15 +1,32 @@
 <template>
     <div class="createnft-step">
         <div class="createnft-step-substeps">
-            <p class="createnft-step-substeps-step active">1</p>
-            <p class="createnft-step-substeps-step">2</p>
+            <p class="createnft-step-substeps-step" :class="{ active: step === 1 }">1</p>
+            <p class="createnft-step-substeps-step" :class="{ active: step === 2 }">2</p>
         </div>
-
+		<AddNft/>
     </div>
 </template>
 
+<script>
+import AddNft from './step2/AddNft'
+import BoxSale from './step2/BoxSale'
+
+export default {
+  data() {
+	return {
+	  step: 1
+	}
+  },
+  components: {
+	AddNft
+  }
+}
+</script>
+
 <style lang="scss" scoped>
 .createnft-step {
+  padding: 3.2rem 0;
   &-substeps {
 	display: flex;
 	width: fit-content;

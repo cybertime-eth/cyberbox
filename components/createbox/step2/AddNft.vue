@@ -155,7 +155,7 @@ export default {
 </script>
 <style lang="scss">
 .createbox__nft {
-  padding: 3.2rem 6rem;
+  padding: 0 6rem;
   &-header {
 	max-width: 42.4rem;
 	margin: 4.8rem auto 0;
