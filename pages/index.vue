@@ -7,7 +7,7 @@
 		</client-only>
     	<h1 class="refi__title">Become carbon neutral with NFTs</h1>
 		<client-only>
-    		<h3 class="refi__subtitle">Cyberbox ReFi NFT Marketplace that helps everyone offset CO2 with <br v-if="!isMobile()"/>NFTs and track their carbon footprint</h3>
+    		<h3 class="refi__subtitle">Cyberbox ReFi NFT Marketplace helps everyone offset CO2 with <br v-if="!isMobile()"/>NFTs and track their carbon footprint</h3>
 		</client-only>
 		<div class="refi__main-buttons">
           <button class="refi__main-button explorer" @click="gotoExplorer('Top_button')">Explorer NFT</button>
