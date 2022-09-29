@@ -14,7 +14,8 @@
 				<p class="box__sale-setting-token-detail-info">Enter the number of carbon tokens to burn</p>
 				<div class="box__sale-setting-token-detail-inputblock">
 					<div class="box__sale-setting-token-detail-inputbox">
-						<input class="box__sale-setting-token-detail-input" placeholder="0">
+						<input class="box__sale-setting-token-detail-input" placeholder="0">	
+						
 					</div>
 					<a class="box__sale-setting-token-detail-buy">Buy cMCO2</a>
 				</div>
