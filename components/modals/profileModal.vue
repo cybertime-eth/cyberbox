@@ -1,21 +1,7 @@
 <template>
   <ul class="profile__menu" :class="{sidemenu: sideMenu }" @mouseleave="closeModal">
-    <!-- <li class="profile__menu-list">
-      <nuxt-link to="/mycollection" class="profile__menu-link">
-        <div class="profile__menu-link-info">
-          <img src="/my-collection.png" alt="coolicon" class="profile__menu-link-info-icon">
-          My collection
-        </div>
-        <img src="/array-right.svg" alt="array">
-      </nuxt-link>
-    </li> -->
-    <li class="profile__menu-list" @click="logout">
-      <div class="profile__menu-link">
-        <div class="profile__menu-link-info">
-          <img :src="getCDNImage('logout.svg')" alt="logout" class="profile__menu-link-info-icon">
-          <h3>Logout</h3>
-        </div>
-      </div>
+    <li class="profile__menu-item" @click="closeModal">
+      <nuxt-link class="profile__menu-item-link gradient-button" to="/createbox" exact>Create Box</nuxt-link>
     </li>
   </ul>
 </template>
@@ -28,9 +14,6 @@ export default {
     }
   },
   methods: {
-    logout() {
-      this.$store.dispatch('logout')
-    },
     closeModal() {
       this.$emit('closeModal', false)
     }
@@ -102,21 +85,25 @@ export default {
     &.sidemenu {
       position: static;
       top: auto;
-      padding: 0 0 2.5rem;
+	  padding: 0;
+	  margin-bottom: 5.2rem;
       box-shadow: none;
       border: 0;
       border-radius: 0;
-      .profile__menu-link {
-        display: block;
-      }
-      .profile__menu-list {
-        height: auto;
-        padding: 0 0 2.5rem;
-        img {
-          display: none;
-        }
-      }
-    }
+	}
+	&-item {
+	  &-link {
+		display: block;
+		width: 14.4rem;
+		margin: 0 auto;
+		padding: 0.8rem 0;
+		text-align: center;
+		font-family: OpenSans-Regular;
+		font-weight: 600;
+		font-size: 1.4rem;
+		color: $textColor !important;
+	  }
+	}
   }
 }
 </style>

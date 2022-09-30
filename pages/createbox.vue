@@ -1,37 +1,44 @@
 <template>
-  <section class="create-box">
-    <div class="container-xl">
-      <Navigation :step="step" />
+	<section class="create-box">
       <CreateBoxStep v-if="step === 1" @changeStep="changeStep"/>
-      <AddLoginStep v-if="step === 2" @routeBack="changeStep"/>
-    </div>
-    <LaunchStep v-if="step === 3" @changeStep="changeStep"/>
+      <PrepareBoxStep v-if="step === 2" @changeStep="changeStep"/>
+      <SuccessfullBoxStep v-if="step === 3" @changeStep="changeStep"/>
+      <CollectionTypeStep v-if="step === 4" @changeStep="changeStep"/>
+	  <CreateOffsetBoxStep :rarity="collectionType === 1" @changeStep="changeStep" v-if="step === 5"/>
   </section>
 </template>
 <script>
-import Navigation from "../components/createbox/Navigation";
-import CreateBoxStep from "../components/createbox/CreateBoxStep";
-import AddLoginStep from "../components/createbox/AddLogicStep";
-import LaunchStep from "../components/createbox/LaunchStep";
+import CreateBoxStep from "../components/createbox/CreateBoxStep"
+import PrepareBoxStep from "../components/createbox/PrepareBoxStep"
+import SuccessfullBoxStep from "../components/createbox/SuccessfullBoxStep"
+import CollectionTypeStep from "../components/createbox/CollectionTypeStep"
+import CreateOffsetBoxStep from "../components/createbox/CreateOffsetBoxStep"
+
 export default {
   data() {
     return {
-      step: 1,
+	  step: 1,
+	  collectionType: 1,
+      showCreateContent: false
     }
   },
   methods: {
-    changeStep(payload) {
-      this.step = payload
+    changeStep(payload, type) {
+	  this.step = payload
+	  if (type) {
+		this.collectionType = type
+	  }
       if (process.browser) {
         window.scrollTo(0, 0)
       }
-    }
+	}
   },
   components: {
-    Navigation,
     CreateBoxStep,
-    AddLoginStep,
-    LaunchStep
+    PrepareBoxStep,
+    SuccessfullBoxStep,
+	CollectionTypeStep,
+	CreateOffsetBoxStep
   }
 }
 </script>
