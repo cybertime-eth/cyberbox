@@ -52,22 +52,28 @@
                 <div class="createbox__collection-main-banner-logo">
                     <p class="createbox__collection-main-banner-label">Collection logo</p>
                     <p class="createbox__collection-main-banner-description">JPEG, PNG, GIF. Recommend 400x400. Max 5mb</p>
-                    <div class="createbox__collection-main-banner-logo-box">
-                        <img class="createbox__collection-main-banner-thumb" src="/picture.svg" alt="logo">
+                    <div class="createbox__collection-main-banner-box createbox__collection-main-banner-logo-box" :class="{ filled: bannerSrc }" @click="changeFile('banner')">
+						<input class="createbox__collection-main-fileinput" type="file" accept="image/*" ref="banner" @change="selectBanner('banner', $event)" hidden>
+						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!bannerSrc">
+						<img class="createbox__collection-main-banner-thumb" :src="bannerSrc" alt="logo" v-else>
                     </div>
                 </div>
                 <div class="createbox__collection-main-banner-cover">
                     <p class="createbox__collection-main-banner-label">Cover image</p>
                     <p class="createbox__collection-main-banner-description">JPEG, PNG. Recommend 1440x236. Max 15mb</p>
-                    <div class="createbox__collection-main-banner-cover-box">
-                        <img class="createbox__collection-main-banner-thumb" src="/picture.svg" alt="cover">
+                    <div class="createbox__collection-main-banner-box createbox__collection-main-banner-cover-box" :class="{ filled: coverSrc }"   @click="changeFile('cover')">
+						<input class="createbox__collection-main-fileinput" type="file" accept="image/*" ref="cover" @change="selectBanner('cover', $event)" hidden>
+						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!coverSrc">
+						<img class="createbox__collection-main-banner-thumb" :src="coverSrc" alt="cover" v-else>
                     </div>
                 </div>
                 <div class="createbox__collection-main-banner-promo">
                     <p class="createbox__collection-main-banner-label">Promo Banner</p>
                     <p class="createbox__collection-main-banner-description">JPEG, PNG. Recommend 424x224. Max 10mb</p>
-                    <div class="createbox__collection-main-banner-promo-box">
-                        <img class="createbox__collection-main-banner-thumb" src="/picture.svg" alt="promo">
+                    <div class="createbox__collection-main-banner-box createbox__collection-main-banner-promo-box" :class="{ filled: promoSrc }" @click="changeFile('promo')">
+						<input class="createbox__collection-main-fileinput" ref="promo" accept="image/*" type="file" @change="selectBanner('promo', $event)" hidden>
+						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!promoSrc">
+						<img class="createbox__collection-main-banner-thumb" :src="promoSrc" alt="promo" v-else>
                     </div>
                 </div>
             </div>
@@ -83,10 +89,31 @@
 export default {
   data() {
     return {
+	  bannerSrc: null,
+	  coverSrc: null,
+	  promoSrc: null,
       canCreate: true
     }
   },
   methods: {
+	changeFile(type) {
+	  const element = this.$refs[type]
+	  element.click()
+	},
+	selectBanner(type, e) {
+	  if (e.target.files.length === 0) return
+	  switch (type) {
+		case 'banner':
+		  this.bannerSrc = URL.createObjectURL(e.target.files[0])
+		  break
+		case 'cover':
+		  this.coverSrc = URL.createObjectURL(e.target.files[0])
+		  break
+		case 'promo':
+		  this.promoSrc = URL.createObjectURL(e.target.files[0])
+		  break
+	  }
+	},
 	createCollection() {
 	  this.$emit('create')
 	}
@@ -134,13 +161,17 @@ export default {
           margin-top: 1.6rem;
           border: 1px solid $border2;
           border-radius: 0.4rem;
-          font-size: 1.6rem;
+		  font-size: 1.6rem;
+		  &:focus {
+			border-color: $grayDark;
+		  }
         }
         &-description {
           margin-top: 3.2rem;
           &-optional {
-            color: $textColor;
-          }
+			font-weight: 500;
+			color: $border;
+		  }
           &-hint {
             width: 100%;
             margin-top: 1.8rem;
@@ -157,7 +188,10 @@ export default {
           border: 1px solid $border2;
           border-radius: 0.4rem;
           font-size: 1.6rem;
-          resize: none;
+		  resize: none;
+		  &:focus {
+			border-color: $grayDark;
+		  }
         }
       }
       &-social {
@@ -194,17 +228,24 @@ export default {
       }
     }
     &-banner {
+	  &-box {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px dashed $border;
+		border-radius: 4px;
+		cursor: pointer;
+	  }
       &-logo {
         &-box {
-          display: flex;
-          align-items: center;
-          justify-content: center;
           width: 12.6rem;
           height: 12.6rem;
           margin-top: 1.6rem;
           border-radius: 50%;
-          border: 1px dashed $border;
-          border-radius: 50%;
+		  overflow: hidden;
+		  &.filled {
+			border: 0;
+		  }
         }
       }
       &-label {
@@ -213,33 +254,29 @@ export default {
       }
       &-description {
         margin-top: 0.8rem;
-        font-size: 1.4rem;
+		font-size: 1.4rem;
       }
-      &-thumb {
+      &-preview {
         width: 1.7rem;
+	  }
+	  &-thumb {
+		width: 100%;
+		height: 100%;
       }
       &-cover {
-        margin-top: 3.2rem;
+		margin-top: 3.2rem;
         &-box {
-          display: flex;
-          align-items: center;
-          justify-content: center;
           width: 38.4rem;
           height: 13.6rem;
           margin-top: 1.6rem;
-          border: 1px dashed $border;
         }
       }
       &-promo {
-        margin-top: 3.2rem;
+		margin-top: 3.2rem;
         &-box {
-          display: flex;
-          align-items: center;
-          justify-content: center;
           width: 18rem;
           height: 13.6rem;
           margin-top: 1.6rem;
-          border: 1px dashed $border;
         }
       }
     }

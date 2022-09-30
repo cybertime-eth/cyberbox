@@ -390,6 +390,11 @@ ul {
   }
 }
 
+.semibold {
+  font-family: OpenSans-Medium;
+  font-weight: 600;
+}
+
 //FONTS
 
 @font-face {

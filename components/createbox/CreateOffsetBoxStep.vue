@@ -1,10 +1,14 @@
 <template>
     <div class="createnft-step">
         <div class="createnft-step-substeps">
-            <p class="createnft-step-substeps-step" :class="{ active: step === 1 }">1</p>
+            <p class="createnft-step-substeps-step" :class="{ active: step === 1, checked: step === 2 }">
+				<span v-if="step === 1">1</span>
+				<img class="createnft-step-substeps-step-checked" src="/check-white.svg" v-else>
+			</p>
             <p class="createnft-step-substeps-step" :class="{ active: step === 2 }">2</p>
         </div>
-		<AddNft/>
+		<AddNft @changeBoxStep="changeStep" :rarity="rarity" v-if="step === 1"/>
+		<BoxSale @onPrevStep="step = 1" @onComplete="completeStep" v-if="step === 2"/>
     </div>
 </template>
 
@@ -13,13 +17,23 @@ import AddNft from './step2/AddNft'
 import BoxSale from './step2/BoxSale'
 
 export default {
+  props: ['rarity'],
   data() {
 	return {
 	  step: 1
 	}
   },
   components: {
-	AddNft
+	AddNft,
+	BoxSale
+  },
+  methods: {
+	changeStep(step) {
+	  this.step = step
+	},
+	completeStep() {
+	  this.$emit('completeBox')
+	}
   }
 }
 </script>
@@ -53,6 +67,16 @@ export default {
 		  background: $border2;
 		  z-index: -1;
 		}
+		&.checked {
+			background: $pink;
+			border: 2px solid transparent;
+		  &::after {
+			background: $pink;
+		  }
+		}
+	  }
+	  &-icon {
+		width: 1.2rem;
 	  }
 	  &.active {
 		border-color: $pink;

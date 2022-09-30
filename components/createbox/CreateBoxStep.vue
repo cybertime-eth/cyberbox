@@ -1,7 +1,7 @@
 <template>
   <div class="createbox__container">
 		<EmptyBox @changeSubStep="moveToCreateStep" v-if="subStep === 1"/>
-		<CreateCollection v-if="subStep === 2" @create="moveToNextStep"/>
+		<CreateCollection @create="moveToNextStep" v-if="subStep === 2"/>
 	</div>
 </template>
 <script>

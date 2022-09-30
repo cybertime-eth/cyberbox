@@ -2,7 +2,7 @@
   <div class="createbox__nft">
     <div class="createbox__nft-header">
 		<h2 class="createbox__nft-header-title">Add NFT for Box collection</h2>
-		<p class="createbox__nft-header-description">Decide how many carbon tokens you want to burn and add nft to each rarity. Rarity is calculated based on the number of burned tokens.</p>
+		<p class="createbox__nft-header-description" v-if="rarity">Decide how many carbon tokens you want to burn and add nft to each rarity. Rarity is calculated based on the number of burned tokens.</p>
     </div>
     <div class="createbox__nft-setting">
 		<div class="createbox__nft-setting-token">
@@ -134,7 +134,7 @@
 			</div>
 		</div>
 	</div>
-	<button class="createbox__nft-next">
+	<button class="createbox__nft-next" @click="gotoNextStep">
 		Next step
 		<img class="createbox__nft-next-icon" src="/arrow-right.svg">
 	</button>
@@ -145,11 +145,12 @@ export default {
   props: ['rarity'],
   data() {
     return {
-
     }
   },
   methods: {
-    
+    gotoNextStep() {
+	  this.$emit('changeBoxStep', 2)
+	}
   }
 }
 </script>
@@ -414,15 +415,21 @@ export default {
 	display: flex;
 	align-items: center;
 	width: 18rem;
-	background: $white;
+	background: $pink;
 	padding: 1.6rem 4rem;
 	margin: 13.6rem auto 0;
 	margin-top: 13.4rem;
-	border: 1px solid $border;
+	border: 1px solid transparent;
 	font-family: OpenSans-SemiBold;
 	font-weight: 600;
 	font-size: 1.4rem;
-	color: $border;
+	color: $white;
+	&.disabled {
+	  pointer-events: none;
+	  background: $white;
+	  color: $border;
+	  border: 1px solid $border;
+	}
 	&-icon {
 	  margin-left: 1.4rem;
 	}

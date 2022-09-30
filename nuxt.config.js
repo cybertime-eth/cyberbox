@@ -62,7 +62,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/co2-generator-unit',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/20220928-max-i32-length',
         options: {}
       },
       ubeswap: {

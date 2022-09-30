@@ -1,198 +1,143 @@
 <template>
   <div class="box__sale">
     <div class="box__sale-header">
-		<h2 class="box__sale-header-title">Add NFT for Box collection</h2>
-		<p class="box__sale-header-description">Decide how many carbon tokens you want to burn and add nft to each rarity. Rarity is calculated based on the number of burned tokens.</p>
+		<h2 class="box__sale-header-title">Create Box</h2>
+		<p class="box__sale-header-description">Enter information about the carbon box</p>
     </div>
     <div class="box__sale-setting">
-		<div class="box__sale-setting-token">
-			<div class="box__sale-setting-step">
-				<p class="box__sale-setting-step-num">1</p>
-				<p class="box__sale-setting-step-name">Enter the number of carbon tokens you are going to burn by creating a box</p>
+		<div class="box__sale-setting-info">
+			<div class="box__sale-setting-info-name">
+				<p class="box__sale-setting-info-label">* Box Name</p>
+				<input class="box__sale-setting-info-input" placeholder="Name your box">
 			</div>
-			<div class="box__sale-setting-token-detail">
-				<p class="box__sale-setting-token-detail-info">Enter the number of carbon tokens to burn</p>
-				<div class="box__sale-setting-token-detail-inputblock">
-					<div class="box__sale-setting-token-detail-inputbox">
-						<input class="box__sale-setting-token-detail-input" placeholder="0">	
-						
-					</div>
-					<a class="box__sale-setting-token-detail-buy">Buy cMCO2</a>
+			<div class="box__sale-setting-info-description">
+				<p class="box__sale-setting-info-label">Collection description <span>(Optional)</span></p>
+				<textarea class="box__sale-setting-info-textarea" placeholder="Add description"/>
+				<p class="box__sale-setting-info-textarea-letters">0/200</p>
+			</div>
+			<div class="box__sale-setting-info-author">
+				<p class="box__sale-setting-info-label">About autor <span>(Optional)</span></p>
+				<textarea class="box__sale-setting-info-textarea" placeholder="Add description"/>
+				<p class="box__sale-setting-info-textarea-letters">0/200</p>
+			</div>
+			<div class="box__sale-setting-info-royalty">
+				<p class="box__sale-setting-info-label">Royalty</p>
+				<div class="box__sale-setting-info-royalty-block">
+					<input class="box__sale-setting-info-input">
+					<button class="box__sale-setting-info-royalty-button minus">-</button>
+					<button class="box__sale-setting-info-royalty-button">+</button>
 				</div>
+				<p class="box__sale-setting-info-royalty-description">Royalties are how much you gain for each sale of your artwork on the secondary market. If you set it at 5%, each and every time anyone sells any copies of the artwork on this site, you get 5% of that sale — at the current sale price!</p>
 			</div>
-			<div class="box__sale-setting-token-units">
-				<p class="box__sale-setting-token-units-unit">1000</p>
-				<p class="box__sale-setting-token-units-unit">10000</p>
-				<p class="box__sale-setting-token-units-unit">30000</p>
-				<p class="box__sale-setting-token-units-unit">100000</p>
-			</div>
-			<p class="box__sale-setting-token-balance">Balance: <b>1034 cMCO2</b></p>
-		</div>
-		<div class="box__sale-setting-nfts">
-			<div class="box__sale-setting-stepbox">
-				<div class="box__sale-setting-step">
-					<p class="box__sale-setting-step-num">2</p>
-					<p class="box__sale-setting-step-name">Load your nft into each window according to rarity</p>
-				</div>
-				<img class="box__sale-setting-step-info" src="/question.svg">
-			</div>
-			<div class="box__sale-setting-nfts-file">
-				<p class="box__sale-setting-nfts-file-label">Upload file for NFTs</p>
-				<p class="box__sale-setting-nfts-file-kinds">JPEG, PNG, GIF, MP4. Max 50 MB</p>
-			</div>
-			<div class="box__sale-setting-nfts-add">
-				<div class="box__sale-setting-nfts-add-block">
-					<input class="box__sale-setting-nfts-add-block-input" placeholder="Enter name">
-					<div class="box__sale-setting-nfts-add-block-category">
-						<div class="box__sale-setting-nfts-add-block-category-plus">
-							<button class="box__sale-setting-nfts-add-block-category-plus-button">
-								<img class="box__sale-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
-							</button>
-							<p class="box__sale-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
-						</div>
-						<div class="box__sale-setting-nfts-add-block-category-type">
-							<img class="box__sale-setting-nfts-add-block-category-type-icon legendary" src="/diamond.svg">
-							<p class="box__sale-setting-nfts-add-block-category-type-name">Legendary</p>
-						</div>
-					</div>
-				</div>
-				<div class="box__sale-setting-nfts-add-buttonbox">
-					<button class="box__sale-setting-nfts-add-button">
-						<p class="box__sale-setting-nfts-add-button-name">Add NFT</p>
-						<img class="box__sale-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
+			<CustomSwitch label="Add Timer" :value="timerOn" @onChange="changeTimerStatus"/>
+			<div class="box__sale-setting-info-timer-block" v-if="timerOn">
+				<div class="box__sale-setting-info-presale">
+					<input type="checkbox" class="box__sale-setting-info-presale-checkbox">
+					<p class="box__sale-setting-info-presale-label">Pre-Sale <span>(whitelist)</span></p>
+					<button class="box__sale-setting-info-presale-address">
+						Add wallet addresses
+						<span class="box__sale-setting-info-presale-address-count">0</span>
 					</button>
-					<div class="box__sale-setting-nfts-add-detail" v-if="!rarity">
-						<p class="box__sale-setting-nfts-add-detail-count">Total NFT’s: 1</p>
-						<p class="box__sale-setting-nfts-add-detail-quantity">Total quantity: 1</p>
-					</div>
+					<img class="box__sale-setting-info-presale-info" src="/question.svg">
 				</div>
-			</div>
-			<div class="box__sale-setting-nfts-add" v-if="rarity">
-				<div class="box__sale-setting-nfts-add-block">
-					<input class="box__sale-setting-nfts-add-block-input" placeholder="Enter name">
-					<div class="box__sale-setting-nfts-add-block-category">
-						<div class="box__sale-setting-nfts-add-block-category-plus">
-							<button class="box__sale-setting-nfts-add-block-category-plus-button">
-								<img class="box__sale-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
-							</button>
-							<p class="box__sale-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
-						</div>
-						<div class="box__sale-setting-nfts-add-block-category-type">
-							<img class="box__sale-setting-nfts-add-block-category-type-icon epic" src="/fire-filled-grey.svg">
-							<p class="box__sale-setting-nfts-add-block-category-type-name">Epic</p>
-						</div>
-					</div>
+				<div class="box__sale-setting-info-price">
+					<p class="box__sale-setting-info-price-label semibold">* Price</p>
+					<input class="box__sale-setting-info-input box__sale-setting-info-price-input">
 				</div>
-				<button class="box__sale-setting-nfts-add-button">
-					<p class="box__sale-setting-nfts-add-button-name">Add NFT</p>
-					<img class="box__sale-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
-				</button>
-			</div>
-			<div class="box__sale-setting-nfts-add" v-if="rarity">
-				<div class="box__sale-setting-nfts-add-block">
-					<input class="box__sale-setting-nfts-add-block-input" placeholder="Enter name">
-					<div class="box__sale-setting-nfts-add-block-category">
-						<div class="box__sale-setting-nfts-add-block-category-plus">
-							<button class="box__sale-setting-nfts-add-block-category-plus-button">
-								<img class="box__sale-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
-							</button>
-							<p class="box__sale-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
+				<div class="box__sale-setting-info-public">
+					<p class="box__sale-setting-info-public-label semibold">Public-Sale</p>
+					<div class="box__sale-setting-info-public-time">
+						<div class="box__sale-setting-info-public-time-block">
+							<p class="box__sale-setting-info-public-time-block-label semibold">Start</p>
+							<input class="box__sale-setting-info-public-time-block-time" placeholder="--:-- AM">
+							<input class="box__sale-setting-info-public-time-block-date" placeholder="--.--.2022">
 						</div>
-						<div class="box__sale-setting-nfts-add-block-category-type">
-							<img class="box__sale-setting-nfts-add-block-category-type-icon" src="/snow.svg">
-							<p class="box__sale-setting-nfts-add-block-category-type-name">Rare</p>
+						<div class="box__sale-setting-info-public-time-block">
+							<p class="box__sale-setting-info-public-time-block-label semibold">End</p>
+							<input class="box__sale-setting-info-public-time-block-time" placeholder="--:-- AM">
+							<input class="box__sale-setting-info-public-time-block-date" placeholder="--.--.2022">
 						</div>
 					</div>
 				</div>
-				<button class="box__sale-setting-nfts-add-button">
-					<p class="box__sale-setting-nfts-add-button-name">Add NFT</p>
-					<img class="box__sale-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
-				</button>
+				<div class="box__sale-setting-info-price">
+					<p class="box__sale-setting-info-price-label semibold">* Price</p>
+					<input class="box__sale-setting-info-input box__sale-setting-info-price-input">
+				</div>
 			</div>
-			<div class="box__sale-setting-nfts-add" v-if="rarity">
-				<div class="box__sale-setting-nfts-add-block">
-					<input class="box__sale-setting-nfts-add-block-input" placeholder="Enter name">
-					<div class="box__sale-setting-nfts-add-block-category">
-						<div class="box__sale-setting-nfts-add-block-category-plus">
-							<button class="box__sale-setting-nfts-add-block-category-plus-button">
-								<img class="box__sale-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
-							</button>
-							<p class="box__sale-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
-						</div>
-						<div class="box__sale-setting-nfts-add-block-category-type">
-							<p class="box__sale-setting-nfts-add-block-category-type-name">Common</p>
-						</div>
+		</div>
+		<div class="box__sale-setting-image">
+			<div class="box__sale-setting-image-box">
+				<p class="box__sale-setting-image-label">Upload file for Box</p>
+				<div class="box__sale-setting-image-area box__sale-setting-image-box-area">
+					<img class="box__sale-setting-image-preview" src="/picture.svg">
+				</div>
+			</div>
+			<div class="box__sale-setting-image-choose">
+				<p class="box__sale-setting-image-label">Or chouse our image:</p>
+				<div class="box__sale-setting-image-choose-block">
+					<div class="box__sale-setting-image-choose-block-box">
+						<img class="box__sale-setting-image-choose-block-box-picture" src="/box-1.png">
+					</div>
+					<div class="box__sale-setting-image-choose-block-box">
+						<img class="box__sale-setting-image-choose-block-box-picture" src="/box-2.png">
+					</div>
+					<div class="box__sale-setting-image-choose-block-box">
+						<img class="box__sale-setting-image-choose-block-box-picture" src="/box-3.png">
 					</div>
 				</div>
-				<button class="box__sale-setting-nfts-add-button">
-					<p class="box__sale-setting-nfts-add-button-name">Add NFT</p>
-					<img class="box__sale-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
-				</button>
 			</div>
-			<div class="box__sale-setting-nfts-total">
-				<p class="box__sale-setting-nfts-total-count">Total NFT's: 4</p>
-				<p class="box__sale-setting-nfts-total-quantity">Total quantity: 0</p>
+			<div class="box__sale-setting-image-cover">
+				<p class="box__sale-setting-image-label">Upload cover</p>
+				<p class="box__sale-setting-image-cover-description">JPEG, PNG. Recommend 1440x236. Max 15mb</p>
+				<div class="box__sale-setting-image-area box__sale-setting-image-cover-area">
+					<img class="box__sale-setting-image-preview" src="/picture.svg">
+				</div>
 			</div>
 		</div>
 	</div>
-	<button class="box__sale-next">
-		Next step
-		<img class="box__sale-next-icon" src="/arrow-right.svg">
+	<button class="box__sale-buttons">
+		<button class="box__sale-buttons-button prev" @click="backToPrevStep">
+			<img class="box__sale-buttons-button-icon" src="/arrow-left-long.svg">
+			Previous step
+		</button>
+		<button class="box__sale-buttons-button" @click="showOffsetBox">Create carbon Box</button>
 	</button>
   </div>
 </template>
+
 <script>
+
+import CustomSwitch from '@/components/utility/CustomSwitch'
+
 export default {
-  props: ['rarity'],
+  components: {
+	CustomSwitch
+  },
   data() {
     return {
-
+	  timerOn: false
     }
   },
   methods: {
-    
-  }
-}
-</script>
-<style lang="scss">
-.box__sale {
-  padding: 0 6rem;
-  &-steps {
-	display: flex;
-	width: fit-content;
-	margin: 0 auto;
-	&-step {
-	  width: 2.4rem;
-	  height: 2.4rem;
-	  border: 2px solid $border2;
-	  border-radius: 50%;
-	  text-align: center;
-	  line-height: 2.4rem;
-	  font-size: 1.2rem;
-	  color: $border2;
-	  position: relative;
-	  &:first-child {
-		margin-right: 15rem;
-		&::after {
-		  content: "";
-		  position: absolute;
-		  top: 50%;
-		  left: calc(100% + 2px);
-		  width: 15rem;
-		  height: 2px;
-		  background: $border2;
-		  z-index: -1;
-		}
-	  }
-	  &.active {
-		border-color: $pink;
-		color: $pink;
-	  }
+    changeTimerStatus() {
+	  this.timerOn = !this.timerOn
+	},
+	backToPrevStep() {
+	  this.$emit('onPrevStep', this.rarity ? 1 : 2)
+	},
+	showOffsetBox() {
+	  this.$router.push('/offsetbox')
 	}
   }
+}
+
+</script>
+
+<style lang="scss">
+.box__sale {
+  padding-bottom: 7.8rem;
   &-header {
-	max-width: 42.4rem;
-	margin: 4.8rem auto 0;
+	margin: 5.3rem auto 0;
 	&-title {
 	  font-family: Cabin-Medium;
 	  font-weight: 500;
@@ -210,255 +155,261 @@ export default {
   &-setting {
 	display: flex;
 	justify-content: space-between;
-	margin-top: 7.9rem;
-	&-step {
-	  display: flex;
-	  align-items: center;
-	  &-num {
-		min-width: 2.8rem;
-		width: 2.8rem;
-		height: 2.8rem;
-		margin-right: 1.6rem;
-		background: $grayDark;
-		border-radius: 50%;
-		text-align: center;
-		line-height: 2.8rem;
-		font-size: 1.4rem;
-		color: $white;
-	  }
-	  &-name {
+	padding: 7.8rem 17.2rem 0;
+	&-info {
+	  flex: 1;
+	  max-width: 53.6rem;
+	  &-label {
+		line-height: 1;
 		font-family: OpenSans-SemiBold;
 		font-weight: 600;
 		font-size: 1.6rem;
-	  }
-	}
-	&-stepbox {
-	  display: flex;
-	  align-items: center;
-	  justify-content: space-between;
-	  .box__sale-setting-step {
-		&-num {
-		  background: transparent;
-		  border: 1px solid $border;
-		  color: $border;
-		}
-		&-name {
+		span {
+		  font-family: OpenSans-Regular;
+		  font-weight: 500;
 		  color: $border;
 		}
 	  }
-	}
-	&-token {
-	  max-width: 49.3rem; 
-	  margin-right: 13.6rem;
-	  &-detail {
-		margin-top: 1rem;
-		padding-top: 2.3rem;
-		border-top: 1px solid $border2;
-		&-info {
-		  font-size: 1.4rem;
-		}
-		&-inputblock {
-		  display: flex;
-		  align-items: center;
-		  margin-top: 2.2rem;
-		}
-		&-inputbox {
-		  flex: 1;
-		  position: relative;
-		  margin-right: 2rem;
-		  &::after {
-			content: "cMCO2";
-			display: block;
-			position: absolute;
-			top: 1.2rem;
-			right: 1.6rem;
-			pointer-events: none;
-			font-family: OpenSans-SemiBold;
-			font-weight: 600;
-			font-size: 1.4rem;
-			color: $grayLight;
-		  }
-		}
-		&-input {
-		  width: calc(100% - 3.2rem);
-		  height: 1.8rem;
-		  padding: 1.2rem 1.6rem;
-		  border: 1px solid $border2;
-		  border-radius: 2.5rem;
-    	  font-size: 1.6rem;
-		}
-		&-buy {
-		  font-family: OpenSans-SemiBold;
-		  font-weight: 600;
-		  font-size: 1.4rem;
-		  color: $green;
-		  cursor: pointer;
-		}
-	  }
-	  &-units {
-		display: flex;
+	  &-input {
+		width: calc(100% - 2rem);
+		height: 1.5rem;
 		margin-top: 1.6rem;
-		&-unit {
-		  margin-right: 2.4rem;
-		  font-family: OpenSans-SemiBold;
-		  line-height: 2rem;
-		  font-weight: 600;
-		  font-size: 1.4rem;
-		  color: $border2;
-		  cursor: pointer;
+		padding: 1.2rem 1rem;
+		border: 1px solid $border2;
+		border-radius: 4px;
+		&:focus {
+		  border-color: $grayDark;
 		}
 	  }
-	  &-balance {
-		margin-top: 2.6rem;
-		line-height: 2rem;
-		font-size: 1.4rem;
-	  }
-	}
-	&-nfts {
-	  flex: 1;
-	  &-file {
-		display: flex;
-		justify-content: space-between;
-		margin-top: 2.5rem;
-		padding-top: 2.2rem;
-		border-top: 1px solid $border2;
-		&-label, &-kinds {
-		  line-height: 2rem;
-		  font-family: OpenSans-SemiBold;
-		  font-weight: 600;
-		  font-size: 1.4rem;
-		  color: $border2;
+	  &-textarea {
+		width: calc(100% - 2rem);
+		height: 14.6rem;
+		border-radius: 4px;
+		padding: 1.8rem 1rem;
+		margin-top: 1.6rem;
+		resize: none;
+		&-letters {
+		  width: 100%;
+		  margin-top: 1.8rem;
+		  line-height: 1;
+		  text-align: right;
+		  font-size: 1.2rem;
+		  color: $border;
+		}
+		&:focus {
+		  border-color: $grayDark;
 		}
 	  }
-	  &-add {
-		margin-top: 2.3rem;
+	  &-description {
+		margin-top: 3.8rem;
+	  }
+	  &-author {
+		margin-top: 4rem;
+	  }
+	  &-royalty {
+		margin-top: 4rem;
 		&-block {
-		  padding: 1.8rem 1.6rem;
-		  box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.06);
-		  border-radius: 0.8rem;
-		  &-input {
-			width: 100%;
-			height: 1.8rem;
-			padding: 0;
-			border: 0;
-			padding-bottom: 1.2rem;
-			border-bottom: 1px solid $modalColor;
-			font-size: 1.6rem;
-		  }
-		  &-category {
-			display: flex;
-			justify-content: space-between;
-			margin-top: 0.8rem;
-			&-plus {
-			  display: flex;
-			  align-items: center;
-			  &-button {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				width: 3.1rem;
-				height: 3.1rem;
-				margin-right: 1.6rem;
-				background: $white;
-				border: 2px solid $border2;
-				border-radius: 0.4rem;
-			  }
-			  &-quantity {
-				font-family: OpenSans-SemiBold;
-				font-weight: 600;
-				font-size: 1.4rem;
-				color: $border2;
-			  }
-			}
-			&-type {
-			  display: flex;
-			  align-items: center;
-			  padding: 0.5rem 0.8rem;
-			  box-shadow: 0px 2px 5px rgba(28, 19, 39, 0.06);
-			  border-radius: 2rem;
-			  &-icon {
-				width: 1.2rem;
-				&.epic {
-				  width: 0.9rem;
-				}
-				&.legendary {
-				  margin-top: 0.6rem;
-				}
-				margin-right: 0.4rem;
-			  }
-			  &-name {
-				font-family: OpenSans-Bold;
-				font-weight: 700;
-				font-size: 1.4rem;
-				color: $border2;
-			  }
-			}
-		  }
-		}
-		&-buttonbox {
 		  display: flex;
-		  align-items: center;
 		  justify-content: space-between;
-		  margin-top: 1.4rem;
-		  .box__sale-setting-nfts-add-button {
-			margin: 0;
+		  margin-top: 1.8rem;
+		  input {
+			flex: 1;
+			width: auto;
+			margin-top: 0;
 		  }
 		}
 		&-button {
 		  display: flex;
 		  align-items: center;
-		  background: transparent;
+		  justify-content: center;
+		  width: 4rem;
+		  height: 4rem;
+		  background: $white;
+		  border: 1px solid $grayDark;
+		  border-radius: 4px;
+		  font-size: 2.4rem;
+		  &.minus {
+			margin: 0 0.8rem;
+		  }
+		}
+		&-description {
 		  margin-top: 1.4rem;
-		  &-name {
-			margin-right: 1.4rem;
-			font-size: 1.4rem;
+		  line-height: 2rem;
+		  font-size: 1.4rem;
+		  color: $textColor2;
+		}
+	  }
+	  &-price, .custom-switch {
+		margin-top: 3.8rem;
+	  }
+	  &-timer-block {
+		margin-top: 4.2rem;
+	  }
+	  &-presale {
+		display: flex;
+		align-items: center;
+		&-checkbox {
+		  width: 2.4rem;
+		  height: 2.4rem;
+		  margin-right: 1.6rem;
+		  background: $white;
+		  border: 1px solid $border;
+		  border-radius: 1px;
+		}
+		&-label {
+		  margin-right: 3.8rem;
+		  font-family: OpenSans-Medium;
+		  font-weight: 600;
+		  font-size: 1.6rem;
+		  span {
+			font-weight: 500;
 			color: $border;
 		  }
 		}
-		&-detail {
+		&-address {
 		  display: flex;
-		  &-count, &-quantity {
-			font-family: OpenSans-SemiBold;
-			font-weight: 600;
-			font-size: 1.4rem;
-			color: $grayDark;
+		  align-items: center;
+		  justify-content: space-between;
+		  width: 20.5rem;
+		  background: $white;
+		  padding: 0.6rem 1.5rem 0.6rem 1rem;
+		  margin-right: 3.5rem;
+		  border: 1px solid $pink;
+		  border-radius: 2rem;
+		  font-family: OpenSans-Medium;
+		  font-weight: 600;
+		  font-size: 1.4rem;
+		  &.disabled {
+			border-color: $border;
+			color: $border;
 		  }
 		  &-count {
-			margin-right: 2.4rem;
+			color: $border;
+		  }
+		}
+		&-info {
+		  width: 1.5rem;
+		}
+	  }
+	  &-price {
+		margin-top: 2.4rem;
+		&-label {
+		  font-size: 1.4rem;
+		  color: $grayLight;
+		}
+		&-input {
+		  width: 29.2rem;
+		}
+	  }
+	  &-public {
+		margin-top: 5.3rem;
+		&-label {
+		  line-height: 1;
+		  font-size: 1.6rem;
+		}
+		&-time {
+		  margin-top: 3.1rem;
+		  &-block {
+			display: flex;
+			align-items: center;
+			margin-bottom: 1rem;
+			&-label {
+			  width: 4rem;
+			  margin-right: 2.6rem;
+			}
+			input {
+			  width: 5.4rem;
+			  height: 1.4rem;
+			  background: rgba(118, 118, 128, 0.12);
+			  border-radius: 0.6rem;
+			  padding: 0.7rem 1.6rem;
+			  margin-right: 0.8rem;
+			  &:last-child {
+				width: 6.4rem;
+				margin: 0;
+			  }
+			}
 		  }
 		}
 	  }
-	  &-total {
+	}
+	&-image {
+	  &-label {
+		font-family: OpenSans-SemiBold;
+		font-weight: 600;
+		font-size: 1.6rem;
+	  }
+	  &-area {
+		width: 100%;
 		display: flex;
 		align-items: center;
-		margin-top: 2.6rem;
-		&-count, &-quantity {
-		  font-family: OpenSans-SemiBold;
-		  font-weight: 600;
-		  font-size: 1.4rem;
-		  color: $border;
+		justify-content: center;
+		border: 1px dashed $border;
+		border-radius: 4px;
+		margin-top: 1.6rem;
+		cursor: pointer;
+	  }
+	  &-box {
+		&-area {
+		  height: 31.2rem;
 		}
-		&-count {
-		  margin-right: 2.4rem;
-		}	  
+	  }
+	  &-choose {
+		margin-top: 2.4rem;
+		&-block {
+		  display: flex;
+		  margin-top: 1.6rem;
+		  &-box {
+			width: 8.8rem;
+			height: 8.8rem;
+			margin-right: 2.4rem;
+			border: 1px dashed $border;
+			border-radius: 4px;
+			cursor: pointer;
+			&:last-child {
+			  margin: 0;
+			}
+			&-picture {
+			  width: 100%;
+			}
+		  }
+		}
+	  }
+	  &-cover {
+		margin-top: 5.8rem;
+		&-description {
+		  margin-top: 0.6rem;
+		  font-size: 1.4rem;
+		  color: $grayLight;
+		}
+		&-area {
+		  height: 11.9rem;
+		}
 	  }
 	}
   }
-  &-next {
+  &-buttons {
 	display: flex;
-	align-items: center;
-	width: 18rem;
 	background: $white;
-	padding: 1.6rem 4rem;
-	margin: 13.6rem auto 0;
-	margin-top: 13.4rem;
-	border: 1px solid $border;
-	font-family: OpenSans-SemiBold;
-	font-weight: 600;
-	font-size: 1.4rem;
-	color: $border;
-	&-icon {
-	  margin-left: 1.4rem;
+	margin: 11rem auto 0;
+	&-button {
+	  display: flex;
+	  align-items: center;
+	  background: $pink;
+	  padding: 1.6rem 2.4rem;
+	  font-weight: 600;
+	  font-size: 1.4rem;
+	  color: $white;
+	  &.prev {
+		background: $white;
+		border: 1px solid $textColor;
+		margin-right: 1.6rem;
+		color: $textColor;
+	  }
+	  &-icon {
+		width: 1.2rem;
+		margin-right: 1.4rem;
+	  }
 	}
   }
 }

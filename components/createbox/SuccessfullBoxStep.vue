@@ -5,7 +5,7 @@
         <div class="successfull-box-step-animation">
         </div>
         <div class="successfull-box-step-buttons">
-            <button class="successfull-box-step-buttons-button">View your collection</button>
+            <button class="successfull-box-step-buttons-button" @click="showBoxCollection">View your collection</button>
             <button class="successfull-box-step-buttons-button" @click="createOffsetBox">Create Offset box</button>
         </div>
     </div>
@@ -14,6 +14,9 @@
 <script>
 export default {
   methods: {
+    showBoxCollection() {
+	  this.$emit('changeStep', 1)
+    },
     createOffsetBox() {
       this.$emit('changeStep', 4)
     }
