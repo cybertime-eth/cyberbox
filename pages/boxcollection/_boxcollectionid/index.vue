@@ -4,7 +4,13 @@
     <div class="boxcollection__content container-xl">
       <div class="boxcollection__header">
         <img src="/collection_logo.png" alt="avatar" class="boxcollection__header-avatar">
-        <h1 class="boxcollection__header-title"><span>Street art</span> <img src="/confirmed.svg" alt="confirm"></h1>
+		<div class="boxcollection__header-title-block">
+        	<h1 class="boxcollection__header-title"><span>Street art</span> <img src="/confirmed.svg" alt="confirm"></h1>
+			<div class="boxcollection__header-edit">
+				<button class="boxcollection__header-edit-btn">Edit</button>
+				<button class="boxcollection__header-edit-dropdown">&bull;&bull;&bull;</button>
+			</div>
+		</div>
 		<div class="boxcollection__header-block">
 			<div class="boxcollection__header-socials">
 				<a :href="collection.discord" target="_blank"><img src="/socials/disckord.svg" alt="social"></a>
@@ -42,7 +48,7 @@
       <div class="boxcollection__loading" v-if="nftLoading">
         <img src="/loading-button.svg" alt="load">
       </div>
-      <button class="boxcollection__empty-items" v-else-if="!loading">Create Carbon Box</button>
+      <button class="boxcollection__create" v-else-if="!loading">Create Carbon Box</button>
     </div>
   </section>
 </template>
@@ -420,13 +426,17 @@ export default {
       height: 12.6rem;
       border-radius: 50%;
       border: .2rem solid $white;
-    }
+	}
+	&-title-block {
+	  width: 100%;
+	  position: relative;
+	}
     &-title {
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-wrap: wrap;
-      padding-top: 2rem;
+	  flex-wrap: wrap;
+	  padding-top: 2rem;
       span {
         margin-right: 1rem;
         white-space: nowrap;
@@ -435,7 +445,36 @@ export default {
         width: 2rem;
         transform: translateY(.2rem);
       }
-    }
+	}
+	&-edit {
+	  position: absolute;
+	  right: 0;
+	  bottom: 0;
+	  display: flex;
+	  align-items: center;
+	  &-btn {
+		width: 14.4rem;
+		height: 3.6rem;
+		background: $white;
+		border: 1px solid $border;
+		font-family: OpenSans-Medium;
+		font-weight: 600;
+		font-size: 1.4rem;
+		margin-right: 1.6rem;
+		text-align: center;
+		font-family: OpenSans-Medium;
+		font-weight: 600;
+		font-size: 1.4rem;
+	  }
+	  &-dropdown {
+		width: 3.6rem;
+		height: 3.6rem;
+		background: $white;
+		text-align: center;
+		border: 1px solid $border;
+		border-radius: 50%;
+	  }
+	}
 	&-mint {
 	  position: absolute;
       left: 0;
@@ -685,10 +724,19 @@ export default {
     grid-row-gap: 3.2rem;
     padding-top: 3.2rem;
   }
-  &__empty-items {
-    padding: 36px 0;
-    text-align: center;
-    font-size: 14px;
+  &__create {
+	display: block;
+	width: 20rem;
+	height: 5.8rem;
+	background: $pink;
+	margin: 6.8rem auto 0;
+	padding: 1.6rem 0;
+	border-radius: 3rem;
+	text-align: center;
+	font-family: OpenSans-Bold;
+	font-weight: 700;
+	font-size: 1.6rem;
+	color: $white;
   }
 }
 @media screen and (max-width: 460px) {
