@@ -84,6 +84,19 @@ export const state = () => ({
 	  description: "Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands."
 	},
 	{
+	  id: 2,
+	  name: 'NFT Bee',
+	  route: 'NFTBee',
+	  image: `${RESOURCE_CDN_ROOT}/collections/daopolis.webp`,
+	  banner: `${RESOURCE_CDN_ROOT}/collections/daopolis-banner.webp`,
+	  logo: `${RESOURCE_CDN_ROOT}/collections/daopolis-logo.webp`,
+	  website: 'https://www.daopolis.city',
+	  twitter: 'https://twitter.com/CyberboxArt',
+	  discord: 'https://discord.gg/cKcWfCux4s',
+	  telegram: 'https://t.me/cyberboxArt',
+	  description: "Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands."
+	},
+	{
 		id: 4,
 		name: 'Daopolis',
 		route: 'daos',
