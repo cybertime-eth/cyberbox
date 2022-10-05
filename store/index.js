@@ -91,11 +91,11 @@ export const state = () => ({
 		mobileImage: `${RESOURCE_CDN_ROOT}/collections/NFTBee-mobile.webp`,
 	  banner: `${RESOURCE_CDN_ROOT}/collections/NFTBee-banner.webp`,
 		logo: `${RESOURCE_CDN_ROOT}/collections/NFTBee-logo.webp`,
-	  website: 'https://www.daopolis.city',
-	  twitter: 'https://twitter.com/CyberboxArt',
-	  discord: 'https://discord.gg/cKcWfCux4s',
-	  telegram: 'https://t.me/cyberboxArt',
-	  description: "Like man, nature has its own unique features that can't be found anywhere else. Each certificate is a portrait of plants. Portraits of plants, like those of people, reflect the unique features and beauty of a plant, worthy of appreciation and admiration. The beauty of nature is in our hands."
+	  website: 'https://valoraapp.com/',
+	  twitter: 'https://www.twitter.com/valoraApp',
+	  discord: 'https://valoraapp.co/discord',
+	  instagram: 'https://www.instagram.com/valoraApp',
+	  description: "You don't need tokens to buy into this project; you just need to spread the word. That's how the butterfly effect and the snowball effect collide. If you believe in the power of small actions, join us on our quest to build a better future."
 	},
 	{
 		id: 4,
