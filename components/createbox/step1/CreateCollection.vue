@@ -9,12 +9,12 @@
                 <div class="createbox__collection-main-info-collection">
                     <div class="createbox__collection-main-info-collection-name">
                         <p class="createbox__collection-main-label">*Collection Name</p>
-                        <input class="createbox__collection-main-info-collection-input" placeholder="Name your box">
+                        <input class="createbox__collection-main-info-collection-input" placeholder="Name your box" v-model="collectionName" @input="checkSubmitAvailable">
                     </div>
                     <div class="createbox__collection-main-info-collection-description">
                         <p class="createbox__collection-main-label">Description<span class="createbox__collection-main-info-collection-description-optional">(Optional)</span></p>
-                        <textarea class="createbox__collection-main-info-collection-textarea" placeholder="Add description"></textarea>
-                        <p class="createbox__collection-main-info-collection-description-hint">0/200</p>
+                        <textarea class="createbox__collection-main-info-collection-textarea" placeholder="Add description" maxlength="200" v-model="description" @input="checkSubmitAvailable"></textarea>
+                        <p class="createbox__collection-main-info-collection-description-hint">{{ description.length }}/200</p>
                     </div>
                 </div>
                 <div class="createbox__collection-main-info-social">
@@ -23,27 +23,27 @@
                         <div class="createbox__collection-main-info-social-link">
                             <img class="createbox__collection-main-info-social-link-icon" :src="getCDNImage('socials/telegram.svg')">
                             <p class="createbox__collection-main-info-social-link-name">@name</p>
-                            <input class="createbox__collection-main-info-social-link-input" placeholder="Website URL">
+                            <input class="createbox__collection-main-info-social-link-input" placeholder="Website URL" v-model="telegramUrl" @input="checkSubmitAvailable">
                         </div>
                         <div class="createbox__collection-main-info-social-link">
                             <img class="createbox__collection-main-info-social-link-icon" :src="getCDNImage('socials/twitter.svg')">
                             <p class="createbox__collection-main-info-social-link-name">twitter.com</p>
-                            <input class="createbox__collection-main-info-social-link-input" placeholder="your nickname">
+                            <input class="createbox__collection-main-info-social-link-input" placeholder="your nickname" v-model="twitterName" @input="checkSubmitAvailable">
                         </div>
                         <div class="createbox__collection-main-info-social-link">
                             <img class="createbox__collection-main-info-social-link-icon" src="/socials/discord.svg">
                             <p class="createbox__collection-main-info-social-link-name">Website URL</p>
-                            <input class="createbox__collection-main-info-social-link-input" placeholder="Website URL">
+                            <input class="createbox__collection-main-info-social-link-input" placeholder="Website URL" v-model="discordUrl" @input="checkSubmitAvailable">
                         </div>
                         <div class="createbox__collection-main-info-social-link">
                             <img class="createbox__collection-main-info-social-link-icon" src="/socials/instagram.svg">
                             <p class="createbox__collection-main-info-social-link-name">Website URL</p>
-                            <input class="createbox__collection-main-info-social-link-input" placeholder="Website URL">
+                            <input class="createbox__collection-main-info-social-link-input" placeholder="Website URL" v-model="instaUrl" @input="checkSubmitAvailable">
                         </div>
                         <div class="createbox__collection-main-info-social-link">
                             <img class="createbox__collection-main-info-social-link-icon" src="/socials/earth.svg">
                             <p class="createbox__collection-main-info-social-link-name">Website URL</p>
-                            <input class="createbox__collection-main-info-social-link-input" placeholder="Website URL">
+                            <input class="createbox__collection-main-info-social-link-input" placeholder="Website URL" v-model="websiteUrl" @input="checkSubmitAvailable">
                         </div>
                     </div>
                 </div>
@@ -52,35 +52,35 @@
                 <div class="createbox__collection-main-banner-logo">
                     <p class="createbox__collection-main-banner-label">Collection logo</p>
                     <p class="createbox__collection-main-banner-description">JPEG, PNG, GIF. Recommend 400x400. Max 5mb</p>
-                    <div class="createbox__collection-main-banner-box createbox__collection-main-banner-logo-box" :class="{ filled: bannerSrc }" @click="changeFile('banner')">
+                    <div class="createbox__collection-main-banner-box createbox__collection-main-banner-logo-box" :class="{ filled: bannerImage }" @click="changeFile('banner')">
 						<input class="createbox__collection-main-fileinput" type="file" accept="image/*" ref="banner" @change="selectBanner('banner', $event)" hidden>
-						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!bannerSrc">
-						<img class="createbox__collection-main-banner-thumb" :src="bannerSrc" alt="logo" v-else>
+						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!bannerImage">
+						<img class="createbox__collection-main-banner-thumb" :src="bannerImage" alt="logo" v-else>
                     </div>
                 </div>
                 <div class="createbox__collection-main-banner-cover">
                     <p class="createbox__collection-main-banner-label">Cover image</p>
                     <p class="createbox__collection-main-banner-description">JPEG, PNG. Recommend 1440x236. Max 15mb</p>
-                    <div class="createbox__collection-main-banner-box createbox__collection-main-banner-cover-box" :class="{ filled: coverSrc }"   @click="changeFile('cover')">
+                    <div class="createbox__collection-main-banner-box createbox__collection-main-banner-cover-box" :class="{ filled: coverImage }"   @click="changeFile('cover')">
 						<input class="createbox__collection-main-fileinput" type="file" accept="image/*" ref="cover" @change="selectBanner('cover', $event)" hidden>
-						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!coverSrc">
-						<img class="createbox__collection-main-banner-thumb" :src="coverSrc" alt="cover" v-else>
+						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!coverImage">
+						<img class="createbox__collection-main-banner-thumb" :src="coverImage" alt="cover" v-else>
                     </div>
                 </div>
                 <div class="createbox__collection-main-banner-promo">
                     <p class="createbox__collection-main-banner-label">Promo Banner</p>
                     <p class="createbox__collection-main-banner-description">JPEG, PNG. Recommend 424x224. Max 10mb</p>
-                    <div class="createbox__collection-main-banner-box createbox__collection-main-banner-promo-box" :class="{ filled: promoSrc }" @click="changeFile('promo')">
+                    <div class="createbox__collection-main-banner-box createbox__collection-main-banner-promo-box" :class="{ filled: promoImage }" @click="changeFile('promo')">
 						<input class="createbox__collection-main-fileinput" ref="promo" accept="image/*" type="file" @change="selectBanner('promo', $event)" hidden>
-						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!promoSrc">
-						<img class="createbox__collection-main-banner-thumb" :src="promoSrc" alt="promo" v-else>
+						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!promoImage">
+						<img class="createbox__collection-main-banner-thumb" :src="promoImage" alt="promo" v-else>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="createbox__collection-main-create" :class="{ disabled: !canCreate }">
-            <button class="createbox__collection-main-create-btn" @click="createCollection">Create collection</button>
-            <a class="createbox__collection-main-create-preview">Preview</a>
+        <div class="createbox__collection-main-create">
+            <button class="createbox__collection-main-create-btn" :class="{ disabled: !canCreate }" @click="createCollection">Create collection</button>
+            <a class="createbox__collection-main-create-preview" :class="{ disabled: !canPreview }" @click="gotoPreview">Preview</a>
         </div>
     </div>
 </template>
@@ -89,10 +89,18 @@
 export default {
   data() {
     return {
-	  bannerSrc: null,
-	  coverSrc: null,
-	  promoSrc: null,
-      canCreate: true
+	  bannerImage: null,
+	  coverImage: null,
+	  promoImage: null,
+	  canCreate: false,
+	  canPreview: false,
+	  collectionName: '',
+	  description: '',
+	  telegramUrl: '',
+	  twitterName: '',
+	  discordUrl: '',
+	  instaUrl: '',
+	  websiteUrl: ''
     }
   },
   methods: {
@@ -104,15 +112,23 @@ export default {
 	  if (e.target.files.length === 0) return
 	  switch (type) {
 		case 'banner':
-		  this.bannerSrc = URL.createObjectURL(e.target.files[0])
+		  this.bannerImage = URL.createObjectURL(e.target.files[0])
 		  break
 		case 'cover':
-		  this.coverSrc = URL.createObjectURL(e.target.files[0])
+		  this.coverImage = URL.createObjectURL(e.target.files[0])
 		  break
 		case 'promo':
-		  this.promoSrc = URL.createObjectURL(e.target.files[0])
+		  this.promoImage = URL.createObjectURL(e.target.files[0])
 		  break
 	  }
+	  this.checkSubmitAvailable()
+	},
+	checkSubmitAvailable() {
+	  this.canPreview = !!this.collectionName
+	  this.canCreate = this.collectionName && (this.twitterName && this.telegramUrl) && this.bannerImage && this.coverImage && this.promoImage
+	},
+	gotoPreview() {
+	  this.$router.push('/boxcollection/1')
 	},
 	createCollection() {
 	  this.$emit('create')
@@ -210,6 +226,9 @@ export default {
           padding: 1.8rem 1rem;
           border: 1px solid $modalColor;
           border-radius: 0.4rem;
+		  &:focus-within {
+			border: 1px solid $grayDark;
+		  }
           &-icon {
             width: 2rem;
             margin-right: 1rem;
@@ -293,7 +312,13 @@ export default {
         font-family: OpenSans-Regular;
         font-weight: 600;
         font-size: 1.4rem;
-        color: $white;
+		color: $white;
+		&.disabled {
+		  pointer-events: none;
+          background: $white;
+          border: 1px solid $border;
+          color: $border;
+		}
       }
       &-preview {
         display: block;
@@ -306,19 +331,11 @@ export default {
         font-weight: 600;
         font-size: 1.4rem;
         color: $black;
-        cursor: pointer;
-      }
-      &.disabled {
-        .createbox__collection-main-create-btn {
-          pointer-events: none;
-          background: $white;
-          border: 1px solid $border;
+		cursor: pointer;
+		&.disabled {
+		  pointer-events: none;
           color: $border;
-        }
-        .createbox__collection-main-create-preview {
-          pointer-events: none;
-          color: $border;
-        }
+		}
       }
     }
   }

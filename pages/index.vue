@@ -10,8 +10,8 @@
     		<h3 class="refi__subtitle">Cyberbox ReFi NFT Marketplace helps everyone offset CO2 with <br v-if="!isMobile()"/>NFTs and track their carbon footprint</h3>
 		</client-only>
 		<div class="refi__main-buttons">
-          <button class="refi__main-button explorer" @click="gotoExplorer('Top_button')">Explorer NFT</button>
-          <button class="refi__main-button top ranking" @click="gotoRankings('Top_button')">Rankings</button>
+		  <button class="refi__main-button createbox" @click="gotoCreateBox">Create Box</button>
+          <button class="refi__main-button explorer" @click="gotoExplorer('Top_button')">Explorer</button>
         </div>
 		<div class="refi__main-live" v-if="totalCO2Amount > 0">
 		  <div class="refi__main-live-box gradient-box">
@@ -379,6 +379,9 @@ export default {
 	  this.sendBrowseEvent({ explorer: from })
 	  this.$router.push('/explorer')
 	},
+	gotoCreateBox(from) {
+	  this.$router.push('/createbox')
+	},
 	gotoRankings(from) {
 	  this.sendBrowseEvent({ rankings: from })
 	  this.$router.push('/rankings')
@@ -416,8 +419,8 @@ export default {
 	}
 	&-buttons {
       display: flex;
-	  flex-direction: column;
       align-items: center;
+	  justify-content: center;
 	  margin-top: 4.4rem;
     }
     &-button {
@@ -432,16 +435,26 @@ export default {
         background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
         color: $white;
       }
-      &.ranking {
-		&.top {
-		  width: auto;
-		  height: auto;
-		  margin-top: 2.6rem;
+      &.createbox {
+		position: relative;
+		margin-right: 1.6rem;
+		&::before {
+		  content: "";
+		  position: absolute;
+		  z-index: -1;
+		  inset: 0;
+		  padding: 2px;
+		  background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
+		  border-radius: 3rem;
+		  -webkit-mask:
+			linear-gradient(#fff 0 0) content-box, 
+			linear-gradient(#fff 0 0);
+				mask: 
+			linear-gradient(#fff 0 0) content-box, 
+			linear-gradient(#fff 0 0);
+		 -webkit-mask-composite: xor;
+		  mask-composite: exclude;
 		}
-        &::after {
-          background: linear-gradient(to right, #C074B5, #E5C282);
-          border-radius: 3rem;
-        }
       }
 	}
 	&-live {
@@ -771,6 +784,9 @@ export default {
       &-button {
 		&.ranking {
 		  background: $white;
+		  &::after {
+			border-radius: 3rem;
+		  }
 		}
         &.explorer {
           margin-top: 6.6rem;
@@ -814,6 +830,7 @@ export default {
 	  padding-top: 18rem;
 	  padding-bottom: 16.5rem;
 	  &-buttons {
+		flex-direction: column-reverse;
 		margin-top: 2.4rem;
 	  }
 	  &-button {
@@ -821,6 +838,10 @@ export default {
 		height: 3.6rem;
 		font-weight: 600;
 		font-size: 1.4rem;
+		&.createbox {
+		  margin-right: 0;
+		  margin-top: 0.8rem;
+		}
 		&.top {
 		  &.ranking {
 			margin-top: 1.6rem;

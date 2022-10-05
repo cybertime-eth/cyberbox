@@ -15,7 +15,7 @@
 export default {
   methods: {
     showBoxCollection() {
-	  this.$emit('changeStep', 1)
+      this.$router.push('/boxcollection/1')
     },
     createOffsetBox() {
       this.$emit('changeStep', 4)
