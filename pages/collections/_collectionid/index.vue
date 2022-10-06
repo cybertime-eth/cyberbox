@@ -503,7 +503,8 @@ export default {
   },
   async created() {
     if (this.$route.params.collectionid === 'NFTBee') {
-      this.filter = 'All'
+	  this.filter = 'All'
+	  this.activeRequest = 'getGraphData'
     }
     setTimeout(() => this.pageLoading = false, 5000)
     if (process && process.client && localStorage.getItem('move_back')) {
