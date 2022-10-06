@@ -256,7 +256,12 @@ export default {
 		  break
 		case 'nkw': return 'https://mint.navikatz.com/'
 		  break
-		default: return this.collection.website
+		default:
+		  if (this.$route.params.collectionid !== 'NFTBee') {
+			return this.collection.website
+		  } else {
+			return null
+		  }
 		  break
 	  }
 	}
