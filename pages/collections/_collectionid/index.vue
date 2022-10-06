@@ -502,6 +502,9 @@ export default {
     window.removeEventListener('scroll', this.handleDebouncedScroll)
   },
   async created() {
+    if (this.$route.params.collectionid === 'NFTBee') {
+      this.filter = 'All'
+    }
     setTimeout(() => this.pageLoading = false, 5000)
     if (process && process.client && localStorage.getItem('move_back')) {
       localStorage.removeItem('move_back')
