@@ -12,7 +12,7 @@
 				<p class="collection__header-mint-tooltip">Minting available</p>
 			</div>
 			<div class="collection__header-socials" :class="{certificate: isCertificateCollection}">
-				<a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
+				<a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/discord.svg" alt="social"></a>
 				<a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
 				<a :href="collection.twitter" target="_blank" v-if="collection.twitter"><img src="/socials/twitter.svg" alt="social"></a>
 				<a :href="collection.website" target="_blank" v-if="collection.website"><img src="/socials/web.svg" alt="social"></a>
@@ -514,6 +514,10 @@ export default {
       }
       this.searchName = this.$store.state.mintNumFilter
     } else {
+	  if (this.$route.params.collectionid === 'NFTBee') {
+		this.filter = 'All'
+		this.activeRequest = 'getGraphData'
+	  }
       this.$store.commit('setTraitFilters', [])
       this.initNftListSetting()
       this.$store.commit('changeMintNumFilter', null)
