@@ -86,7 +86,7 @@ export const state = () => ({
 	{
 	  id: 2,
 	  name: 'Valora Hive Mind',
-	  route: 'NFTBee',
+	  route: 'Hive',
 		image: `${RESOURCE_CDN_ROOT}/collections/NFTBee.webp`,
 		mobileImage: `${RESOURCE_CDN_ROOT}/collections/NFTBee-mobile.webp`,
 	  banner: `${RESOURCE_CDN_ROOT}/collections/NFTBee-banner.webp`,
