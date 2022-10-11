@@ -62,7 +62,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/20220928-max-i32-length',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/20201003addnewcollection',
         options: {}
       },
       ubeswap: {
