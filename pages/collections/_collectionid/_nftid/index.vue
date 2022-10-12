@@ -491,8 +491,7 @@ export default {
       })
       let rarityInfos = null
       if (nft.contract !== 'nomdom' && (nft.market_status !== this.oldNftStatus || nft.price !== this.oldNftPrice || this.nft.owner !== this.oldNftOwner)) {
-        // rarityInfos = await API.getNftRankings([nft.id])
-        rarityInfos = [{}]
+        rarityInfos = await API.getNftRankings([nft.id])
       }
       this.nft = {
         ...nft,
