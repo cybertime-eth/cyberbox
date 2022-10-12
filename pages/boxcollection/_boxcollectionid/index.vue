@@ -1,11 +1,13 @@
 <template>
   <section class="boxcollection">
-    <img src="/collection_banner.png" alt="banner" class="boxcollection__banner">
+    <img src="/collection_banner.png" alt="banner" class="boxcollection__banner" v-if="collection.banner">
+	<div class="boxcollection__bannerframe" v-else></div>
     <div class="boxcollection__content container-xl">
       <div class="boxcollection__header">
-        <img src="/collection_logo.png" alt="avatar" class="boxcollection__header-avatar">
+        <img src="/collection_logo.png" alt="avatar" class="boxcollection__header-avatar" v-if="collection.logo">
+		<div class="boxcollection__header-avatarframe" v-else></div>
 		<div class="boxcollection__header-title-block">
-        	<h1 class="boxcollection__header-title"><span>Street art</span> <img src="/confirmed.svg" alt="confirm"></h1>
+        	<h1 class="boxcollection__header-title"><span>{{ collection.name }}</span> <img src="/confirmed.svg" alt="confirm"></h1>
 			<div class="boxcollection__header-edit">
 				<button class="boxcollection__header-edit-btn">Edit</button>
 				<button class="boxcollection__header-edit-dropdown">&bull;&bull;&bull;</button>
@@ -13,10 +15,10 @@
 		</div>
 		<div class="boxcollection__header-block">
 			<div class="boxcollection__header-socials">
-				<a :href="collection.discord" target="_blank"><img src="/socials/disckord.svg" alt="social"></a>
+				<a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
 				<a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
 				<a :href="collection.twitter" target="_blank" v-if="collection.twitter"><img src="/socials/twitter.svg" alt="social"></a>
-				<a :href="collection.website" target="_blank"><img src="/socials/web.svg" alt="social"></a>
+				<a :href="collection.website" target="_blank" v-if="collection.website"><img src="/socials/web.svg" alt="social"></a>
 			</div>
 			<div class="boxcollection__header-info">
 				<div class="boxcollection__header-info-block" ref="itemsInfo">
@@ -37,11 +39,8 @@
 				</div>
 			</div>
 		</div>
-        <h3 class="boxcollection__header-content">
-          Wipies is the biggest collection of digital toilet paper on the blockchain. Each one of the 10,000 Wipies is as special as the next. 
-        </h3>
+        <h3 class="boxcollection__header-content">{{ collection.description }}</h3>
       </div>
-<!--      <attributesFilter />-->
       <div class="boxcollection__loading" v-if="loading">
         <img src="/loading-button.svg" alt="load">
       </div>
@@ -55,8 +54,6 @@
 <script>
 import _ from 'lodash'
 import nft from '@/components/nft.vue'
-import attributesFilter from '@/components/modals/attributesFilter'
-import TraitsFilterModal from '@/components/modals/traitsFilterModal'
 import CustomSwitch from '@/components/utility/CustomSwitch'
 import {BigNumber} from 'ethers'
 export default {
@@ -79,8 +76,6 @@ export default {
   },
   components: {
     nft,
-    attributesFilter,
-	TraitsFilterModal,
 	CustomSwitch
   },
   computed: {
@@ -108,9 +103,13 @@ export default {
       }
     },
     collection() {
-      const colletionList = this.$store.state.collectionList || []
-      const filteredList = colletionList.filter(item => item.route === this.$route.params.collectionid)
-      return filteredList.length > 0 ? filteredList[0] : {}
+	  const currCollection = this.$store.state.boxCollection
+	  if (currCollection) {
+		return currCollection
+	  } else {
+		const colletionList = this.$store.state.boxCollectionList || []
+		return colletionList.find(collection => collection.id === parseInt(this.$route.params.boxcollectionid)) || {}
+	  }
 	},
     nftList() {
       return this.$store.state.nftList
@@ -172,6 +171,11 @@ export default {
         this.showFixedFooter(true)
       }
     }
+  },
+  created() {
+	if (!this.collection) {
+	  this.$router.go(-1)
+	}
   },
   methods: {
     nftRoute(nft) {
@@ -413,6 +417,11 @@ export default {
     height: 22.4rem;
     object-fit: cover;
   }
+  &__bannerframe {
+	width: 100%;
+	height: 33rem;
+	background: #F0F0F0;
+  }
   &__content {
     position: relative;
     top: -7rem;
@@ -421,11 +430,16 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    &-avatar {
+    &-avatar, &-avatarframe {
       width: 12.6rem;
       height: 12.6rem;
       border-radius: 50%;
-      border: .2rem solid $white;
+	}
+	&-avatar {
+	  border: .2rem solid $white;
+	}
+	&-avatarframe {
+	  background: #D9D9D9;
 	}
 	&-title-block {
 	  width: 100%;

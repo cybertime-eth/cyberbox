@@ -40,6 +40,8 @@ export const state = () => ({
   notificationList: [],
   certificateList: [],
   certificateSaleList: [],
+  boxCollection: null,
+  boxCollectionList: [],
   filteredTraits: null,
   nft: {},
   approveToken: '',
@@ -2275,6 +2277,15 @@ export const actions = {
 	}
   },
 
+  loadBoxCollectionList({commit}) {
+	if (process.client) {
+	  const boxList = localStorage.getItem('boxlist')
+	  if (boxList) {
+		commit('setBoxCollectionList', JSON.parse(boxList))
+	  }
+	}
+  },
+
   async loadNotificationList({commit, getters}) {
 	try {
 	  const today = new Date()
@@ -2556,6 +2567,20 @@ export const mutations = {
       newNftList = newNftList.sort((a, b) => a.contract_id - b.contract_id)
     }
     state.nftList = newNftList
+  },
+  setBoxCollection(state, collection) {
+	state.boxCollection = collection
+  },
+  setBoxCollectionList(state, list) {
+	state.boxCollectionList = list
+  },
+  addBoxCollectionToList(state, collection) {
+	state.boxCollection = null
+	state.boxCollectionList = [
+	  ...state.boxCollectionList,
+	  collection
+	]
+	localStorage.setItem('boxlist', JSON.stringify(state.boxCollectionList))
   },
   setNotificationList(state, list) {
     state.notificationList = list

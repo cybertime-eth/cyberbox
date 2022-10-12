@@ -15,7 +15,8 @@
 export default {
   methods: {
     showBoxCollection() {
-      this.$router.push('/boxcollection/1')
+      const currCollection = this.$store.state.boxCollectionList.at(-1)
+      this.$router.push(`/boxcollection/${currCollection.id}`)
     },
     createOffsetBox() {
       this.$emit('changeStep', 4)

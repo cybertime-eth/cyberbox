@@ -103,6 +103,9 @@ export default {
 	  websiteUrl: ''
     }
   },
+  created() {
+	this.$store.commit('setBoxCollection', null)
+  },
   methods: {
 	changeFile(type) {
 	  const element = this.$refs[type]
@@ -126,11 +129,47 @@ export default {
 	checkSubmitAvailable() {
 	  this.canPreview = !!this.collectionName
 	  this.canCreate = this.collectionName && (this.twitterName && this.telegramUrl) && this.bannerImage && this.coverImage && this.promoImage
-	},
+  },
+  makeCollectionData() {
+    const collectionPreview = {}
+    if (this.collectionName) {
+      collectionPreview.name = this.collectionName
+    }
+    if (this.description) {
+      collectionPreview.description = this.description
+    }
+    if (this.websiteUrl) {
+      collectionPreview.website = this.websiteUrl
+    }
+    if (this.twitterName) {
+      collectionPreview.twitter = `https://twitter.com/${this.twitterName}`
+    }
+    if (this.discordUrl) {
+      collectionPreview.discord = this.discordUrl
+    }
+    if (this.telegramUrl) {
+      collectionPreview.telegram = this.telegramUrl
+    }
+    if (this.bannerImage) {
+      collectionPreview.logo = this.bannerImage
+    }
+    if (this.coverImage) {
+      collectionPreview.banner = this.coverImage
+    }
+    if (this.promoImage) {
+      collectionPreview.image = this.promoImage
+    }
+    return collectionPreview
+  },
 	gotoPreview() {
-	  this.$router.push('/boxcollection/1')
+    const collectionInfo = this.makeCollectionData()
+    this.$store.commit('setBoxCollection', collectionInfo)
+	  this.$router.push('/boxcollection/preview')
 	},
 	createCollection() {
+	const collectionInfo = this.makeCollectionData()
+	collectionInfo.id = this.$store.state.boxCollectionList.length + 1
+    this.$store.commit('addBoxCollectionToList', collectionInfo)
 	  this.$emit('create')
 	}
   }
