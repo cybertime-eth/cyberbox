@@ -88,16 +88,17 @@ export const state = () => ({
 	{
 	  id: 2,
 	  name: 'Valora Hive Mind',
-	  route: 'NFTBee',
-		image: `${RESOURCE_CDN_ROOT}/collections/NFTBee.webp`,
-		mobileImage: `${RESOURCE_CDN_ROOT}/collections/NFTBee-mobile.webp`,
+	  route: 'Hive',
+	  image: `${RESOURCE_CDN_ROOT}/collections/NFTBee.webp`,
+	  mobileImage: `${RESOURCE_CDN_ROOT}/collections/NFTBee-mobile.webp`,
 	  banner: `${RESOURCE_CDN_ROOT}/collections/NFTBee-banner.webp`,
-		logo: `${RESOURCE_CDN_ROOT}/collections/NFTBee-logo.webp`,
+	  logo: `${RESOURCE_CDN_ROOT}/collections/NFTBee-logo.webp`,
 	  website: 'https://valoraapp.com/',
 	  twitter: 'https://www.twitter.com/valoraApp',
 	  discord: 'https://valoraapp.co/discord',
 	  instagram: 'https://www.instagram.com/valoraApp',
-	  description: "You don't need tokens to buy into this project; you just need to spread the word. That's how the butterfly effect and the snowball effect collide. If you believe in the power of small actions, join us on our quest to build a better future."
+	  description: "You don't need tokens to buy into this project; you just need to spread the word. That's how the butterfly effect and the snowball effect collide. If you believe in the power of small actions, join us on our quest to build a better future.",
+	  subDescription: "<b>Important!</b> The number of NFTs in the collection is not limited. NFT can be obtained for participating in the referral program from Valora."
 	},
 	{
 		id: 4,

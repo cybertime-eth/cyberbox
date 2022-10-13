@@ -39,6 +39,7 @@
         <h3 class="collection__header-content">
           {{ collection.description }}
         </h3>
+		<p class="collection__header-subcontent" v-html="collection.subDescription" v-if="collection.subDescription"></p>
       </div>
       <div class="collection__filter" @click="changeFilter">
         <button
@@ -256,7 +257,12 @@ export default {
 		  break
 		case 'nkw': return 'https://mint.navikatz.com/'
 		  break
-		default: return this.collection.website
+		default:
+		  if (this.$route.params.collectionid !== 'Hive') {
+			return this.collection.website
+		  } else {
+			return null
+		  }
 		  break
 	  }
 	}
@@ -518,6 +524,10 @@ export default {
       }
       this.searchName = this.$store.state.mintNumFilter
     } else {
+	  if (this.$route.params.collectionid === 'Hive') {
+		this.filter = 'All'
+		this.activeRequest = 'getGraphData'
+	  }
       this.$store.commit('setTraitFilters', [])
       this.initNftListSetting()
       this.$store.commit('changeMintNumFilter', null)
@@ -689,7 +699,7 @@ export default {
         }
       }
     }
-    &-content {
+    &-content, &-subcontent {
       display: flex;
       justify-content: center;
       color: $grayLight;
@@ -697,7 +707,15 @@ export default {
       padding-top: 1rem;
       letter-spacing: 0.03em;
       font-size: 1.4rem;
-    }
+	}
+	&-subcontent {
+	  display: block;
+	  padding-top: 0.6rem;
+	  font-weight: 600;
+	  b {
+		color: $textColor;
+	  }
+	}
   }
   &__filter {
     display: flex;
@@ -928,7 +946,12 @@ export default {
         font-size: 1.4rem;
         text-align: left;
         width: auto;
-      }
+	  }
+	  &-subcontent {
+		width: auto;
+		text-align: left;
+		font-size: 1.4rem;
+	  }
     }
     &__filter {
       margin-top: 2rem;
