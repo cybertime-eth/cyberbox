@@ -62,7 +62,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/20201003addnewcollection',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/add-hive-mind-second',
         options: {}
       },
       ubeswap: {

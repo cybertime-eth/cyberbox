@@ -33,7 +33,7 @@
 		</client-only>
 		<button	class="modal__wallet-buttons-button" @click="connectMetaTrust">
 			<p class="modal__wallet-buttons-button-name">Brave</p>
-			<img class="modal__wallet-buttons-button-image" src="auth/brave.svg" alt="brave">
+			<img class="modal__wallet-buttons-button-image" :src="getCDNImage('auth/brave.svg')" alt="brave">
 		</button>
 	  </div>
     </div>

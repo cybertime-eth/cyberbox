@@ -29,7 +29,7 @@ export default {
   },
   methods: {
 	collectionImage(collection) {
-	  if ((collection.route !== 'CBCN' && collection.route !== 'NFTBee') || !this.isMobile()) {
+    if ((collection.route !== 'CBCN' && collection.route !== 'Hive') || !this.isMobile()) {
 		return collection.image
 	  } else {
 		return collection.mobileImage
