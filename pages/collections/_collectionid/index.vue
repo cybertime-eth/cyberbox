@@ -258,7 +258,7 @@ export default {
 		case 'nkw': return 'https://mint.navikatz.com/'
 		  break
 		default:
-		  if (this.$route.params.collectionid !== 'Hive') {
+		  if (this.$route.params.collectionid !== 'Hive' && this.$route.params.collectionid !== 'NFTBee') {
 			return this.collection.website
 		  } else {
 			return null
@@ -520,7 +520,7 @@ export default {
       }
       this.searchName = this.$store.state.mintNumFilter
     } else {
-	  if (this.$route.params.collectionid === 'Hive') {
+	  if (this.$route.params.collectionid === 'Hive' || this.$route.params.collectionid === 'NFTBee') {
 		this.filter = 'All'
 		this.activeRequest = 'getGraphData'
 	  }
