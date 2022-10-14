@@ -96,11 +96,11 @@ export const state = () => ({
 	  discord: 'https://valoraapp.co/discord',
 	  instagram: 'https://www.instagram.com/valoraApp',
 	  description: "You don't need tokens to buy into this project; you just need to spread the word. That's how the butterfly effect and the snowball effect collide. If you believe in the power of small actions, join us on our quest to build a better future.",
-	  subDescription: "<b>Important!</b> The total number of NFTs in the collection is 2000. NFTs are issued by invitees in the referral program from Valora app."
+	  subDescription: "<b>Important!</b> The total number of NFTs in the collection is 2000. NFTs are issued by inviters in the referral program from Valora app."
 	},
 	{
 		id: 3,
-		name: 'NFTBee',
+		name: 'Valora NFT Bee',
 		route: 'NFTBee',
 		image: `${RESOURCE_CDN_ROOT}/collections/NFTBee.webp`,
 		mobileImage: `${RESOURCE_CDN_ROOT}/collections/NFTBee-mobile.webp`,
@@ -111,7 +111,7 @@ export const state = () => ({
 		discord: 'https://valoraapp.co/discord',
 		instagram: 'https://www.instagram.com/valoraApp',
 		description: "You don't need tokens to buy into this project; you just need to spread the word. That's how the butterfly effect and the snowball effect collide. If you believe in the power of small actions, join us on our quest to build a better future.",
-		subDescription: "<b>Important!</b> The total number of NFTs in the collection is 2000. NFTs are issued by invitees in the referral program from Valora app."
+		subDescription: "<b>Important!</b> The total number of NFTs in the collection is 2000. NFTs are issued by inviters in the referral program from Valora app."
 	},
 	{
 		id: 4,
