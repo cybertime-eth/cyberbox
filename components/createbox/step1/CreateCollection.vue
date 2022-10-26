@@ -86,6 +86,12 @@
 </template>
 
 <script>
+
+// import VueIpfs from 'ipfs'
+// const ipfs = VueIpfs.create()
+// let node = null
+// const IPFS = require('ipfs')
+
 export default {
   data() {
     return {
@@ -105,23 +111,45 @@ export default {
   },
   created() {
 	this.$store.commit('setBoxCollection', null)
+  // this.getIpfsNodeInfo()
+    console.log('000000', window)
   },
   methods: {
+	// async getIpfsNodeInfo() {
+	//   try {
+    //     // Await for ipfs node instance.
+	// 	node = await ipfs
+	// 	console.log(node)
+    //     // // Call ipfs `id` method.
+    //     // // Returns the identity of the Peer.
+    //     // const { agentVersion, id } = await node.id()
+    //     // this.agentVersion = agentVersion
+    //     // this.id = id
+    //     // // Set successful status text.
+    //     // this.status = 'Connected to IPFS =)'
+    //   } catch (err) {
+	// 	console.log(err)
+    //   }
+	// },
 	changeFile(type) {
 	  const element = this.$refs[type]
 	  element.click()
 	},
 	selectBanner(type, e) {
 	  if (e.target.files.length === 0) return
+	  const file = e.target.files[0]
+	  file = node.files.write('/' + this.selectedFile.name, this.selectedFile, {
+        create: true,
+      })
 	  switch (type) {
 		case 'banner':
-		  this.bannerImage = URL.createObjectURL(e.target.files[0])
+		  this.bannerImage = URL.createObjectURL(file)
 		  break
 		case 'cover':
-		  this.coverImage = URL.createObjectURL(e.target.files[0])
+		  this.coverImage = URL.createObjectURL(file)
 		  break
 		case 'promo':
-		  this.promoImage = URL.createObjectURL(e.target.files[0])
+		  this.promoImage = URL.createObjectURL(file)
 		  break
 	  }
 	  this.checkSubmitAvailable()
