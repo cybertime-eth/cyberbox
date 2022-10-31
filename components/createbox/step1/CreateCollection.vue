@@ -87,10 +87,8 @@
 
 <script>
 
-// import VueIpfs from 'ipfs'
-// const ipfs = VueIpfs.create()
-// let node = null
-// const IPFS = require('ipfs')
+import API from '@/api'
+const fs = require('fs')
 
 export default {
   data() {
@@ -98,6 +96,9 @@ export default {
 	  bannerImage: null,
 	  coverImage: null,
 	  promoImage: null,
+	  bannerFile: null,
+	  coverFile: null,
+	  promoFile: null,
 	  canCreate: false,
 	  canPreview: false,
 	  collectionName: '',
@@ -110,49 +111,75 @@ export default {
     }
   },
   created() {
-	this.$store.commit('setBoxCollection', null)
-  // this.getIpfsNodeInfo()
-    console.log('000000', window)
+	const boxCollection = this.$store.state.boxCollection
+	if (boxCollection) {
+	  if (boxCollection.name) {
+		this.collectionName = boxCollection.name
+	  }
+	  if (boxCollection.description) {
+		this.description = boxCollection.description
+	  }
+	  if (boxCollection.website) {
+		this.websiteUrl = boxCollection.website
+	  }
+	  if (boxCollection.twitter) {
+		this.twitterName = boxCollection.twitter.split('https://twitter.com/')[1]
+	  }
+	  if (boxCollection.discord) {
+		this.discordUrl = boxCollection.discord
+	  }
+	  if (boxCollection.telegram) {
+		this.telegramUrl = boxCollection.telegram
+	  }
+	  if (boxCollection.logo) {
+		this.bannerImage = boxCollection.logo
+	  }
+	  if (boxCollection.banner) {
+		this.coverImage = boxCollection.banner
+	  }
+	  if (boxCollection.image) {
+		this.promoImage = boxCollection.image
+	  }
+	  this.checkSubmitAvailable()
+	}
   },
   methods: {
-	// async getIpfsNodeInfo() {
-	//   try {
-    //     // Await for ipfs node instance.
-	// 	node = await ipfs
-	// 	console.log(node)
-    //     // // Call ipfs `id` method.
-    //     // // Returns the identity of the Peer.
-    //     // const { agentVersion, id } = await node.id()
-    //     // this.agentVersion = agentVersion
-    //     // this.id = id
-    //     // // Set successful status text.
-    //     // this.status = 'Connected to IPFS =)'
-    //   } catch (err) {
-	// 	console.log(err)
-    //   }
-	// },
 	changeFile(type) {
 	  const element = this.$refs[type]
 	  element.click()
 	},
-	selectBanner(type, e) {
-	  if (e.target.files.length === 0) return
-	  const file = e.target.files[0]
-	  file = node.files.write('/' + this.selectedFile.name, this.selectedFile, {
-        create: true,
-      })
+	updateBanner(type, src) {
 	  switch (type) {
 		case 'banner':
-		  this.bannerImage = URL.createObjectURL(file)
-		  break
+		  this.bannerImage = src
+		break
 		case 'cover':
-		  this.coverImage = URL.createObjectURL(file)
-		  break
+		  this.coverImage = src
+		break
 		case 'promo':
-		  this.promoImage = URL.createObjectURL(file)
-		  break
+		  this.promoImage = src
+		break
 	  }
+	},
+	selectBanner(type, e) {
+	  if (e.target.files.length === 0) return
+
+	  const file = e.target.files[0]
+	  const src = URL.createObjectURL(file)
+	  this.updateBanner(type, src)
 	  this.checkSubmitAvailable()
+
+	  switch (type) {
+		case 'banner':
+		  this.bannerFile = file
+		break
+		case 'cover':
+		  this.coverFile = file
+		break
+		case 'promo':
+		  this.promoFile = file
+		break
+	  }
 	},
 	checkSubmitAvailable() {
 	  this.canPreview = !!this.collectionName
@@ -190,14 +217,53 @@ export default {
     return collectionPreview
   },
 	gotoPreview() {
-    const collectionInfo = this.makeCollectionData()
-    this.$store.commit('setBoxCollection', collectionInfo)
+      const collectionInfo = this.makeCollectionData()
+      this.$store.commit('setBoxCollection', collectionInfo)
 	  this.$router.push('/boxcollection/preview')
 	},
-	createCollection() {
-	const collectionInfo = this.makeCollectionData()
-	collectionInfo.id = this.$store.state.boxCollectionList.length + 1
-    this.$store.commit('addBoxCollectionToList', collectionInfo)
+	async uploadBannerImagesToIPFS(type) {
+	  let oldBannerType = null
+	  let bannerCount = 0
+	  const ipfsArray = []
+	  const bannerTypes= ['banner', 'cover', 'promo']
+	  const reader = new FileReader()
+	  
+	  while (bannerCount < 3) {
+		const type = bannerTypes[bannerCount]
+		if (type !== oldBannerType) {
+		  let file = null
+		  switch (type) {
+		    case 'banner':
+			  file = this.bannerFile
+			break
+			case 'cover':
+			  file = this.coverFile
+			break
+			case 'promo':
+			  file = this.promoFile
+			break
+		  }
+		  reader.onloadend = () => {
+			ipfsArray.push({
+			  path: `BoxImages/${file.name}`,
+			  content: reader.result
+			})
+			bannerCount++
+		  }
+		  reader.readAsDataURL(file)
+		}
+		oldBannerType = type
+	  }
+	  const resultArray = await API.uploadImageToIPFS(ipfsArray)
+	  bannerTypes.forEach((bType, idx) => {
+		this.updateBanner(bType, resultArray[idx].path)
+	  })
+	},
+	async createCollection() {
+	  await this.uploadBannerImagesToIPFS()
+	  const collectionInfo = this.makeCollectionData()
+	  collectionInfo.id = this.$store.state.boxCollectionList.length + 1
+      this.$store.commit('addBoxCollectionToList', collectionInfo)
 	  this.$emit('create')
 	}
   }

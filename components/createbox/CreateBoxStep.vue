@@ -35,6 +35,9 @@ export default {
 	  const footerEl = document.querySelector('.footer')
 	  footerEl.style.display = 'none'
 	}
+	if (this.$store.state.boxCollection) {
+	  this.subStep = 2
+	}
   },
   methods: {
 	showCollection(collection) {
