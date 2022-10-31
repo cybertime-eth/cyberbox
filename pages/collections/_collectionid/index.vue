@@ -258,7 +258,7 @@ export default {
 		case 'nkw': return 'https://mint.navikatz.com/'
 		  break
 		default:
-		  if (this.$route.params.collectionid !== 'Hive' && this.$route.params.collectionid !== 'NFTBee') {
+		  if (this.$route.params.collectionid !== 'butterfly' && this.$route.params.collectionid !== 'hive') {
 			return this.collection.website
 		  } else {
 			return null
@@ -508,7 +508,7 @@ export default {
     window.removeEventListener('scroll', this.handleDebouncedScroll)
   },
   async created() {
-    if (this.$route.params.collectionid === 'NFTBee') {
+    if (this.$route.params.collectionid === 'butterfly' || this.$route.params.collectionid === 'hive') {
 	  this.filter = 'All'
 	  this.activeRequest = 'getGraphData'
     }
@@ -524,7 +524,7 @@ export default {
       }
       this.searchName = this.$store.state.mintNumFilter
     } else {
-	  if (this.$route.params.collectionid === 'Hive' || this.$route.params.collectionid === 'NFTBee') {
+	  if (this.$route.params.collectionid === 'butterfly' || this.$route.params.collectionid === 'hive') {
 		this.filter = 'All'
 		this.activeRequest = 'getGraphData'
 	  }

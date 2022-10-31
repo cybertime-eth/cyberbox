@@ -88,7 +88,7 @@ export const state = () => ({
 	{
 	  id: 2,
 	  name: 'Valora Hive Mind',
-	  route: 'Hive',
+	  route: 'butterfly',
 	  image: `${RESOURCE_CDN_ROOT}/collections/Hive.webp`,
 	  mobileImage: `${RESOURCE_CDN_ROOT}/collections/Hive-mobile.webp`,
 	  banner: `${RESOURCE_CDN_ROOT}/collections/Hive-banner.webp`,
@@ -103,7 +103,7 @@ export const state = () => ({
 	{
 		id: 3,
 		name: 'NFTBee',
-		route: 'NFTBee',
+		route: 'hive',
 		image: `${RESOURCE_CDN_ROOT}/collections/NFTBee.webp`,
 		mobileImage: `${RESOURCE_CDN_ROOT}/collections/NFTBee-mobile.webp`,
 		banner: `${RESOURCE_CDN_ROOT}/collections/NFTBee-banner.webp`,
