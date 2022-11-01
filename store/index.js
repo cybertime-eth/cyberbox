@@ -85,7 +85,7 @@ export const state = () => ({
 	},
 	{
 	  id: 2,
-	  name: 'Valora Hive Mind',
+	  name: 'The Butterfly Effect',
 	  route: 'butterfly',
 	  image: `${RESOURCE_CDN_ROOT}/collections/Hive.webp`,
 	  mobileImage: `${RESOURCE_CDN_ROOT}/collections/Hive-mobile.webp`,
@@ -100,7 +100,7 @@ export const state = () => ({
 	},
 	{
 		id: 3,
-		name: 'NFTBee',
+		name: 'Hive Mind',
 		route: 'hive',
 		image: `${RESOURCE_CDN_ROOT}/collections/NFTBee.webp`,
 		mobileImage: `${RESOURCE_CDN_ROOT}/collections/NFTBee-mobile.webp`,
