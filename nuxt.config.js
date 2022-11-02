@@ -46,7 +46,7 @@ export default {
     '@/plugins/components.js',
     '@/plugins/vue-carousel.client.js',
     '@/plugins/utils.js',
-    '@/plugins/bugsnag.js',
+    // '@/plugins/bugsnag.js',
     // '@/plugins/logrocket.js'
   ],
 
@@ -62,7 +62,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/add-hive-mind-second',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/exchange-bee-second',
         options: {}
       },
       ubeswap: {
@@ -80,14 +80,14 @@ export default {
       '@nuxtjs/proxy',
       // 'nuxt-logrocket',
       ['@nuxtjs/component-cache', { maxAge: 1000 * 60 * 60 }],
-      ['nuxt-bugsnag', {
-        apiKey: 'cef8153f64709623f660870486f23999',
-        publishRelease: true,
-        reporterOptions: {
-          appVersion: 'v1.0.0',
-          autoAssignRelease: true
-        }
-      }]
+      // ['nuxt-bugsnag', {
+      //   apiKey: 'cef8153f64709623f660870486f23999',
+      //   publishRelease: true,
+      //   reporterOptions: {
+      //     appVersion: 'v1.0.0',
+      //     autoAssignRelease: true
+      //   }
+      // }]
     ],
 
     axios: {
