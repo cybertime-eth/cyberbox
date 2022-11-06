@@ -209,7 +209,7 @@
 </template>
 
 <script>
-import { CERTIFICATE_TOKEN_TYPE, CDN_ROOT } from '@/config'
+import { CERTIFICATE_TOKEN_TYPE } from '@/config'
 import API from '@/api'
 import BuyToken from '@/components/modals/buyToken'
 import ExchangeBonus from '@/components/modals/exchangeBonus.vue'
@@ -297,7 +297,7 @@ export default {
     const today = new Date()
     const currMonth = today.getMonth() + 1
 	const month = today.toLocaleString('en-us', { month: 'long' })
-	this.currentCertificateImage = CDN_ROOT + `CBCN/detail/${currMonth}.png`
+	this.currentCertificateImage = this.getCertificateImage({month: currMonth}, true)
     this.certificate = {
       name: `Carbon Offset Certificate ${month} ${today.getFullYear()}`,
 	  contract: 'CBCN',

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { CDN_ROOT, COLLECTION_CDN_ROOT, CERTIFICATE_TOKEN_TYPE, RESOURCE_CDN_ROOT } from "@/config"
+import { COLLECTION_CDN_ROOT, CERTIFICATE_TOKEN_TYPE, RESOURCE_CDN_ROOT } from "@/config"
 
 Vue.mixin({
   methods: {
@@ -104,9 +104,9 @@ Vue.mixin({
         }
 	},
 	getCertificateImage(certificate, detail = false) {
-	  const folderName = detail ? 'detail' : 'thumb'
+	  const folderName = detail ? '/detail' : ''
       const month = certificate.month || certificate.tag_element2
-	  return CDN_ROOT + `CBCN/${folderName}/${month}.png`
+	  return RESOURCE_CDN_ROOT + `/certificates${folderName}/${month}.webp`
 	},
 	getCDNImage(imageName) {
 	 return `${RESOURCE_CDN_ROOT}/${imageName}`

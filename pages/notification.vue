@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { CDN_ROOT, COLLECTION_CDN_ROOT } from "@/config"
+import { COLLECTION_CDN_ROOT } from "@/config"
 export default {
   data() {
     return {
@@ -179,7 +179,7 @@ export default {
         }
         return COLLECTION_CDN_ROOT + '280/' + notification.nftSymbol + `/${contractId}.${fileExtension}`
 	  } else {
-		return CDN_ROOT + `CBCN/thumb/${notification.month}.png`
+		return this.getCertificateImage(notification)
 	  }
       
 	},
