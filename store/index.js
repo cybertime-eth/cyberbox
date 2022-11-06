@@ -5,6 +5,7 @@ import { mobileLinkChoiceKey, setLocal, removeLocal } from "@walletconnect/utils
 import ENS from "@ensdomains/ensjs"
 import MarketMainABI from '../abis/marketMain.json'
 import MarketCertificateABI from '../abis/marketCertificate.json'
+import BoxCollectionMgrABI from '../abis/boxCollectionManager.json'
 import API from '../api'
 import daosABI from '../abis/daos.json'
 import punksABI from '../abis/punks.json'
@@ -22,6 +23,7 @@ export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
   marketCertificate: '0xD734bB58a28AAAAcbE5a738398f471B3187B2960',
+  boxCollectionManager: '0xe55DB8B5Af361beA139efe952540e29F81De32cC',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   certContractAddress: '0xA4A8E345E1a88EFc9164014BB2CeBd4C2F98E986',
   user: {},
@@ -54,15 +56,16 @@ export const state = () => ({
   buyTokenApproved: false,
   successBuyToken: false,
   successRemoveToken: false,
-	successTransferToken: false,
-	sellTokenClosed: false,
+  successTransferToken: false,
+  sellTokenClosed: false,
+  successCreateBoxCollection: false,
   message: '',
   sort: `orderBy: contract_id`,
   raritySort: null,
   pagination: null,
   collectionSetting: null,
-	multiNftSymbols: ['knoxnft', 'CBCN'],
-	availableCDNCollections: ['daos', 'nomdom'],
+  multiNftSymbols: ['knoxnft', 'CBCN'],
+  availableCDNCollections: ['daos', 'nomdom'],
   multiNftNames: [
     { id: 'COMMON', name: 'Knoxer' },
     { id: 'LEGENDARY', name: 'LydianKnoxer' },
@@ -2502,7 +2505,7 @@ export const actions = {
 	  const provider = new ethers.providers.Web3Provider(getters.provider)
       const signer = provider.getSigner()
       const contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
-	  await contract.exchangeMonthNFTToBonus(year).send({
+	  await contract.exchangeMonthNFTToBonus(year).send({ 	
 	    gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
 	  })
 	  provider.once(contract, async () => {
@@ -2512,6 +2515,36 @@ export const actions = {
 	  console.log(error)
 	  commit('changeSuccessBuyToken', 'error')
     }
+  },
+
+  async createBoxCollection({state, getters, commit}, collection) {
+	try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+	  const signer = provider.getSigner()
+	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
+	  await contract.addNewCollection(
+		collection.name,
+		collection.description,
+		collection.logo,
+		collection.banner,
+		collection.image,
+		'',
+		collection.twitter,
+		collection.discord,
+		collection.website
+	  )
+	  contract.on('CyberBoxAddedNewCollection', (collectionName, collectionDescription, collectionLogoUrl, collectionCoverImgUrl, collectionPromoBannerUrl, profileEmail, profileTwitter, profileDiscord, profileSite,
+		collectionAddress
+	  ) => {
+		commit('addBoxCollectionToList', {
+	  	  ...collection,
+		  contractAddress: collectionAddress
+		})
+		commit('changeSuccessCreateBoxCollection', true)
+	  })
+	} catch(e) {
+	  console.log('error', e)
+	}
   }
 }
 
@@ -2657,10 +2690,13 @@ export const mutations = {
   },
   changeSuccessTransferToken(state, status) {
     state.successTransferToken = status
-	},
-	changeSellTokenClosed(state, status) {
+  },
+  changeSellTokenClosed(state, status) {
     state.sellTokenClosed = status
-	},
+  },
+  changeSuccessCreateBoxCollection(state, status) {
+    state.successCreateBoxCollection = status
+  },
   setChainId(state, chain) {
     state.chainId = chain
     state.wrongNetwork = chain !== 42220

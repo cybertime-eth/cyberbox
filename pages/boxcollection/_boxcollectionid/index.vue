@@ -15,7 +15,7 @@
 		</div>
 		<div class="boxcollection__header-block">
 			<div class="boxcollection__header-socials">
-				<a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/disckord.svg" alt="social"></a>
+				<a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/discord.svg" alt="social"></a>
 				<a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
 				<a :href="collection.twitter" target="_blank" v-if="collection.twitter"><img src="/socials/twitter.svg" alt="social"></a>
 				<a :href="collection.website" target="_blank" v-if="collection.website"><img src="/socials/web.svg" alt="social"></a>
@@ -47,7 +47,7 @@
       <div class="boxcollection__loading" v-if="nftLoading">
         <img src="/loading-button.svg" alt="load">
       </div>
-      <button class="boxcollection__create" v-else-if="!loading">Create Carbon Box</button>
+      <button class="boxcollection__create" v-else-if="collection && !loading && !collection.preview">Create Carbon Box</button>
     </div>
   </section>
 </template>
@@ -105,10 +105,13 @@ export default {
     collection() {
 	  const currCollection = this.$store.state.boxCollection
 	  if (currCollection) {
-		return currCollection
+		return {
+		  currCollection,
+		  preview: true
+		}
 	  } else {
 		const colletionList = this.$store.state.boxCollectionList || []
-		return colletionList.find(collection => collection.id === parseInt(this.$route.params.boxcollectionid)) || {}
+		return colletionList.find(collection => collection.contractAddress === this.$route.params.boxcollectionid) || {}
 	  }
 	},
     nftList() {

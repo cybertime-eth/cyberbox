@@ -52,10 +52,10 @@
                 <div class="createbox__collection-main-banner-logo">
                     <p class="createbox__collection-main-banner-label">Collection logo</p>
                     <p class="createbox__collection-main-banner-description">JPEG, PNG, GIF. Recommend 400x400. Max 5mb</p>
-                    <div class="createbox__collection-main-banner-box createbox__collection-main-banner-logo-box" :class="{ filled: bannerImage }" @click="changeFile('banner')">
+                    <div class="createbox__collection-main-banner-box createbox__collection-main-banner-logo-box" :class="{ filled: logoImage }" @click="changeFile('banner')">
 						<input class="createbox__collection-main-fileinput" type="file" accept="image/*" ref="banner" @change="selectBanner('banner', $event)" hidden>
-						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!bannerImage">
-						<img class="createbox__collection-main-banner-thumb" :src="bannerImage" alt="logo" v-else>
+						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!logoImage">
+						<img class="createbox__collection-main-banner-thumb" :src="logoImage" alt="logo" v-else>
                     </div>
                 </div>
                 <div class="createbox__collection-main-banner-cover">
@@ -93,10 +93,10 @@ const fs = require('fs')
 export default {
   data() {
     return {
-	  bannerImage: null,
+	  logoImage: null,
 	  coverImage: null,
 	  promoImage: null,
-	  bannerFile: null,
+	  logoFile: null,
 	  coverFile: null,
 	  promoFile: null,
 	  canCreate: false,
@@ -132,16 +132,35 @@ export default {
 		this.telegramUrl = boxCollection.telegram
 	  }
 	  if (boxCollection.logo) {
-		this.bannerImage = boxCollection.logo
+		this.logoImage = boxCollection.logo
+	  }
+	  if (boxCollection.logoFile) {
+		this.logoFile = boxCollection.logoFile
 	  }
 	  if (boxCollection.banner) {
 		this.coverImage = boxCollection.banner
 	  }
+	  if (boxCollection.coverFile) {
+		this.coverFile = boxCollection.coverFile
+	  }
 	  if (boxCollection.image) {
 		this.promoImage = boxCollection.image
 	  }
+	  if (boxCollection.promoFile) {
+		this.promoFile = boxCollection.promoFile
+	  }
 	  this.checkSubmitAvailable()
 	}
+	this.collectionName = 'Street art'
+	this.description = 'Wipies is the biggest collection of digital toilet paper on the blockchain. Each one of the 10,000 Wipies is as special as the next.'
+	this.telegramUrl = 'https://t.me/streetArt'
+	this.twitterName = 'street_art'
+	this.discordUrl = 'https://discord.gg/streetart'
+	this.websiteUrl = 'https://streetart.com'
+	this.logoImage = 'https://ipfs.moralis.io:2053/ipfs/QmQCvfKfFaMFm38K32WsEaRRJ2SARwM1S1FWxW2JCpw1fy/BoxImages/collection_logo.png'
+	this.coverImage = 'https://ipfs.moralis.io:2053/ipfs/QmQCvfKfFaMFm38K32WsEaRRJ2SARwM1S1FWxW2JCpw1fy/BoxImages/collection_banner.png'
+	this.promoImage = 'https://ipfs.moralis.io:2053/ipfs/QmQCvfKfFaMFm38K32WsEaRRJ2SARwM1S1FWxW2JCpw1fy/BoxImages/collection_cover.png'
+	this.checkSubmitAvailable()
   },
   methods: {
 	changeFile(type) {
@@ -151,7 +170,7 @@ export default {
 	updateBanner(type, src) {
 	  switch (type) {
 		case 'banner':
-		  this.bannerImage = src
+		  this.logoImage = src
 		break
 		case 'cover':
 		  this.coverImage = src
@@ -167,23 +186,37 @@ export default {
 	  const file = e.target.files[0]
 	  const src = URL.createObjectURL(file)
 	  this.updateBanner(type, src)
-	  this.checkSubmitAvailable()
 
-	  switch (type) {
-		case 'banner':
-		  this.bannerFile = file
-		break
-		case 'cover':
-		  this.coverFile = file
-		break
-		case 'promo':
-		  this.promoFile = file
-		break
+	  const reader = new FileReader()
+	  reader.onloadend = () => {
+		switch (type) {
+		  case 'banner':
+			this.logoFile = {
+			  name: file.name,
+			  content: reader.result
+			}
+		  break
+		  case 'cover':
+		    this.coverFile = {
+			  name: file.name,
+			  content: reader.result
+			}
+		  break
+		  case 'promo':
+		    this.promoFile = {
+			  name: file.name,
+			  content: reader.result
+			}
+		  break
+		}
 	  }
+	  reader.readAsDataURL(file)
+
+	  this.checkSubmitAvailable()
 	},
 	checkSubmitAvailable() {
 	  this.canPreview = !!this.collectionName
-	  this.canCreate = this.collectionName && (this.twitterName && this.telegramUrl) && this.bannerImage && this.coverImage && this.promoImage
+	  this.canCreate = this.collectionName && (this.twitterName && this.telegramUrl) && this.logoImage && this.coverImage && this.promoImage
   },
   makeCollectionData() {
     const collectionPreview = {}
@@ -205,14 +238,23 @@ export default {
     if (this.telegramUrl) {
       collectionPreview.telegram = this.telegramUrl
     }
-    if (this.bannerImage) {
-      collectionPreview.logo = this.bannerImage
+    if (this.logoImage) {
+      collectionPreview.logo = this.logoImage
+	}
+	if (this.logoFile) {
+      collectionPreview.logoFile = this.logoFile
     }
     if (this.coverImage) {
       collectionPreview.banner = this.coverImage
+	}
+	if (this.coverImage) {
+      collectionPreview.coverFile = this.coverFile
     }
     if (this.promoImage) {
       collectionPreview.image = this.promoImage
+	}
+	if (this.promoImage) {
+      collectionPreview.promoFile = this.promoFile
     }
     return collectionPreview
   },
@@ -222,48 +264,49 @@ export default {
 	  this.$router.push('/boxcollection/preview')
 	},
 	async uploadBannerImagesToIPFS(type) {
-	  let oldBannerType = null
+	  let checkCount = 0
 	  let bannerCount = 0
 	  const ipfsArray = []
 	  const bannerTypes= ['banner', 'cover', 'promo']
-	  const reader = new FileReader()
 	  
-	  while (bannerCount < 3) {
+	  while (checkCount <= 3) {
 		const type = bannerTypes[bannerCount]
-		if (type !== oldBannerType) {
-		  let file = null
-		  switch (type) {
-		    case 'banner':
-			  file = this.bannerFile
-			break
-			case 'cover':
-			  file = this.coverFile
-			break
-			case 'promo':
-			  file = this.promoFile
-			break
-		  }
-		  reader.onloadend = () => {
-			ipfsArray.push({
-			  path: `BoxImages/${file.name}`,
-			  content: reader.result
-			})
-			bannerCount++
-		  }
-		  reader.readAsDataURL(file)
+		let file = null
+		switch (type) {
+		  case 'banner':
+			file = this.logoFile
+		  break
+		  case 'cover':
+			file = this.coverFile
+		  break
+		  case 'promo':
+			file = this.promoFile
+		  break
 		}
-		oldBannerType = type
+
+		if (file) {
+		  console.log('0000', file)
+		  ipfsArray.push({
+			path: `BoxImages/${file.name}`,
+			content: file.content
+		  })
+		  bannerCount++
+		}
+		checkCount++
 	  }
+
 	  const resultArray = await API.uploadImageToIPFS(ipfsArray)
 	  bannerTypes.forEach((bType, idx) => {
 		this.updateBanner(bType, resultArray[idx].path)
 	  })
+	  return bannerCount >= 3 ? true : false
 	},
 	async createCollection() {
-	  await this.uploadBannerImagesToIPFS()
+	//   const success = await this.uploadBannerImagesToIPFS()
+	//   if (!success) return
 	  const collectionInfo = this.makeCollectionData()
 	  collectionInfo.id = this.$store.state.boxCollectionList.length + 1
-      this.$store.commit('addBoxCollectionToList', collectionInfo)
+	  this.$store.dispatch('createBoxCollection', collectionInfo)
 	  this.$emit('create')
 	}
   }

@@ -14,7 +14,7 @@
 				<p class="createbox__nft-setting-token-detail-info">Enter the number of carbon tokens to burn</p>
 				<div class="createbox__nft-setting-token-detail-inputblock">
 					<div class="createbox__nft-setting-token-detail-inputbox">
-						<input class="createbox__nft-setting-token-detail-input" placeholder="0">
+						<input class="createbox__nft-setting-token-detail-input" placeholder="0" :value="1000" readonly>
 					</div>
 					<a class="createbox__nft-setting-token-detail-buy">Buy cMCO2</a>
 				</div>
@@ -25,7 +25,7 @@
 				<p class="createbox__nft-setting-token-units-unit">30000</p>
 				<p class="createbox__nft-setting-token-units-unit">100000</p>
 			</div>
-			<p class="createbox__nft-setting-token-balance">Balance: <b>1034 cMCO2</b></p>
+			<p class="createbox__nft-setting-token-balance">Balance: <b>{{ cmco2Balance }} cMCO2</b></p>
 		</div>
 		<div class="createbox__nft-setting-nfts">
 			<div class="createbox__nft-setting-stepbox">
@@ -39,19 +39,21 @@
 				<p class="createbox__nft-setting-nfts-file-label">Upload file for NFTs</p>
 				<p class="createbox__nft-setting-nfts-file-kinds">JPEG, PNG, GIF, MP4. Max 50 MB</p>
 			</div>
-			<div class="createbox__nft-setting-nfts-add">
+			<div class="createbox__nft-setting-nfts-add" :key="lIdx" v-for="(nft, lIdx) of legendaryNFTs">
 				<div class="createbox__nft-setting-nfts-add-block">
-					<input class="createbox__nft-setting-nfts-add-block-input" placeholder="Enter name">
+					<input class="createbox__nft-setting-nfts-add-block-input" placeholder="Enter name" :value="nft.name" @input="changeNftName('legendary', $event)">
 					<div class="createbox__nft-setting-nfts-add-block-category">
 						<div class="createbox__nft-setting-nfts-add-block-category-plus">
-							<button class="createbox__nft-setting-nfts-add-block-category-plus-button">
-								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
+							<input class="createbox__nft-setting-nfts-add-block-category-fileinput" type="file" accept="image/*" :ref="refName('legendary', lIdx)" @change="selectNftImage('banner', $event)" hidden>
+							<button class="createbox__nft-setting-nfts-add-block-category-plus-button gradient-button" @click="changeNftFile('legendary')" v-if="!nft.image">
+								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-pink.svg">
 							</button>
-							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
+							<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
+							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>10</b></p>
 						</div>
-						<div class="createbox__nft-setting-nfts-add-block-category-type">
-							<img class="createbox__nft-setting-nfts-add-block-category-type-icon legendary" src="/diamond.svg">
-							<p class="createbox__nft-setting-nfts-add-block-category-type-name">Legendary</p>
+						<div class="createbox__nft-setting-nfts-add-block-category-type legendary">
+							<img class="createbox__nft-setting-nfts-add-block-category-type-icon type-icon" src="/diamond-filled.svg">
+							<p class="createbox__nft-setting-nfts-add-block-category-type-name type-name">Legendary</p>
 						</div>
 					</div>
 				</div>
@@ -62,44 +64,25 @@
 					</button>
 					<div class="createbox__nft-setting-nfts-add-detail" v-if="!rarity">
 						<p class="createbox__nft-setting-nfts-add-detail-count">Total NFT’s: 1</p>
-						<p class="createbox__nft-setting-nfts-add-detail-quantity">Total quantity: 1</p>
+						<p class="createbox__nft-setting-nfts-add-detail-quantity">Total quantity: 10</p>
 					</div>
 				</div>
 			</div>
-			<div class="createbox__nft-setting-nfts-add" v-if="rarity">
+			<div class="createbox__nft-setting-nfts-add" :key="eIdx" v-for="(nft, eIdx) of epicNFTs" v-if="rarity">
 				<div class="createbox__nft-setting-nfts-add-block">
-					<input class="createbox__nft-setting-nfts-add-block-input" placeholder="Enter name">
+					<input class="createbox__nft-setting-nfts-add-block-input" placeholder="Enter name" :value="nft.name" @input="changeNftName('epic', $event)">
 					<div class="createbox__nft-setting-nfts-add-block-category">
 						<div class="createbox__nft-setting-nfts-add-block-category-plus">
-							<button class="createbox__nft-setting-nfts-add-block-category-plus-button">
-								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
+							<input class="createbox__nft-setting-nfts-add-block-category-fileinput" type="file" accept="image/*" :ref="refName('epic', eIdx)" @change="selectNftImage('epic', $event)" hidden>
+							<button class="createbox__nft-setting-nfts-add-block-category-plus-button gradient-button" @click="changeNftFile('epic')" v-if="!nft.image">
+								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-pink.svg">
 							</button>
-							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
+							<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
+							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>10</b></p>
 						</div>
-						<div class="createbox__nft-setting-nfts-add-block-category-type">
-							<img class="createbox__nft-setting-nfts-add-block-category-type-icon epic" src="/fire-filled-grey.svg">
-							<p class="createbox__nft-setting-nfts-add-block-category-type-name">Epic</p>
-						</div>
-					</div>
-				</div>
-				<button class="createbox__nft-setting-nfts-add-button">
-					<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
-					<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
-				</button>
-			</div>
-			<div class="createbox__nft-setting-nfts-add" v-if="rarity">
-				<div class="createbox__nft-setting-nfts-add-block">
-					<input class="createbox__nft-setting-nfts-add-block-input" placeholder="Enter name">
-					<div class="createbox__nft-setting-nfts-add-block-category">
-						<div class="createbox__nft-setting-nfts-add-block-category-plus">
-							<button class="createbox__nft-setting-nfts-add-block-category-plus-button">
-								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
-							</button>
-							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
-						</div>
-						<div class="createbox__nft-setting-nfts-add-block-category-type">
-							<img class="createbox__nft-setting-nfts-add-block-category-type-icon" src="/snow.svg">
-							<p class="createbox__nft-setting-nfts-add-block-category-type-name">Rare</p>
+						<div class="createbox__nft-setting-nfts-add-block-category-type epic">
+							<img class="createbox__nft-setting-nfts-add-block-category-type-icon type-icon" src="/fire-filled.svg">
+							<p class="createbox__nft-setting-nfts-add-block-category-type-name type-name">Epic</p>
 						</div>
 					</div>
 				</div>
@@ -113,13 +96,34 @@
 					<input class="createbox__nft-setting-nfts-add-block-input" placeholder="Enter name">
 					<div class="createbox__nft-setting-nfts-add-block-category">
 						<div class="createbox__nft-setting-nfts-add-block-category-plus">
-							<button class="createbox__nft-setting-nfts-add-block-category-plus-button">
-								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-grey.svg">
+							<button class="createbox__nft-setting-nfts-add-block-category-plus-button gradient-button">
+								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-pink.svg">
 							</button>
-							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: 0</p>
+							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>10</b></p>
+						</div>
+						<div class="createbox__nft-setting-nfts-add-block-category-type rare">
+							<img class="createbox__nft-setting-nfts-add-block-category-type-icon type-icon" src="/snow-filled.svg">
+							<p class="createbox__nft-setting-nfts-add-block-category-type-name type-name">Rare</p>
+						</div>
+					</div>
+				</div>
+				<button class="createbox__nft-setting-nfts-add-button">
+					<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
+					<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
+				</button>
+			</div>
+			<div class="createbox__nft-setting-nfts-add" v-if="rarity">
+				<div class="createbox__nft-setting-nfts-add-block">
+					<input class="createbox__nft-setting-nfts-add-block-input" placeholder="Enter name">
+					<div class="createbox__nft-setting-nfts-add-block-category">
+						<div class="createbox__nft-setting-nfts-add-block-category-plus">
+							<button class="createbox__nft-setting-nfts-add-block-category-plus-button gradient-button">
+								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-pink.svg">
+							</button>
+							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>10</b></p>
 						</div>
 						<div class="createbox__nft-setting-nfts-add-block-category-type">
-							<p class="createbox__nft-setting-nfts-add-block-category-type-name">Common</p>
+							<p class="createbox__nft-setting-nfts-add-block-category-type-name type-name">Common</p>
 						</div>
 					</div>
 				</div>
@@ -130,7 +134,7 @@
 			</div>
 			<div class="createbox__nft-setting-nfts-total">
 				<p class="createbox__nft-setting-nfts-total-count">Total NFT's: 4</p>
-				<p class="createbox__nft-setting-nfts-total-quantity">Total quantity: 0</p>
+				<p class="createbox__nft-setting-nfts-total-quantity">Total quantity: 40</p>
 			</div>
 		</div>
 	</div>
@@ -145,9 +149,39 @@ export default {
   props: ['rarity'],
   data() {
     return {
+	  legendaryNFTs: [],
+	  epicNFTs: [],
+	  rareNFTs: [],
+	  commonNFTs: []
     }
   },
+  computed: {
+	cmco2Balance() {
+	  const balance = this.$store.state.balance * this.$store.state.cMCO2Price
+	  return balance.toFixed(2)
+	}
+  },
+  created() {
+	const nftInfo = {
+	  name: '',
+	  quantity: 10,
+	  image: ''
+	}
+	this.legendaryNFTs.push(nftInfo)
+	this.epicNFTs.push(nftInfo)
+	this.rareNFTs.push(nftInfo)
+	this.commonNFTs.push(nftInfo)
+  },
   methods: {
+	refName(type, index) {
+	  return `${type}${index + 1}`
+	},
+	changeNftName(type, e) {
+
+	},
+	selectNftImage(type, e) {
+
+	},
     gotoNextStep() {
 	  this.$emit('changeBoxStep', 2)
 	}
@@ -203,16 +237,16 @@ export default {
 	  display: flex;
 	  align-items: center;
 	  justify-content: space-between;
-	  .createbox__nft-setting-step {
-		&-num {
-		  background: transparent;
-		  border: 1px solid $border;
-		  color: $border;
-		}
-		&-name {
-		  color: $border;
-		}
-	  }
+	//   .createbox__nft-setting-step {
+	// 	&-num {
+	// 	  background: transparent;
+	// 	  border: 1px solid $border;
+	// 	  color: $border;
+	// 	}
+	// 	&-name {
+	// 	  color: $border;
+	// 	}
+	//   }
 	}
 	&-token {
 	  max-width: 49.3rem; 
@@ -250,7 +284,7 @@ export default {
 		  width: calc(100% - 3.2rem);
 		  height: 1.8rem;
 		  padding: 1.2rem 1.6rem;
-		  border: 1px solid $border2;
+		  border: 1px solid $grayLight;
 		  border-radius: 2.5rem;
     	  font-size: 1.6rem;
 		}
@@ -259,7 +293,7 @@ export default {
 		  font-weight: 600;
 		  font-size: 1.4rem;
 		  color: $green;
-		  cursor: pointer;
+		  cursor: default;
 		}
 	  }
 	  &-units {
@@ -294,7 +328,8 @@ export default {
 		  font-family: OpenSans-SemiBold;
 		  font-weight: 600;
 		  font-size: 1.4rem;
-		  color: $border2;
+		//   color: $border2;
+		  color: $grayLight;
 		}
 	  }
 	  &-add {
@@ -310,7 +345,11 @@ export default {
 			border: 0;
 			padding-bottom: 1.2rem;
 			border-bottom: 1px solid $modalColor;
+			border-radius: 0;
 			font-size: 1.6rem;
+			&:focus {
+			  border-color: $grayLight;
+			}
 		  }
 		  &-category {
 			display: flex;
@@ -319,7 +358,7 @@ export default {
 			&-plus {
 			  display: flex;
 			  align-items: center;
-			  &-button {
+			  &-button, &-nft {
 				display: flex;
 				align-items: center;
 				justify-content: center;
@@ -327,14 +366,19 @@ export default {
 				height: 3.1rem;
 				margin-right: 1.6rem;
 				background: $white;
-				border: 2px solid $border2;
 				border-radius: 0.4rem;
+				&::after {
+				  border-radius: 0.4rem;
+				}
 			  }
 			  &-quantity {
 				font-family: OpenSans-SemiBold;
 				font-weight: 600;
 				font-size: 1.4rem;
-				color: $border2;
+				color: $grayLight;
+				b {
+				  color: $textColor;
+				}
 			  }
 			}
 			&-type {
@@ -345,19 +389,40 @@ export default {
 			  border-radius: 2rem;
 			  &-icon {
 				width: 1.2rem;
-				&.epic {
-				  width: 0.9rem;
-				}
-				&.legendary {
-				  margin-top: 0.6rem;
-				}
 				margin-right: 0.4rem;
+				// &.epic {
+				//   width: 0.9rem;
+				// }
+				// &.legendary {
+				//   margin-top: 0.6rem;
+				// }
 			  }
 			  &-name {
 				font-family: OpenSans-Bold;
 				font-weight: 700;
 				font-size: 1.4rem;
-				color: $border2;
+				color: $border;
+			  }
+			  &.legendary {
+				.type-icon {
+				  margin-top: 0.6rem;
+				}
+				.type-name {
+				  color: $darkYellow;
+				}
+			  }
+			  &.epic {
+				.type-icon {
+				  width: 0.9rem;
+				}
+				.type-name {
+				  color: $darkPink;
+				}
+			  }
+			  &.rare {
+				.type-name {
+				  color: $lightBlue;
+				}
 			  }
 			}
 		  }
@@ -376,6 +441,7 @@ export default {
 		  align-items: center;
 		  background: transparent;
 		  margin-top: 1.4rem;
+		  cursor: default;
 		  &-name {
 			margin-right: 1.4rem;
 			font-size: 1.4rem;
