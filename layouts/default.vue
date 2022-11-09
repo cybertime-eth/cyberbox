@@ -77,7 +77,6 @@ export default {
     }
   },
  async mounted() {
-    this.$store.dispatch('loadBoxCollectionList')
     await this.$store.dispatch('updateUser')
     await this.$store.dispatch('walletConnect', false)
     if (!this.$store.state.cMCO2Price) {

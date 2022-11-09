@@ -59,9 +59,12 @@ export default {
 		if (nonFixedRoutes.includes(this.routeName) || (this.routeName !== 'index' && process.browser && window.innerWidth <= 460)) {
 		  this.footerFixed = false
 		}
-		if (this.routeName.includes('createbox')) {
-		  this.footerHidden = true
-		}
+		const hiddenRoutes = ['createbox', 'createnft', 'boxcollection']
+		hiddenRoutes.forEach(route => {
+		  if (!this.footerHidden && this.routeName.includes(route)) {
+			this.footerHidden = true
+		  }
+		})
 	  },
 	  gotoTop() {
 		window.scrollTo(0, 0)

@@ -44,6 +44,8 @@ export const state = () => ({
   certificateSaleList: [],
   boxCollection: null,
   boxCollectionList: [],
+  offsetBoxList: [],
+  boxNftInfo: null,
   filteredTraits: null,
   nft: {},
   approveToken: '',
@@ -59,6 +61,7 @@ export const state = () => ({
   successTransferToken: false,
   sellTokenClosed: false,
   successCreateBoxCollection: false,
+  successCreateBoxNft: false,
   message: '',
   sort: `orderBy: contract_id`,
   raritySort: null,
@@ -2222,6 +2225,57 @@ export const actions = {
     return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
   },
 
+  // GET BOX COLLECTION INFO
+
+  async getBoxCollectionList({commit}) {
+	const query = gql`
+      query Sample {
+        rncollections(first: 48 where: { linkedNFTAddress_not: "" }) {
+		  id
+		  collectionAddress
+		  collectionName
+		  collectionDesc
+		  collectionLogo
+		  collectionCover
+		  collectionBanner
+		  email
+		  twitter
+		  discord
+		  site
+		  linkedNFTAddress
+		  linkedBoxAddress
+        }
+	  }`
+	const data = await this.$graphql.default.request(query)
+	let rnCollections = data.rncollections || []
+	commit('setBoxCollectionList', rnCollections)
+  },
+
+  async getBoxCollectionInfo({commit}) {
+    const query = gql`
+      query Sample {
+        rnboxes(first: 48) {
+		  id
+			boxName
+			boxDescription
+		  boxAddress
+		  boxAutor
+		  linkedCollectionAddress
+		  boxImage
+		  boxCoverImage
+		  boxRoyalty
+		  fee_co2
+		  legendary_count
+		  epic_count
+		  rare_count
+		  common_count
+        }
+	  }`
+	const data = await this.$graphql.default.request(query)
+	let rnBoxes = data.rnboxes || []
+	commit('addBoxToList', rnBoxes)
+  },
+
   // REMOVE NFT FROM LIST
 
   async removeNft({commit, state, getters}, nft) {
@@ -2293,15 +2347,6 @@ export const actions = {
 	  return traitFilters
 	} catch {
 	  return []
-	}
-  },
-
-  loadBoxCollectionList({commit}) {
-	if (process.client) {
-	  const boxList = localStorage.getItem('boxlist')
-	  if (boxList) {
-		commit('setBoxCollectionList', JSON.parse(boxList))
-	  }
 	}
   },
 
@@ -2517,33 +2562,123 @@ export const actions = {
     }
   },
 
-  async createBoxCollection({state, getters, commit}, collection) {
+  // BOX CONTRACT METHODS
+
+  async createBoxNft({state, getters, commit}, collection) {
 	try {
 	  const provider = new ethers.providers.Web3Provider(getters.provider)
 	  const signer = provider.getSigner()
 	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
-	  await contract.addNewCollection(
-		collection.name,
-		collection.description,
-		collection.logo,
-		collection.banner,
-		collection.image,
-		'',
-		collection.twitter,
-		collection.discord,
-		collection.website
-	  )
-	  contract.on('CyberBoxAddedNewCollection', (collectionName, collectionDescription, collectionLogoUrl, collectionCoverImgUrl, collectionPromoBannerUrl, profileEmail, profileTwitter, profileDiscord, profileSite,
-		collectionAddress
-	  ) => {
-		commit('addBoxCollectionToList', {
-	  	  ...collection,
-		  contractAddress: collectionAddress
+	  await contract.generateNFT(
+		collection.collectionAddress,
+		collection.collectionName
+	  );
+	  contract.on('CyberBoxCollectionNFTCreated', (collectionAddress, nftAddress) => {
+		console.log('Generate NFT Done. NFT Addresss: ', nftAddress)
+		commit('changeBoxNftInfo', {
+		  collection: {
+			...collection,
+			linkedNFTAddress: nftAddress
+		  }
 		})
 		commit('changeSuccessCreateBoxCollection', true)
 	  })
 	} catch(e) {
 	  console.log('error', e)
+	}
+  },
+
+  async createBoxCollection({state, getters, dispatch}, collection) {
+	try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+	  const signer = provider.getSigner()
+	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
+	  await contract.addNewCollection(
+		collection.collectionName,
+		collection.collectionDesc,
+		collection.collectionLogo,
+		collection.collectionBanner,
+		collection.collectionCover,
+		'',
+		collection.twitter,
+		collection.discord,
+		collection.site
+	  )
+	  contract.on('CyberBoxAddedNewCollection', (collectionName, collectionDescription, collectionLogoUrl, collectionCoverImgUrl, collectionPromoBannerUrl, profileEmail, profileTwitter, profileDiscord, profileSite,
+		collectionAddress
+	  ) => {
+		console.log('Generate Box Collection Done. Collection Addresss: ', collectionAddress)
+		dispatch('createBoxNft', {
+		  ...collection,
+		  collectionAddress
+		})
+	  })
+	} catch(e) {
+	  console.log('error', e)
+	}
+  },
+
+  async setBoxFeeAndNftCounts({state, getters, commit}) {
+	try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+	  const signer = provider.getSigner()
+	  const boxInfo = state.boxNftInfo
+	  const feeCO2 = web3.utils.toWei(String(boxInfo.price * state.cMCO2Price))
+	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
+	  const legendaryCount = 10
+	  const legendaryImages = boxInfo.legendaryNfts.map(nft => nft.image)
+	  const epicCount = boxInfo.rarity ? 10 : 0
+	  const epicImages = boxInfo.epicNfts.map(nft => nft.image)
+	  const rareCount = boxInfo.rarity ? 10 : 0
+	  const rareImages = boxInfo.rareNfts.map(nft => nft.image)
+	  const commonCount = boxInfo.rarity ? 10 : 0
+	  const commonImages = boxInfo.commonNfts.map(nft => nft.image)
+	  await contract.setFeeAndNFTCounts(
+		feeCO2,
+		legendaryCount,
+		legendaryImages,
+		epicCount,
+		epicImages,
+		rareCount,
+		rareImages,
+		commonCount,
+		commonImages,
+		boxInfo.boxAddress
+	  );
+	  provider.once(contract, () => {
+		console.log('Set Fee And Counts Done')
+		commit('changeSuccessCreateBoxNft', true)
+	  })
+	} catch(e) {
+	  console.log('error', e)
+	}
+  },
+
+  async createCyberNftBox({state, getters, commit, dispatch}) {
+	try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+	  const signer = provider.getSigner()
+	  const boxInfo = state.boxNftInfo
+	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
+	  await contract.addCyberNFTBox(
+		boxInfo.collection.collectionAddress,
+		boxInfo.collection.linkedNFTAddress,
+		boxInfo.name,
+		boxInfo.description,
+		boxInfo.authorDetail,
+		boxInfo.boxImage,
+		boxInfo.boxCover,
+		boxInfo.royalty ? web3.utils.toWei(String(boxInfo.royalty)) : null
+	  );
+	  contract.on('CyberBoxAddedNewBox', (collectionAddress, boxAddress) => {
+		console.log('Add New Box Done. Box Addresss: ', boxAddress)
+		commit('changeBoxNftInfo', {
+		  boxAddress
+		})
+		dispatch('setBoxFeeAndNftCounts')
+	  })
+	} catch(e) {
+		console.log('error', e)
 	}
   }
 }
@@ -2617,11 +2752,29 @@ export const mutations = {
     }
     state.nftList = newNftList
   },
+  addBoxToList(state, list) {
+	state.offsetBoxList = [
+	  ...state.offsetBoxList,
+	  ...list
+	]
+  },
   setBoxCollection(state, collection) {
 	state.boxCollection = collection
   },
   setBoxCollectionList(state, list) {
 	state.boxCollectionList = list
+  },
+  changeBoxNftInfo(state, data) {
+	if (data) {
+	  const boxInfo = state.boxNftInfo || {}
+	  state.boxNftInfo = {
+		...boxInfo,
+		...data
+	  }
+	} else {
+	  state.boxNftInfo = null
+	}
+	
   },
   addBoxCollectionToList(state, collection) {
 	state.boxCollection = null
@@ -2629,7 +2782,10 @@ export const mutations = {
 	  ...state.boxCollectionList,
 	  collection
 	]
-	localStorage.setItem('boxlist', JSON.stringify(state.boxCollectionList))
+	// localStorage.setItem('boxlist', JSON.stringify(state.boxCollectionList))
+  },
+  setBoxCollectionList(state, collectionList) {
+	state.boxCollectionList = collectionList
   },
   setNotificationList(state, list) {
     state.notificationList = list
@@ -2696,6 +2852,9 @@ export const mutations = {
   },
   changeSuccessCreateBoxCollection(state, status) {
     state.successCreateBoxCollection = status
+  },
+  changeSuccessCreateBoxNft(state, status) {
+    state.successCreateBoxNft = status
   },
   setChainId(state, chain) {
     state.chainId = chain

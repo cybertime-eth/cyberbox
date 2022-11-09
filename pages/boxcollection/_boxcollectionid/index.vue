@@ -1,24 +1,24 @@
 <template>
   <section class="boxcollection">
-    <img src="/collection_banner.png" alt="banner" class="boxcollection__banner" v-if="collection.banner">
+    <img :src="collection.collectionBanner" alt="banner" class="boxcollection__banner" v-if="collection.collectionBanner">
 	<div class="boxcollection__bannerframe" v-else></div>
     <div class="boxcollection__content container-xl">
       <div class="boxcollection__header">
-        <img src="/collection_logo.png" alt="avatar" class="boxcollection__header-avatar" v-if="collection.logo">
+        <img :src="collection.collectionLogo" alt="avatar" class="boxcollection__header-avatar" v-if="collection.collectionLogo">
 		<div class="boxcollection__header-avatarframe" v-else></div>
 		<div class="boxcollection__header-title-block">
-        	<h1 class="boxcollection__header-title"><span>{{ collection.name }}</span> <img src="/confirmed.svg" alt="confirm"></h1>
-			<div class="boxcollection__header-edit">
+        	<h1 class="boxcollection__header-title"><span>{{ collection.collectionName }}</span> <img src="/confirmed.svg" alt="confirm"></h1>
+			<!-- <div class="boxcollection__header-edit">
 				<button class="boxcollection__header-edit-btn">Edit</button>
 				<button class="boxcollection__header-edit-dropdown">&bull;&bull;&bull;</button>
-			</div>
+			</div> -->
 		</div>
 		<div class="boxcollection__header-block">
 			<div class="boxcollection__header-socials">
 				<a :href="collection.discord" target="_blank" v-if="collection.discord"><img src="/socials/discord.svg" alt="social"></a>
 				<a :href="collection.telegram" target="_blank" v-if="collection.telegram"><img src="/socials/telegram.svg" alt="social"></a>
 				<a :href="collection.twitter" target="_blank" v-if="collection.twitter"><img src="/socials/twitter.svg" alt="social"></a>
-				<a :href="collection.website" target="_blank" v-if="collection.website"><img src="/socials/web.svg" alt="social"></a>
+				<a :href="collection.site" target="_blank" v-if="collection.site"><img src="/socials/web.svg" alt="social"></a>
 			</div>
 			<div class="boxcollection__header-info">
 				<div class="boxcollection__header-info-block" ref="itemsInfo">
@@ -39,7 +39,7 @@
 				</div>
 			</div>
 		</div>
-        <h3 class="boxcollection__header-content">{{ collection.description }}</h3>
+        <h3 class="boxcollection__header-content">{{ collection.collectionDesc }}</h3>
       </div>
       <div class="boxcollection__loading" v-if="loading">
         <img src="/loading-button.svg" alt="load">
@@ -47,7 +47,7 @@
       <div class="boxcollection__loading" v-if="nftLoading">
         <img src="/loading-button.svg" alt="load">
       </div>
-      <button class="boxcollection__create" v-else-if="collection && !loading && !collection.preview">Create Carbon Box</button>
+      <button class="boxcollection__create" @click="createCarbonBox" v-else-if="collection && !loading && !collection.preview">Create Carbon Box</button>
     </div>
   </section>
 </template>
@@ -62,7 +62,6 @@ export default {
       pageLoading: false,
       loading: false,
       nftLoading: false,
-      showTraitsFilter: false,
       filter: 'listed',
       activeRequest: 'getGraphDataListed',
       sort: '',
@@ -70,8 +69,7 @@ export default {
       collectionInfo: {},
       floorPrice: '-',
       refiCO2Price: '-',
-      traitFilters: null,
-      searchName: '',
+      searchName: ''
     }
   },
   components: {
@@ -79,9 +77,6 @@ export default {
 	CustomSwitch
   },
   computed: {
-    isMultiNftCollection() {
-      return this.$store.state.multiNftSymbols.includes(this.$route.params.collectionid)
-	},
 	isCertificateCollection() {
       return this.$route.params.collectionid === 'CBCN'
     },
@@ -101,17 +96,17 @@ export default {
       } else {
         return this.nftList.length
       }
-    },
+	},
     collection() {
 	  const currCollection = this.$store.state.boxCollection
 	  if (currCollection) {
 		return {
-		  currCollection,
+		  ...currCollection,
 		  preview: true
 		}
 	  } else {
 		const colletionList = this.$store.state.boxCollectionList || []
-		return colletionList.find(collection => collection.contractAddress === this.$route.params.boxcollectionid) || {}
+		return colletionList.find(collection => collection.collectionAddress === this.$route.params.boxcollectionid) || {}
 	  }
 	},
     nftList() {
@@ -123,16 +118,6 @@ export default {
     fetchEnabled() {
       return this.address || (!this.address && !this.myNft)
     },
-    filtersCount() {
-      let sectionCount = 0
-      this.$store.state.traitFilters.forEach(item => {
-        const filteredValues = item.values ? item.values.filter(filterItem => filterItem.checked) : []
-        if (filteredValues.length > 0) {
-          sectionCount++
-        }
-      })
-      return sectionCount
-	},
 	mintLink() {
 	  const fullyMintedCollections = ['knoxnft', 'christmaspunk', 'cpunkneon', 'cak', 'nomstronaut', 'mpunk', 'ctoadz', 'cshape', 'cpaint']
 	  if (fullyMintedCollections.includes(this.$route.params.collectionid)) return null
@@ -155,6 +140,11 @@ export default {
 	}
   },
   watch: {
+	collection() {
+	  if (!this.collection.preview && this.$store.state.nftList.length === 0) {
+		this.fetchNftList()
+	  }
+	},
     nftList() {
       if (this.$store.state.nftList.length === 0) {
         if (window.innerWidth < 836) {
@@ -175,18 +165,21 @@ export default {
       }
     }
   },
-  created() {
-	if (!this.collection) {
-	  this.$router.go(-1)
+  beforeDestroy() {
+    // window.removeEventListener('scroll', this.handleDebouncedScroll)
+  },
+  mounted() {
+	this.initNftListSetting()
+	if (this.$store.state.boxCollectionList.length === 0) {
+	  this.$store.dispatch('getBoxCollectionList')
+	}
+	if (!this.collection.preview) {
+	  this.fetchNftList()
 	}
   },
   methods: {
     nftRoute(nft) {
-      if (!this.isMultiNftCollection) {
-        return `/collections/${nft.contract}/${nft.contract !== 'nomdom' ? nft.contract_id : nft.image}`
-      } else {
-		return `/collections/${nft.nftSymbol}/${nft.image.substring(nft.image.lastIndexOf('/') + 1).split('.')[0]}`
-      }
+      return `/collections/${nft.contract}/${nft.contract !== 'nomdom' ? nft.contract_id : nft.image}`
     },
     nftOwned(nft) {
       return nft.owner && nft.owner.toLowerCase() === this.$store.state.fullAddress
@@ -204,28 +197,9 @@ export default {
       this.$store.commit('setNewNftList', [])
       this.$store.commit('changeCountPage', 1)
       this.$store.commit('changeSortData', 'all')
-    },
-    async fetchNftsBySearch() {
-      this.nftLoading = true
-      const searchValue = !this.isNomDomain && this.searchName ? parseInt(this.searchName) : this.searchName
-      if (!this.isNomDomain) {
-        this.$store.commit('changeMintNumFilter', !searchValue ? null : searchValue)
-      } else {
-        this.$store.commit('changeNomNameFilter', !searchValue ? null : searchValue)
-      }
-      await this.$store.dispatch(this.activeRequest, this.$store.state.filteredTraits)
-      this.nftLoading = false
-    },
-    searchNft: _.debounce(function() {
-      if (this.searchName && parseInt(this.searchName) < 0) {
-        this.searchName = ''
-      } else {
-        this.fetchNftsBySearch()
-      }
-    }, 500),
-    clearSearch() {
-      this.searchName = ''
-      this.fetchNftsBySearch()
+	},
+	createCarbonBox() {
+	  this.$router.push(`/createnft?collectionAddress=${this.collection.collectionAddress}`)
 	},
 	sendCollectionEvent(eventInfo) {
 	  let eventName = ''
@@ -294,11 +268,15 @@ export default {
 	  }
     },
     async fetchNftList() {
-      if (this.fetchEnabled) {
-        await this.$store.dispatch(this.activeRequest, this.$store.state.filteredTraits)
-      } else {
-        this.$store.commit('setNewNftList', [])
-      }
+	  if (this.collection.collectionAddress) {
+		// this.loading = true
+		// this.loading = false
+	  }
+    //   if (this.fetchEnabled) {
+    //     await this.$store.dispatch(this.activeRequest, this.$store.state.filteredTraits)
+    //   } else {
+    //     this.$store.commit('setNewNftList', [])
+    //   }
     },
     changeCollectionSetting(setting) {
       const collectionSetting = this.$store.state.collectionSetting
@@ -306,22 +284,6 @@ export default {
         ...collectionSetting,
         ...setting
       })
-    },
-    async changeSort(id) {
-	  this.sort = id
-	  this.sendCollectionEvent({ sort: id })
-      if (this.isMultiNftCollection || this.isCertificateCollection) return
-      this.loading = true
-      let sortPrefix = ''
-      if (this.myNft) {
-        if (this.address) {
-          sortPrefix = 'myNft-'
-        }
-      }
-      this.$store.commit('changeSortData', this.filter === 'bought' ? (sortPrefix + `${id}-sold`) : (sortPrefix + id))
-      await this.fetchNftList()
-      this.changeCollectionSetting({ sort: id })
-      this.loading = false
     },
     changeMyNftFilter() {
       let sortMyNft = 'all'
@@ -347,68 +309,7 @@ export default {
       if (this.isMultiNftCollection) return
       this.changeMyNftFilter()
       this.changeCollectionSetting({ myNft: this.myNft })
-    },
-    changeFilter() {
-      const filter = this.filter
-      this.sort = '';
-      this.$store.commit('setNewNftList', [])
-      this.$store.commit('changeSortData', 'all')
-	  let activeRequest = 'getGraphData'
-	  let eventTab = ''
-      switch (filter) {
-		case 'All': activeRequest = 'getGraphData'
-			eventTab = 'All'
-          break;
-		case 'listed': activeRequest = 'getGraphDataListed'
-			eventTab = 'Listing'
-          break;
-		case 'bought': activeRequest = 'getGraphDataSells'
-			eventTab = 'Sold'
-		  break;
-	  }
-      this.activeRequest = activeRequest
-      this.changeCollectionSetting({
-        filter: this.filter,
-        fetchRequest: activeRequest
-	  })
-	  this.sendCollectionEvent({ filter })
-
-      if (this.myNft) {
-        this.changeMyNftFilter()
-      } else {
-        this.$store.dispatch(activeRequest, this.traitFilters)
-      }
-      this.$store.commit('changeCountPage', 1)
-	},
-	clickTraitsButton() {
-	  this.showTraitsFilter = true
-	  this.sendCollectionEvent({ traits: true })
-	},
-    async updateTraitFilter(filters, filteredCount) {
-      this.loading = true
-      this.initNftListSetting()
-      this.traitFilters = filters
-      await this.$store.dispatch(this.activeRequest, filters)
-      this.collectionInfo = {
-        ...this.collectionInfo,
-        filter_count: filteredCount
-      }
-      this.loading = false
     }
-  },
-  beforeDestroy() {
-    window.removeEventListener('scroll', this.handleDebouncedScroll)
-  },
-  created() {
-  },
-  mounted() {
-    // if (this.isMobile() && this.$refs.itemsInfo) {
-    //   this.$refs.itemsInfo.parentNode.insertBefore(this.$refs.refiInfo, this.$refs.itemsInfo.nextSibling)
-    // }
-    // if (process && process.browser) {
-	//   this.handleDebouncedScroll = _.debounce(this.addCurrentPage, 100)
-	//   window.addEventListener('scroll', this.handleDebouncedScroll)
-	// }
   }
 }
 </script>
@@ -437,9 +338,6 @@ export default {
       width: 12.6rem;
       height: 12.6rem;
       border-radius: 50%;
-	}
-	&-avatar {
-	  border: .2rem solid $white;
 	}
 	&-avatarframe {
 	  background: #D9D9D9;

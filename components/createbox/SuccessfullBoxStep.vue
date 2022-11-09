@@ -1,26 +1,38 @@
 <template>
     <div class="successfull-box-step">
         <h2 class="successfull-box-step-title">Successfully created</h2>
-        <p class="successfull-box-step-subtitle">Congratulations! The page for your collection has been successfully created</p>
+        <p class="successfull-box-step-subtitle">Congratulations! The page for your {{ successTitle }} has been successfully created</p>
         <div class="successfull-box-step-animation">
         </div>
-        <div class="successfull-box-step-buttons">
+        <div class="successfull-box-step-buttons" v-if="collectionMode">
             <button class="successfull-box-step-buttons-button" @click="showBoxCollection">View your collection</button>
             <button class="successfull-box-step-buttons-button" @click="createOffsetBox">Create Offset box</button>
         </div>
+		<button class="successfull-box-step-done" @click="showOffsetBox" v-else>Excellent! I'm glad</button>
     </div>
 </template>
 
 <script>
 export default {
+  props: ['collectionMode'],
+  computed: {
+	successTitle() {
+	  return this.collectionMode ? 'collection' : 'Offset Box'
+	}
+  },
   methods: {
     showBoxCollection() {
       const currCollection = this.$store.state.boxCollectionList.at(-1)
-      this.$router.push(`/boxcollection/${currCollection.contractAddress}`)
+      if (currCollection) {
+        this.$router.push(`/boxcollection/${currCollection.collectionAddress}`)
+      }
     },
     createOffsetBox() {
       this.$emit('changeStep', 4)
-    }
+	},
+	showOffsetBox() {
+	  this.$router.push('/offsetbox')
+	}
   }
 }
 </script>
@@ -74,6 +86,19 @@ export default {
         color: $white;
       }
     }
+  }
+  &-done {
+	display: block;
+	width: 38.4rem;
+	height: 5.2rem;
+	background: $white;
+	margin: 0 auto;
+	border: 1px solid $pink;
+	text-align: center;
+	line-height: 5.2rem;
+	font-weight: 600;
+	font-size: 1.4rem;
+	color: $pink;
   }
 }
 </style>

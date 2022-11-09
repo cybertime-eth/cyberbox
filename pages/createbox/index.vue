@@ -11,8 +11,8 @@
         </div>
 		<div class="createbox__list">
 			<div class="createbox__list-item" :key="idx" v-for="(collection, idx) of boxList" @click="showCollection(collection)">
-				<img class="createbox__list-item-logo" :src="collection.logo">
-				<p class="createbox__list-item-name">{{ collection.name }}</p>
+				<img class="createbox__list-item-logo" :src="collection.collectionLogo">
+				<p class="createbox__list-item-name">{{ collection.collectionName }}</p>
 			</div>
 		</div>
   </section>
@@ -33,13 +33,16 @@ export default {
 	  return this.$store.state.boxCollectionList
 	}
   },
+  mounted() {
+	this.$store.dispatch('getBoxCollectionList')
+  },
   methods: {
     clickCreate() {
       this.$router.push('/createbox/1')
 	},
 	showCollection(collection) {
 	  this.$store.commit('setBoxCollection', null)
-	  this.$router.push(`/boxcollection/${collection.contractAddress}`)
+	  this.$router.push(`/boxcollection/${collection.collectionAddress}`)
 	}
   }
 }
@@ -98,9 +101,13 @@ export default {
 	  align-items: center;
 	  background: $white;
 	  padding: 1.6rem;
+	  margin-top: 2.6rem;
 	  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
 	  border-radius: 0.8rem;
 	  cursor: pointer;
+	  &:first-child {
+		margin: 0;
+	  }
 	  &-logo {
 		width: 5.6rem;
 		height: 5.6rem;

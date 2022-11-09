@@ -53,7 +53,7 @@
                     <p class="createbox__collection-main-banner-label">Collection logo</p>
                     <p class="createbox__collection-main-banner-description">JPEG, PNG, GIF. Recommend 400x400. Max 5mb</p>
                     <div class="createbox__collection-main-banner-box createbox__collection-main-banner-logo-box" :class="{ filled: logoImage }" @click="changeFile('banner')">
-						<input class="createbox__collection-main-fileinput" type="file" accept="image/*" ref="banner" @change="selectBanner('banner', $event)" hidden>
+						<input class="createbox__collection-main-fileinput" type="file" accept="image/png, image/gif, image/jpeg" ref="banner" @change="selectBanner('banner', $event)" hidden>
 						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!logoImage">
 						<img class="createbox__collection-main-banner-thumb" :src="logoImage" alt="logo" v-else>
                     </div>
@@ -62,7 +62,7 @@
                     <p class="createbox__collection-main-banner-label">Cover image</p>
                     <p class="createbox__collection-main-banner-description">JPEG, PNG. Recommend 1440x236. Max 15mb</p>
                     <div class="createbox__collection-main-banner-box createbox__collection-main-banner-cover-box" :class="{ filled: coverImage }"   @click="changeFile('cover')">
-						<input class="createbox__collection-main-fileinput" type="file" accept="image/*" ref="cover" @change="selectBanner('cover', $event)" hidden>
+						<input class="createbox__collection-main-fileinput" type="file" accept="image/png, image/gif, image/jpeg" ref="cover" @change="selectBanner('cover', $event)" hidden>
 						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!coverImage">
 						<img class="createbox__collection-main-banner-thumb" :src="coverImage" alt="cover" v-else>
                     </div>
@@ -71,7 +71,7 @@
                     <p class="createbox__collection-main-banner-label">Promo Banner</p>
                     <p class="createbox__collection-main-banner-description">JPEG, PNG. Recommend 424x224. Max 10mb</p>
                     <div class="createbox__collection-main-banner-box createbox__collection-main-banner-promo-box" :class="{ filled: promoImage }" @click="changeFile('promo')">
-						<input class="createbox__collection-main-fileinput" ref="promo" accept="image/*" type="file" @change="selectBanner('promo', $event)" hidden>
+						<input class="createbox__collection-main-fileinput" ref="promo" accept="image/png, image/gif, image/jpeg" type="file" @change="selectBanner('promo', $event)" hidden>
 						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!promoImage">
 						<img class="createbox__collection-main-banner-thumb" :src="promoImage" alt="promo" v-else>
                     </div>
@@ -88,7 +88,6 @@
 <script>
 
 import API from '@/api'
-const fs = require('fs')
 
 export default {
   data() {
@@ -113,14 +112,14 @@ export default {
   created() {
 	const boxCollection = this.$store.state.boxCollection
 	if (boxCollection) {
-	  if (boxCollection.name) {
-		this.collectionName = boxCollection.name
+	  if (boxCollection.collectionName) {
+		this.collectionName = boxCollection.collectionName
 	  }
-	  if (boxCollection.description) {
-		this.description = boxCollection.description
+	  if (boxCollection.collectionDesc) {
+		this.description = boxCollection.collectionDesc
 	  }
-	  if (boxCollection.website) {
-		this.websiteUrl = boxCollection.website
+	  if (boxCollection.site) {
+		this.websiteUrl = boxCollection.site
 	  }
 	  if (boxCollection.twitter) {
 		this.twitterName = boxCollection.twitter.split('https://twitter.com/')[1]
@@ -131,36 +130,38 @@ export default {
 	  if (boxCollection.telegram) {
 		this.telegramUrl = boxCollection.telegram
 	  }
-	  if (boxCollection.logo) {
-		this.logoImage = boxCollection.logo
+	  if (boxCollection.collectionLogo) {
+		this.logoImage = boxCollection.collectionLogo
 	  }
 	  if (boxCollection.logoFile) {
 		this.logoFile = boxCollection.logoFile
 	  }
-	  if (boxCollection.banner) {
-		this.coverImage = boxCollection.banner
+	  if (boxCollection.collectionBanner) {
+		this.coverImage = boxCollection.collectionBanner
 	  }
 	  if (boxCollection.coverFile) {
 		this.coverFile = boxCollection.coverFile
 	  }
-	  if (boxCollection.image) {
-		this.promoImage = boxCollection.image
+	  if (boxCollection.collectionCover) {
+		this.promoImage = boxCollection.collectionCover
 	  }
 	  if (boxCollection.promoFile) {
 		this.promoFile = boxCollection.promoFile
 	  }
 	  this.checkSubmitAvailable()
-	}
-	this.collectionName = 'Street art'
-	this.description = 'Wipies is the biggest collection of digital toilet paper on the blockchain. Each one of the 10,000 Wipies is as special as the next.'
-	this.telegramUrl = 'https://t.me/streetArt'
-	this.twitterName = 'street_art'
-	this.discordUrl = 'https://discord.gg/streetart'
-	this.websiteUrl = 'https://streetart.com'
-	this.logoImage = 'https://ipfs.moralis.io:2053/ipfs/QmQCvfKfFaMFm38K32WsEaRRJ2SARwM1S1FWxW2JCpw1fy/BoxImages/collection_logo.png'
-	this.coverImage = 'https://ipfs.moralis.io:2053/ipfs/QmQCvfKfFaMFm38K32WsEaRRJ2SARwM1S1FWxW2JCpw1fy/BoxImages/collection_banner.png'
-	this.promoImage = 'https://ipfs.moralis.io:2053/ipfs/QmQCvfKfFaMFm38K32WsEaRRJ2SARwM1S1FWxW2JCpw1fy/BoxImages/collection_cover.png'
-	this.checkSubmitAvailable()
+  }
+  
+  // TODO
+	// this.collectionName = 'Street Art3'
+	// this.description = 'Wipies is the biggest collection of digital toilet paper on the blockchain. Each one of the 10,000 Wipies is as special as the next.'
+	// this.telegramUrl = 'https://t.me/streetArt'
+	// this.twitterName = 'street_art'
+	// this.discordUrl = 'https://discord.gg/streetart'
+	// this.websiteUrl = 'https://streetart.com'
+	// this.logoImage = 'https://ipfs.moralis.io:2053/ipfs/QmQCvfKfFaMFm38K32WsEaRRJ2SARwM1S1FWxW2JCpw1fy/BoxImages/collection_logo.png'
+	// this.coverImage = 'https://ipfs.moralis.io:2053/ipfs/QmQCvfKfFaMFm38K32WsEaRRJ2SARwM1S1FWxW2JCpw1fy/BoxImages/collection_banner.png'
+	// this.promoImage = 'https://ipfs.moralis.io:2053/ipfs/QmQCvfKfFaMFm38K32WsEaRRJ2SARwM1S1FWxW2JCpw1fy/BoxImages/collection_cover.png'
+	// this.checkSubmitAvailable()
   },
   methods: {
 	changeFile(type) {
@@ -216,18 +217,19 @@ export default {
 	},
 	checkSubmitAvailable() {
 	  this.canPreview = !!this.collectionName
-	  this.canCreate = this.collectionName && (this.twitterName && this.telegramUrl) && this.logoImage && this.coverImage && this.promoImage
+    this.canCreate = this.collectionName && this.logoImage && this.coverImage && this.promoImage
+	  // this.canCreate = this.collectionName && (this.twitterName && this.telegramUrl) && this.logoImage && this.coverImage && this.promoImage
   },
   makeCollectionData() {
     const collectionPreview = {}
     if (this.collectionName) {
-      collectionPreview.name = this.collectionName
+      collectionPreview.collectionName = this.collectionName
     }
     if (this.description) {
-      collectionPreview.description = this.description
+      collectionPreview.collectionDesc = this.description
     }
     if (this.websiteUrl) {
-      collectionPreview.website = this.websiteUrl
+      collectionPreview.site = this.websiteUrl
     }
     if (this.twitterName) {
       collectionPreview.twitter = `https://twitter.com/${this.twitterName}`
@@ -239,19 +241,19 @@ export default {
       collectionPreview.telegram = this.telegramUrl
     }
     if (this.logoImage) {
-      collectionPreview.logo = this.logoImage
+      collectionPreview.collectionLogo = this.logoImage
 	}
 	if (this.logoFile) {
       collectionPreview.logoFile = this.logoFile
     }
     if (this.coverImage) {
-      collectionPreview.banner = this.coverImage
+      collectionPreview.collectionBanner = this.coverImage
 	}
 	if (this.coverImage) {
       collectionPreview.coverFile = this.coverFile
     }
     if (this.promoImage) {
-      collectionPreview.image = this.promoImage
+      collectionPreview.collectionCover = this.promoImage
 	}
 	if (this.promoImage) {
       collectionPreview.promoFile = this.promoFile
@@ -285,7 +287,6 @@ export default {
 		}
 
 		if (file) {
-		  console.log('0000', file)
 		  ipfsArray.push({
 			path: `BoxImages/${file.name}`,
 			content: file.content
@@ -302,8 +303,10 @@ export default {
 	  return bannerCount >= 3 ? true : false
 	},
 	async createCollection() {
-	//   const success = await this.uploadBannerImagesToIPFS()
-	//   if (!success) return
+    this.canPreview = false
+    this.canCreate = false
+	  // const success = await this.uploadBannerImagesToIPFS()
+	  // if (!success) return
 	  const collectionInfo = this.makeCollectionData()
 	  collectionInfo.id = this.$store.state.boxCollectionList.length + 1
 	  this.$store.dispatch('createBoxCollection', collectionInfo)

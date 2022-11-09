@@ -1,7 +1,7 @@
 <template>
     <div class="preparebox-step">
-        <h2 class="preparebox-step-title">Preparing your Collection</h2>
-        <p class="preparebox-step-subtitle">We are creating a page for your collection. Wait a bit <img :src="getCDNImage('plant.svg')"></p>
+        <h2 class="preparebox-step-title">Preparing your {{ prepareTitle }}</h2>
+        <p class="preparebox-step-subtitle">We are creating a page for your {{ prepareTitle.toLowerCase() }}. Wait a bit <img :src="getCDNImage('plant.svg')"></p>
         <img class="preparebox-step-box" src="/createbox.svg">
         <div class="preparebox-step-progress">
             <div class="preparebox-step-progress-content" :style="progressStyle"></div>
@@ -11,36 +11,52 @@
 
 <script>
 export default {
+  props: ['collectionMode'],
   data() {
 	return {
-	  progress: 1,
-	  readyNextStep: false
+	  progress: 1
 	}
   },
   computed: {
-	prepareDone() {
+	prepareTitle() {
+	  return this.collectionMode ? 'Collection' : 'Offset Box'
+	},
+	prepareCollectionDone() {
 	  return this.$store.state.successCreateBoxCollection
+	},
+	prepareNftDone() {
+	  return this.$store.state.successCreateBoxNft
 	},
 	progressStyle() {
 	  return `width: ${this.progress}%`
 	}
   },
   watch: {
-	prepareDone() {
+	prepareCollectionDone() {
 	  if (this.$store.state.successCreateBoxCollection) {
-		this.progress = 100
-		this.$emit('changeStep', 3)
-		this.readyNextStep = true
-		setTimeout(() => this.$emit('changeStep', 3), 2000)
+		this.moveToSuccessStep()
+	  }
+	},
+	prepareNftDone() {
+	  if (this.$store.state.successCreateBoxNft) {
+		this.moveToSuccessStep()
 	  }
 	}
   },
   mounted() {
-    setTimeout(() => {
-	  if (this.progress < 50) {
-		this.progress = 50
-	  }
-	}, 5000)
+    setTimeout(() => this.updateProgress(), 3000)
+  },
+  methods: {
+    updateProgress() {
+      if (this.progress < 80) {
+		this.progress = this.progress + 20
+		setTimeout(() => this.updateProgress(), 3000)
+      }
+	},
+	moveToSuccessStep() {
+	  this.progress = 100
+	  setTimeout(() => this.$emit('changeStep', this.collectionMode ? 3 : 4), 2000)
+	}
   }
 }
 </script>

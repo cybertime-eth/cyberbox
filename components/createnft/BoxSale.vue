@@ -8,26 +8,30 @@
 		<div class="box__sale-setting-info">
 			<div class="box__sale-setting-info-name">
 				<p class="box__sale-setting-info-label">* Box Name</p>
-				<input class="box__sale-setting-info-input" placeholder="Name your box">
+				<input class="box__sale-setting-info-input" placeholder="Name your box" v-model="boxName" @input="checkSubmitAvailable">
 			</div>
 			<div class="box__sale-setting-info-description">
 				<p class="box__sale-setting-info-label">Collection description <span>(Optional)</span></p>
-				<textarea class="box__sale-setting-info-textarea" placeholder="Add description"/>
-				<p class="box__sale-setting-info-textarea-letters">0/200</p>
+				<textarea class="box__sale-setting-info-textarea" placeholder="Add description" maxlength="200" v-model="boxDescription"/>
+				<p class="box__sale-setting-info-textarea-letters">{{ boxDescription.length }}/200</p>
 			</div>
 			<div class="box__sale-setting-info-author">
 				<p class="box__sale-setting-info-label">About autor <span>(Optional)</span></p>
-				<textarea class="box__sale-setting-info-textarea" placeholder="Add description"/>
-				<p class="box__sale-setting-info-textarea-letters">0/200</p>
+				<textarea class="box__sale-setting-info-textarea" placeholder="Add description" maxlength="200" v-model="boxAuthorDetail"/>
+				<p class="box__sale-setting-info-textarea-letters">{{ boxAuthorDetail.length }}/200</p>
 			</div>
 			<div class="box__sale-setting-info-royalty">
 				<p class="box__sale-setting-info-label">Royalty</p>
 				<div class="box__sale-setting-info-royalty-block">
-					<input class="box__sale-setting-info-input">
+					<input class="box__sale-setting-info-input" type="number" v-model="boxRoyalty" @input="checkSubmitAvailable">
 					<button class="box__sale-setting-info-royalty-button minus">-</button>
 					<button class="box__sale-setting-info-royalty-button">+</button>
 				</div>
 				<p class="box__sale-setting-info-royalty-description">Royalties are how much you gain for each sale of your artwork on the secondary market. If you set it at 5%, each and every time anyone sells any copies of the artwork on this site, you get 5% of that sale — at the current sale price!</p>
+			</div>
+			<div class="box__sale-setting-info-price" v-if="!timerOn">
+				<p class="box__sale-setting-info-price-label semibold">* Price</p>
+				<input class="box__sale-setting-info-input box__sale-setting-info-price-input" placeholder="0" v-model="boxPrice" @input="checkSubmitAvailable">
 			</div>
 			<CustomSwitch label="Add Timer" :value="timerOn" @onChange="changeTimerStatus"/>
 			<div class="box__sale-setting-info-timer-block" v-if="timerOn">
@@ -39,10 +43,6 @@
 						<span class="box__sale-setting-info-presale-address-count">0</span>
 					</button>
 					<img class="box__sale-setting-info-presale-info" src="/question.svg">
-				</div>
-				<div class="box__sale-setting-info-price">
-					<p class="box__sale-setting-info-price-label semibold">* Price</p>
-					<input class="box__sale-setting-info-input box__sale-setting-info-price-input">
 				</div>
 				<div class="box__sale-setting-info-public">
 					<p class="box__sale-setting-info-public-label semibold">Public-Sale</p>
@@ -59,29 +59,31 @@
 						</div>
 					</div>
 				</div>
-				<div class="box__sale-setting-info-price">
+				<div class="box__sale-setting-info-price in-timer">
 					<p class="box__sale-setting-info-price-label semibold">* Price</p>
-					<input class="box__sale-setting-info-input box__sale-setting-info-price-input">
+					<input class="box__sale-setting-info-input box__sale-setting-info-price-input" placeholder="0">
 				</div>
 			</div>
 		</div>
 		<div class="box__sale-setting-image">
 			<div class="box__sale-setting-image-box">
 				<p class="box__sale-setting-image-label">Upload file for Box</p>
-				<div class="box__sale-setting-image-area box__sale-setting-image-box-area">
-					<img class="box__sale-setting-image-preview" src="/picture.svg">
+				<input class="box__sale-setting-image-box-input" type="file" accept="image/png, image/gif, image/jpeg" ref="boxImage" @change="selectBoxBanner('image', $event)" hidden>
+				<div class="box__sale-setting-image-area box__sale-setting-image-box-area" :class="{ selected: boxImage }" @click="changeBoxBanner('boxImage')">
+					<img class="box__sale-setting-image-area-image" :src="boxImage" v-if="boxImage">
+					<img class="box__sale-setting-image-preview" src="/picture.svg" v-else>
 				</div>
 			</div>
 			<div class="box__sale-setting-image-choose">
 				<p class="box__sale-setting-image-label">Or chouse our image:</p>
 				<div class="box__sale-setting-image-choose-block">
-					<div class="box__sale-setting-image-choose-block-box">
+					<div class="box__sale-setting-image-choose-block-box" :class="{ selected: boxPreImageNum === 1 }" @click="boxPreImageNum = 1">
 						<img class="box__sale-setting-image-choose-block-box-picture" src="/box-1.png">
 					</div>
-					<div class="box__sale-setting-image-choose-block-box">
+					<div class="box__sale-setting-image-choose-block-box" :class="{ selected: boxPreImageNum === 2 }" @click="boxPreImageNum = 2">
 						<img class="box__sale-setting-image-choose-block-box-picture" src="/box-2.png">
 					</div>
-					<div class="box__sale-setting-image-choose-block-box">
+					<div class="box__sale-setting-image-choose-block-box" :class="{ selected: boxPreImageNum === 3 }" @click="boxPreImageNum = 3">
 						<img class="box__sale-setting-image-choose-block-box-picture" src="/box-3.png">
 					</div>
 				</div>
@@ -89,24 +91,27 @@
 			<div class="box__sale-setting-image-cover">
 				<p class="box__sale-setting-image-label">Upload cover</p>
 				<p class="box__sale-setting-image-cover-description">JPEG, PNG. Recommend 1440x236. Max 15mb</p>
-				<div class="box__sale-setting-image-area box__sale-setting-image-cover-area">
-					<img class="box__sale-setting-image-preview" src="/picture.svg">
+				<input class="box__sale-setting-image-cover-input" type="file" accept="image/png, image/gif, image/jpeg" ref="boxCover" @change="selectBoxBanner('cover', $event)" hidden>
+				<div class="box__sale-setting-image-area box__sale-setting-image-cover-area" :class="{ selected: boxCover }" @click="changeBoxBanner('boxCover')">
+					<img class="box__sale-setting-image-area-image" :src="boxCover" v-if="boxCover">
+					<img class="box__sale-setting-image-preview" src="/picture.svg" v-else>
 				</div>
 			</div>
 		</div>
 	</div>
-	<button class="box__sale-buttons">
+	<div class="box__sale-buttons">
 		<button class="box__sale-buttons-button prev" @click="backToPrevStep">
 			<img class="box__sale-buttons-button-icon" src="/arrow-left-long.svg">
 			Previous step
 		</button>
-		<button class="box__sale-buttons-button" @click="showOffsetBox">Create carbon Box</button>
-	</button>
+		<button class="box__sale-buttons-button" :class="{ disabled: !isSubmitAvailable }" @click="submitOffsetBox">Create carbon Box</button>
+	</div>
   </div>
 </template>
 
 <script>
 
+import API from '@/api'
 import CustomSwitch from '@/components/utility/CustomSwitch'
 
 export default {
@@ -115,18 +120,199 @@ export default {
   },
   data() {
     return {
-	  timerOn: false
+	  boxName: '',
+	  boxDescription: '',
+	  boxAuthorDetail: '',
+	  boxRoyalty: null,
+	  boxPrice: null,
+	  boxImage: null,
+	  boxImageFile: null,
+	  boxPreImageNum: null,
+	  boxCover: null,
+	  boxCoverFile: null,
+	  timerOn: false,
+	  isSubmitAvailable: false
     }
   },
+  // TODO
+//   created() {
+// 	this.boxName = 'StreetArt4-1'
+// 	this.boxDescription = 'In 2111, the "year of Nuggets", during the official meeting of all countries on the Day of Protection from Children the majority suggested holding an annual competition, a World DIY contest among chil'
+// 	this.boxAuthorDetail = "Amur is a multidisciplinary artist, founder of the creative association +111°, creative director\n.\n+111° - creative association, originally formed as\na graffiti team\n\nAfter 5 years of active existence"
+// 	this.boxRoyalty = 10
+// 	this.boxPrice = 30
+// 	// this.boxImage = "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/Rectangle 604-1.png"
+// 	// this.boxCover = "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/Rectangle 604-2.png"
+// 	this.isSubmitAvailable = true
+//   },
   methods: {
+	changeBoxDescription(e) {
+	  this.boxDescription = e.target.value
+	},
+	changeBoxAuthor(e) {
+	  this.boxAuthorDetail = e.target.value
+	},
     changeTimerStatus() {
-	  this.timerOn = !this.timerOn
+	//   this.timerOn = !this.timerOn
+	},
+	checkSubmitAvailable() {
+	  this.isSubmitAvailable = this.boxName && this.boxRoyalty && this.boxPrice && this.boxImage && this.boxCover
+	},
+	changeBoxBanner(refName) {
+	  this.$refs[refName].click()
+	},
+	updateBoxBanner(type, src) {
+	  switch (type) {
+		case 'image':
+		  this.boxImage = src
+		  this.boxPreImageNum = null
+		break
+		case 'cover':
+	 	  this.boxCover = src
+		break
+	  }
+	},
+	selectBoxBanner(type, e) {
+	  const file = e.target.files[0]
+	  if (!file) return
+	  
+	  const src = URL.createObjectURL(file)
+	  this.updateBoxBanner(type, src)
+	  this.checkSubmitAvailable()
+
+	  const reader = new FileReader()
+	  reader.onloadend = () => {
+		switch (type) {
+		  case 'image':
+			this.boxImageFile = {
+			  name: file.name,
+			  content: reader.result
+			}
+		  break
+		  case 'cover':
+		    this.boxCoverFile = {
+			  name: file.name,
+			  content: reader.result
+			}
+		  break
+		}
+	  }
+	  reader.readAsDataURL(file)
+	},
+	async uploadBoxImagesToIPFS(boxInfo) {
+	  const ipfsArray = []
+	  const nftArray = [
+		...boxInfo.legendaryNfts,
+		...boxInfo.epicNfts,
+		...boxInfo.rareNfts,
+		...boxInfo.commonNfts,
+		this.boxImageFile,
+		this.boxCoverFile
+	  ]
+	  let nftIndex = 0
+	  nftArray.forEach(nft => {
+		const file = nft.file ? nft.file : nft
+		if (file) {
+		  ipfsArray.push({
+			path: `BoxImages/${file.name}`,
+			content: file.content
+		  })
+		}
+	  })
+	  const resultArray = await API.uploadImageToIPFS(ipfsArray)
+
+	  boxInfo.legendaryNfts.map(nft => {
+		nft.image = resultArray[nftIndex].path
+		nftIndex++
+	  })
+	  boxInfo.epicNfts.map(nft => {
+		nft.image = resultArray[nftIndex].path
+		nftIndex++
+	  })
+	  boxInfo.rareNfts.map(nft => {
+		nft.image = resultArray[nftIndex].path
+		nftIndex++
+	  })
+	  boxInfo.commonNfts.map(nft => {
+		nft.image = resultArray[nftIndex].path
+		nftIndex++
+	  })
+
+	  boxInfo.boxImage = resultArray[nftIndex].path
+	  boxInfo.boxCover = resultArray[++nftIndex].path
+	  return nftArray.length === resultArray.length ? boxInfo : null
 	},
 	backToPrevStep() {
-	  this.$emit('onPrevStep', this.rarity ? 1 : 2)
+	  this.$emit('onPrevStep')
 	},
-	showOffsetBox() {
-	  this.$router.push('/offsetbox')
+	// TODO
+	// submitOffsetBox() {
+	//   this.isSubmitAvailable = false
+	//   let preSelectedImage = null
+	//   if (this.boxPreImageNum) {
+	// 	preSelectedImage = location.origin + '/' + `box-${this.boxPreImageNum}.png`
+	//   }
+	// 	const legendaryNfts = [{
+	// 	image: "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/art1.png",
+	// 	name: "Art1",
+	// 	quantity: 10
+	// 	}]
+	// 	const epicNfts = [{
+	// 	image: "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/art2.png",
+	// 	name: "Art2",
+	// 	quantity: 10
+	// 	}]
+	// 	const rareNfts = [{
+	// 	image: "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/art3.png",
+	// 	name: "Art3",
+	// 	quantity: 10
+	// 	}]
+	// 	const commonNfts = [{
+	// 	image: "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/art4.png",
+	// 	name: "Art4",
+	// 	quantity: 10
+	// 	}]
+	// 	console.log('1111', this.$store.state.boxNftInfo)
+	// 	const boxInfo = {
+	// 		...this.$store.state.boxNftInfo,
+	// 		name: this.boxName,
+	// 		description: this.boxDescription,
+	// 		authorDetail: this.boxAuthorDetail,
+	// 		royalty: this.boxRoyalty,
+	// 		price: this.boxPrice,
+	// 		preImage: preSelectedImage,
+	// 		boxImage: this.boxImage,
+	// 		boxCover: this.boxCover,
+	// 		legendaryNfts,
+	// 		epicNfts,
+	// 		rareNfts,
+	// 		commonNfts,
+	// 		boxAddress: '0x9b963e5a009f7ae8fde4b4d4c9bbba46f90cadc1'
+	// 	}
+
+	// 	this.$store.commit('changeBoxNftInfo', boxInfo)
+	// 	this.$emit('onComplete')
+	// },
+	async submitOffsetBox() {
+	  this.isSubmitAvailable = false
+	  let preSelectedImage = null
+	  if (this.boxPreImageNum) {
+		preSelectedImage = location.origin + '/' + `box-${this.boxPreImageNum}.png`
+	  }
+	  const boxInfo = {
+		...JSON.parse(JSON.stringify(this.$store.state.boxNftInfo)),
+		name: this.boxName,
+		description: this.boxDescription,
+		authorDetail: this.boxAuthorDetail,
+		royalty: this.boxRoyalty,
+		price: this.boxPrice,
+		preImage: preSelectedImage
+	  }
+	  const newBoxInfo = await this.uploadBoxImagesToIPFS(boxInfo)
+	  if (!newBoxInfo) return
+
+	  this.$store.commit('changeBoxNftInfo', newBoxInfo)
+	  this.$emit('onComplete')
 	}
   }
 }
@@ -292,13 +478,16 @@ export default {
 		}
 	  }
 	  &-price {
+		width: 100%;
 		margin-top: 2.4rem;
 		&-label {
 		  font-size: 1.4rem;
 		  color: $grayLight;
 		}
-		&-input {
-		  width: 29.2rem;
+		&.in-timer {
+		  &-input {
+			width: 29.2rem;
+		  }
 		}
 	  }
 	  &-public {
@@ -348,10 +537,16 @@ export default {
 		border-radius: 4px;
 		margin-top: 1.6rem;
 		cursor: pointer;
+		&-image {
+		  width: 100%;
+		}
 	  }
 	  &-box {
 		&-area {
 		  height: 31.2rem;
+		  &.selected {
+			border-style: none;
+		  }
 		}
 	  }
 	  &-choose {
@@ -372,6 +567,10 @@ export default {
 			&-picture {
 			  width: 100%;
 			}
+			&.selected {
+			  border-style: solid;
+			  border-radius: 0;
+			}
 		  }
 		}
 	  }
@@ -384,12 +583,16 @@ export default {
 		}
 		&-area {
 		  height: 11.9rem;
+		  &.selected {
+			border-style: none;
+		  }
 		}
 	  }
 	}
   }
   &-buttons {
 	display: flex;
+	width: fit-content;
 	background: $white;
 	margin: 11rem auto 0;
 	&-button {
@@ -409,6 +612,12 @@ export default {
 	  &-icon {
 		width: 1.2rem;
 		margin-right: 1.4rem;
+	  }
+	  &.disabled {
+		background: $white;
+		border: 1px solid $border;
+		color: $border;
+		pointer-events: none;
 	  }
 	}
   }
