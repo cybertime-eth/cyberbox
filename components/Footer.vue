@@ -59,7 +59,7 @@ export default {
 		if (nonFixedRoutes.includes(this.routeName) || (this.routeName !== 'index' && process.browser && window.innerWidth <= 460)) {
 		  this.footerFixed = false
 		}
-		const hiddenRoutes = ['createbox', 'createnft', 'boxcollection']
+		const hiddenRoutes = ['createbox', 'createnft', 'boxcollection', 'offsetbox']
 		hiddenRoutes.forEach(route => {
 		  if (!this.footerHidden && this.routeName.includes(route)) {
 			this.footerHidden = true

@@ -1689,8 +1689,10 @@ export const actions = {
         contracts: contracts(first: 1 where: { nftSymbol: "${token.collectionId}" }) {
           producerFee
         }
-      }`;
-    const data = await this.$graphql.default.request(query)
+	  }`;
+	const foundCollection = state.collectionList.find(collection => collection.route === token.collectionId)
+	const graphql = foundCollection ? this.$graphql.default : this.$graphql.boxmgr
+    const data = await graphql.request(query)
     let multiNftInfo = null
     let multiNftCollection = null
     if (isMultiNft) {
@@ -2227,31 +2229,109 @@ export const actions = {
 
   // GET BOX COLLECTION INFO
 
-  async getBoxCollectionList({commit}) {
-	const query = gql`
-      query Sample {
-        rncollections(first: 48 where: { linkedNFTAddress_not: "" }) {
-		  id
-		  collectionAddress
-		  collectionName
-		  collectionDesc
-		  collectionLogo
-		  collectionCover
-		  collectionBanner
-		  email
-		  twitter
-		  discord
-		  site
-		  linkedNFTAddress
-		  linkedBoxAddress
-        }
-	  }`
-	const data = await this.$graphql.default.request(query)
-	let rnCollections = data.rncollections || []
-	commit('setBoxCollectionList', rnCollections)
+  async getBoxCollectionList({commit}, paramAddress) {
+	const collectionAddress = $nuxt.$route.params.boxcollectionid || paramAddress
+	const collectionCondition = collectionAddress ? `collectionAddress: "${collectionAddress}"` : ''
+	try {
+	  const query = gql`
+		query Sample {
+		  contracts(first: 30) {
+			nftSymbol
+			mint_count
+		  }
+		  rncollections(first: 48 where: { linkedNFTAddress_not: "" ${collectionCondition} }) {
+			id
+			collectionAddress
+			collectionName
+			collectionDesc
+			collectionLogo
+			collectionCover
+			collectionBanner
+			email
+			twitter
+			discord
+			site
+			linkedNFTAddress
+			linkedBoxAddress
+		  }
+		}`
+	  const data = await this.$graphql.boxmgr.request(query)
+	  const contracts = data.contracts || []
+	  const rnCollections = data.rncollections.filter(collection => {
+		const foundContract = contracts.find(contract => contract.nftSymbol === collection.linkedNFTAddress)
+		return foundContract && foundContract.mint_count > 0
+	  })
+	  commit('setBoxCollectionList', rnCollections)
+	  return rnCollections		
+	} catch {
+	  return []
+	}
   },
 
-  async getBoxCollectionInfo({commit}) {
+  async getBoxNftList({state, getters, commit}) {
+	try {
+	  const sort = getters.paginationSort
+	  const boxCollection = state.boxCollectionList.find(collection => collection.collectionAddress === $nuxt.$route.params.boxcollectionid)
+	  if (!boxCollection) return []
+	  let condition = `where: { contract: "${boxCollection.linkedNFTAddress}"}`
+	  const query = gql`
+		query Sample {
+			contractInfos: contractInfos(${sort} first: 48 ${condition}) {
+				id
+				contract
+				contract_id
+				mint_key
+				price
+				seller
+				owner
+				attributes
+				rarity_rank
+				contract_address
+				market_status
+				name
+				image
+				description
+				updatedAt
+				dna
+				trait
+				tag_element0
+				tag_element1
+				tag_element2
+				tag_element3
+				tag_element4
+				listData {
+				  id
+				  owner
+				  price
+				}
+				bidData {
+				  id
+				  owner
+				  bidder
+				  price_total
+				  price_value
+				  price_fee
+				}
+				selled {
+				  id
+				  seller
+				  buyer
+				  price_total
+				  price_value
+				  price_fee
+				}
+			}
+		}`;
+	  const data = await this.$graphql.boxmgr.request(query)
+	  let contractInfos = data.contractInfos || []
+	  state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
+	  return contractInfos
+	} catch {
+	  return []
+	}  
+  },
+
+  async getOffsetBoxList({state, commit}) {
     const query = gql`
       query Sample {
         rnboxes(first: 48) {
@@ -2271,9 +2351,9 @@ export const actions = {
 		  common_count
         }
 	  }`
-	const data = await this.$graphql.default.request(query)
+	const data = await this.$graphql.boxmgr.request(query)
 	let rnBoxes = data.rnboxes || []
-	commit('addBoxToList', rnBoxes)
+	commit('setNewBoxList', rnBoxes)
   },
 
   // REMOVE NFT FROM LIST
@@ -2618,7 +2698,44 @@ export const actions = {
 	}
   },
 
-  async setBoxFeeAndNftCounts({state, getters, commit}) {
+  async setReadyForSellBoxNft({getters, state, commit}) {
+	try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+	  const signer = provider.getSigner()
+	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
+	  const boxInfo = state.boxNftInfo
+	  await contract.setNFTReadyForSell(boxInfo.collection.linkedNFTAddress);
+	  provider.once(contract, () => {
+		console.log('Set NFT Ready For Sell Done')
+		commit('changeSuccessCreateBoxNft', true)
+	  })
+	} catch(e) {
+	  console.log('error', e)
+	}
+  },
+
+  async mintBoxNft({getters, state, commit, dispatch}) {
+	try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+	  const signer = provider.getSigner()
+	  const boxInfo = state.boxNftInfo
+	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
+	  await contract.mintingBoxNFTs(
+		boxInfo.boxAddress,
+		boxInfo.collection.linkedNFTAddress,
+		state.fullAddress
+	  )
+	  provider.once(contract, () => {
+		console.log('Minting Box NFT Done')
+		commit('changeSuccessCreateBoxNft', true)
+		// dispatch('setReadyForSellBoxNft')
+	  })
+	} catch(e) {
+	  console.log('error', e)
+	}
+  },
+
+  async setBoxFeeAndNftCounts({state, getters, dispatch}) {
 	try {
 	  const provider = new ethers.providers.Web3Provider(getters.provider)
 	  const signer = provider.getSigner()
@@ -2647,7 +2764,7 @@ export const actions = {
 	  );
 	  provider.once(contract, () => {
 		console.log('Set Fee And Counts Done')
-		commit('changeSuccessCreateBoxNft', true)
+		dispatch('mintBoxNft')
 	  })
 	} catch(e) {
 	  console.log('error', e)
@@ -2751,6 +2868,9 @@ export const mutations = {
       newNftList = newNftList.sort((a, b) => a.contract_id - b.contract_id)
     }
     state.nftList = newNftList
+  },
+  setNewBoxList(state, list) {
+	state.offsetBoxList = list
   },
   addBoxToList(state, list) {
 	state.offsetBoxList = [

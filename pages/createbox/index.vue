@@ -38,6 +38,10 @@ export default {
   },
   methods: {
     clickCreate() {
+			if (!this.$store.state.address) {
+				alert('Please Connect Wallet!')
+				return
+			}
       this.$router.push('/createbox/1')
 	},
 	showCollection(collection) {

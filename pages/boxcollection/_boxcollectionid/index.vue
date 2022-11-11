@@ -47,7 +47,10 @@
       <div class="boxcollection__loading" v-if="nftLoading">
         <img src="/loading-button.svg" alt="load">
       </div>
-      <button class="boxcollection__create" @click="createCarbonBox" v-else-if="collection && !loading && !collection.preview">Create Carbon Box</button>
+	  <div class="boxcollection__items" v-else-if="nftList.length && !loading">
+        <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :owner="nftOwned(nft)" :boxnft="true" :seller="false" :route="nftRoute(nft)" from="Collection"/>
+      </div>
+      <button class="boxcollection__create" @click="createCarbonBox" v-else-if="!loading && nftList.length === 0">Create Carbon Box</button>
     </div>
   </section>
 </template>
@@ -59,6 +62,7 @@ import {BigNumber} from 'ethers'
 export default {
   data() {
     return {
+	  collection: {},
       pageLoading: false,
       loading: false,
       nftLoading: false,
@@ -96,18 +100,6 @@ export default {
       } else {
         return this.nftList.length
       }
-	},
-    collection() {
-	  const currCollection = this.$store.state.boxCollection
-	  if (currCollection) {
-		return {
-		  ...currCollection,
-		  preview: true
-		}
-	  } else {
-		const colletionList = this.$store.state.boxCollectionList || []
-		return colletionList.find(collection => collection.collectionAddress === this.$route.params.boxcollectionid) || {}
-	  }
 	},
     nftList() {
       return this.$store.state.nftList
@@ -168,6 +160,9 @@ export default {
   beforeDestroy() {
     // window.removeEventListener('scroll', this.handleDebouncedScroll)
   },
+  created() {
+	this.loadCollection()
+  },
   mounted() {
 	this.initNftListSetting()
 	if (this.$store.state.boxCollectionList.length === 0) {
@@ -179,11 +174,28 @@ export default {
   },
   methods: {
     nftRoute(nft) {
-      return `/collections/${nft.contract}/${nft.contract !== 'nomdom' ? nft.contract_id : nft.image}`
+      return `/collections/${nft.contract}/${nft.contract_id}`
     },
     nftOwned(nft) {
       return nft.owner && nft.owner.toLowerCase() === this.$store.state.fullAddress
-    },
+	},
+	async loadCollection() {
+	  this.loading = true
+	  const currCollection = this.$store.state.boxCollection
+	  if (currCollection) {
+		this.collection = {
+		  ...currCollection,
+		  preview: true
+		}
+	  } else if (this.$store.state.boxCollectionList.length > 0) {
+		const collectionList = this.$store.state.boxCollectionList || []
+		this.collection = collectionList.find(collection => collection.collectionAddress === this.$route.params.boxcollectionid) || {}
+	  } else {
+		const collectionList = await this.$store.dispatch('getBoxCollectionList')
+		this.collection = collectionList.find(collection => collection.collectionAddress === this.$route.params.boxcollectionid) || {}
+	  }
+	  this.loading = false
+	},
     showFixedFooter(show) {
       const footerEl = document.querySelector('.footer')
       if (!footerEl) return
@@ -269,8 +281,9 @@ export default {
     },
     async fetchNftList() {
 	  if (this.collection.collectionAddress) {
-		// this.loading = true
-		// this.loading = false
+		this.loading = true
+		await this.$store.dispatch('getBoxNftList')
+		this.loading = false
 	  }
     //   if (this.fetchEnabled) {
     //     await this.$store.dispatch(this.activeRequest, this.$store.state.filteredTraits)
@@ -637,7 +650,7 @@ export default {
     grid-template-columns: 20rem 20rem 20rem 20rem 20rem 20rem;
     grid-column-gap: 2.4rem;
     grid-row-gap: 3.2rem;
-    padding-top: 3.2rem;
+    padding-top: 6.4rem;
   }
   &__create {
 	display: block;

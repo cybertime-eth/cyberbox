@@ -1,5 +1,5 @@
 <template>
-  <div class="collection__item" :class="{ knoxnft: nft.nftSymbol === 'knoxnft', multinft: multiNft && $route.params.collectionid }" @click="routeNft">
+  <div class="collection__item" :class="{ knoxnft: nft.nftSymbol === 'knoxnft', multinft: (multiNft && $route.params.collectionid  || boxnft) }" @click="routeNft">
 	<dropdown-menu class="collection__item-dropdown" v-model="showMoreMenu" v-if="moreButtonVisible">
     <img :src="getCDNImage('more.webp')" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
 		<div slot="dropdown" class="collection__item-modal">
@@ -23,7 +23,7 @@
     </div>
     <div class="collection__item-info">
       <h2 class="collection__item-info-name" :class="{multinft: multiNft, 'multi-collection': isMultiNftCollection}">{{ nftName }}</h2>
-      <p class="collection__item-info-rank" v-if="nft.contract !== 'nomdom' && nft.contract !== 'CBCN' && !multiNft">Rarity Rank {{ nft.rating_index }}</p>
+      <p class="collection__item-info-rank" v-if="rarityVisible">Rarity Rank {{ nft.rating_index }}</p>
       <p class="collection__item-info-id" :class="{'nomdom-nft': nft.contract === 'nomdom' || nft.contract === 'CBCN', 'nomdom-collection': $route.params.collectionid === 'nomdom'}" v-if="!multiNft">Token ID {{ nftID }}</p>
       <div class="collection__item-info-bottom">
         <p class="collection__item-info-type" :class="{multinft: multiNft}" v-if="sellInfo">Last sell</p>
@@ -68,6 +68,9 @@ export default {
     },
     moreButtonVisible() {
       return (this.seller || (!this.seller && this.owner)) && !this.multiNft
+    },
+	rarityVisible() {
+	  return this.nft.contract !== 'nomdom' && this.nft.contract !== 'CBCN' && !this.multiNft && !this.boxnft
 	},
     visitMenuName() {
       if (this.nft.market_status === 'LISTED') {
@@ -142,7 +145,7 @@ export default {
       }
     },
   },
-  props: ['nft', 'route', 'owner', 'seller', 'filter', 'multiNft', 'from'],
+  props: ['nft', 'route', 'owner', 'seller', 'filter', 'multiNft', 'boxnft', 'from'],
   watch: {
     nft() {
 	  const cdnImageUrl = this.getCDNImageUrl()

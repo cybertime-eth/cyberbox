@@ -305,8 +305,8 @@ export default {
 	async createCollection() {
     this.canPreview = false
     this.canCreate = false
-	  // const success = await this.uploadBannerImagesToIPFS()
-	  // if (!success) return
+	  const success = await this.uploadBannerImagesToIPFS()
+	  if (!success) return
 	  const collectionInfo = this.makeCollectionData()
 	  collectionInfo.id = this.$store.state.boxCollectionList.length + 1
 	  this.$store.dispatch('createBoxCollection', collectionInfo)

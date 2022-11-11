@@ -62,7 +62,11 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/randomboxtwo',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/exchange-bee-second',
+        options: {}
+      },
+      boxmgr: {
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/randomcollectionthree',
         options: {}
       },
       ubeswap: {

@@ -30,7 +30,8 @@ export default {
   },
   created() {
 	if (this.collectionList.length === 0) {
-	  this.$store.dispatch('getBoxCollectionList')
+	  const collectionAddress = this.$route.query.collectionAddress
+	  this.$store.dispatch('getBoxCollectionList', collectionAddress)
 	} else {
 	  this.loadCollection()
 	}
@@ -71,7 +72,7 @@ export default {
 		this.$store.commit('changeBoxNftInfo', {
 		  collection: boxCollection
 		})
-	  }
+		}
 	},
 	gotoNextStep() {
 	  this.$router.push('/createnft/2')
