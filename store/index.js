@@ -2675,14 +2675,14 @@ export const actions = {
 	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
 	  await contract.addNewCollection(
 		collection.collectionName,
-		collection.collectionDesc,
+		collection.collectionDesc || '',
 		collection.collectionLogo,
 		collection.collectionBanner,
 		collection.collectionCover,
 		'',
-		collection.twitter,
-		collection.discord,
-		collection.site
+		collection.twitter || '',
+		collection.discord || '',
+		collection.site || ''
 	  )
 	  contract.on('CyberBoxAddedNewCollection', (collectionName, collectionDescription, collectionLogoUrl, collectionCoverImgUrl, collectionPromoBannerUrl, profileEmail, profileTwitter, profileDiscord, profileSite,
 		collectionAddress
@@ -2781,8 +2781,8 @@ export const actions = {
 		boxInfo.collection.collectionAddress,
 		boxInfo.collection.linkedNFTAddress,
 		boxInfo.name,
-		boxInfo.description,
-		boxInfo.authorDetail,
+		boxInfo.description || '',
+		boxInfo.authorDetail || '',
 		boxInfo.boxImage,
 		boxInfo.boxCover,
 		boxInfo.royalty ? web3.utils.toWei(String(boxInfo.royalty)) : null
