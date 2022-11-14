@@ -10,7 +10,7 @@
     		<h3 class="refi__subtitle">Cyberbox ReFi NFT Marketplace helps everyone offset CO2 with <br v-if="!isMobile()"/>NFTs and track their carbon footprint</h3>
 		</client-only>
 		<div class="refi__main-buttons">
-		  <button class="refi__main-button createbox" @click="gotoCreateBox">Create Box</button>
+		  <button class="refi__main-button btn-createbox" @click="gotoCreateBox">Create Box</button>
           <button class="refi__main-button explorer" @click="gotoExplorer('Top_button')">Explorer</button>
         </div>
 		<div class="refi__main-live" v-if="totalCO2Amount > 0">
@@ -435,7 +435,7 @@ export default {
         background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
         color: $white;
       }
-      &.createbox {
+      &.btn-createbox {
 		position: relative;
 		margin-right: 1.6rem;
 		&::before {
@@ -838,7 +838,7 @@ export default {
 		height: 3.6rem;
 		font-weight: 600;
 		font-size: 1.4rem;
-		&.createbox {
+		&.btn-createbox {
 		  margin-right: 0;
 		  margin-top: 0.8rem;
 		}

@@ -523,6 +523,8 @@ export default {
 	  }
 	}
 	&-image {
+	  flex: 1;
+	  max-width: 31.6rem;
 	  &-label {
 		font-family: OpenSans-SemiBold;
 		font-weight: 600;

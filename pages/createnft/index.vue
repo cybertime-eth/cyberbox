@@ -24,15 +24,15 @@ export default {
 	AddNft
   },
   computed: {
-	boxCollectionInfo() {
-	  return this.$store.state.boxCollection
+	boxNft() {
+	  return this.$store.state.boxNftInfo
 	},
 	collectionList() {
 	  return this.$store.state.boxCollectionList
 	}
   },
   created() {
-	if (!this.boxCollectionInfo || !this.boxCollectionInfo.collectionAddress) {
+	if (!this.boxNft || !this.boxNft.collection || !this.boxNft.collection.collectionAddress) {
 	  if (this.collectionList.length === 0) {
 		const collectionAddress = this.$route.query.collectionAddress
 		this.$store.dispatch('getBoxCollectionList', collectionAddress)
@@ -65,7 +65,7 @@ export default {
 	//   	linkedBoxAddress: ''
 	//   }
 	//-------
-	  if (this.boxCollectionInfo && this.boxCollectionInfo.collectionAddress) return
+	  if (this.boxNft && this.boxNft.collection && this.boxNft.collection.collectionAddress) return
 	  let boxCollection = null
 	  const collectionList = this.collectionList
 	  if (this.$route.query.collectionAddress) {

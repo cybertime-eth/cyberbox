@@ -45,10 +45,12 @@
 					<div class="createbox__nft-setting-nfts-add-block-category">
 						<div class="createbox__nft-setting-nfts-add-block-category-plus">
 							<input class="createbox__nft-setting-nfts-add-block-category-fileinput legendary" type="file" accept="image/png, image/gif, image/jpeg" :ref="refName('legendary', lIdx)" @change="selectNftImage('legendary', lIdx, $event)" hidden>
-							<button class="createbox__nft-setting-nfts-add-block-category-plus-button gradient-button" @click="changeNftFile('legendary', lIdx)" v-if="!nft.image">
-								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-pink.svg">
-							</button>
-							<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
+							<div @click="changeNftFile('legendary', lIdx)">
+								<button class="createbox__nft-setting-nfts-add-block-category-plus-button gradient-button" v-if="!nft.image">
+									<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-pink.svg">
+								</button>
+								<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
+							</div>
 							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>10</b></p>
 						</div>
 						<div class="createbox__nft-setting-nfts-add-block-category-type legendary">
@@ -74,10 +76,12 @@
 					<div class="createbox__nft-setting-nfts-add-block-category">
 						<div class="createbox__nft-setting-nfts-add-block-category-plus">
 							<input class="createbox__nft-setting-nfts-add-block-category-fileinput epic" type="file" accept="image/png, image/gif, image/jpeg" :ref="refName('epic', eIdx)" @change="selectNftImage('epic', eIdx, $event)" hidden>
-							<button class="createbox__nft-setting-nfts-add-block-category-plus-button gradient-button" @click="changeNftFile('epic', eIdx)" v-if="!nft.image">
-								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-pink.svg">
-							</button>
-							<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
+							<div @click="changeNftFile('epic', eIdx)">
+								<button class="createbox__nft-setting-nfts-add-block-category-plus-button gradient-button" v-if="!nft.image">
+									<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-pink.svg">
+								</button>
+								<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
+							</div>
 							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>10</b></p>
 						</div>
 						<div class="createbox__nft-setting-nfts-add-block-category-type epic">
@@ -97,10 +101,12 @@
 					<div class="createbox__nft-setting-nfts-add-block-category">
 						<div class="createbox__nft-setting-nfts-add-block-category-plus">
 							<input class="createbox__nft-setting-nfts-add-block-category-fileinput rare" type="file" accept="image/png, image/gif, image/jpeg" :ref="refName('rare', rIdx)" @change="selectNftImage('rare', rIdx, $event)" hidden>
-							<button class="createbox__nft-setting-nfts-add-block-category-plus-button gradient-button" @click="changeNftFile('rare', rIdx)" v-if="!nft.image">
-								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-pink.svg">
-							</button>
-							<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
+							<div @click="changeNftFile('rare', rIdx)">
+								<button class="createbox__nft-setting-nfts-add-block-category-plus-button gradient-button" v-if="!nft.image">
+									<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-pink.svg">
+								</button>
+								<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
+							</div>
 							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>10</b></p>
 						</div>
 						<div class="createbox__nft-setting-nfts-add-block-category-type rare">
@@ -120,10 +126,12 @@
 					<div class="createbox__nft-setting-nfts-add-block-category">
 						<div class="createbox__nft-setting-nfts-add-block-category-plus">
 							<input class="createbox__nft-setting-nfts-add-block-category-fileinput common" type="file" accept="image/png, image/gif, image/jpeg" :ref="refName('common', cIdx)" @change="selectNftImage('common', cIdx, $event)" hidden>
-							<button class="createbox__nft-setting-nfts-add-block-category-plus-button gradient-button" @click="changeNftFile('common', cIdx)" v-if="!nft.image">
-								<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-pink.svg">
-							</button>
-							<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
+							<div @click="changeNftFile('common', cIdx)">
+								<button class="createbox__nft-setting-nfts-add-block-category-plus-button gradient-button" v-if="!nft.image">
+									<img class="createbox__nft-setting-nfts-add-block-category-plus-button-icon" src="/plus-pink.svg">
+								</button>
+								<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
+							</div>
 							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>10</b></p>
 						</div>
 						<div class="createbox__nft-setting-nfts-add-block-category-type">
@@ -232,7 +240,8 @@ export default {
 	// TODO COMMENT
 	  if (!boxNftInfo || !boxNftInfo.collection || !boxNftInfo.collection.collectionAddress) {
 		this.isSubmitDisabled = true
-		this.isSubmitAvailable = false
+	  } else {
+		this.isSubmitDisabled = false
 	  }
 	},
 	updateNftInfo(type, index, nftInfo) {
@@ -386,6 +395,7 @@ export default {
 	},
 	selectNftImage(type, index, e) {
 	  const file = e.target.files[0]
+	  if (!file) return
 	  const src = URL.createObjectURL(file)
 	  this.updateNftInfo(type, index, {
 		image: src
