@@ -33,7 +33,7 @@
 				<p class="box__sale-setting-info-price-label semibold">* Price</p>
 				<input class="box__sale-setting-info-input box__sale-setting-info-price-input" placeholder="0" v-model="boxPrice" @input="checkSubmitAvailable">
 			</div>
-			<CustomSwitch label="Add Timer" :value="timerOn" @onChange="changeTimerStatus"/>
+			<!-- <CustomSwitch label="Add Timer" :value="timerOn" @onChange="changeTimerStatus"/> -->
 			<div class="box__sale-setting-info-timer-block" v-if="timerOn">
 				<div class="box__sale-setting-info-presale">
 					<input type="checkbox" class="box__sale-setting-info-presale-checkbox">
@@ -131,20 +131,21 @@ export default {
 	  boxCover: null,
 	  boxCoverFile: null,
 	  timerOn: false,
-	  isSubmitAvailable: false
+	  isSubmitAvailable: false,
+	  isSubmitDisabled: false
     }
   },
   // TODO
-//   created() {
-// 	this.boxName = 'StreetArt4-1'
-// 	this.boxDescription = 'In 2111, the "year of Nuggets", during the official meeting of all countries on the Day of Protection from Children the majority suggested holding an annual competition, a World DIY contest among chil'
-// 	this.boxAuthorDetail = "Amur is a multidisciplinary artist, founder of the creative association +111°, creative director\n.\n+111° - creative association, originally formed as\na graffiti team\n\nAfter 5 years of active existence"
-// 	this.boxRoyalty = 10
-// 	this.boxPrice = 30
-// 	// this.boxImage = "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/Rectangle 604-1.png"
-// 	// this.boxCover = "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/Rectangle 604-2.png"
-// 	this.isSubmitAvailable = true
-//   },
+  created() {
+	// this.boxName = 'StreetArt4-1'
+	// this.boxDescription = 'In 2111, the "year of Nuggets", during the official meeting of all countries on the Day of Protection from Children the majority suggested holding an annual competition, a World DIY contest among chil'
+	// this.boxAuthorDetail = "Amur is a multidisciplinary artist, founder of the creative association +111°, creative director\n.\n+111° - creative association, originally formed as\na graffiti team\n\nAfter 5 years of active existence"
+	// this.boxRoyalty = 10
+	// this.boxPrice = 30
+	// this.boxImage = "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/Rectangle 604-1.png"
+	// this.boxCover = "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/Rectangle 604-2.png"
+	// this.isSubmitAvailable = true
+  },
   methods: {
 	changeBoxDescription(e) {
 	  this.boxDescription = e.target.value
@@ -156,7 +157,9 @@ export default {
 	//   this.timerOn = !this.timerOn
 	},
 	checkSubmitAvailable() {
-	  this.isSubmitAvailable = this.boxName && this.boxRoyalty && this.boxPrice && this.boxImage && this.boxCover
+	  if (!this.isSubmitDisabled) {
+		this.isSubmitAvailable = this.boxName && this.boxRoyalty && this.boxPrice && this.boxImage && this.boxCover
+	  }
 	},
 	changeBoxBanner(refName) {
 	  this.$refs[refName].click()
@@ -202,10 +205,10 @@ export default {
 	async uploadBoxImagesToIPFS(boxInfo) {
 	  const ipfsArray = []
 	  const nftArray = [
-		...boxInfo.legendaryNfts,
-		...boxInfo.epicNfts,
-		...boxInfo.rareNfts,
-		...boxInfo.commonNfts,
+		...(boxInfo.legendaryNfts || []),
+		...(boxInfo.epicNfts || []),
+		...(boxInfo.rareNfts || []),
+		...(boxInfo.commonNfts || []),
 		this.boxImageFile,
 		this.boxCoverFile
 	  ]
@@ -220,23 +223,30 @@ export default {
 		}
 	  })
 	  const resultArray = await API.uploadImageToIPFS(ipfsArray)
-
-	  boxInfo.legendaryNfts.map(nft => {
-		nft.image = resultArray[nftIndex].path
-		nftIndex++
-	  })
-	  boxInfo.epicNfts.map(nft => {
-		nft.image = resultArray[nftIndex].path
-		nftIndex++
-	  })
-	  boxInfo.rareNfts.map(nft => {
-		nft.image = resultArray[nftIndex].path
-		nftIndex++
-	  })
-	  boxInfo.commonNfts.map(nft => {
-		nft.image = resultArray[nftIndex].path
-		nftIndex++
-	  })
+	  if (boxInfo.legendaryNfts) {
+		boxInfo.legendaryNfts.map(nft => {
+		  nft.image = resultArray[nftIndex].path
+		  nftIndex++
+	    })
+	  }
+	  if (boxInfo.epicNfts) {
+		boxInfo.epicNfts.map(nft => {
+		  nft.image = resultArray[nftIndex].path
+		  nftIndex++
+	    })
+	  }
+	  if (boxInfo.rareNfts) {
+		boxInfo.rareNfts.map(nft => {
+		  nft.image = resultArray[nftIndex].path
+		  nftIndex++
+	    })
+	  }
+	  if (boxInfo.commonNfts) {
+		boxInfo.commonNfts.map(nft => {
+		  nft.image = resultArray[nftIndex].path
+		  nftIndex++
+	    })
+	  }
 
 	  boxInfo.boxImage = resultArray[nftIndex].path
 	  boxInfo.boxCover = resultArray[++nftIndex].path

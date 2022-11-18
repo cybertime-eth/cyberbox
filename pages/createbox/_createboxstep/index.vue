@@ -43,10 +43,14 @@ export default {
 		this.changeStep(step)
 		this.$router.push(`/createbox/${step}`)
 	  } else {
+		let collectionQuery = ''
+		const collectionAddress = this.$route.query.collectionAddress
 		if (type === 1) {
-		  this.$router.push('/createnft')
+		  collectionQuery = collectionAddress ? `?collectionAddress=${collectionAddress}` : ''
+		  this.$router.push(`/createnft${collectionQuery}`)
 		} else {
-		  this.$router.push('/createnft?simple=true')
+		  collectionQuery = collectionAddress ? `&collectionAddress=${collectionAddress}` : ''
+		  this.$router.push(`/createnft?simple=true${collectionQuery}`)
 		}
 	  }
     }

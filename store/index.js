@@ -2235,10 +2235,6 @@ export const actions = {
 	try {
 	  const query = gql`
 		query Sample {
-		  contracts(first: 30) {
-			nftSymbol
-			mint_count
-		  }
 		  rncollections(first: 48 where: { linkedNFTAddress_not: "" ${collectionCondition} }) {
 			id
 			collectionAddress
@@ -2256,11 +2252,7 @@ export const actions = {
 		  }
 		}`
 	  const data = await this.$graphql.boxmgr.request(query)
-	  const contracts = data.contracts || []
-	  const rnCollections = data.rncollections.filter(collection => {
-		const foundContract = contracts.find(contract => contract.nftSymbol === collection.linkedNFTAddress)
-		return foundContract && foundContract.mint_count > 0
-	  })
+	  const rnCollections = data.rncollections
 	  commit('setBoxCollectionList', rnCollections)
 	  return rnCollections		
 	} catch {
@@ -2744,12 +2736,31 @@ export const actions = {
 	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
 	  const legendaryCount = 10
 	  const legendaryImages = boxInfo.legendaryNfts.map(nft => nft.image)
-	  const epicCount = boxInfo.rarity ? 10 : 0
-	  const epicImages = boxInfo.epicNfts.map(nft => nft.image)
-	  const rareCount = boxInfo.rarity ? 10 : 0
-	  const rareImages = boxInfo.rareNfts.map(nft => nft.image)
-	  const commonCount = boxInfo.rarity ? 10 : 0
-	  const commonImages = boxInfo.commonNfts.map(nft => nft.image)
+
+	  let epicCount = boxInfo.rarity ? 10 : 0
+	  let epicImages = []
+	  if (boxInfo.epicNfts && boxInfo.epicNfts.length > 0) {
+		epicImages = boxInfo.epicNfts.map(nft => nft.image)
+	  } else {
+		epicCount = 0
+	  }
+
+	  let rareCount = boxInfo.rarity ? 10 : 0
+	  let rareImages = []
+	  if (boxInfo.rareNfts && boxInfo.rareNfts.length > 0) {
+		epicImages = boxInfo.rareNfts.map(nft => nft.image)
+	  } else {
+	    rareCount = 0
+	  }
+
+	  let commonCount = boxInfo.rarity ? 10 : 0
+	  let commonImages = []
+	  if (boxInfo.commonNfts && boxInfo.commonNfts.length > 0) {
+		commonImages = boxInfo.commonNfts.map(nft => nft.image)
+	  } else {
+	    commonCount = 0
+	  }
+
 	  await contract.setFeeAndNFTCounts(
 		feeCO2,
 		legendaryCount,

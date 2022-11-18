@@ -199,9 +199,11 @@ export default {
 		file: null
 	  }
 	  this.legendaryNFTs.push({...nftInfo})
-	  this.epicNFTs.push({...nftInfo})
-	  this.rareNFTs.push({...nftInfo})
-	  this.commonNFTs.push({...nftInfo})
+	  if (this.rarityMode) {
+		this.epicNFTs.push({...nftInfo})
+	    this.rareNFTs.push({...nftInfo})
+	    this.commonNFTs.push({...nftInfo})
+	  }
 	  // TODO
 	//   this.legendaryNFTs.push({
 	// 	...nftInfo,
@@ -231,9 +233,9 @@ export default {
 	  const boxNftInfo = this.boxNft
 	  if (boxNftInfo && boxNftInfo.legendaryNFTs) {
 		this.legendaryNFTs = boxNftInfo.legendaryNfts
-	    this.epicNFTs = boxNftInfo.epicNfts
-	    this.rareNFTs = boxNftInfo.rareNfts
-	    this.commonNFTs = boxNftInfo.commonNfts
+	    this.epicNFTs = boxNftInfo.epicNfts || []
+	    this.rareNFTs = boxNftInfo.rareNfts || []
+	    this.commonNFTs = boxNftInfo.commonNfts || []
 	    this.rarityMode = boxNftInfo.rarity
 	  }
 

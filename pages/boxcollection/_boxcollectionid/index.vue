@@ -211,7 +211,7 @@ export default {
       this.$store.commit('changeSortData', 'all')
 	},
 	createCarbonBox() {
-	  this.$router.push(`/createnft?collectionAddress=${this.collection.collectionAddress}`)
+	  this.$router.push(`/createbox/4?collectionAddress=${this.collection.collectionAddress}`)
 	},
 	sendCollectionEvent(eventInfo) {
 	  let eventName = ''
