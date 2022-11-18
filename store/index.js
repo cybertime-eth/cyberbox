@@ -2737,28 +2737,22 @@ export const actions = {
 	  const legendaryCount = 10
 	  const legendaryImages = boxInfo.legendaryNfts.map(nft => nft.image)
 
-	  let epicCount = boxInfo.rarity ? 10 : 0
+	  const epicCount = boxInfo.rarity ? 10 : 0
 	  let epicImages = []
 	  if (boxInfo.epicNfts && boxInfo.epicNfts.length > 0) {
 		epicImages = boxInfo.epicNfts.map(nft => nft.image)
-	  } else {
-		epicCount = 0
 	  }
 
-	  let rareCount = boxInfo.rarity ? 10 : 0
+	  const rareCount = boxInfo.rarity ? 10 : 0
 	  let rareImages = []
 	  if (boxInfo.rareNfts && boxInfo.rareNfts.length > 0) {
-		epicImages = boxInfo.rareNfts.map(nft => nft.image)
-	  } else {
-	    rareCount = 0
+		rareImages = boxInfo.rareNfts.map(nft => nft.image)
 	  }
 
-	  let commonCount = boxInfo.rarity ? 10 : 0
+	  const commonCount = boxInfo.rarity ? 10 : 0
 	  let commonImages = []
 	  if (boxInfo.commonNfts && boxInfo.commonNfts.length > 0) {
 		commonImages = boxInfo.commonNfts.map(nft => nft.image)
-	  } else {
-	    commonCount = 0
 	  }
 
 	  await contract.setFeeAndNFTCounts(

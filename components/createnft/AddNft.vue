@@ -145,8 +145,8 @@
 				</button>
 			</div>
 			<div class="createbox__nft-setting-nfts-total">
-				<p class="createbox__nft-setting-nfts-total-count">Total NFT's: 1</p>
-				<p class="createbox__nft-setting-nfts-total-quantity">Total quantity: 10</p>
+				<p class="createbox__nft-setting-nfts-total-count">Total NFT's: {{ rarity ? 4 : 1 }}</p>
+				<p class="createbox__nft-setting-nfts-total-quantity">Total quantity: {{ rarity ? 40 : 10 }}</p>
 			</div>
 		</div>
 	</div>
