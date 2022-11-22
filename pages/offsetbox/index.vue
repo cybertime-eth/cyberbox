@@ -18,7 +18,7 @@
 					<p class="offsetbox__content-block-name">Discover drops</p>
 				</div>
 				<div class="offsetbox__content-list">
-					<div class="offsetbox__content-list-card" :key="idx" v-for="(box, idx) of boxList">
+					<div class="offsetbox__content-list-card" @click="showBoxDetail(box)" :key="idx" v-for="(box, idx) of boxList">
 						<img class="offsetbox__content-list-card-cover" :src="box.boxCoverImage">
 						<div class="offsetbox__content-list-card-logoblock">
 							<p class="offsetbox__content-list-card-logoblock-title">CyberBox</p>
@@ -27,7 +27,7 @@
 						<div class="offsetbox__content-list-card-info">
 						  <p class="offsetbox__content-list-card-info-name">{{ box.boxName }}</p>
 						  <div class="offsetbox__content-list-card-info-sale">
-							  <p class="offsetbox__content-list-card-info-name">WILL SOON</p>
+							  <p class="offsetbox__content-list-card-info-name public">PUBLIC SALE</p>
 							  <!-- <p class="offsetbox__content-list-card-info-sale-time">08:00 pm, 1 oct.</p> -->
 						  </div>
 						</div>
@@ -62,7 +62,10 @@ export default {
       this.loading = true
       await this.$store.dispatch('getOffsetBoxList')
       this.loading = false
-    }
+	},
+	showBoxDetail(box) {
+	  this.$router.push(`/offsetbox/${box.boxAddress}`)
+	}
   }
 }
 </script>
@@ -160,6 +163,7 @@ export default {
 		position: relative;
 		height: 28.5rem;
 		border-radius: 0.8rem;
+		cursor: pointer;
 		&-cover {
 		  position: absolute;
 		  left: 0;
@@ -206,6 +210,9 @@ export default {
 			font-weight: 700;
 			font-size: 1.8rem;
 			color: $white;
+			&.public {
+			  color: $green;
+			}
 		  }
 		  &-sale {
 			text-align: right;

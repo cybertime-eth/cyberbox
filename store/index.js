@@ -2323,13 +2323,14 @@ export const actions = {
 	}  
   },
 
-  async getOffsetBoxList({state, commit}) {
+  async getOffsetBoxList({commit}, boxAddress) {
+	const condition = boxAddress ? `where: { boxAddress: "${boxAddress}" }` : ''
     const query = gql`
       query Sample {
-        rnboxes(first: 48) {
+        rnboxes(first: 48 ${condition}) {
 		  id
-			boxName
-			boxDescription
+		  boxName
+		  boxDescription
 		  boxAddress
 		  boxAutor
 		  linkedCollectionAddress
