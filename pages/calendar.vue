@@ -215,7 +215,7 @@ import BuyToken from '@/components/modals/buyToken'
 import ExchangeBonus from '@/components/modals/exchangeBonus.vue'
 import ExchangeToken from '@/components/modals/exchangeToken.vue'
 import SuccessfullBuy from '@/components/modals/successBuy'
-const CERTIFICATE_MINT_PRICE = 15
+const CERTIFICATE_MINT_PRICE = 40
 
 export default {
   components: {
