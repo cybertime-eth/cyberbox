@@ -6,7 +6,7 @@
                 <h2 class="box__cover-title">{{ boxInfo.boxName }}</h2>
                 <p class="box__cover-desc">Offset Box by Cyberbox</p>
             </div>
-            <div class="box__info">
+            <!-- <div class="box__info">
                 <img class="box__info-img" :src="boxInfo.boxImage">
                 <div class="box__info-sale">
                     <div class="box__info-sale-price">
@@ -24,19 +24,19 @@
                         <button class="box__info-sale-purchase-buy">Buy</button>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="box__detail">
-                <div class="box__contents">
+                <div class="box__contents" v-if="boxNfts.length > 0">
                     <p class="box__contents-name">Box contents</p>
                     <div class="box__contents-nfts">
                         <div class="box__contents-nfts-nft" :key="idx" v-for="(boxNft, idx) of boxNfts">
-                            <img class="box__contents-nfts-nft-img" :src="boxNft.image">
+                            <img class="box__contents-nfts-nft-img" :src="boxNft.linkedImage">
                             <div class="box__contents-nfts-nft-info">
-                                <p class="box__contents-nfts-nft-name">{{ boxNft.name }}</p>
+                                <p class="box__contents-nfts-nft-name">Random NFT</p>
                                 <div class="box__contents-nfts-nft-type">
                                     <img class="box__contents-nfts-nft-type-img" :src="boxNftTypeIcon(boxNft)" v-if="boxNftTypeIcon(boxNft)">
                                     <p class="box__contents-nfts-nft-type-name" :class="{ [boxNftType(boxNft)]: true }">{{ boxNftType(boxNft) }}</p>
-                                    <p class="box__contents-nfts-nft-type-count">x{{ boxNftCount(boxNft) }}</p>
+                                    <p class="box__contents-nfts-nft-type-count">x{{ boxNft.imageCount }}</p>
                                 </div>
                             </div>
                         </div>
@@ -102,23 +102,6 @@ export default {
     const tokenPrice = await this.$store.dispatch('getPriceToken')
     this.celoPrice = tokenPrice.value
     this.boxAddress = this.$route.params.offsetboxid
-    this.boxNfts = [{
-      image: 'https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/art1.png',
-      name: 'Art1',
-      legendary_count: 10
-    }, {
-      image: 'https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/art2.png',
-      name: 'Art2',
-      epic_count: 10
-    }, {
-      image: 'https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/art3.png',
-      name: 'Art3',
-      rare_count: 10
-    }, {
-      image: 'https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/art4.png',
-      name: 'Art4',
-      common_count: 10
-    }]
     if (this.boxAddress) {
       this.loadBoxInfo()
       if (this.boxList.length === 0 || !this.boxInfo.boxAddress) {
@@ -141,19 +124,17 @@ export default {
         if (collectionList.length > 0) {
           this.collectionInfo = collectionList[0]
         }
-      }
+	  }
+	  this.boxNfts = await this.$store.dispatch('getBoxImageList', this.boxAddress)
     },
     boxNftType(boxNft) {
-      if (boxNft.legendary_count !== undefined) {
-        return BOX_NFT_TYPE_LEGENDARY
-      } else if (boxNft.epic_count !== undefined) {
-        return BOX_NFT_TYPE_EPIC
-      } else if (boxNft.rare_count !== undefined) {
-        return BOX_NFT_TYPE_RARE
-      } else if (boxNft.common_count !== undefined) {
-        return BOX_NFT_TYPE_COMMON
-      }
-      return 'unknown'
+	  switch(boxNft.rnType) {
+		case 0: return BOX_NFT_TYPE_LEGENDARY
+		case 1: return BOX_NFT_TYPE_EPIC
+		case 2: return BOX_NFT_TYPE_RARE
+		case 3: return BOX_NFT_TYPE_COMMON
+		default: return 'unknown'
+	  }
     },
     boxNftTypeIcon(boxNft) {
       const type = this.boxNftType(boxNft)
@@ -301,7 +282,7 @@ export default {
   }
 
   &__contents {
-    padding: 5.3rem 0;
+    padding-bottom: 5.3rem;
     &-name {
       font-family: OpenSans-SemiBold;
       font-weight: 600;
@@ -370,7 +351,7 @@ export default {
     }
   }
   &__detail {
-    padding: 0 6rem;
+    padding: 5.3rem 6rem 0;
     &-info {
       display: flex;
       justify-content: space-between;

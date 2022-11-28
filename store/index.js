@@ -22,8 +22,8 @@ import { RESOURCE_CDN_ROOT } from '@/config'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
-  marketCertificate: '0xD734bB58a28AAAAcbE5a738398f471B3187B2960',
-  boxCollectionManager: '0xe55DB8B5Af361beA139efe952540e29F81De32cC',
+	marketCertificate: '0xD734bB58a28AAAAcbE5a738398f471B3187B2960',
+  boxCollectionManager: '0xa16f2974a3ee7131FDFB8bB7D3a6445D8f503833',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   certContractAddress: '0xA4A8E345E1a88EFc9164014BB2CeBd4C2F98E986',
   user: {},
@@ -2324,10 +2324,11 @@ export const actions = {
   },
 
   async getOffsetBoxList({commit}, boxAddress) {
-	const condition = boxAddress ? `where: { boxAddress: "${boxAddress}" }` : ''
-    const query = gql`
-      query Sample {
-        rnboxes(first: 48 ${condition}) {
+	try {
+	  const condition = boxAddress ? `where: { boxAddress: "${boxAddress}" }` : ''
+	  const query = gql`
+	  query Sample {
+		rnboxes(first: 48 ${condition}) {
 		  id
 		  boxName
 		  boxDescription
@@ -2342,11 +2343,37 @@ export const actions = {
 		  epic_count
 		  rare_count
 		  common_count
-        }
+		  updatedAt
+	    }
 	  }`
-	const data = await this.$graphql.boxmgr.request(query)
-	let rnBoxes = data.rnboxes || []
-	commit('setNewBoxList', rnBoxes)
+	  const data = await this.$graphql.boxmgr.request(query)
+	  let rnBoxes = data.rnboxes || []
+	  commit('setNewBoxList', rnBoxes)
+	  return rnBoxes
+	} catch(e) {
+	  console(e)
+	  return []
+	}
+  },
+
+  async getBoxImageList({}, boxAddress) {
+	try {
+	  const query = gql`
+	  query Sample {
+		rnimages(first: 48 where: {boxAddress: "${boxAddress}"}) {
+		  id
+		  boxAddress
+		  linkedImage
+		  rnType
+		  imageCount
+		}
+	  }`
+	  const data = await this.$graphql.boxmgr.request(query)
+	  return data.rnimages
+	} catch(e) {
+	  console(e)
+	  return []
+	}
   },
 
   // REMOVE NFT FROM LIST

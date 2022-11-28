@@ -51,23 +51,27 @@
 								</button>
 								<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
 							</div>
-							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>10</b></p>
+							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>{{ nft.quantity }}</b></p>
 						</div>
-						<div class="createbox__nft-setting-nfts-add-block-category-type legendary">
-							<img class="createbox__nft-setting-nfts-add-block-category-type-icon type-icon" src="/diamond-filled.svg">
-							<p class="createbox__nft-setting-nfts-add-block-category-type-name type-name">Legendary</p>
+						<div class="createbox__nft-setting-nfts-add-block-category-box" :class="{ 'can-delete': lIdx > 0 }">
+							<a class="createbox__nft-setting-nfts-add-block-category-delete" v-if="lIdx > 0" @click="clickDeleteNft('legendary', lIdx)">Delete</a>
+							<div class="createbox__nft-setting-nfts-add-block-category-type legendary">
+								<img class="createbox__nft-setting-nfts-add-block-category-type-icon type-icon" src="/diamond-filled.svg">
+								<p class="createbox__nft-setting-nfts-add-block-category-type-name type-name">Legendary</p>
+							</div>
 						</div>
 					</div>
 				</div>
-				<div class="createbox__nft-setting-nfts-add-buttonbox">
-					<button class="createbox__nft-setting-nfts-add-button">
-						<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
-						<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
-					</button>
-					<div class="createbox__nft-setting-nfts-add-detail" v-if="!rarity">
-						<p class="createbox__nft-setting-nfts-add-detail-count">Total NFT’s: 1</p>
-						<p class="createbox__nft-setting-nfts-add-detail-quantity">Total quantity: 10</p>
-					</div>
+			</div>
+			<div class="createbox__nft-setting-nfts-add-buttonbox">
+				<button class="createbox__nft-setting-nfts-add-button" :class="{ active: canAddNft('legendary') }" @click="clickAddNft('legendary')">
+					<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
+					<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-black.svg" v-if="canAddNft('legendary')">
+					<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg" v-else>
+				</button>
+				<div class="createbox__nft-setting-nfts-add-detail" v-if="!rarity">
+					<p class="createbox__nft-setting-nfts-add-detail-count">Total NFT’s: 1</p>
+					<p class="createbox__nft-setting-nfts-add-detail-quantity">Total quantity: 10</p>
 				</div>
 			</div>
 			<div class="createbox__nft-setting-nfts-add" :key="eIdx + 100" v-for="(nft, eIdx) of epicNFTs" v-if="rarityMode">
@@ -82,19 +86,23 @@
 								</button>
 								<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
 							</div>
-							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>10</b></p>
+							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>{{ nft.quantity }}</b></p>
 						</div>
-						<div class="createbox__nft-setting-nfts-add-block-category-type epic">
-							<img class="createbox__nft-setting-nfts-add-block-category-type-icon type-icon" src="/fire-filled.svg">
-							<p class="createbox__nft-setting-nfts-add-block-category-type-name type-name">Epic</p>
+						<div class="createbox__nft-setting-nfts-add-block-category-box" :class="{ 'can-delete': eIdx > 0 }">
+							<a class="createbox__nft-setting-nfts-add-block-category-delete" v-if="eIdx > 0" @click="clickDeleteNft('epic', eIdx)">Delete</a>
+							<div class="createbox__nft-setting-nfts-add-block-category-type epic">
+								<img class="createbox__nft-setting-nfts-add-block-category-type-icon type-icon" src="/fire-filled.svg">
+								<p class="createbox__nft-setting-nfts-add-block-category-type-name type-name">Epic</p>
+							</div>
 						</div>
 					</div>
 				</div>
-				<button class="createbox__nft-setting-nfts-add-button">
-					<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
-					<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
-				</button>
 			</div>
+			<button class="createbox__nft-setting-nfts-add-button" :class="{ active: canAddNft('epic') }" @click="clickAddNft('epic')" v-if="rarityMode">
+				<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
+				<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-black.svg" v-if="canAddNft('epic')">
+					<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg" v-else>
+			</button>
 			<div class="createbox__nft-setting-nfts-add" :key="rIdx + 200" v-for="(nft, rIdx) of rareNFTs" v-if="rarityMode">
 				<div class="createbox__nft-setting-nfts-add-block">
 					<input class="createbox__nft-setting-nfts-add-block-input" placeholder="Enter name" :value="nft.name" @input="changeNftName('rare', rIdx, $event)">
@@ -107,19 +115,23 @@
 								</button>
 								<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
 							</div>
-							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>10</b></p>
+							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>{{ nft.quantity }}</b></p>
 						</div>
-						<div class="createbox__nft-setting-nfts-add-block-category-type rare">
-							<img class="createbox__nft-setting-nfts-add-block-category-type-icon type-icon" src="/snow-filled.svg">
-							<p class="createbox__nft-setting-nfts-add-block-category-type-name type-name">Rare</p>
+						<div class="createbox__nft-setting-nfts-add-block-category-box" :class="{ 'can-delete': rIdx > 0 }">
+							<a class="createbox__nft-setting-nfts-add-block-category-delete" v-if="rIdx > 0" @click="clickDeleteNft('rare', rIdx)">Delete</a>
+							<div class="createbox__nft-setting-nfts-add-block-category-type rare">
+								<img class="createbox__nft-setting-nfts-add-block-category-type-icon type-icon" src="/snow-filled.svg">
+								<p class="createbox__nft-setting-nfts-add-block-category-type-name type-name">Rare</p>
+							</div>
 						</div>
 					</div>
 				</div>
-				<button class="createbox__nft-setting-nfts-add-button">
-					<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
-					<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
-				</button>
 			</div>
+			<button class="createbox__nft-setting-nfts-add-button" :class="{ active: canAddNft('rare') }" @click="clickAddNft('rare')" v-if="rarityMode">
+				<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
+				<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-black.svg" v-if="canAddNft('rare')">
+				<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg" v-else>
+			</button>
 			<div class="createbox__nft-setting-nfts-add" :key="cIdx + 300" v-for="(nft, cIdx) of commonNFTs" v-if="rarityMode">
 				<div class="createbox__nft-setting-nfts-add-block">
 					<input class="createbox__nft-setting-nfts-add-block-input" placeholder="Enter name" :value="nft.name" @input="changeNftName('common', cIdx, $event)">
@@ -132,18 +144,22 @@
 								</button>
 								<img class="createbox__nft-setting-nfts-add-block-category-plus-nft" :src="nft.image" v-else>
 							</div>
-							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>10</b></p>
+							<p class="createbox__nft-setting-nfts-add-block-category-plus-quantity">Quantity: <b>{{ nft.quantity }}</b></p>
 						</div>
-						<div class="createbox__nft-setting-nfts-add-block-category-type">
-							<p class="createbox__nft-setting-nfts-add-block-category-type-name type-name">Common</p>
+						<div class="createbox__nft-setting-nfts-add-block-category-box" :class="{ 'can-delete': cIdx > 0 }">
+							<a class="createbox__nft-setting-nfts-add-block-category-delete" v-if="cIdx > 0" @click="clickDeleteNft('common', cIdx)">Delete</a>
+							<div class="createbox__nft-setting-nfts-add-block-category-type">
+								<p class="createbox__nft-setting-nfts-add-block-category-type-name type-name">Common</p>
+							</div>
 						</div>
 					</div>
 				</div>
-				<button class="createbox__nft-setting-nfts-add-button">
-					<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
-					<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg">
-				</button>
 			</div>
+			<button class="createbox__nft-setting-nfts-add-button" :class="{ active: canAddNft('common') }" @click="clickAddNft('common')" v-if="rarityMode">
+				<p class="createbox__nft-setting-nfts-add-button-name">Add NFT</p>
+				<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-black.svg" v-if="canAddNft('common')">
+				<img class="createbox__nft-setting-nfts-add-block-button-icon" src="/plus-grey-small.svg" v-else>
+			</button>
 			<div class="createbox__nft-setting-nfts-total">
 				<p class="createbox__nft-setting-nfts-total-count">Total NFT's: {{ rarity ? 4 : 1 }}</p>
 				<p class="createbox__nft-setting-nfts-total-quantity">Total quantity: {{ rarity ? 40 : 10 }}</p>
@@ -157,6 +173,12 @@
   </div>
 </template>
 <script>
+
+const NFT_TYPE_LEGENDARY = 'legendary'
+const NFT_TYPE_EPIC = 'epic'
+const NFT_TYPE_RARE = 'rare'
+const NFT_TYPE_COMMON = 'common'
+
 export default {
   props: ['rarity'],
   data() {
@@ -204,24 +226,6 @@ export default {
 	    this.rareNFTs.push({...nftInfo})
 	    this.commonNFTs.push({...nftInfo})
 	  }
-	  // TODO
-	//   this.legendaryNFTs.push({
-	// 	...nftInfo,
-	// 	name: 'Art1'
-	//   })
-	//   this.epicNFTs.push({
-	// 	...nftInfo,
-	// 	name: 'Art2'
-	//   })
-	//   this.rareNFTs.push({
-	// 	...nftInfo,
-	// 	name: 'Art3'
-	//   })
-	//   this.commonNFTs.push({
-	// 	...nftInfo,
-	// 	name: 'Art4'
-	//   })
-	// ----
 	}
 	this.checkBoxNftInfo()
   },
@@ -247,84 +251,89 @@ export default {
 	  }
 	},
 	updateNftInfo(type, index, nftInfo) {
+	  let newNFTs = []
 	  switch(type) {
-		case 'legendary':
+		case NFT_TYPE_LEGENDARY:
+		  newNFTs = JSON.parse(JSON.stringify(this.legendaryNFTs))
 		  if (index > 0) {
 			this.legendaryNFTs = [
-			  ...this.legendaryNFTs.slice(0, index - 1),
+			  ...newNFTs.slice(0, index),
 			  {
-				...this.legendaryNFTs[index],
+				...newNFTs[index],
 				...nftInfo
 			  },
-			  this.legendaryNFTs.slice(index)
+			  ...newNFTs.slice(index + 1)
 			]
 		  } else {
 			this.legendaryNFTs = [
 			  {
-				...this.legendaryNFTs[0],
+				...newNFTs[0],
 				...nftInfo
 			  },
-			  ...this.legendaryNFTs.slice(index + 1)
+			  ...newNFTs.slice(index + 1)
 			]
 		  }
 		break
-		case 'epic':
+		case NFT_TYPE_EPIC:
+		  newNFTs = JSON.parse(JSON.stringify(this.epicNFTs))
 		  if (index > 0) {
 			this.epicNFTs = [
-			  ...this.epicNFTs.slice(0, index - 1),
+			  ...newNFTs.slice(0, index),
 			  {
-				...this.epicNFTs[index],
+				...newNFTs[index],
 				...nftInfo
 			  },
-			  this.epicNFTs.slice(index)
+			  ...newNFTs.slice(index + 1)
 			]
 		  } else {
 			this.epicNFTs = [
 			  {
-				...this.epicNFTs[0],
+				...newNFTs[0],
 				...nftInfo
 			  },
-			  ...this.epicNFTs.slice(index + 1)
+			  ...newNFTs.slice(index + 1)
 			]
 		  }
 		break
-		case 'rare':
+		case NFT_TYPE_RARE:
+		  newNFTs = JSON.parse(JSON.stringify(this.rareNFTs))
 		  if (index > 0) {
 			this.rareNFTs = [
-			  ...this.rareNFTs.slice(0, index - 1),
+			  ...newNFTs.slice(0, index),
 			  {
-				...this.rareNFTs[index],
+				...newNFTs[index],
 				...nftInfo
 			  },
-			  this.rareNFTs.slice(index)
+			  ...newNFTs.slice(index + 1)
 			]
 		  } else {
 			this.rareNFTs = [
 			  {
-				...this.rareNFTs[0],
+				...newNFTs[0],
 				...nftInfo
 			  },
-			  ...this.rareNFTs.slice(index + 1)
+			  ...newNFTs.slice(index + 1)
 			]
 		  }
 		break
-		case 'common':
+		case NFT_TYPE_COMMON:
+		  newNFTs = JSON.parse(JSON.stringify(this.commonNFTs))
 		  if (index > 0) {
 			this.commonNFTs = [
-			  ...this.commonNFTs.slice(0, index - 1),
+			  ...newNFTs.slice(0, index),
 			  {
-				...this.commonNFTs[index],
+				...newNFTs[index],
 				...nftInfo
 			  },
-			  this.commonNFTs.slice(index)
+			  ...newNFTs.slice(index + 1)
 			]
 		  } else {
 			this.commonNFTs = [
 			  {
-				...this.commonNFTs[0],
+				...newNFTs[0],
 				...nftInfo
 			  },
-			  ...this.commonNFTs.slice(index + 1)
+			  ...newNFTs.slice(index + 1)
 			]
 		  }
 		break
@@ -384,6 +393,142 @@ export default {
 
 	  this.isSubmitAvailable = isAvailable
 	},
+	canAddNft(type) {
+	  let nfts = []
+	  let readyCount = 0
+	  switch (type) {
+		case NFT_TYPE_LEGENDARY:
+		  nfts = this.legendaryNFTs
+		  break
+		case NFT_TYPE_EPIC:
+		  nfts = this.epicNFTs
+		  break
+		case NFT_TYPE_RARE:
+		  nfts = this.rareNFTs
+		  break
+		case NFT_TYPE_COMMON:
+		  nfts = this.commonNFTs
+		  break
+	  }
+
+	  nfts.forEach(nft => {
+		if (nft.name && nft.image) {
+		  readyCount++;
+		}
+	  })
+	  return nfts.length <= 10 && readyCount === nfts.length
+	},
+	updateNftsQuantity(nfts) {
+	  const quantity = Math.floor(10 / nfts.length)
+	  const lastQuantity = quantity + 10 % nfts.length
+	  nfts.map((nft, index) => {
+		if (index < nfts.length - 1) {
+		  nft.quantity = quantity
+		} else {
+		  nft.quantity = lastQuantity
+		}
+	  })
+	  return nfts
+	},
+	clickAddNft(type) {
+	  let newNFTs = []
+	  const newNFT = {
+		name: '',
+		image: null,
+		file: null
+	  }
+	  switch (type) {
+		case NFT_TYPE_LEGENDARY:
+		  newNFTs = [
+			...JSON.parse(JSON.stringify(this.legendaryNFTs)),
+			newNFT
+		  ]
+		  newNFTs = this.updateNftsQuantity(newNFTs)
+		  this.legendaryNFTs = newNFTs
+		  break
+		case NFT_TYPE_EPIC:
+		  newNFTs = [
+			...JSON.parse(JSON.stringify(this.epicNFTs)),
+			newNFT
+		  ]
+		  newNFTs = this.updateNftsQuantity(newNFTs)
+		  this.epicNFTs = newNFTs
+		  break
+		case NFT_TYPE_RARE:
+		  newNFTs = [
+			...JSON.parse(JSON.stringify(this.rareNFTs)),
+			newNFT
+		  ]
+		  newNFTs = this.updateNftsQuantity(newNFTs)
+		  this.rareNFTs = newNFTs
+		  break
+		case NFT_TYPE_COMMON:
+		  newNFTs = [
+			...JSON.parse(JSON.stringify(this.commonNFTs)),
+			newNFT
+		  ]
+		  newNFTs = this.updateNftsQuantity(newNFTs)
+		  this.commonNFTs = newNFTs
+		  break
+	  }
+	},
+	clickDeleteNft(type, index) {
+	  let newNfs = []
+	  switch (type) {
+		case NFT_TYPE_LEGENDARY:
+		  newNfs = JSON.parse(JSON.stringify(this.legendaryNFTs))
+		  if (index > 0) {
+			newNfs = [
+			  ...newNfs.slice(0, index),
+			  ...newNfs.slice(index + 1)
+			]
+		  } else {
+			newNfs = newNfs.slice(index + 1)
+		  }
+		  newNfs = this.updateNftsQuantity(newNfs)
+		  this.legendaryNFTs = newNfs
+		  break
+		case NFT_TYPE_EPIC:
+		  newNfs = JSON.parse(JSON.stringify(this.epicNFTs))
+		  if (index > 0) {
+			newNfs = [
+			  ...newNfs.slice(0, index),
+			  ...newNfs.slice(index + 1)
+			]
+		  } else {
+			newNfs = newNfs.slice(i + 1)
+		  }
+		  newNfs = this.updateNftsQuantity(newNfs)
+		  this.epicNFTs = newNfs
+		  break
+		case NFT_TYPE_RARE:
+		  newNfs = JSON.parse(JSON.stringify(this.rareNFTs))
+		  if (index > 0) {
+			newNfs = [
+			  ...newNfs.slice(0, index),
+			  ...newNfs.slice(index + 1)
+			]
+		  } else {
+			newNfs = newNfs.slice(index + 1)
+		  }
+		  newNfs = this.updateNftsQuantity(newNfs)
+		  this.rareNFTs = newNfs
+		  break
+		case NFT_TYPE_COMMON:
+		  newNfs = JSON.parse(JSON.stringify(this.commonNFTs))
+		  if (index > 0) {
+			newNfs = [
+			  ...newNfs.slice(0, index),
+			  ...newNfs.slice(index + 1)
+			]
+		  } else {
+			newNfs = newNfs.slice(index + 1)
+		  }
+		  newNfs = this.updateNftsQuantity(newNfs)
+		  this.commonNFTs = newNfs
+		  break
+	  }
+	},
 	changeNftName(type, index, e) {
 	  this.updateNftInfo(type, index, {
 		name: e.target.value
@@ -423,7 +568,7 @@ export default {
 		rareNfts: this.rareNFTs,
 		commonNfts: this.commonNFTs,
 		rarity: this.rarityMode
-	  })
+		})
 	  this.$emit('onNextStep')
 	}
   }
@@ -596,6 +741,14 @@ export default {
 			display: flex;
 			justify-content: space-between;
 			margin-top: 0.8rem;
+			&-box {
+			  display: flex;
+			  align-items: center;
+			  justify-content: space-between;
+			  &.can-delete {
+				width: 22.9rem;
+			  }
+			}
 			&-plus {
 			  display: flex;
 			  align-items: center;
@@ -621,6 +774,12 @@ export default {
 				  color: $textColor;
 				}
 			  }
+			}
+			&-delete {
+			  margin-right: 7.8rem;
+			  font-size: 1.4rem;
+			  color: $red;
+			  cursor: pointer;
 			}
 			&-type {
 			  display: flex;
@@ -683,10 +842,18 @@ export default {
 		  background: transparent;
 		  margin-top: 1.4rem;
 		  cursor: default;
+		  pointer-events: none;
 		  &-name {
 			margin-right: 1.4rem;
 			font-size: 1.4rem;
 			color: $border;
+		  }
+		  &.active {
+			cursor: pointer;
+			pointer-events: auto;
+			.createbox__nft-setting-nfts-add-button-name {
+			  color: $grayDark;
+			}
 		  }
 		}
 		&-detail {

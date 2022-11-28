@@ -66,7 +66,7 @@ export default {
         options: {}
       },
       boxmgr: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/randomcollectionthree',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/cyberrandomthree',
         options: {}
       },
       ubeswap: {
