@@ -109,6 +109,10 @@ export default {
           box-shadow: 0px 1.32126px 3.30314px rgba(28, 19, 39, 0.06);
           border-radius: 2rem;
           padding: 0.4rem 0.8rem;
+		  font-family: OpenSans-Bold;
+		  font-weight: 700;
+		  font-size: 0.9rem;
+		  color: $pink;
           &-img {
             width: 0.7rem;
             margin-right: 0.6rem;
@@ -118,10 +122,70 @@ export default {
       &-title {
         margin-top: 3.4rem;
         line-height: 1;
+		font-family: OpenSans-SemiBold;
         font-weight: 600;
         font-size: 2rem;
       }
     }
+  }
+
+  @media (max-width: 460px) {
+	width: calc(100% - 1.6rem);
+	padding: 2.4rem 0.8rem;
+	&-title {
+	  font-family: OpenSans-SemiBold;
+	  font-weight: 600;
+	  font-size: 2.2rem;
+	  text-align: center;
+	}
+	&-subtitle {
+	  width: auto;
+	}
+	&-box {
+	  display: block;
+	  width: 100%;
+	  margin-top: 2rem;
+	  &-card {
+		flex-direction: row;
+		width: calc(100% - 3.2rem);
+		padding: 1.6rem;
+		&:last-child {
+		  margin-top: 1.6rem;
+		}
+		&-frame {
+		  padding: 0.8rem 0.8rem 1.8rem;
+		  margin-right: 1.6rem;
+		  &-raritybg, &-simplebg {
+			width: 8.5rem;
+			height: 8.7rem;
+		  }
+		  &-line1, &-line2 {
+			height: 0.4rem;
+			margin-top: 0.4rem;
+			border-radius: 1.6rem;
+		  }
+		  &-line1 {
+			width: 5.1rem;
+		  }
+		  &-line2 {
+			width: 4rem;
+		  }
+		  &-epic {
+			padding: 0.3rem 0.6rem;
+			right: 0.6rem;
+			font-size: 0.6rem;
+			&-img {
+			  width: 0.4rem;
+			  margin-right: 0.4rem;
+			}
+		  }
+		}
+		&-title {
+		  margin: 0;
+		  font-size: 1.4rem;
+		}
+	  }
+	}
   }
 }
 </style>

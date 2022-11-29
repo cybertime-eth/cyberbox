@@ -179,7 +179,7 @@ export default {
       left: 0;
       top: 0;
       width: 100%;
-      max-height: 100%;
+      height: 100%;
       z-index: 0;
     }
     &-title {
@@ -302,6 +302,8 @@ export default {
         border-radius: 0.4rem;
         &-img {
           width: 100%;
+		  height: 31.2rem;
+		  border-radius: 0.4rem 0.4rem 0 0;
         }
         &-info {
           padding: 2.5rem 0;
@@ -357,7 +359,11 @@ export default {
       justify-content: space-between;
       padding-bottom: 16.1rem;
       &-block {
+		flex: 1;
         max-width: 42.6rem;
+		&:last-child {
+		  max-width: 62.8rem;
+		}
         &-name {
           font-family: OpenSans-SemiBold;
           font-weight: 600;
@@ -369,6 +375,63 @@ export default {
         }
       }
     }
+  }
+
+  @media (max-width: 460px) {
+	&__cover {
+	  height: 16rem;
+	  &-title {
+		font-size: 3.2rem;
+	  }
+	  &-desc {
+		margin-top: 0.8rem;
+		font-size: 1.4rem;
+	  }
+	}
+	&__detail {
+	  padding: 4.5rem 0.9rem;
+	}
+	&__contents {
+	  padding-bottom: 4.5rem;
+	  &-nfts {
+		grid-template-columns: repeat(3, 1fr);
+		grid-column-gap: 1rem;
+		grid-row-gap: 1rem;
+		&-nft {
+		  &-img {
+			height: 9rem;
+		  }
+		  &-info {
+			padding: 0.6rem 0 1.2rem;
+		  }
+		  &-type {
+			width: fit-content;
+			margin: 0.8rem auto 0;
+			padding: 0.5rem;
+			&-img, &-name {
+			  display: none;
+			}
+			&-count {
+			  font-size: 0.8rem;
+			}
+		  }
+		}
+	  }
+	}
+	&__detail-info {
+	  display: block;
+	  padding: 0;
+	  &-block {
+		max-width: none;
+		margin-top: 5.6rem;
+		&:first-child {
+		  margin: 0;
+	    }
+		&-content {
+		  margin-top: 2.1rem;
+		}
+	  }
+	}
   }
 }
 </style>

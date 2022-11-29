@@ -373,6 +373,7 @@ export default {
 		padding: 1.2rem 1rem;
 		border: 1px solid $border2;
 		border-radius: 4px;
+		font-size: 1.6rem;
 		&:focus {
 		  border-color: $grayDark;
 		}
@@ -383,6 +384,7 @@ export default {
 		border-radius: 4px;
 		padding: 1.8rem 1rem;
 		margin-top: 1.6rem;
+		font-size: 1.6rem;
 		resize: none;
 		&-letters {
 		  width: 100%;
@@ -630,6 +632,62 @@ export default {
 		border: 1px solid $border;
 		color: $border;
 		pointer-events: none;
+	  }
+	}
+  }
+
+  @media (max-width: 460px) {
+	padding-left: 0.8rem;
+	padding-right: 0.8rem;
+	&-header {
+	  margin-top: 4rem;
+	  &-title {
+		font-family: OpenSans-SemiBold;
+		font-weight: 600;
+		font-size: 1.8rem;
+	  }
+	  &-description {
+		margin-top: 0.6rem;
+		font-size: 1.4rem;
+	  }
+	}
+	&-setting {
+	  flex-direction: column-reverse;
+	  justify-content: center;
+	  padding: 0;
+	  &-image {
+		margin-top: 3.6rem;
+		&-area {
+		  margin-top: 1rem;
+		}
+		&-box-area {
+		  height: 30.4rem;
+		}
+		&-cover {
+		  margin-top: 3.2rem;
+		  &-area {
+			height: 9.1rem;
+		  }
+		}
+	  }
+	  &-info {
+		margin-top: 7.2rem;
+		&-input, &-textarea {
+		  font-size: 1.4rem;
+		}
+	  }
+	}
+	&-buttons {
+	  flex-direction: column-reverse;
+	  width: 100%;
+	  margin-top: 6.7rem;
+	  &-button {
+		width: 100%;
+		justify-content: center;
+		&.prev {
+		  margin-top: 1.6rem;
+		  margin-right: 0;
+		}
 	  }
 	}
   }

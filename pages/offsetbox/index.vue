@@ -27,7 +27,7 @@
 						<div class="offsetbox__content-list-card-info">
 						  <p class="offsetbox__content-list-card-info-name">{{ box.boxName }}</p>
 						  <div class="offsetbox__content-list-card-info-sale">
-							  <p class="offsetbox__content-list-card-info-name public">PUBLIC SALE</p>
+							  <p class="offsetbox__content-list-card-info-name status public">PUBLIC SALE</p>
 							  <!-- <p class="offsetbox__content-list-card-info-sale-time">08:00 pm, 1 oct.</p> -->
 						  </div>
 						</div>
@@ -118,7 +118,7 @@ export default {
 	}
 	&-desc {
 	  margin-top: 1rem;
-	  font-family: OpenSans-Medium;
+	  font-family: OpenSans-SemiBold;
 	  font-weight: 600;
 	  font-size: 2rem;
 	  color: $white;
@@ -135,7 +135,7 @@ export default {
 	  padding: 0.4rem 0.8rem;
 	  margin-top: 1.2rem;
 	  border-radius: 0.4rem;
-	  font-family: OpenSans-Medium;
+	  font-family: OpenSans-SemiBold;
 	  font-weight: 600;
 	  font-size: 1.8rem;
 	  color: $white;
@@ -148,7 +148,7 @@ export default {
 	  align-items: center;
 	  justify-content: space-between;
 	  &-name {
-		font-family: OpenSans-Medium;
+		font-family: OpenSans-SemiBold;
 		font-weight: 600;
 		font-size: 2.2rem;
 	  }
@@ -170,6 +170,7 @@ export default {
 		  top: 0;
 		  width: 100%;
 		  height: 100%;
+		  border-radius: 0.8rem;
 		}
 		&-logoblock {
 		  display: flex;
@@ -182,7 +183,7 @@ export default {
 			padding: 0.4rem 0.8rem;
 			margin-right: 0.8rem;
 			border-radius: 2.6rem;
-			font-family: OpenSans-Medium;
+			font-family: OpenSans-SemiBold;
 			font-weight: 600;
 			font-size: 1.4rem;
 			color: $white;
@@ -221,10 +222,75 @@ export default {
 			  margin-top: 0.8rem;
 			  padding: 0.4rem 0.8rem;
 			  border-radius: 0.4rem;
-			  font-family: OpenSans-Medium;
+			  font-family: OpenSans-SemiBold;
 			  font-weight: 600;
 			  font-size: 1.4rem;
 			  color: $white;
+			}
+		  }
+		}
+	  }
+	}
+  }
+
+  @media (max-width: 460px) {
+	max-width: none;
+	padding: 0 0 4rem;
+	&__popular {
+	  padding-top: 2.2rem;
+	  padding-bottom: 3rem;
+	  &-img {
+		width: 2.8rem;
+		height: 2.8rem;
+		top: 0.8rem;
+	  }
+	  &-info {
+		width: 100%;
+	  }
+	  &-title {
+		white-space: nowrap;
+		font-family: OpenSans-Bold;
+		font-weight: 700;
+		font-size: 1.8rem;
+	  }
+	  &-desc {
+		white-space: nowrap;
+		font-size: 1.4rem;
+	  }
+	}
+	&__content {
+	  margin-top: 2.4rem;
+	  padding: 0 0.8rem;
+	  &-block {
+		&-name {
+		  font-size: 1.6rem;
+		}
+	  }
+	  &-list {
+		display: block;
+		&-card {
+		  height: 20.4rem;
+		  margin-top: 1.6rem;
+		  &:first-child {
+			margin: 0;
+		  }
+		  &-logoblock {
+			&-title {
+			  font-size: 1rem;
+			}
+			&-img {
+			  width: 2.8rem;
+			  height: 2.8rem;
+			}
+		  }
+		  &-info {
+			height: 6.4rem;
+			padding: 1.2rem 0.8rem;
+			&-name {
+			  font-size: 1.6rem;
+			  &.status {
+				font-size: 1.4rem;
+			  }
 			}
 		  }
 		}

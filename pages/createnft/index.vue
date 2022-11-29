@@ -129,9 +129,15 @@ export default {
 	  }
 	  &.active {
 		border-color: $pink;
-		color: $pink;
+		span {
+		  color: $pink;
+		}
 	  }
 	}
+  }
+
+  @media (max-width: 460px) {
+	padding: 1.6rem 0;
   }
 }
 </style>

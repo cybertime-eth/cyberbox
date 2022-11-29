@@ -28,6 +28,7 @@
         <nuxt-link to="/rankings" active-class="gradient-text" class="menu-mobile-list-link" @click="sendRankingEvent">Rankings</nuxt-link>
         <nuxt-link to="/tracker" active-class="gradient-text" class="menu-mobile-list-link">Tracker</nuxt-link>
         <nuxt-link to="/offsetbox" active-class="gradient-text" class="menu-mobile-list-link">Offset Box</nuxt-link>
+        <nuxt-link to="/createbox" active-class="gradient-text" class="menu-mobile-list-link">Create Box</nuxt-link>
       </div>
       <client-only>
         <profileModal :sideMenu="true" @closeModal="closeModal" v-if="isMobile()"/>

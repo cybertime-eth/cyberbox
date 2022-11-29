@@ -168,7 +168,8 @@
 	</div>
 	<button class="createbox__nft-next" :class="{ disabled: !isSubmitAvailable }" @click="gotoNextStep">
 		Next step
-		<img class="createbox__nft-next-icon" src="/arrow-right-white.svg">
+		<img class="createbox__nft-next-icon" src="/arrow-right-white.svg" v-if="isSubmitAvailable">
+		<img class="createbox__nft-next-icon" src="/arrow-right.svg" v-else>
 	</button>
   </div>
 </template>
@@ -610,6 +611,8 @@ export default {
 		border-radius: 50%;
 		text-align: center;
 		line-height: 2.8rem;
+		font-family: OpenSans-SemiBold;
+		font-weight: 600;
 		font-size: 1.4rem;
 		color: $white;
 	  }
@@ -693,6 +696,9 @@ export default {
 		  font-size: 1.4rem;
 		  color: $border2;
 		  cursor: pointer;
+		  &:last-child {
+			margin: 0;
+		  }
 		}
 	  }
 	  &-balance {
@@ -732,6 +738,8 @@ export default {
 			padding-bottom: 1.2rem;
 			border-bottom: 1px solid $modalColor;
 			border-radius: 0;
+			font-family: OpenSans-SemiBold;
+			font-weight: 600;
 			font-size: 1.6rem;
 			&:focus {
 			  border-color: $grayLight;
@@ -877,7 +885,6 @@ export default {
 		  font-family: OpenSans-SemiBold;
 		  font-weight: 600;
 		  font-size: 1.4rem;
-		  color: $border;
 		}
 		&-count {
 		  margin-right: 2.4rem;
@@ -906,6 +913,101 @@ export default {
 	}
 	&-icon {
 	  margin-left: 1.4rem;
+	}
+  }
+
+  @media (max-width: 460px) {
+	padding: 0 0.8rem 16.8rem;
+	&-header {
+	  max-width: none;
+	  margin-top: 4rem;
+	  &-title {
+		font-family: OpenSans-SemiBold;
+		font-weight: 600;
+		font-size: 1.8rem;
+	  }
+	  &-description {
+		margin-top: 0.6rem;
+		font-size: 1.4rem;
+	  }
+	}
+	&-setting {
+	  display: block;
+	  margin-top: 3.3rem;
+	  &-step {
+		align-items: flex-start;
+		&-num {
+		  min-width: 2.4rem;
+		  width: 2.4rem;
+		  height: 2.4rem;
+		  line-height: 2.4rem;
+		  font-size: 1.2rem;
+		}
+		&-name {
+		  font-size: 1.4rem;
+		}
+	  }
+	  &-stepbox {
+		align-items: flex-start;
+	  }
+	  &-token {
+		max-width: none;
+		margin: 0;
+		&-detail {
+		  margin-top: 1.2rem;
+		  padding-top: 0.8rem;
+		  &-inputblock {
+			margin-top: 1.6rem;
+		  }
+		  &-inputbox {
+			margin: 0;
+		  }
+		  &-input {
+			width: calc(100% - 2.8rem);
+			height: 1.6rem;
+			padding: 1.2rem 1.4rem;
+		  }
+		  &-buy {
+			display: none;
+		  }
+		}
+		&-units {
+		  width: fit-content;
+		  margin: 0.8rem auto 0;
+		}
+	  }
+
+	  &-nfts {
+		margin-top: 5.8rem;
+		&-file {
+		  display: block;
+		  margin-top: 1.2rem;
+		  padding-top: 2.4rem;
+		  &-kinds {
+			margin-top: 0.8rem;
+		  }
+		}
+		&-add {
+		  margin-top: 1.6rem;
+		  &-block {
+			padding: 1.8rem 0.8rem;
+			&-category {
+			  &-plus {
+				&-button, &-nft {
+				  width: 5.6rem;
+				  height: 5.6rem;
+				}
+			  }
+			  &-delete {
+				display: none;
+			  }
+			}
+		  }
+		}
+	  }
+	}
+	&-next {
+	  margin-top: 5.8rem;
 	}
   }
 }

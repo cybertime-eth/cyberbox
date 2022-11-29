@@ -510,6 +510,8 @@ export default {
       width: 65rem;
       padding-top: 1rem;
       letter-spacing: 0.03em;
+	  font-family: OpenSans-Regular;
+      font-weight: 400;
       font-size: 1.4rem;
     }
   }
@@ -668,7 +670,8 @@ export default {
   }
 }
 @media screen and (max-width: 460px) {
-  .collection {
+  .boxcollection {
+	padding: 0 0.8rem 2rem;
     &__banner {
       height: 12rem;
     }
@@ -681,25 +684,20 @@ export default {
         height: 8rem;
       }
       &-title {
-        padding-top: 1rem;
-		span.certificate {
+        padding-top: 1.6rem;
+		span {
+		  font-family: OpenSans-SemiBold;
+		  font-weight: 600;
+		  font-size: 1.8rem;
 		  white-space: normal;
 		  text-align: center;
+		}
+		img {
+		  display: none;
 		}
       }
       &-subtitle {
         padding-top: .5rem;
-	  }
-	  &-mint {
-		&-link {
-		  text-decoration: none;
-		}
-	  }
-      &-socials {
-        top: 17rem;
-        left: auto;
-        right: auto;
-        width: 15rem;
 	  }
 	  &-block {
 		display: flex;
@@ -712,14 +710,14 @@ export default {
 		  padding-bottom: 1rem;
 		}
 		.boxcollection__header-socials {
-		  top: 16rem;
+		  top: 14rem;
 		  left: 50%;
 		  transform: translateX(-50%);
 		}
 	  }
       &-info {
         width: 100%;
-        padding-top: 7.2rem;
+        padding-top: 6.2rem;
         flex-wrap: wrap;
         &-block {
           width: 14rem;
@@ -765,34 +763,6 @@ export default {
       grid-row-gap: 1.6rem;
       padding-top: 2.2rem;
     }
-    &__sort {
-      padding-bottom: 1rem;
-      overflow-x: auto;
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-      &::-webkit-scrollbar {
-        display: none;
-      }
-      &-button {
-        flex: 1;
-        width: auto;
-        height: 5.2rem;
-        margin-right: .8rem;
-        font-size: 1rem;
-        &-delimiter {
-          display: none;
-        }
-        &-breakline {
-          display: inline-block;
-        }
-        &:last-child {
-          margin: 0;
-        }
-        &-title.traits {
-          display: none;
-        }
-      }
-    }
     &__info {
       position: relative;
       padding-top: 6.3rem;
@@ -807,6 +777,16 @@ export default {
         font-size: 1.4rem;
       }
     }
+	&__create {
+	  width: 18rem;
+	  height: 3.6rem;
+	  padding: 0.8rem 0;
+	  margin-top: 5.4rem;
+	  border-radius: 2.5rem;
+	  font-family: OpenSans-SemiBold;
+	  font-weight: 600;
+	  font-size: 1.4rem;
+	}
   }
 }
 @keyframes shaking {

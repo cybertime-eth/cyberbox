@@ -81,6 +81,9 @@ export default {
     margin-top: 1.8rem;
     font-size: 1.6rem;
     color: $grayDark;
+	img {
+	  width: 1.3rem;
+	}
   }
   &-box {
     width: 36.4rem;
@@ -99,6 +102,30 @@ export default {
       background: linear-gradient(90deg, #365BE0 -14.25%, #D676CF 48.65%, #FFE884 109.5%);
 	  transition: all 0.5s;
     }
+  }
+
+  @media (max-width: 460px) {
+	width: calc(100% - 3.2rem);
+	margin: 0;
+    padding: 2.4rem 1.6rem;
+	&-title {
+      font-family: OpenSans-SemiBold;
+      font-weight: 600;
+      font-size: 2.2rem;
+	  text-align: center;
+	}
+	&-subtitle {
+	  font-size: 1.4rem;
+	  text-align: center;
+	}
+	&-box {
+	  width: 100%;
+	  margin-top: 4rem;
+	}
+	&-progress {
+	  width: 100%;
+	  margin-top: 4.6rem;
+	}
   }
 }
 </style>

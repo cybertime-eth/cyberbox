@@ -342,6 +342,7 @@ export default {
     margin-top: 5rem;
     &-label {
       line-height: 1;
+	  font-family: OpenSans-SemiBold;
       font-weight: 600;
       font-size: 1.6rem;
     }
@@ -351,7 +352,7 @@ export default {
       &-collection {
         &-input {
           width: calc(100% - 2rem);
-          height: 2.4rem;
+          height: 2.2rem;
           padding: 1.2rem 1rem;
           margin-top: 1.6rem;
           border: 1px solid $border2;
@@ -392,6 +393,7 @@ export default {
       &-social {
         margin-top: 3.2rem;
         &-label {
+		  font-family: OpenSans-SemiBold;
           font-weight: 600;
           font-size: 1.8rem;
         }
@@ -414,6 +416,7 @@ export default {
           }
           &-name {
             margin-right: 0.8rem;
+			white-space: nowrap;
             font-size: 1.4rem;
           }
           &-input {
@@ -447,6 +450,7 @@ export default {
         }
       }
       &-label {
+		font-family: OpenSans-SemiBold;
         font-weight: 600;
         font-size: 1.6rem;
       }
@@ -488,7 +492,7 @@ export default {
         background: $pink;
         text-align: center;
         border-radius: 2.5rem;
-        font-family: OpenSans-Regular;
+        font-family: OpenSans-SemiBold;
         font-weight: 600;
         font-size: 1.4rem;
 		color: $white;
@@ -517,6 +521,74 @@ export default {
 		}
       }
     }
+  }
+
+  @media (max-width: 460px) {
+	padding: 2.4rem 0.8rem;
+	&-header {
+	  max-width: none;
+	  &-title {
+		font-family: OpenSans-SemiBold;
+		font-weight: 600;
+		font-size: 1.8rem;
+	  }
+	  &-description {
+		font-size: 1.4rem;
+	  }
+	}
+
+	&-main {
+	  flex-direction: column-reverse;
+	  margin-top: 3.2rem;
+	  &-banner {
+		&-description {
+		  margin-top: 0.6rem;
+		}
+		&-logo-box {
+		  width: 10rem;
+		  height: 10rem;
+		  margin: 1.6rem auto 0;
+		}
+		&-cover {
+		  margin-top: 4rem;
+		  &-box {
+			width: 100%;
+			height: 9.1rem;
+		  }
+		}
+		&-promo-box {
+		  width: 14.4rem;
+    	  height: 9rem;
+    	  margin: 1.6rem auto 0;
+		}
+	  }
+	  &-info {
+		max-width: none;
+    	margin-top: 4rem;
+		&-collection {
+		  &-description {
+			margin-top: 2.4rem;
+		  }
+		}
+		&-social {
+		  margin-top: 2.6rem;
+		  &-label {
+			font-size: 1.6rem;
+		  }
+		}
+	  }
+	  &-create {
+		width: 100%;
+		margin-top: 5.4rem;
+		&-btn {
+		  height: 3.6rem;
+		}
+		&-preview {
+		  height: 3.6rem;
+    	  line-height: 3.6rem;
+		}
+	  }
+	}
   }
 }
 </style>

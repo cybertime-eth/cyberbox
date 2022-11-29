@@ -100,6 +100,40 @@ export default {
 	font-size: 1.4rem;
 	color: $pink;
   }
+
+  @media (max-width: 460px) {
+	width: calc(100% - 3.2rem);
+	margin: 0;
+	padding: 2.4rem 1.6rem;
+	box-shadow: none;
+	&-title {
+	  font-family: OpenSans-SemiBold;
+	  font-weight: 600;
+	  font-size: 2.2rem;
+	}
+	&-subtitle {
+	  margin-top: 0.8rem;
+	  font-size: 1.4rem;
+	}
+	&-animation {
+	  width: 100%;
+	  height: 27.2rem;
+	  margin-top: 4rem;
+	}
+	&-buttons {
+	  flex-direction: column-reverse;
+	  margin-top: 1rem;
+	  &-button {
+		flex: none;
+		width: 100%;
+		height: 3.6rem;
+		line-height: 3.6rem;
+		&:first-child {
+		  margin-top: 0.8rem;
+		}
+	  }
+	}
+  }
 }
 </style>
 

@@ -116,12 +116,50 @@ export default {
 		width: 5.6rem;
 		height: 5.6rem;
 		margin-right: 2.4rem;
-		border-radius: 0.6rem;
+		border-radius: 50%;
 	  }
 	  &-name {
 		font-family: OpenSans-Medium;
 		font-weight: 600;
 		font-size: 1.8rem;
+	  }
+	}
+  }
+
+  @media (max-width: 460px) {
+	padding-top: 13.8rem;
+	&__emptybox {
+	  width: 100%;
+	  margin: 0;
+	  &-create {
+		width: calc(100% - 3.2rem);
+		&-add {
+		  width: 4.8rem;
+		  height: 4.8rem;
+		}
+		&-collection {
+		  font-size: 1.6rem;
+		}
+	  }
+	  &-title {
+		font-family: OpenSans-SemiBold;
+		font-weight: 600;
+		font-size: 2.2rem;
+		text-align: center;
+	  }
+	}
+	&__list {
+	  width: 100%;
+	  margin: 1.6rem 0;
+	  &-item {
+		margin-top: 1.6rem;
+		&-logo {
+		  width: 4.8rem;
+		  height: 4.8rem;
+		}
+		&-name {
+		  font-size: 1.6rem;
+		}
 	  }
 	}
   }
