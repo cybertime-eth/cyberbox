@@ -152,7 +152,7 @@ export default {
   }
   
   // TODO
-	// this.collectionName = 'Street Art3'
+	// this.collectionName = 'Street Art'
 	// this.description = 'Wipies is the biggest collection of digital toilet paper on the blockchain. Each one of the 10,000 Wipies is as special as the next.'
 	// this.telegramUrl = 'https://t.me/streetArt'
 	// this.twitterName = 'street_art'
@@ -305,10 +305,10 @@ export default {
 	async createCollection() {
     this.canPreview = false
     this.canCreate = false
+    // TODO Comment
 	  const success = await this.uploadBannerImagesToIPFS()
 	  if (!success) return
 	  const collectionInfo = this.makeCollectionData()
-	  collectionInfo.id = this.$store.state.boxCollectionList.length + 1
 	  this.$store.dispatch('createBoxCollection', collectionInfo)
 	  this.$emit('create')
 	}

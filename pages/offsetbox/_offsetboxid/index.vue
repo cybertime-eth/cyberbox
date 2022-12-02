@@ -6,7 +6,7 @@
                 <h2 class="box__cover-title">{{ boxInfo.boxName }}</h2>
                 <p class="box__cover-desc">Offset Box by Cyberbox</p>
             </div>
-            <!-- <div class="box__info">
+            <div class="box__info">
                 <img class="box__info-img" :src="boxInfo.boxImage">
                 <div class="box__info-sale">
                     <div class="box__info-sale-price">
@@ -17,30 +17,34 @@
                     <p class="box__info-sale-count">{{ remainedBoxCount }}/{{ totalBoxCount }} boxes left</p>
                     <div class="box__info-sale-purchase">
                         <div class="box__info-sale-purchase-change">
-                            <button class="box__info-sale-purchase-change-btn disabled">-</button>
-                            <p class="box__info-sale-purchase-change-amount">1</p>
-                            <button class="box__info-sale-purchase-change-btn">+</button>
+                            <button class="box__info-sale-purchase-change-btn" :class="{ disabled: mintAmount === 1 }" @click="decreaseAmount">-</button>
+                            <p class="box__info-sale-purchase-change-amount">{{ mintAmount }}</p>
+                            <button class="box__info-sale-purchase-change-btn" :class="{ disabled: mintAmount === remainedBoxCount }" @click="increaseAmount">+</button>
                         </div>
-                        <button class="box__info-sale-purchase-buy">Buy</button>
+                        <button class="box__info-sale-purchase-buy" :class="{ disabled: remainedBoxCount === 0 || !mintEnabled }" @click="buyRandomNft">Buy</button>
                     </div>
                 </div>
-            </div> -->
+            </div>
             <div class="box__detail">
                 <div class="box__contents" v-if="boxNfts.length > 0">
                     <p class="box__contents-name">Box contents</p>
-                    <div class="box__contents-nfts">
-                        <div class="box__contents-nfts-nft" :key="idx" v-for="(boxNft, idx) of boxNfts">
-                            <img class="box__contents-nfts-nft-img" :src="boxNft.linkedImage">
-                            <div class="box__contents-nfts-nft-info">
-                                <p class="box__contents-nfts-nft-name">Random NFT</p>
-                                <div class="box__contents-nfts-nft-type">
-                                    <img class="box__contents-nfts-nft-type-img" :src="boxNftTypeIcon(boxNft)" v-if="boxNftTypeIcon(boxNft)">
-                                    <p class="box__contents-nfts-nft-type-name" :class="{ [boxNftType(boxNft)]: true }">{{ boxNftType(boxNft) }}</p>
-                                    <p class="box__contents-nfts-nft-type-count">x{{ boxNft.imageCount }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+					<div class="box__contents-splide splide" ref="slider">
+						<div class="splide__track">
+							<div class="box__contents-nfts splide__list">
+								<div class="box__contents-nfts-nft splide__slide" :key="idx" v-for="(boxNft, idx) of boxNfts">
+									<img class="box__contents-nfts-nft-img" :src="boxNft.linkedImage">
+									<div class="box__contents-nfts-nft-info">
+										<p class="box__contents-nfts-nft-name">Random NFT</p>
+										<div class="box__contents-nfts-nft-type">
+											<img class="box__contents-nfts-nft-type-img" :src="boxNftTypeIcon(boxNft)" v-if="boxNftTypeIcon(boxNft)">
+											<p class="box__contents-nfts-nft-type-name" :class="{ [boxNftType(boxNft)]: true }">{{ boxNftType(boxNft) }}</p>
+											<p class="box__contents-nfts-nft-type-count">x{{ boxNft.imageCount }}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
                 </div>
                 <div class="box__detail-info" v-if="collectionInfo.collectionDesc || boxInfo.boxAutor">
                     <div class="box__detail-info-block">
@@ -59,6 +63,8 @@
 
 <script>
 
+import Splide from '@splidejs/splide'
+
 const BOX_NFT_TYPE_LEGENDARY = 'legendary'
 const BOX_NFT_TYPE_EPIC = 'epic'
 const BOX_NFT_TYPE_RARE = 'rare'
@@ -71,8 +77,10 @@ export default {
       boxNfts: [],
       collectionInfo: {},
       boxAddress: null,
-      boxPrice: 15,
-      celoPrice: 0
+	  celoPrice: 0,
+	  mintAmount: 1,
+	  oldReaminedNftCount: 0,
+	  mintEnabled: true
     }
   },
   computed: {
@@ -87,16 +95,19 @@ export default {
       return (legendaryNftCount + epicNftCount + rareNftCount + commonNftCount)
     },
     remainedBoxCount() {
-      const legendaryNftCount = this.boxInfo.legendary_count || 0
-      const epicNftCount = this.boxInfo.epic_count || 0
-      const rareNftCount = this.boxInfo.rare_count || 0
-      const commonNftCount = this.boxInfo.common_count || 0
-      return (legendaryNftCount + epicNftCount + rareNftCount + commonNftCount)
-    },
+      return (this.totalBoxCount && this.boxInfo.mint_count !== undefined) ? (this.totalBoxCount - this.boxInfo.mint_count) : 0
+	},
+	boxPrice() {
+	  const price = (this.boxInfo && this.boxInfo.nftPrice) ? this.boxInfo.nftPrice / 1000 : 0
+	  return price
+	},
     boxDollarPrice() {
       const price = this.boxPrice * this.celoPrice
       return price > 0 ? Math.ceil(price) : 0
-    }
+	},
+	successMintRandomNft() {
+	  return this.$store.state.successMintRandomNft
+	}
   },
   async created() {
     const tokenPrice = await this.$store.dispatch('getPriceToken')
@@ -114,19 +125,48 @@ export default {
       if (this.$store.state.offsetBoxList.length > 0 && !this.boxInfo.boxAddress) {
         this.loadBoxInfo()
       }
-    }
+	},
+	boxNfts(newVal) {
+	  if (newVal.length > 0) {
+		this.showSplide()
+	  }
+	},
+	successMintRandomNft() {
+	  const success = this.$store.state.successMintRandomNft
+	  if (success) {
+		if (success === true) {
+		  this.loadBoxInfo()
+		} else {
+		  this.mintEnabled = true
+		}
+	  }
+	}
   },
   methods: {
     async loadBoxInfo() {
-      this.boxInfo = this.boxList.find(box => box.boxAddress === this.boxAddress) || {}
-      if (this.boxInfo.linkedCollectionAddress) {
-        const collectionList = await this.$store.dispatch('getBoxCollectionList', this.boxInfo.linkedCollectionAddress)
-        if (collectionList.length > 0) {
-          this.collectionInfo = collectionList[0]
-        }
+	  this.boxInfo = this.boxList.find(box => box.boxAddress === this.boxAddress) || {}
+	  if (this.mintEnabled) {
+		if (this.boxInfo.linkedCollectionAddress) {
+		  const collectionList = await this.$store.dispatch('getBoxCollectionList', this.boxInfo.linkedCollectionAddress)
+		  if (collectionList.length > 0) {
+			this.collectionInfo = collectionList[0]
+		  }
+		}
+		this.boxNfts = await this.$store.dispatch('getBoxImageList', this.boxAddress)
+	  } else if (this.successMintRandomNft) {
+		this.mintEnabled = true
+		this.$store.commit('changeSuccessMintRandomNft', false)
 	  }
-	  this.boxNfts = await this.$store.dispatch('getBoxImageList', this.boxAddress)
-    },
+	},
+	showSplide() {
+	  setTimeout(() => new Splide('.splide', {
+		rewind: true,
+		perPage: !this.isMobile() ? 4 : 3,
+		gap: !this.isMobile() ? '2.4rem' : '1rem',
+		pagination: false,
+		arrows: false
+	  }).mount({}))
+	},
     boxNftType(boxNft) {
 	  switch(boxNft.rnType) {
 		case 0: return BOX_NFT_TYPE_LEGENDARY
@@ -154,7 +194,25 @@ export default {
         case BOX_NFT_TYPE_COMMON: return boxNft.common_count
         default: return 0
       }
-    }
+	},
+	decreaseAmount() {
+	  if (this.mintAmount > 1) {
+		this.mintAmount = this.mintAmount - 1
+	  }
+	},
+	increaseAmount() {
+	  if (this.mintAmount < this.remainedBoxCount) {
+		this.mintAmount = this.mintAmount + 1
+	  }
+	},
+	buyRandomNft() {
+	  this.mintEnabled = false
+	  this.oldReaminedNftCount = this.remainedBoxCount
+	  this.$store.dispatch('mintBoxNft', {
+		...this.boxInfo,
+		mintCount: this.mintAmount
+	  })
+	}
   }
 }
 </script>
@@ -276,6 +334,12 @@ export default {
           font-weight: 600;
           font-size: 1.4rem;
           color: $white;
+		  &.disabled {
+			pointer-events: none;
+			background: $white;
+			border: 1px solid $border;
+			color: $border;
+		  }
         }
       }
     }
@@ -288,17 +352,18 @@ export default {
       font-weight: 600;
       font-size: 1.8rem;
     }
+	&-splide {
+	  margin-top: 2rem;
+	}
     &-nfts {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-column-gap: 2.4rem;
-      margin-top: 2rem;
       &-nft {
         display: flex;
         flex-direction: column;
         align-items: center;
         background: $white;
+		margin-bottom: 1rem;
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+		transition: all 0.3s;
         border-radius: 0.4rem;
         &-img {
           width: 100%;
@@ -388,15 +453,45 @@ export default {
 		font-size: 1.4rem;
 	  }
 	}
+	&__info {
+	  display: block;
+      width: calc(100% - 13.2rem);
+      padding: 2.4rem 5.8rem;
+      margin: 0 0.8rem;
+	  border-radius: 1rem;
+	  &-img {
+		max-width: 18.8rem;
+		margin: 0 auto;
+	  }
+	  &-sale {
+		margin-top: 1.6rem;
+		text-align: center;
+		&-price {
+		  width: fit-content;
+		  margin: 0 auto;
+		}
+		&-count {
+		  margin-top: 1.6rem;
+		}
+		&-purchase {
+		  flex-direction: column;
+    	  justify-content: center;
+		  &-change {
+			margin: 0;
+		  }
+		  &-buy {
+			width: 18.8rem;
+			margin-top: 2rem;
+		  }
+		}
+	  }
+	}
 	&__detail {
-	  padding: 4.5rem 0.9rem;
+	  padding: 1.3rem 0.9rem 4.5rem;
 	}
 	&__contents {
 	  padding-bottom: 4.5rem;
 	  &-nfts {
-		grid-template-columns: repeat(3, 1fr);
-		grid-column-gap: 1rem;
-		grid-row-gap: 1rem;
 		&-nft {
 		  &-img {
 			height: 9rem;

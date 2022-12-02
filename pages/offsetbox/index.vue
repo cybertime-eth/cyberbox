@@ -1,7 +1,7 @@
 <template>
     <section id="offsetbox">
         <div class="offsetbox">
-			<div class="offsetbox__popular">
+			<div class="offsetbox__popular" v-if="popularBox">
 				<div class="offsetbox__popular-coverbox">
 					<img class="offsetbox__popular-cover" :src="popularBox.boxCoverImage">
 				</div>
@@ -13,7 +13,7 @@
 					<p class="offsetbox__popular-time">1d 47h 23min</p> -->
 				</div>
 			</div>
-			<div class="offsetbox__content">
+			<div class="offsetbox__content" :class="{ empty: !popularBox }">
 				<div class="offsetbox__content-block">
 					<p class="offsetbox__content-block-name">Discover drops</p>
 				</div>
@@ -51,7 +51,7 @@ export default {
       return this.$store.state.offsetBoxList
     },
 	popularBox() {
-	  return this.boxList.length > 0 ? this.boxList[this.boxList.length - 1] : {}
+	  return this.boxList.length > 0 ? this.boxList[this.boxList.length - 1] : null
 	}
   },
   created() {
@@ -143,6 +143,9 @@ export default {
   }
   &__content {
 	margin-top: 7rem;
+	&.empty {
+	  margin: 0;
+	}
 	&-block {
 	  display: flex;
 	  align-items: center;

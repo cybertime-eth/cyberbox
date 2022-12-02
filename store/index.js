@@ -22,8 +22,8 @@ import { RESOURCE_CDN_ROOT } from '@/config'
 export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
-	marketCertificate: '0xD734bB58a28AAAAcbE5a738398f471B3187B2960',
-  boxCollectionManager: '0xa16f2974a3ee7131FDFB8bB7D3a6445D8f503833',
+  marketCertificate: '0xD734bB58a28AAAAcbE5a738398f471B3187B2960',
+  boxCollectionManager: '0xDf15183f198A44F2f8536eD048947c7B7b726C65',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   certContractAddress: '0xA4A8E345E1a88EFc9164014BB2CeBd4C2F98E986',
   user: {},
@@ -61,7 +61,8 @@ export const state = () => ({
   successTransferToken: false,
   sellTokenClosed: false,
   successCreateBoxCollection: false,
-  successCreateBoxNft: false,
+  successCreateBox: false,
+  successMintRandomNft: false,
   message: '',
   sort: `orderBy: contract_id`,
   raritySort: null,
@@ -2328,16 +2329,22 @@ export const actions = {
 	  const condition = boxAddress ? `where: { boxAddress: "${boxAddress}" }` : ''
 	  const query = gql`
 	  query Sample {
+        contracts(first: 30) {
+          nftSymbol
+          mint_count
+        }
 		rnboxes(first: 48 ${condition}) {
 		  id
 		  boxName
 		  boxDescription
 		  boxAddress
 		  boxAutor
-		  linkedCollectionAddress
+          linkedCollectionAddress
+          linkedNFTAddress
 		  boxImage
 		  boxCoverImage
-		  boxRoyalty
+          boxRoyalty
+          nftPrice
 		  fee_co2
 		  legendary_count
 		  epic_count
@@ -2347,11 +2354,15 @@ export const actions = {
 	    }
 	  }`
 	  const data = await this.$graphql.boxmgr.request(query)
-	  let rnBoxes = data.rnboxes || []
+      let rnBoxes = data.rnboxes || []
+      rnBoxes.map(box => {
+        const contract = data.contracts.find(contract => contract.nftSymbol === box.linkedNFTAddress)
+        box.mint_count = contract ? contract.mint_count : 0
+      })
 	  commit('setNewBoxList', rnBoxes)
 	  return rnBoxes
 	} catch(e) {
-	  console(e)
+	  console.log(e)
 	  return []
 	}
   },
@@ -2369,9 +2380,9 @@ export const actions = {
 		}
 	  }`
 	  const data = await this.$graphql.boxmgr.request(query)
-	  return data.rnimages
+	  return data.rnimages.sort((a, b) => a.rnType - b.rnType)
 	} catch(e) {
-	  console(e)
+	  console.log(e)
 	  return []
 	}
   },
@@ -2727,40 +2738,50 @@ export const actions = {
 	  await contract.setNFTReadyForSell(boxInfo.collection.linkedNFTAddress);
 	  provider.once(contract, () => {
 		console.log('Set NFT Ready For Sell Done')
-		commit('changeSuccessCreateBoxNft', true)
+		// commit('changeSuccessCreateBox', true)
 	  })
 	} catch(e) {
 	  console.log('error', e)
 	}
   },
 
-  async mintBoxNft({getters, state, commit, dispatch}) {
+  async mintBoxNft({getters, state, dispatch, commit}, boxInfo) {
 	try {
-	  const provider = new ethers.providers.Web3Provider(getters.provider)
-	  const signer = provider.getSigner()
-	  const boxInfo = state.boxNftInfo
-	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
-	  await contract.mintingBoxNFTs(
-		boxInfo.boxAddress,
-		boxInfo.collection.linkedNFTAddress,
-		state.fullAddress
-	  )
+      const ethereumProvider = getters.provider
+	  const provider = new ethers.providers.Web3Provider(ethereumProvider)
+	  const web3 = new Web3(ethereumProvider)
+	  const accounts = await web3.eth.getAccounts()
+	  const account = accounts[0]
+	  const kit = ContractKit.newKitFromWeb3(web3)
+      const contract = new kit.web3.eth.Contract(BoxCollectionMgrABI, state.boxCollectionManager)
+      const parsePrice = web3.utils.toWei(String(boxInfo.nftPrice / 1000 * boxInfo.mintCount))
+      await contract.methods.mintingBoxNFTs(
+        boxInfo.boxAddress,
+		boxInfo.linkedNFTAddress,
+        state.fullAddress,
+        boxInfo.mintCount
+      ).send({
+        from: account,
+        value: parsePrice,
+        gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+      })
 	  provider.once(contract, () => {
-		console.log('Minting Box NFT Done')
-		commit('changeSuccessCreateBoxNft', true)
-		// dispatch('setReadyForSellBoxNft')
+        dispatch('getOffsetBoxList', boxInfo.boxAddress)
+        console.log('Minting Box NFT Done')
+        setTimeout(() => commit('changeSuccessMintRandomNft', true), 2000)
 	  })
 	} catch(e) {
-	  console.log('error', e)
+      console.log('error', e)
+      commit('changeSuccessMintRandomNft', 'error')
 	}
   },
 
-  async setBoxFeeAndNftCounts({state, getters, dispatch}) {
+  async setBoxFeeAndNftCounts({state, getters, commit}) {
 	try {
 	  const provider = new ethers.providers.Web3Provider(getters.provider)
 	  const signer = provider.getSigner()
 	  const boxInfo = state.boxNftInfo
-	  const feeCO2 = web3.utils.toWei(String(boxInfo.price * state.cMCO2Price))
+	  const feeCO2 = 0
 	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
 	  const legendaryCount = 10
 	  const legendaryImages = boxInfo.legendaryNfts.map(nft => nft.image)
@@ -2797,7 +2818,7 @@ export const actions = {
 	  );
 	  provider.once(contract, () => {
 		console.log('Set Fee And Counts Done')
-		dispatch('mintBoxNft')
+		commit('changeSuccessCreateBox', true)
 	  })
 	} catch(e) {
 	  console.log('error', e)
@@ -2818,7 +2839,8 @@ export const actions = {
 		boxInfo.authorDetail || '',
 		boxInfo.boxImage,
 		boxInfo.boxCover,
-		boxInfo.royalty ? web3.utils.toWei(String(boxInfo.royalty)) : null
+		boxInfo.price ? web3.utils.toWei(String(boxInfo.price)) : 0,
+		boxInfo.royalty ? boxInfo.royalty : 0
 	  );
 	  contract.on('CyberBoxAddedNewBox', (collectionAddress, boxAddress) => {
 		console.log('Add New Box Done. Box Addresss: ', boxAddress)
@@ -3006,8 +3028,11 @@ export const mutations = {
   changeSuccessCreateBoxCollection(state, status) {
     state.successCreateBoxCollection = status
   },
-  changeSuccessCreateBoxNft(state, status) {
-    state.successCreateBoxNft = status
+  changeSuccessCreateBox(state, status) {
+    state.successCreateBox = status
+  },
+  changeSuccessMintRandomNft(state, status) {
+    state.successMintRandomNft = status
   },
   setChainId(state, chain) {
     state.chainId = chain

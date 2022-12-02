@@ -136,16 +136,16 @@ export default {
     }
   },
   // TODO
-  created() {
-	// this.boxName = 'StreetArt4-1'
-	// this.boxDescription = 'In 2111, the "year of Nuggets", during the official meeting of all countries on the Day of Protection from Children the majority suggested holding an annual competition, a World DIY contest among chil'
-	// this.boxAuthorDetail = "Amur is a multidisciplinary artist, founder of the creative association +111°, creative director\n.\n+111° - creative association, originally formed as\na graffiti team\n\nAfter 5 years of active existence"
-	// this.boxRoyalty = 10
-	// this.boxPrice = 30
-	// this.boxImage = "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/Rectangle 604-1.png"
-	// this.boxCover = "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/Rectangle 604-2.png"
-	// this.isSubmitAvailable = true
-  },
+//   created() {
+// 	this.boxName = 'StreetArt-1'
+// 	this.boxDescription = 'In 2111, the "year of Nuggets", during the official meeting of all countries on the Day of Protection from Children the majority suggested holding an annual competition, a World DIY contest among chil'
+// 	this.boxAuthorDetail = "Amur is a multidisciplinary artist, founder of the creative association +111°, creative director\n.\n+111° - creative association, originally formed as\na graffiti team\n\nAfter 5 years of active existence"
+// 	this.boxRoyalty = 10
+// 	this.boxPrice = 0.1
+// 	this.boxImage = "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/Rectangle 604-1.png"
+// 	this.boxCover = "https://ipfs.moralis.io:2053/ipfs/QmeVAMS15iocLUBVF78HRRM5Xi7zHYArVSwT4BPKXMY2P8/BoxImages/Rectangle 604-2.png"
+// 	this.isSubmitAvailable = true
+//   },
   methods: {
 	changeBoxDescription(e) {
 	  this.boxDescription = e.target.value
@@ -282,7 +282,6 @@ export default {
 	// 	name: "Art4",
 	// 	quantity: 10
 	// 	}]
-	// 	console.log('1111', this.$store.state.boxNftInfo)
 	// 	const boxInfo = {
 	// 		...this.$store.state.boxNftInfo,
 	// 		name: this.boxName,
@@ -296,8 +295,7 @@ export default {
 	// 		legendaryNfts,
 	// 		epicNfts,
 	// 		rareNfts,
-	// 		commonNfts,
-	// 		boxAddress: '0x9b963e5a009f7ae8fde4b4d4c9bbba46f90cadc1'
+	// 		commonNfts
 	// 	}
 
 	// 	this.$store.commit('changeBoxNftInfo', boxInfo)

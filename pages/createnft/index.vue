@@ -53,18 +53,6 @@ export default {
   },
   methods: {
 	loadCollection() {
-	  // TODO
-	//   let boxCollection = {
-	//   	collectionAddress: '0x9787de967a07d4bd2d88d190961694218e7da661',
-	//   	collectionName: 'Street Art4',
-	//   	collectionDesc: 'Wipies is the biggest collection of digital toilet paper on the blockchain. Each one of the 10,000 Wipies is as special as the next.',
-	//   	collectionLogo: 'https://ipfs.moralis.io:2053/ipfs/QmQCvfKfFaMFm38K32WsEaRRJ2SARwM1S1FWxW2JCpw1fy/BoxImages/collection_logo.png',
-	//   	collectionCover: 'https://ipfs.moralis.io:2053/ipfs/QmQCvfKfFaMFm38K32WsEaRRJ2SARwM1S1FWxW2JCpw1fy/BoxImages/collection_cover.png',
-	//   	collectionBanner: 'https://ipfs.moralis.io:2053/ipfs/QmQCvfKfFaMFm38K32WsEaRRJ2SARwM1S1FWxW2JCpw1fy/BoxImages/collection_banner.png',
-	//   	linkedNFTAddress: '0x5f108e1a78edf7fe09b71926c37d80c04cac71de',
-	//   	linkedBoxAddress: ''
-	//   }
-	//-------
 	  if (this.boxNft && this.boxNft.collection && this.boxNft.collection.collectionAddress) return
 	  let boxCollection = null
 	  const collectionList = this.collectionList
