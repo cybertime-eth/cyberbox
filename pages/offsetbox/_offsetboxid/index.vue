@@ -34,7 +34,7 @@
 								<div class="box__contents-nfts-nft splide__slide" :key="idx" v-for="(boxNft, idx) of boxNfts">
 									<img class="box__contents-nfts-nft-img" :src="boxNft.linkedImage">
 									<div class="box__contents-nfts-nft-info">
-										<p class="box__contents-nfts-nft-name">Random NFT</p>
+										<p class="box__contents-nfts-nft-name">{{ boxNft.imageName }}</p>
 										<div class="box__contents-nfts-nft-type">
 											<img class="box__contents-nfts-nft-type-img" :src="boxNftTypeIcon(boxNft)" v-if="boxNftTypeIcon(boxNft)">
 											<p class="box__contents-nfts-nft-type-name" :class="{ [boxNftType(boxNft)]: true }">{{ boxNftType(boxNft) }}</p>
@@ -112,7 +112,8 @@ export default {
   async created() {
     const tokenPrice = await this.$store.dispatch('getPriceToken')
     this.celoPrice = tokenPrice.value
-    this.boxAddress = this.$route.params.offsetboxid
+	this.boxAddress = this.$route.params.offsetboxid
+	this.$store.commit('changeFetchingOwnedBox', false)
     if (this.boxAddress) {
       this.loadBoxInfo()
       if (this.boxList.length === 0 || !this.boxInfo.boxAddress) {

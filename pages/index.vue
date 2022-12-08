@@ -5,9 +5,9 @@
 		<client-only>
 			<img class="refi__main-img" :src="backgroundImage" alt="background">
 		</client-only>
-    	<h1 class="refi__title">Become carbon neutral with NFTs</h1>
+    	<h1 class="refi__title">Carbon NFT Marketplace</h1>
 		<client-only>
-    		<h3 class="refi__subtitle">Cyberbox ReFi NFT Marketplace helps everyone offset CO2 with <br v-if="!isMobile()"/>NFTs and track their carbon footprint</h3>
+    		<h3 class="refi__subtitle">We help businesses and individuals become carbon neutral by creating & trading NFTs</h3>
 		</client-only>
 		<div class="refi__main-buttons">
 		  <button class="refi__main-button btn-createbox" @click="gotoCreateBox">Create Box</button>

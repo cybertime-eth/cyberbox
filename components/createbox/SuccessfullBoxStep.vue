@@ -22,9 +22,10 @@ export default {
   },
   methods: {
     showBoxCollection() {
-      const currCollection = this.$store.state.boxCollectionList.at(-1)
-      if (currCollection) {
-        this.$router.push(`/boxcollection/${currCollection.collectionAddress}`)
+      const currBoxInfo = this.$store.state.boxNftInfo
+      console.log('0000', currBoxInfo)
+      if (currBoxInfo && currBoxInfo.collection) {
+        this.$router.push(`/boxcollection/${currBoxInfo.collection.collectionAddress}`)
       }
     },
     createOffsetBox() {

@@ -25,7 +25,7 @@ export default {
 	  return this.$store.state.successCreateBoxCollection
 	},
 	prepareNftDone() {
-	  return this.$store.state.successCreateBoxNft
+	  return this.$store.state.successCreateBox
 	},
 	progressStyle() {
 	  return `width: ${this.progress}%`
@@ -38,7 +38,7 @@ export default {
 	  }
 	},
 	prepareNftDone() {
-	  if (this.$store.state.successCreateBoxNft) {
+	  if (this.$store.state.successCreateBox) {
 		this.moveToSuccessStep()
 	  }
 	}

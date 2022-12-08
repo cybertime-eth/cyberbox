@@ -11,12 +11,16 @@
 				<input class="box__sale-setting-info-input" placeholder="Name your box" v-model="boxName" @input="checkSubmitAvailable">
 			</div>
 			<div class="box__sale-setting-info-description">
-				<p class="box__sale-setting-info-label">Collection description <span>(Optional)</span></p>
+				<p class="box__sale-setting-info-label">Box description <span>(Optional)</span></p>
 				<textarea class="box__sale-setting-info-textarea" placeholder="Add description" maxlength="200" v-model="boxDescription"/>
 				<p class="box__sale-setting-info-textarea-letters">{{ boxDescription.length }}/200</p>
 			</div>
+			<div class="box__sale-setting-info-user">
+				<p class="box__sale-setting-info-label">* Author name</p>
+				<input class="box__sale-setting-info-input" placeholder="Your name" v-model="boxAuthorName" @input="checkSubmitAvailable"/>
+			</div>
 			<div class="box__sale-setting-info-author">
-				<p class="box__sale-setting-info-label">About autor <span>(Optional)</span></p>
+				<p class="box__sale-setting-info-label">About author <span>(Optional)</span></p>
 				<textarea class="box__sale-setting-info-textarea" placeholder="Add description" maxlength="200" v-model="boxAuthorDetail"/>
 				<p class="box__sale-setting-info-textarea-letters">{{ boxAuthorDetail.length }}/200</p>
 			</div>
@@ -121,7 +125,8 @@ export default {
   data() {
     return {
 	  boxName: '',
-	  boxDescription: '',
+		boxDescription: '',
+		boxAuthorName: '',
 	  boxAuthorDetail: '',
 	  boxRoyalty: null,
 	  boxPrice: null,
@@ -158,7 +163,7 @@ export default {
 	},
 	checkSubmitAvailable() {
 	  if (!this.isSubmitDisabled) {
-		this.isSubmitAvailable = this.boxName && this.boxRoyalty && this.boxPrice && this.boxImage && this.boxCover
+		this.isSubmitAvailable = this.boxName && this.boxAuthorName && this.boxRoyalty && this.boxPrice && this.boxImage && this.boxCover
 	  }
 	},
 	changeBoxBanner(refName) {
@@ -311,6 +316,7 @@ export default {
 		...JSON.parse(JSON.stringify(this.$store.state.boxNftInfo)),
 		name: this.boxName,
 		description: this.boxDescription,
+		authorName: this.boxAuthorName,
 		authorDetail: this.boxAuthorDetail,
 		royalty: this.boxRoyalty,
 		price: this.boxPrice,
@@ -399,8 +405,11 @@ export default {
 	  &-description {
 		margin-top: 3.8rem;
 	  }
-	  &-author {
+	  &-user {
 		margin-top: 4rem;
+	  }
+	  &-author {
+		margin-top: 3.8rem;
 	  }
 	  &-royalty {
 		margin-top: 4rem;

@@ -7,7 +7,7 @@
 			<div class="footer__links">
 				<div class="footer__links-box">
 					<div class="footer__links-social">
-						<a class="footer__links-social-link" href="https://twitter.com/cybertime_eth" target="_blank">
+						<a class="footer__links-social-link" href="https://twitter.com/cyberboxart" target="_blank">
 							<img class="footer__links-social-link-icon" :src="getCDNImage('socials/twitter-gray.svg')" alt="twitter">
 						</a>
 						<a class="footer__links-social-link" href="https://t.me/cybertime_eth" target="_blank">

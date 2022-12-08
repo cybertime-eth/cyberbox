@@ -2,7 +2,7 @@
     <div class="profile-dropdown">
         <div class="dropdown-item" @click="gotoMyCollection">
             <div class="dropdown-item-profile">
-                <img class="dropdown-item-profile-icon" src="/profile.svg">
+                <img class="dropdown-item-profile-icon" :src="getCDNImage('earth.webp')">
                 <h3 class="dropdown-item-profile-name">Profile</h3>
             </div>
             <img class="dropdown-item-arrow" src="/array-right-grey.svg">
@@ -74,7 +74,6 @@ export default {
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
     padding: 2.1rem 0 !important;
     &:first-child {
       border-bottom: 1px solid $modalColor;

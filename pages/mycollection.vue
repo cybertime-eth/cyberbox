@@ -18,71 +18,97 @@
 		<p class="my-collection-header-tracker-name">Offset tracker</p>
 	  </a>
     </div>
-    <div class="my-collection__loading" v-if="!filteredNft && loading">
-      <img :src="getCDNImage('loading-button.svg')" alt="load">
-    </div>
-    <div class="my-collection__empty" v-else-if="!filteredNft">
-      <h3 class="my-collection__empty-title">You don't have NFT yet</h3>
-      <button class="gradient-button my-collection__empty-button" @click="$router.push('/')">Buy</button>
-    </div>
-    <div class="my-collection-filters-container" v-if="filteredNft">
-      <div class="my-collection-filters">
-        <div class="my-collection-filters-item" @click="filter('all')" :class="{'my-collection-filters-item-active': activeFilter === 'all'}">
-          <p class="my-collection-filters-item-text">All</p>
-          <p class="my-collection-filters-item-content">{{ nftCount }}</p>
-        </div>
-        <div class="my-collection-filters-item" :class="{'my-collection-filters-item-active': activeFilter === 'sale'}" @click="filter('sale')" v-if="forSaleInfo > 0">
-          <p class="my-collection-filters-item-text">For sale</p>
-          <p class="my-collection-filters-item-content">{{ forSaleInfo }}</p>
-        </div>
-        <div class="my-collection-filters-item" :title="filterItem.name" :class="{'my-collection-filters-item-active': activeFilter === filterItem.contract}" :key="idx" @click="filter(filterItem.contract)" v-for="(filterItem, idx) in collectionFilters">
-          <img class="my-collection-filters-item-image" :src="filterItem.image" :alt="filterItem.contract">
-          <p class="my-collection-filters-item-content">{{ filterItem.count }}</p>
-        </div>
-      </div>
-      <div class="my-collection-sort" v-if="activeFilter !== 'knoxnft'">
-		<div class="my-collection-sort-buttons" v-if="activeFilter !== 'all'">
-			<CustomSelect class="sort-select" :options="sortOptions" :selected="activePriceSort" @change="changeSort"/>
-			<div class="my-collection-sort-buttons-box" :class="{ 'no-traits': !isTraitVisible }" v-if="activeFilter !== 'sale'">
-			  	<button class="my-collection-sort-buttons-button" :class="{active: activeSort === 'mint-highest'}" @click="changeSort('mint-highest')">
-					<span>Token ID</span>
-					<img :src="getCDNImage('arrow-down.svg')" alt="down">
-			  	</button>
-				<button class="my-collection-sort-buttons-button" :class="{active: activeSort === 'mint-lowest'}" @click="changeSort('mint-lowest')">
-					<span>Token ID</span>
-				  	<img :src="getCDNImage('arrow-up.svg')" alt="up">
-			  	</button>
-				<button class="my-collection-sort-buttons-button" @click="showTrailtsModal" v-if="isTraitVisible">
-					<span class="my-collection-sort-buttons-button-name">Traits</span>
-				  	<img :src="getCDNImage('trait.svg')" alt="trait">
-					<span class="my-collection-sort-buttons-button-bage" v-if="filtersCount">{{ filtersCount }}</span>
-			  	</button>
+	<div class="my-collection-tab">
+		<p class="my-collection-tab-item" :class="{ active: currTab === 1 }" @click="changeTab(1)">Collected</p>
+		<p class="my-collection-tab-item" :class="{ active: currTab === 2 }" @click="changeTab(2)">Boxes</p>
+	</div>
+	<div class="my-collection__loading" v-if="isLoading">
+		<img :src="getCDNImage('loading-button.svg')" alt="load">
+	</div>
+	<div v-else>
+		<div v-if="currTab === 1">
+			<div class="my-collection__empty" v-if="!filteredNft">
+				<h3 class="my-collection__empty-title">You don't have NFT yet</h3>
+				<button class="gradient-button my-collection__empty-button" @click="$router.push('/')">Buy</button>
+			</div>
+			<div class="my-collection-filters-container" v-if="filteredNft">
+				<div class="my-collection-filters">
+					<div class="my-collection-filters-item" @click="filter('all')" :class="{'my-collection-filters-item-active': activeFilter === 'all'}">
+						<p class="my-collection-filters-item-text">All</p>
+						<p class="my-collection-filters-item-content">{{ nftCount }}</p>
+					</div>
+					<div class="my-collection-filters-item" :class="{'my-collection-filters-item-active': activeFilter === 'sale'}" @click="filter('sale')" v-if="forSaleInfo > 0">
+						<p class="my-collection-filters-item-text">For sale</p>
+						<p class="my-collection-filters-item-content">{{ forSaleInfo }}</p>
+					</div>
+					<div class="my-collection-filters-item" :title="filterItem.name" :class="{'my-collection-filters-item-active': activeFilter === filterItem.contract}" :key="idx" @click="filter(filterItem.contract)" v-for="(filterItem, idx) in collectionFilters">
+						<img class="my-collection-filters-item-image" :src="filterItem.image" :alt="filterItem.contract">
+						<p class="my-collection-filters-item-content">{{ filterItem.count }}</p>
+					</div>
+				</div>
+				<div class="my-collection-sort" v-if="activeFilter !== 'knoxnft'">
+					<div class="my-collection-sort-buttons" v-if="activeFilter !== 'all'">
+						<CustomSelect class="sort-select" :options="sortOptions" :selected="activePriceSort" @change="changeSort"/>
+						<div class="my-collection-sort-buttons-box" :class="{ 'no-traits': !isTraitVisible }" v-if="activeFilter !== 'sale'">
+							<button class="my-collection-sort-buttons-button" :class="{active: activeSort === 'mint-highest'}" @click="changeSort('mint-highest')">
+								<span>Token ID</span>
+								<img :src="getCDNImage('arrow-down.svg')" alt="down">
+							</button>
+							<button class="my-collection-sort-buttons-button" :class="{active: activeSort === 'mint-lowest'}" @click="changeSort('mint-lowest')">
+								<span>Token ID</span>
+								<img :src="getCDNImage('arrow-up.svg')" alt="up">
+							</button>
+							<button class="my-collection-sort-buttons-button" @click="showTrailtsModal" v-if="isTraitVisible">
+								<span class="my-collection-sort-buttons-button-name">Traits</span>
+								<img :src="getCDNImage('trait.svg')" alt="trait">
+								<span class="my-collection-sort-buttons-button-bage" v-if="filtersCount">{{ filtersCount }}</span>
+							</button>
+						</div>
+					</div>
+					<div class="collection__info-nft-search search-box" :class="{ 'with-sort': activeFilter !== 'all' }">
+						<input class="search-box-input" type="number" min="1" placeholder="Mint number" v-model="searchName" @input="searchNft">
+						<img :src="getCDNImage('search.svg')" alt="search" class="search-box-img" v-if="!searchName">
+						<img :src="getCDNImage('close-bold.svg')" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
+					</div>
+				</div>
+			</div>
+			<p class="my-collection-collection-filter" v-if="activeFilter !== 'all' && activeFilter !== 'sale'">{{ currCollectionFilter }}</p>
+			<div class="my-collection__items">
+				<nft :nft="nft" :key="idx" :route="nftRoute(nft)" :seller="owner" :multiNft="isMultiNft(nft)" :boxnft="isBoxNft(nft)" from="MyNFT" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
+			</div>
+			<TraitsFilterModal
+				:show="showTraitsFilter"
+				:mintCount="activeMintCount"
+				:filtersCount="filtersCount"
+				@updateFilter="updateTraitFilter"
+				@close="showTraitsFilter = false"
+				v-if="showTraitsFilter"
+			/>
+		</div>
+		<div class="my-collection-box" v-else>
+			<div class="my-collection-box-filter">
+				<div class="my-collection-box-filter-list">
+					<div class="my-collection-box-filter-list-item" :class="{ active: activeBoxFilter === 'all' }" @click="filterBox">
+						<span class="my-collection-box-filter-list-item-name filter-name">All</span>
+						<span class="my-collection-box-filter-list-item-count">{{ filteredBoxList.length }}</span>
+					</div>
+				</div>
+				<div class="my-collection-box-filter-search">
+					<input class="my-collection-box-filter-search-input" placeholder="Name" @input="searchBox">
+					<img class="my-collection-box-filter-search-icon" src="/search.svg">
+				</div>
+			</div>
+			<div class="my-collection-box-list" v-if="filteredBoxList.length > 0">
+				<box :box="box" @click="showBoxDetail(box)" :key="idx" v-for="(box, idx) of filteredBoxList"/>
 			</div>
 		</div>
-        <div class="collection__info-nft-search search-box" :class="{ 'with-sort': activeFilter !== 'all' }">
-          <input class="search-box-input" type="number" min="1" placeholder="Mint number" v-model="searchName" @input="searchNft">
-          <img :src="getCDNImage('search.svg')" alt="search" class="search-box-img" v-if="!searchName">
-          <img :src="getCDNImage('close-bold.svg')" alt="close" class="search-box-img icon-close" @click="clearSearch" v-else>
-        </div>
-      </div>
-    </div>
-    <p class="my-collection-collection-filter" v-if="activeFilter !== 'all' && activeFilter !== 'sale'">{{ currCollectionFilter }}</p>
-    <div class="my-collection__items">
-      <nft :nft="nft" :key="idx" :route="nftRoute(nft)" :seller="owner" :multiNft="isMultiNft(nft)" from="MyNFT" v-for="(nft, idx) of filteredNft" v-if="filteredNft" />
-    </div>
-	<TraitsFilterModal
-      :show="showTraitsFilter"
-      :mintCount="activeMintCount"
-      :filtersCount="filtersCount"
-      @updateFilter="updateTraitFilter"
-      @close="showTraitsFilter = false"
-      v-if="showTraitsFilter"
-    />
+	</div>
   </section>
 </template>
 <script>
 import _ from 'lodash'
 import nft from '@/components/nft.vue'
+import box from '@/components/box.vue'
 import CustomSelect from '@/components/utility/CustomSelect.vue'
 import ShareFrame from '@/components/ShareFrame.vue'
 import TraitsFilterModal from '@/components/modals/traitsFilterModal'
@@ -101,7 +127,9 @@ export default {
 	  linkShared: false,
       listNft: [],
       collectionFilters: [],
-      filteredNft: false,
+	  filteredNft: false,
+	  boxList: [],
+	  filteredBoxList: [],
 	  activeFilter: 'all',
 	  activeSort: null,
 	  activePriceSort: null,
@@ -111,6 +139,8 @@ export default {
 	  activeMintCount: 0,
 	  showTraitsFilter: false,
 	  traitFilters: null,
+	  currTab: 1,
+	  activeBoxFilter: 'all'
     }
   },
   beforeDestroy() {
@@ -123,7 +153,20 @@ export default {
     }
 	this.updateSharedWallet()
     if (this.address || this.linkShared) {
-      this.reloadMyCollection()
+	  const collectionSetting = this.$store.state.collectionSetting
+	  if (collectionSetting && collectionSetting.myTab === 2) {
+		this.currTab = 2
+		this.reloadBoxList()
+	  } else {
+		this.reloadMyCollection()
+	  }
+	  try {
+		if (process.client) {
+		  localStorage.removeItem('move_back')
+		}
+	  } catch(e) {
+		console.log(e)
+	  }
     } else {
       this.listNft = []
       this.filteredNft = false
@@ -134,6 +177,9 @@ export default {
 	})
   },
   computed: {
+	isLoading() {
+	  return ((this.currTab === 1 && !this.filteredNft) || (this.currTab === 2 && this.boxList.length === 0)) && this.loading
+	},
 	sharedWallet() {
 	  return this.$store.state.sharedWallet
 	},
@@ -195,7 +241,7 @@ export default {
         }
       })
       return sectionCount
-    }
+	}
   },
   watch: {
 	$route(from, to) {
@@ -230,26 +276,45 @@ export default {
   methods: {
     isMultiNft(nft) {
       return this.$store.state.multiNftSymbols.includes(nft.nftSymbol)
-    },
+	},
+	isBoxNft(nft) {
+	  const collection = this.$store.state.collectionList.find(collection => collection.route === nft.contract)
+	  return !collection && nft.contract.length >= 42
+	},
     copyAddress() {
 	  if (this.addressCopied) return
       this.$copyText(this.address)
 	  this.addressCopied = true
 	  setTimeout(() => this.addressCopied = false, 1000)
-    },
+	},
+	async reloadBoxList(initLoading = true) {
+	  if (this.boxList.length === 0 || !initLoading) {
+		this.loading = initLoading
+		this.boxList = await this.$store.dispatch('getOffsetBoxList')
+		this.filteredBoxList = JSON.parse(JSON.stringify(this.boxList))
+		this.loading = false
+	  }
+	},
+	changeTab(tab) {
+	  this.currTab = tab
+	  if (tab === 1) {
+		this.reloadMyCollection()
+	  }
+	  if (tab === 2) {
+		this.reloadBoxList()
+	  }
+	  const collectionSetting = this.$store.state.collectionSetting
+      this.$store.commit('updateCollectionSetting', {
+        ...collectionSetting,
+        myTab: tab
+	  })
+	},
     async reloadMyCollection() {
       if (process.client && !localStorage.getItem('move_back')) {
 		this.$store.commit('setTraitFilters', [])
         await this.fetchMyCollection()
         this.loadNftCounts()
       } else {
-		try {
-		  if (process.client) {
-			localStorage.removeItem('move_back')
-		  }
-		} catch(e) {
-		  console.log(e)
-		}
         this.loading = true
         this.loadNftCounts()
 
@@ -271,8 +336,8 @@ export default {
       }
     },
     showFixedFooter(show) {
-			const footerEl = document.querySelector('.footer')
-			if (!footerEl) return
+	  const footerEl = document.querySelector('.footer')
+	  if (!footerEl) return
       if (show) {
         footerEl.classList.add('fixed')
       } else {
@@ -457,7 +522,21 @@ export default {
     closeModal(payload) {
       this.showTransfer = payload
       this.showPurchased = payload
-    }
+	},
+	filterBox() {
+	  this.reloadBoxList(false)
+	},
+	searchBox(e) {
+	  const boxName = e.target.value
+	  if (boxName) {
+		this.filteredBoxList = this.boxList.filter(box => box.boxName.toLowerCase().includes(boxName))
+	  } else {
+		this.filteredBoxList = JSON.parse(JSON.stringify(this.boxList))
+	  }
+	},
+	showBoxDetail(box) {
+	  this.$router.push(`/offsetbox/${box.boxAddress}`)
+	}
   },
 }
 </script>
@@ -537,6 +616,26 @@ export default {
 	  }
 	}
   }
+  &-tab {
+	display: flex;
+	margin-top: 3rem;
+	border-bottom: 1px solid $modalColor;
+	&-item {
+	  padding-bottom: 1.2rem;
+	  font-weight: 400;
+	  font-size: 1.6rem;
+	  cursor: pointer;
+	  &.active {
+		font-weight: 600;
+		font-family: OpenSans-SemiBold;
+		border-bottom: 1px solid $pink;
+		transform: translateY(1px);
+	  }
+	  &:first-child {
+		margin-right: 2.4rem;
+	  }
+	}
+  }
   &__empty {
     padding-top: 6rem;
     display: flex;
@@ -562,7 +661,7 @@ export default {
   &-filters-container {
     display: flex;
 	justify-content: space-between;
-	padding-top: 5.5rem;
+	padding-top: 2.4rem;
 	padding-bottom: 1rem;
   }
   &-filters {
@@ -693,6 +792,72 @@ export default {
       animation: loading 1s infinite;
     }
   }
+  &-box {
+	margin-top: 3rem;
+	&-filter {
+	  display: flex;
+	  align-items: center;
+	  justify-content: space-between;
+	  &-list {
+		display: flex;
+		&-item {
+		  width: 5.5rem;
+		  height: 3.2rem;
+		  display: flex;
+		  align-items: center;
+		  justify-content: center;
+		  background: $white;
+		  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+		  border-radius: 2rem;
+		  cursor: pointer;
+		  &-name {
+			margin-right: 0.8rem;
+			font-weight: 400;
+			font-size: 1.4rem;
+		  }
+		  &-count {
+			font-family: OpenSans-SemiBold;
+			font-weight: 600;
+			font-size: 1.4rem;
+			color: $border;
+		  }
+		  &.active {
+			background: $modalColor;
+			.filter-name {
+			  font-family: OpenSans-SemiBold;
+			  font-weight: 600;
+			}
+		  }
+		}
+	  }
+	  &-search {
+		position: relative;
+		background: $white;
+		border: 1px solid $border2;
+		border-radius: 2.5rem;
+		overflow: hidden;
+		&-input {
+		  width: 20rem;
+		  height: 2rem;
+		  padding: 1.2rem 1.6rem;
+		  border: 0;
+		}
+		&-icon {
+		  position: absolute;
+		  top: 1.3rem;
+		  right: 1.6rem;
+		  width: 1.8rem;
+		}
+	  }
+	}
+	&-list {
+	  display: grid;
+	  grid-template-columns: repeat(3, 1fr);
+	  grid-column-gap: 3.2rem;
+	  grid-row-gap: 1.6rem;
+	  margin-top: 3.2rem;
+	}
+  }
 }
 @media screen and (max-width: 460px) {
   .my-collection {
@@ -799,6 +964,26 @@ export default {
 		&.with-sort {
 		  width: 14.4rem !important;
 		}
+	  }
+	}
+	&-box {
+	  margin-top: 4.2rem;
+	  &-filter {
+		display: block;
+		&-search {
+		  margin-top: 1.6rem;
+		  &-input {
+			width: 100%;
+			padding: 0.6rem 0.8rem;
+		  }
+		  &-icon {
+			top: 0.7rem;
+			right: 1.1rem;
+		  }
+		}
+	  }
+	  &-list {
+		grid-template-columns: 1fr;
 	  }
 	}
   }
