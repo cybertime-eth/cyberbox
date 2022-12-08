@@ -66,7 +66,8 @@ export default {
 
 <style lang="scss" scoped>
 .offsetbox {
-  max-width: 144rem;
+	max-width: 144rem;
+	min-height: 40rem;
   margin: 0 auto;
   padding: 7.2rem 6rem;
   &__popular {
