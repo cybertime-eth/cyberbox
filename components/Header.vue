@@ -55,7 +55,7 @@
             <span class="header__notification-count" v-if="notificationCount">{{ notificationCount }}</span>
           </nuxt-link>
           <dropdown-menu class="header__wallet-dropdown" :right="true" interactive="interactive" v-model="showProfileDropdown" v-if="address && mobileMenuVisible">
-			<img class="dropdown-toggle" src="/profile-mobile.svg" alt="avatar">
+			<img class="dropdown-toggle" :src="getCDNImage('earth.webp')" alt="avatar">
 			<div slot="dropdown">
 				<ProfileDropdown @onMyCollection="showProfileDropdown = false"/>
 			</div>
