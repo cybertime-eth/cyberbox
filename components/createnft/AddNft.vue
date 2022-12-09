@@ -202,10 +202,6 @@ export default {
 	}
   },
   created() {
-	this.rarityMode = this.rarity
-	if (this.$route.query.simple) {
-	  this.rarityMode = false
-	}
 	if (!this.boxNft || !this.boxNft.commonNfts) {
 	  const nftInfo = {
 		name: '',

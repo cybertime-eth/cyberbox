@@ -4,14 +4,14 @@
             <div class="box__cover">
                 <img class="box__cover-img" :src="boxInfo.boxCoverImage">
                 <h2 class="box__cover-title">{{ boxInfo.boxName }}</h2>
-                <p class="box__cover-desc">Offset Box by Cyberbox</p>
+                <p class="box__cover-desc">Offset Box by {{ boxInfo.boxAutorTitle }}</p>
             </div>
             <div class="box__info">
                 <img class="box__info-img" :src="boxInfo.boxImage">
                 <div class="box__info-sale">
                     <div class="box__info-sale-price">
                         <img class="box__info-sale-price-img" src="/celo.svg">
-                        <p class="box__info-sale-price-celo">{{ boxPrice }}</p>
+                        <p class="box__info-sale-price-celo">{{ boxPrice.toFixed(1) }}</p>
                         <p class="box__info-sale-price-dollar">(${{ boxDollarPrice }})</p>
                     </div>
                     <p class="box__info-sale-count">{{ remainedBoxCount }}/{{ totalBoxCount }} boxes left</p>
@@ -58,12 +58,14 @@
                 </div>
             </div>
         </div>
+        <SuccessfullBuy :name="boxInfo.boxName" :image="boxInfo.boxImage" :randomNft="true" v-if="successMintRandomNft === true"/>
     </section>
 </template>
 
 <script>
 
 import Splide from '@splidejs/splide'
+import SuccessfullBuy from '@/components/modals/successBuy'
 
 const BOX_NFT_TYPE_LEGENDARY = 'legendary'
 const BOX_NFT_TYPE_EPIC = 'epic'
@@ -83,6 +85,9 @@ export default {
 	  mintEnabled: true
     }
   },
+  components: {
+    SuccessfullBuy
+  },
   computed: {
     boxList() {
       return this.$store.state.offsetBoxList
@@ -99,17 +104,18 @@ export default {
 	},
 	boxPrice() {
 	  const price = (this.boxInfo && this.boxInfo.nftPrice) ? this.boxInfo.nftPrice / 1000 : 0
-	  return price
+	  return price * this.mintAmount
 	},
     boxDollarPrice() {
       const price = this.boxPrice * this.celoPrice
-      return price > 0 ? Math.ceil(price) : 0
+      return price.toFixed(2)
 	},
 	successMintRandomNft() {
 	  return this.$store.state.successMintRandomNft
 	}
   },
   async created() {
+	this.$store.commit('changeSuccessMintRandomNft', false)
     const tokenPrice = await this.$store.dispatch('getPriceToken')
     this.celoPrice = tokenPrice.value
 	this.boxAddress = this.$route.params.offsetboxid
@@ -134,7 +140,7 @@ export default {
 	},
 	successMintRandomNft() {
 	  const success = this.$store.state.successMintRandomNft
-	  if (success) {
+	  if (success !== undefined) {
 		if (success === true) {
 		  this.loadBoxInfo()
 		} else {
@@ -156,7 +162,6 @@ export default {
 		this.boxNfts = await this.$store.dispatch('getBoxImageList', this.boxAddress)
 	  } else if (this.successMintRandomNft) {
 		this.mintEnabled = true
-		this.$store.commit('changeSuccessMintRandomNft', false)
 	  }
 	},
 	showSplide() {
@@ -249,6 +254,10 @@ export default {
       color: $white;
     }
     &-desc {
+	  max-width: 40rem;
+	  white-space: nowrap;
+	  overflow: hidden;
+	  text-overflow: ellipsis;
       margin-top: 1rem;
       font-family: OpenSans-SemiBold;
       font-weight: 600;

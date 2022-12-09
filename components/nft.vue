@@ -1,5 +1,5 @@
 <template>
-  <div class="collection__item" :class="{ knoxnft: nft.nftSymbol === 'knoxnft', multinft: (multiNft && $route.params.collectionid  || boxnft) }" @click="routeNft">
+  <div class="collection__item" :class="{ knoxnft: nft.nftSymbol === 'knoxnft', multinft: multiNft && $route.params.collectionid }" @click="routeNft">
 	<dropdown-menu class="collection__item-dropdown" v-model="showMoreMenu" v-if="moreButtonVisible">
     <img :src="getCDNImage('more.webp')" alt="more" class="collection__item-more dropdown-toggle" @click="openModal">
 		<div slot="dropdown" class="collection__item-modal">

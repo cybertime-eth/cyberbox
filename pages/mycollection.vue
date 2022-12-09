@@ -290,6 +290,7 @@ export default {
 	async reloadBoxList(initLoading = true) {
 	  if (this.boxList.length === 0 || !initLoading) {
 		this.loading = initLoading
+		this.$store.commit('changeFetchingOwnedBox', true)
 		this.boxList = await this.$store.dispatch('getOffsetBoxList')
 		this.filteredBoxList = JSON.parse(JSON.stringify(this.boxList))
 		this.loading = false

@@ -34,6 +34,7 @@ export default {
 	}
   },
   mounted() {
+	this.$store.commit('changeFetchingOwnedBox', true)
 	this.$store.dispatch('getBoxCollectionList')
   },
   methods: {

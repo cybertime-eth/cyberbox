@@ -3,7 +3,6 @@
         <CreateCollection v-if="step === 1" @create="changeStep(2)"/>
         <PrepareBoxStep :collectionMode="true" v-if="step === 2" @changeStep="changeStep"/>
         <SuccessfullBoxStep :collectionMode="true" v-if="step === 3" @changeStep="moveStep"/>
-        <CollectionTypeStep v-if="step === 4" @changeStep="moveStep"/>
     </section>
 </template>
 
@@ -12,7 +11,6 @@
 import CreateCollection from "@/components/createbox/step1/CreateCollection.vue"
 import PrepareBoxStep from "@/components/createbox/PrepareBoxStep"
 import SuccessfullBoxStep from "@/components/createbox/SuccessfullBoxStep"
-import CollectionTypeStep from "@/components/createbox/CollectionTypeStep"
 
 export default {
   data()  {
@@ -23,8 +21,7 @@ export default {
   components: {
     CreateCollection,
     PrepareBoxStep,
-    SuccessfullBoxStep,
-    CollectionTypeStep
+    SuccessfullBoxStep
   },
   created() {
     if (this.$route.params.createboxstep) {
@@ -39,19 +36,13 @@ export default {
 	  }
     },
     moveStep(step, type) {
-      if (!type) {
+      if (step < 4) {
 		this.changeStep(step)
 		this.$router.push(`/createbox/${step}`)
 	  } else {
-		let collectionQuery = ''
 		const collectionAddress = this.$route.query.collectionAddress
-		if (type === 1) {
-		  collectionQuery = collectionAddress ? `?collectionAddress=${collectionAddress}` : ''
-		  this.$router.push(`/createnft${collectionQuery}`)
-		} else {
-		  collectionQuery = collectionAddress ? `&collectionAddress=${collectionAddress}` : ''
-		  this.$router.push(`/createnft?simple=true${collectionQuery}`)
-		}
+		const collectionQuery = collectionAddress ? `?collectionAddress=${collectionAddress}` : ''
+		this.$router.push(`/createnft${collectionQuery}`)
 	  }
     }
   }

@@ -592,6 +592,7 @@ export const actions = {
   async replaceMultiNftCollections({state, dispatch}, collectionData) {
 	let contractInfos = collectionData.contractInfos
 	const nftSymbols = state.collectionList.map(item => item.route)
+	const randomNfts = contractInfos.filter(item => !nftSymbols.includes(item.contract))
 	contractInfos = contractInfos.filter(item => nftSymbols.includes(item.contract)) // remove Random NFTS here
 	let multiNftInfos = contractInfos.filter(item => state.multiNftSymbols.includes(item.contract))
 	if (multiNftInfos.length > 0) {
@@ -611,7 +612,10 @@ export const actions = {
 		})
 		contractInfos = await dispatch('getMultiNftPriceData', contractInfos)
 	}
-	return contractInfos
+	return [
+	  ...contractInfos,
+	  ...randomNfts
+	]
   },
   async getMultiNftGraphData({dispatch, commit}, filter) {
 	try {
@@ -2333,7 +2337,7 @@ export const actions = {
   async getOffsetBoxList({state, commit}, boxAddress) {
 	try {
 	  const address = state.fullAddress
-	  let condition = boxAddress ? `where: { boxAddress: "${boxAddress}" owner }` : ''
+		let condition = boxAddress ? `where: { boxAddress: "${boxAddress}" owner }` : ''
 	  const ownerCondition = state.fetchingOwnedBox && address ? `owner: "${address.toLowerCase()}"` : ''
 	  if (condition) {
 		condition = condition.replace('owner', ownerCondition)
