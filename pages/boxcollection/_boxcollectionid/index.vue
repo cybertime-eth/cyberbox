@@ -1,6 +1,6 @@
 <template>
   <section class="boxcollection">
-    <img :src="collection.collectionBanner" alt="banner" class="boxcollection__banner" v-if="collection.collectionBanner">
+    <img :src="collection.collectionCover" alt="banner" class="boxcollection__banner" v-if="collection.collectionCover">
 	<div class="boxcollection__bannerframe" v-else></div>
     <div class="boxcollection__content container-xl">
       <div class="boxcollection__header">

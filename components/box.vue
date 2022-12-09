@@ -2,7 +2,7 @@
     <div class="box__item" @click="$emit('click')">
         <img class="box__item-cover" :src="box.boxCoverImage">
         <div class="box__item-logoblock">
-            <p class="box__item-logoblock-title">CyberBox</p>
+            <p class="box__item-logoblock-title">{{ box.boxAutorTitle }}</p>
             <img class="box__item-logoblock-img" :src="box.boxImage">
         </div>
         <div class="box__item-info">
@@ -46,6 +46,10 @@ export default {
       padding: 0.4rem 0.8rem;
       margin-right: 0.8rem;
       border-radius: 2.6rem;
+      max-width: 8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       font-family: OpenSans-SemiBold;
       font-weight: 600;
       font-size: 1.4rem;
