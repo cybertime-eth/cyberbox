@@ -23,7 +23,7 @@ export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
   marketCertificate: '0xD734bB58a28AAAAcbE5a738398f471B3187B2960',
-  boxCollectionManager: '0xDf15183f198A44F2f8536eD048947c7B7b726C65',
+  boxCollectionManager: '0x36Ee94115D90dd0BB9C48C9155D56aa300684f72',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   certContractAddress: '0xA4A8E345E1a88EFc9164014BB2CeBd4C2F98E986',
   user: {},
@@ -45,6 +45,7 @@ export const state = () => ({
   boxCollection: null,
   boxCollectionList: [],
   offsetBoxList: [],
+  fetchingOwnedBox: true,
   boxNftInfo: null,
   filteredTraits: null,
   nft: {},
@@ -590,6 +591,8 @@ export const actions = {
   },
   async replaceMultiNftCollections({state, dispatch}, collectionData) {
 	let contractInfos = collectionData.contractInfos
+	const nftSymbols = state.collectionList.map(item => item.route)
+	contractInfos = contractInfos.filter(item => nftSymbols.includes(item.contract)) // remove Random NFTS here
 	let multiNftInfos = contractInfos.filter(item => state.multiNftSymbols.includes(item.contract))
 	if (multiNftInfos.length > 0) {
 	  const nftImages = contractInfos.map(item => item.image)
@@ -605,8 +608,8 @@ export const actions = {
 		  return newItem
 		}
 		return item
-	  })
-	  contractInfos = await dispatch('getMultiNftPriceData', contractInfos)
+		})
+		contractInfos = await dispatch('getMultiNftPriceData', contractInfos)
 	}
 	return contractInfos
   },
@@ -1692,8 +1695,7 @@ export const actions = {
         }
 	  }`;
 	const foundCollection = state.collectionList.find(collection => collection.route === token.collectionId)
-	const graphql = foundCollection ? this.$graphql.default : this.$graphql.boxmgr
-    const data = await graphql.request(query)
+    const data = await this.$graphql.default.request(query)
     let multiNftInfo = null
     let multiNftCollection = null
     if (isMultiNft) {
@@ -2230,14 +2232,18 @@ export const actions = {
 
   // GET BOX COLLECTION INFO
 
-  async getBoxCollectionList({commit}, paramAddress) {
+  async getBoxCollectionList({state, commit}, paramAddress) {
+	let address = state.fullAddress
+	if (!address) return []
 	const collectionAddress = $nuxt.$route.params.boxcollectionid || paramAddress
+	const ownerCondition = state.fetchingOwnedBox ? `owner: "${address.toLowerCase()}"` : ''
 	const collectionCondition = collectionAddress ? `collectionAddress: "${collectionAddress}"` : ''
 	try {
 	  const query = gql`
 		query Sample {
-		  rncollections(first: 48 where: { linkedNFTAddress_not: "" ${collectionCondition} }) {
+		  rncollections(first: 48 where: { linkedNFTAddress_not: "" ${ownerCondition} ${collectionCondition} }) {
 			id
+			owner
 			collectionAddress
 			collectionName
 			collectionDesc
@@ -2252,7 +2258,7 @@ export const actions = {
 			linkedBoxAddress
 		  }
 		}`
-	  const data = await this.$graphql.boxmgr.request(query)
+	  const data = await this.$graphql.default.request(query)
 	  const rnCollections = data.rncollections
 	  commit('setBoxCollectionList', rnCollections)
 	  return rnCollections		
@@ -2315,7 +2321,7 @@ export const actions = {
 				}
 			}
 		}`;
-	  const data = await this.$graphql.boxmgr.request(query)
+	  const data = await this.$graphql.default.request(query)
 	  let contractInfos = data.contractInfos || []
 	  state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
 	  return contractInfos
@@ -2324,9 +2330,16 @@ export const actions = {
 	}  
   },
 
-  async getOffsetBoxList({commit}, boxAddress) {
+  async getOffsetBoxList({state, commit}, boxAddress) {
 	try {
-	  const condition = boxAddress ? `where: { boxAddress: "${boxAddress}" }` : ''
+	  const address = state.fullAddress
+	  let condition = boxAddress ? `where: { boxAddress: "${boxAddress}" owner }` : ''
+	  const ownerCondition = state.fetchingOwnedBox && address ? `owner: "${address.toLowerCase()}"` : ''
+	  if (condition) {
+		condition = condition.replace('owner', ownerCondition)
+	  } else if (ownerCondition) {
+		condition = `where: { ${ownerCondition} }`
+	  }
 	  const query = gql`
 	  query Sample {
         contracts(first: 30) {
@@ -2335,9 +2348,11 @@ export const actions = {
         }
 		rnboxes(first: 48 ${condition}) {
 		  id
+		  owner
 		  boxName
 		  boxDescription
 		  boxAddress
+		  boxAutorTitle
 		  boxAutor
           linkedCollectionAddress
           linkedNFTAddress
@@ -2352,8 +2367,8 @@ export const actions = {
 		  common_count
 		  updatedAt
 	    }
-	  }`
-	  const data = await this.$graphql.boxmgr.request(query)
+		}`
+	  const data = await this.$graphql.default.request(query)
       let rnBoxes = data.rnboxes || []
       rnBoxes.map(box => {
         const contract = data.contracts.find(contract => contract.nftSymbol === box.linkedNFTAddress)
@@ -2374,13 +2389,14 @@ export const actions = {
 		rnimages(first: 48 where: {boxAddress: "${boxAddress}"}) {
 		  id
 		  boxAddress
+		  imageName
 		  linkedImage
 		  rnType
 		  imageCount
 		}
 	  }`
-	  const data = await this.$graphql.boxmgr.request(query)
-	  return data.rnimages.sort((a, b) => a.rnType - b.rnType)
+	  const data = await this.$graphql.default.request(query)
+	  return data.rnimages.sort((a, b) => b.rnType - a.rnType)
 	} catch(e) {
 	  console.log(e)
 	  return []
@@ -2783,37 +2799,50 @@ export const actions = {
 	  const boxInfo = state.boxNftInfo
 	  const feeCO2 = 0
 	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
-	  const legendaryCount = 10
-	  const legendaryImages = boxInfo.legendaryNfts.map(nft => nft.image)
+	  const blockCount = boxInfo.commonNfts.length
+	  const commonCount = 125 * blockCount
+	  const commonArr = [
+		boxInfo.commonNfts.map(nft => nft.name),
+		boxInfo.commonNfts.map(nft => nft.image)
+	  ]
 
-	  const epicCount = boxInfo.rarity ? 10 : 0
-	  let epicImages = []
-	  if (boxInfo.epicNfts && boxInfo.epicNfts.length > 0) {
-		epicImages = boxInfo.epicNfts.map(nft => nft.image)
-	  }
-
-	  const rareCount = boxInfo.rarity ? 10 : 0
-	  let rareImages = []
+	  const rareCount = boxInfo.rarity ? (25 * blockCount) : 0
+	  let rareArr = []
 	  if (boxInfo.rareNfts && boxInfo.rareNfts.length > 0) {
-		rareImages = boxInfo.rareNfts.map(nft => nft.image)
+		rareArr = [
+		  boxInfo.rareNfts.map(nft => nft.name),
+		  boxInfo.rareNfts.map(nft => nft.image)
+		]
 	  }
 
-	  const commonCount = boxInfo.rarity ? 10 : 0
-	  let commonImages = []
-	  if (boxInfo.commonNfts && boxInfo.commonNfts.length > 0) {
-		commonImages = boxInfo.commonNfts.map(nft => nft.image)
+	  const epicCount = boxInfo.rarity ? (5 * blockCount) : 0
+	  let epicArr = []
+	  if (boxInfo.epicNfts && boxInfo.epicNfts.length > 0) {
+		epicArr = [
+		  boxInfo.epicNfts.map(nft => nft.name),
+		  boxInfo.epicNfts.map(nft => nft.image)
+		]
+	  }
+
+	  const legendaryCount = boxInfo.rarity ? blockCount : 0
+	  let legendaryArr = []
+	  if (boxInfo.legendaryNfts && boxInfo.legendaryNfts.length > 0) {
+		legendaryArr = [
+		  boxInfo.legendaryNfts.map(nft => nft.name),
+		  boxInfo.legendaryNfts.map(nft => nft.image)
+	    ]		
 	  }
 
 	  await contract.setFeeAndNFTCounts(
 		feeCO2,
 		legendaryCount,
-		legendaryImages,
+		legendaryArr,
 		epicCount,
-		epicImages,
+		epicArr,
 		rareCount,
-		rareImages,
+		rareArr,
 		commonCount,
-		commonImages,
+		commonArr,
 		boxInfo.boxAddress
 	  );
 	  provider.once(contract, () => {
@@ -2836,6 +2865,7 @@ export const actions = {
 		boxInfo.collection.linkedNFTAddress,
 		boxInfo.name,
 		boxInfo.description || '',
+		boxInfo.authorName || '',
 		boxInfo.authorDetail || '',
 		boxInfo.boxImage,
 		boxInfo.boxCover,
@@ -2949,7 +2979,6 @@ export const mutations = {
 	} else {
 	  state.boxNftInfo = null
 	}
-	
   },
   addBoxCollectionToList(state, collection) {
 	state.boxCollection = null
@@ -2961,6 +2990,9 @@ export const mutations = {
   },
   setBoxCollectionList(state, collectionList) {
 	state.boxCollectionList = collectionList
+  },
+  changeFetchingOwnedBox(state, fetching) {
+	state.fetchingOwnedBox = fetching
   },
   setNotificationList(state, list) {
     state.notificationList = list
