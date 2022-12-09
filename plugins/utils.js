@@ -105,7 +105,10 @@ Vue.mixin({
 	},
 	getCertificateImage(certificate, detail = false) {
 	  const folderName = detail ? '/detail' : ''
-      const month = certificate.month || certificate.tag_element2
+	  let month = certificate.month || certificate.tag_element2
+	  if (certificate.token_type === CERTIFICATE_TOKEN_TYPE.BONUS) {
+		month = 'rare'
+	  }
 	  return RESOURCE_CDN_ROOT + `/certificates${folderName}/${month}.webp`
 	},
 	getCDNImage(imageName) {
