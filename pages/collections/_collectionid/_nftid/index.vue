@@ -20,7 +20,7 @@
           <div class="nft__block-info" v-if="!seller">
             <div v-if="!nftReloading">
               <div class="nft__block-info-collection">
-                <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
+                <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="!isRandomNft && nft.contract">
                 <h2 class="nft__block-info-collection-name" @click="gotoCollection">{{ collectionName }}</h2>
               </div>
               <h1 class="nft__block-info-name">{{ nftName }}</h1>
@@ -82,7 +82,7 @@
           <div class="nft__block-info" v-else-if="seller">
             <div v-if="!nftReloading">
               <div class="nft__block-info-collection">
-                <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="nft.contract">
+                <img :src="collectionIcon(nft.contract)" alt="collection" class="nft__block-info-collection-icon" v-if="!isRandomNft && nft.contract">
                 <h2 class="nft__block-info-collection-name" @click="gotoCollection">{{ collectionName }}</h2>
               </div>
               <h1 class="nft__block-info-name">{{ nftName }}</h1>
@@ -342,7 +342,11 @@ export default {
 	},
 	isCertificateNft() {
       return this.nft.contract === 'CBCN'
-    },
+	},
+	isRandomNft() {
+	  const nftSymbols = this.$store.state.collectionList.map(item => item.route)
+	  return !nftSymbols.includes(this.nft.contract)
+	},
     nftName() {
 	  if (this.isCertificateNft) {
 		return this.getCertificateName(this.nft)
@@ -491,7 +495,8 @@ export default {
       })
       let rarityInfos = null
       if (nft.contract !== 'nomdom' && (nft.market_status !== this.oldNftStatus || nft.price !== this.oldNftPrice || this.nft.owner !== this.oldNftOwner)) {
-        rarityInfos = await API.getNftRankings([nft.id])
+		// rarityInfos = await API.getNftRankings([nft.id])
+		rarityInfos = []
       }
       this.nft = {
         ...nft,

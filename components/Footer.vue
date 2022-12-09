@@ -1,5 +1,5 @@
 <template>
-	<section class="footer" :class="{ fixed: footerFixed }">
+	<section class="footer" :class="{ fixed: footerFixed, hidden: footerHidden }">
 		<div class="footer__container container-xl">
 			<a class="footer__logo" href="/">
 				<img :src="getCDNImage('footer-logo.svg')" alt="logo" >
@@ -7,7 +7,7 @@
 			<div class="footer__links">
 				<div class="footer__links-box">
 					<div class="footer__links-social">
-						<a class="footer__links-social-link" href="https://twitter.com/cybertime_eth" target="_blank">
+						<a class="footer__links-social-link" href="https://twitter.com/cyberboxart" target="_blank">
 							<img class="footer__links-social-link-icon" :src="getCDNImage('socials/twitter-gray.svg')" alt="twitter">
 						</a>
 						<a class="footer__links-social-link" href="https://t.me/cybertime_eth" target="_blank">
@@ -36,7 +36,8 @@
 export default {
 	data() {
 	  return {
-		footerFixed: true
+		footerFixed: true,
+		footerHidden: false
 	  }
 	},
 	computed: {
@@ -54,10 +55,16 @@ export default {
 	},
 	methods: {
 	  updateLayout() {
-			const nonFixedRoutes = ['index', 'explorer', 'tracker', 'calendar']
+		const nonFixedRoutes = ['index', 'explorer', 'tracker', 'calendar']
 		if (nonFixedRoutes.includes(this.routeName) || (this.routeName !== 'index' && process.browser && window.innerWidth <= 460)) {
 		  this.footerFixed = false
 		}
+		const hiddenRoutes = ['createbox', 'createnft', 'boxcollection', 'offsetbox']
+		hiddenRoutes.forEach(route => {
+		  if (!this.footerHidden && this.routeName.includes(route)) {
+			this.footerHidden = true
+		  }
+		})
 	  },
 	  gotoTop() {
 		window.scrollTo(0, 0)
@@ -76,6 +83,9 @@ export default {
 		left: 0;
 		right: 0;
 		bottom: 0;
+	}
+	&.hidden {
+	  	display: none;
 	}
 	&__container {
 		display: flex;

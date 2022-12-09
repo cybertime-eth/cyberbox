@@ -26,5 +26,15 @@ export default {
         const url = `${API_URL}/account_refers/getClickCount?address=${address}`
         const result = await axios.get(url)
         return result.data ? JSON.parse(result.data) : {}
+    },
+    async uploadImageToIPFS(ipfsArray) {
+        const res = await axios.post('https://deep-index.moralis.io/api/v2/ipfs/uploadFolder', ipfsArray, {
+            headers: { 
+                "X-API-KEY": 'ymjHNi36z9W2T3KrZIV0Wo5g7DDesCg95uCh4M1UzrMHFDUOMpdQvGPKFVEmcLnN',
+                'Content-Type': 'application/json',
+                "accept": "application/json"
+            }
+        })
+        return res.data
     }
 }

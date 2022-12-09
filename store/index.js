@@ -5,6 +5,7 @@ import { mobileLinkChoiceKey, setLocal, removeLocal } from "@walletconnect/utils
 import ENS from "@ensdomains/ensjs"
 import MarketMainABI from '../abis/marketMain.json'
 import MarketCertificateABI from '../abis/marketCertificate.json'
+import BoxCollectionMgrABI from '../abis/boxCollectionManager.json'
 import API from '../api'
 import daosABI from '../abis/daos.json'
 import punksABI from '../abis/punks.json'
@@ -22,6 +23,7 @@ export const state = () => ({
   marketMain: '0xaBb380Bd683971BDB426F0aa2BF2f111aA7824c2',
   marketNom: '0x2C66111c8eB0e18687E6C83895e066B0Bd77556A',
   marketCertificate: '0xD734bB58a28AAAAcbE5a738398f471B3187B2960',
+  boxCollectionManager: '0x36Ee94115D90dd0BB9C48C9155D56aa300684f72',
   nomContractAddress: '0xdf204de57532242700D988422996e9cED7Aba4Cb',
   certContractAddress: '0xA4A8E345E1a88EFc9164014BB2CeBd4C2F98E986',
   user: {},
@@ -40,6 +42,11 @@ export const state = () => ({
   notificationList: [],
   certificateList: [],
   certificateSaleList: [],
+  boxCollection: null,
+  boxCollectionList: [],
+  offsetBoxList: [],
+  fetchingOwnedBox: true,
+  boxNftInfo: null,
   filteredTraits: null,
   nft: {},
   approveToken: '',
@@ -52,15 +59,18 @@ export const state = () => ({
   buyTokenApproved: false,
   successBuyToken: false,
   successRemoveToken: false,
-	successTransferToken: false,
-	sellTokenClosed: false,
+  successTransferToken: false,
+  sellTokenClosed: false,
+  successCreateBoxCollection: false,
+  successCreateBox: false,
+  successMintRandomNft: false,
   message: '',
   sort: `orderBy: contract_id`,
   raritySort: null,
   pagination: null,
   collectionSetting: null,
-	multiNftSymbols: ['knoxnft', 'CBCN'],
-	availableCDNCollections: ['daos', 'nomdom'],
+  multiNftSymbols: ['knoxnft', 'CBCN'],
+  availableCDNCollections: ['daos', 'nomdom'],
   multiNftNames: [
     { id: 'COMMON', name: 'Knoxer' },
     { id: 'LEGENDARY', name: 'LydianKnoxer' },
@@ -581,6 +591,9 @@ export const actions = {
   },
   async replaceMultiNftCollections({state, dispatch}, collectionData) {
 	let contractInfos = collectionData.contractInfos
+	const nftSymbols = state.collectionList.map(item => item.route)
+	const randomNfts = contractInfos.filter(item => !nftSymbols.includes(item.contract))
+	contractInfos = contractInfos.filter(item => nftSymbols.includes(item.contract)) // remove Random NFTS here
 	let multiNftInfos = contractInfos.filter(item => state.multiNftSymbols.includes(item.contract))
 	if (multiNftInfos.length > 0) {
 	  const nftImages = contractInfos.map(item => item.image)
@@ -596,10 +609,13 @@ export const actions = {
 		  return newItem
 		}
 		return item
-	  })
-	  contractInfos = await dispatch('getMultiNftPriceData', contractInfos)
+		})
+		contractInfos = await dispatch('getMultiNftPriceData', contractInfos)
 	}
-	return contractInfos
+	return [
+	  ...contractInfos,
+	  ...randomNfts
+	]
   },
   async getMultiNftGraphData({dispatch, commit}, filter) {
 	try {
@@ -1681,7 +1697,8 @@ export const actions = {
         contracts: contracts(first: 1 where: { nftSymbol: "${token.collectionId}" }) {
           producerFee
         }
-      }`;
+	  }`;
+	const foundCollection = state.collectionList.find(collection => collection.route === token.collectionId)
     const data = await this.$graphql.default.request(query)
     let multiNftInfo = null
     let multiNftCollection = null
@@ -2217,6 +2234,179 @@ export const actions = {
     return ts2 === 0 ? 0 : Math.ceil(tsOffset / ts2 * 100)
   },
 
+  // GET BOX COLLECTION INFO
+
+  async getBoxCollectionList({state, commit}, paramAddress) {
+	let address = state.fullAddress
+	if (!address) return []
+	const collectionAddress = $nuxt.$route.params.boxcollectionid || paramAddress
+	const ownerCondition = state.fetchingOwnedBox ? `owner: "${address.toLowerCase()}"` : ''
+	const collectionCondition = collectionAddress ? `collectionAddress: "${collectionAddress}"` : ''
+	try {
+	  const query = gql`
+		query Sample {
+		  rncollections(first: 48 where: { linkedNFTAddress_not: "" ${ownerCondition} ${collectionCondition} }) {
+			id
+			owner
+			collectionAddress
+			collectionName
+			collectionDesc
+			collectionLogo
+			collectionCover
+			collectionBanner
+			email
+			twitter
+			discord
+			site
+			linkedNFTAddress
+			linkedBoxAddress
+		  }
+		}`
+	  const data = await this.$graphql.default.request(query)
+	  const rnCollections = data.rncollections
+	  commit('setBoxCollectionList', rnCollections)
+	  return rnCollections		
+	} catch {
+	  return []
+	}
+  },
+
+  async getBoxNftList({state, getters, commit}) {
+	try {
+	  const sort = getters.paginationSort
+	  const boxCollection = state.boxCollectionList.find(collection => collection.collectionAddress === $nuxt.$route.params.boxcollectionid)
+	  if (!boxCollection) return []
+	  let condition = `where: { contract: "${boxCollection.linkedNFTAddress}"}`
+	  const query = gql`
+		query Sample {
+			contractInfos: contractInfos(${sort} first: 48 ${condition}) {
+				id
+				contract
+				contract_id
+				mint_key
+				price
+				seller
+				owner
+				attributes
+				rarity_rank
+				contract_address
+				market_status
+				name
+				image
+				description
+				updatedAt
+				dna
+				trait
+				tag_element0
+				tag_element1
+				tag_element2
+				tag_element3
+				tag_element4
+				listData {
+				  id
+				  owner
+				  price
+				}
+				bidData {
+				  id
+				  owner
+				  bidder
+				  price_total
+				  price_value
+				  price_fee
+				}
+				selled {
+				  id
+				  seller
+				  buyer
+				  price_total
+				  price_value
+				  price_fee
+				}
+			}
+		}`;
+	  const data = await this.$graphql.default.request(query)
+	  let contractInfos = data.contractInfos || []
+	  state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
+	  return contractInfos
+	} catch {
+	  return []
+	}  
+  },
+
+  async getOffsetBoxList({state, commit}, boxAddress) {
+	try {
+	  const address = state.fullAddress
+		let condition = boxAddress ? `where: { boxAddress: "${boxAddress}" owner }` : ''
+	  const ownerCondition = state.fetchingOwnedBox && address ? `owner: "${address.toLowerCase()}"` : ''
+	  if (condition) {
+		condition = condition.replace('owner', ownerCondition)
+	  } else if (ownerCondition) {
+		condition = `where: { ${ownerCondition} }`
+	  }
+	  const query = gql`
+	  query Sample {
+        contracts(first: 30) {
+          nftSymbol
+          mint_count
+        }
+		rnboxes(first: 48 ${condition}) {
+		  id
+		  owner
+		  boxName
+		  boxDescription
+		  boxAddress
+		  boxAutorTitle
+		  boxAutor
+          linkedCollectionAddress
+          linkedNFTAddress
+		  boxImage
+		  boxCoverImage
+          boxRoyalty
+          nftPrice
+		  fee_co2
+		  legendary_count
+		  epic_count
+		  rare_count
+		  common_count
+		  updatedAt
+	    }
+		}`
+	  const data = await this.$graphql.default.request(query)
+      let rnBoxes = data.rnboxes || []
+      rnBoxes.map(box => {
+        const contract = data.contracts.find(contract => contract.nftSymbol === box.linkedNFTAddress)
+        box.mint_count = contract ? contract.mint_count : 0
+      })
+	  commit('setNewBoxList', rnBoxes)
+	  return rnBoxes
+	} catch(e) {
+	  console.log(e)
+	  return []
+	}
+  },
+
+  async getBoxImageList({}, boxAddress) {
+	try {
+	  const query = gql`
+	  query Sample {
+		rnimages(first: 48 where: {boxAddress: "${boxAddress}"}) {
+		  id
+		  boxAddress
+		  imageName
+		  linkedImage
+		  rnType
+		  imageCount
+		}
+	  }`
+	  const data = await this.$graphql.default.request(query)
+	  return data.rnimages.sort((a, b) => b.rnType - a.rnType)
+	} catch(e) {
+	  console.log(e)
+	  return []
+	}
+  },
+
   // REMOVE NFT FROM LIST
 
   async removeNft({commit, state, getters}, nft) {
@@ -2491,7 +2681,7 @@ export const actions = {
 	  const provider = new ethers.providers.Web3Provider(getters.provider)
       const signer = provider.getSigner()
       const contract = new ethers.Contract(state.marketCertificate, MarketCertificateABI, signer)
-	  await contract.exchangeMonthNFTToBonus(year).send({
+	  await contract.exchangeMonthNFTToBonus(year).send({ 	
 	    gasPrice: ethers.utils.parseUnits('0.5', 'gwei'),
 	  })
 	  provider.once(contract, async () => {
@@ -2501,6 +2691,201 @@ export const actions = {
 	  console.log(error)
 	  commit('changeSuccessBuyToken', 'error')
     }
+  },
+
+  // BOX CONTRACT METHODS
+
+  async createBoxNft({state, getters, commit}, collection) {
+	try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+	  const signer = provider.getSigner()
+	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
+	  await contract.generateNFT(
+		collection.collectionAddress,
+		collection.collectionName
+	  );
+	  contract.on('CyberBoxCollectionNFTCreated', (collectionAddress, nftAddress) => {
+		console.log('Generate NFT Done. NFT Addresss: ', nftAddress)
+		commit('changeBoxNftInfo', {
+		  collection: {
+			...collection,
+			linkedNFTAddress: nftAddress
+		  }
+		})
+		commit('changeSuccessCreateBoxCollection', true)
+	  })
+	} catch(e) {
+	  console.log('error', e)
+	}
+  },
+
+  async createBoxCollection({state, getters, dispatch}, collection) {
+	try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+	  const signer = provider.getSigner()
+	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
+	  await contract.addNewCollection(
+		collection.collectionName,
+		collection.collectionDesc || '',
+		collection.collectionLogo,
+		collection.collectionBanner,
+		collection.collectionCover,
+		'',
+		collection.twitter || '',
+		collection.discord || '',
+		collection.site || ''
+	  )
+	  contract.on('CyberBoxAddedNewCollection', (collectionName, collectionDescription, collectionLogoUrl, collectionCoverImgUrl, collectionPromoBannerUrl, profileEmail, profileTwitter, profileDiscord, profileSite,
+		collectionAddress
+	  ) => {
+		console.log('Generate Box Collection Done. Collection Addresss: ', collectionAddress)
+		dispatch('createBoxNft', {
+		  ...collection,
+		  collectionAddress
+		})
+	  })
+	} catch(e) {
+	  console.log('error', e)
+	}
+  },
+
+  async setReadyForSellBoxNft({getters, state, commit}) {
+	try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+	  const signer = provider.getSigner()
+	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
+	  const boxInfo = state.boxNftInfo
+	  await contract.setNFTReadyForSell(boxInfo.collection.linkedNFTAddress);
+	  provider.once(contract, () => {
+		console.log('Set NFT Ready For Sell Done')
+		// commit('changeSuccessCreateBox', true)
+	  })
+	} catch(e) {
+	  console.log('error', e)
+	}
+  },
+
+  async mintBoxNft({getters, state, dispatch, commit}, boxInfo) {
+	try {
+      const ethereumProvider = getters.provider
+	  const provider = new ethers.providers.Web3Provider(ethereumProvider)
+	  const web3 = new Web3(ethereumProvider)
+	  const accounts = await web3.eth.getAccounts()
+	  const account = accounts[0]
+	  const kit = ContractKit.newKitFromWeb3(web3)
+      const contract = new kit.web3.eth.Contract(BoxCollectionMgrABI, state.boxCollectionManager)
+      const parsePrice = web3.utils.toWei(String(boxInfo.nftPrice / 1000 * boxInfo.mintCount))
+      await contract.methods.mintingBoxNFTs(
+        boxInfo.boxAddress,
+		boxInfo.linkedNFTAddress,
+        state.fullAddress,
+        boxInfo.mintCount
+      ).send({
+        from: account,
+        value: parsePrice,
+        gasPrice: ethers.utils.parseUnits('0.5', 'gwei')
+      })
+	  provider.once(contract, () => {
+        dispatch('getOffsetBoxList', boxInfo.boxAddress)
+        console.log('Minting Box NFT Done')
+        setTimeout(() => commit('changeSuccessMintRandomNft', true), 2000)
+	  })
+	} catch(e) {
+      console.log('error', e)
+      commit('changeSuccessMintRandomNft', 'error')
+	}
+  },
+
+  async setBoxFeeAndNftCounts({state, getters, commit}) {
+	try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+	  const signer = provider.getSigner()
+	  const boxInfo = state.boxNftInfo
+	  const feeCO2 = 0
+	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
+	  const blockCount = boxInfo.commonNfts.length
+	  const commonCount = 125 * blockCount
+	  const commonArr = [
+		boxInfo.commonNfts.map(nft => nft.name),
+		boxInfo.commonNfts.map(nft => nft.image)
+	  ]
+
+	  const rareCount = boxInfo.rarity ? (25 * blockCount) : 0
+	  let rareArr = []
+	  if (boxInfo.rareNfts && boxInfo.rareNfts.length > 0) {
+		rareArr = [
+		  boxInfo.rareNfts.map(nft => nft.name),
+		  boxInfo.rareNfts.map(nft => nft.image)
+		]
+	  }
+
+	  const epicCount = boxInfo.rarity ? (5 * blockCount) : 0
+	  let epicArr = []
+	  if (boxInfo.epicNfts && boxInfo.epicNfts.length > 0) {
+		epicArr = [
+		  boxInfo.epicNfts.map(nft => nft.name),
+		  boxInfo.epicNfts.map(nft => nft.image)
+		]
+	  }
+
+	  const legendaryCount = boxInfo.rarity ? blockCount : 0
+	  let legendaryArr = []
+	  if (boxInfo.legendaryNfts && boxInfo.legendaryNfts.length > 0) {
+		legendaryArr = [
+		  boxInfo.legendaryNfts.map(nft => nft.name),
+		  boxInfo.legendaryNfts.map(nft => nft.image)
+	    ]		
+	  }
+
+	  await contract.setFeeAndNFTCounts(
+		feeCO2,
+		legendaryCount,
+		legendaryArr,
+		epicCount,
+		epicArr,
+		rareCount,
+		rareArr,
+		commonCount,
+		commonArr,
+		boxInfo.boxAddress
+	  );
+	  provider.once(contract, () => {
+		console.log('Set Fee And Counts Done')
+		commit('changeSuccessCreateBox', true)
+	  })
+	} catch(e) {
+	  console.log('error', e)
+	}
+  },
+
+  async createCyberNftBox({state, getters, commit, dispatch}) {
+	try {
+	  const provider = new ethers.providers.Web3Provider(getters.provider)
+	  const signer = provider.getSigner()
+	  const boxInfo = state.boxNftInfo
+	  const contract = new ethers.Contract(state.boxCollectionManager, BoxCollectionMgrABI, signer)
+	  await contract.addCyberNFTBox(
+		boxInfo.collection.collectionAddress,
+		boxInfo.collection.linkedNFTAddress,
+		boxInfo.name,
+		boxInfo.description || '',
+		boxInfo.authorName || '',
+		boxInfo.authorDetail || '',
+		boxInfo.boxImage,
+		boxInfo.boxCover,
+		boxInfo.price ? web3.utils.toWei(String(boxInfo.price)) : 0,
+		boxInfo.royalty ? boxInfo.royalty : 0
+	  );
+	  contract.on('CyberBoxAddedNewBox', (collectionAddress, boxAddress) => {
+		console.log('Add New Box Done. Box Addresss: ', boxAddress)
+		commit('changeBoxNftInfo', {
+		  boxAddress
+		})
+		dispatch('setBoxFeeAndNftCounts')
+	  })
+	} catch(e) {
+		console.log('error', e)
+	}
   }
 }
 
@@ -2573,6 +2958,46 @@ export const mutations = {
     }
     state.nftList = newNftList
   },
+  setNewBoxList(state, list) {
+	state.offsetBoxList = list
+  },
+  addBoxToList(state, list) {
+	state.offsetBoxList = [
+	  ...state.offsetBoxList,
+	  ...list
+	]
+  },
+  setBoxCollection(state, collection) {
+	state.boxCollection = collection
+  },
+  setBoxCollectionList(state, list) {
+	state.boxCollectionList = list
+  },
+  changeBoxNftInfo(state, data) {
+	if (data) {
+	  const boxInfo = state.boxNftInfo || {}
+	  state.boxNftInfo = {
+		...boxInfo,
+		...data
+	  }
+	} else {
+	  state.boxNftInfo = null
+	}
+  },
+  addBoxCollectionToList(state, collection) {
+	state.boxCollection = null
+	state.boxCollectionList = [
+	  ...state.boxCollectionList,
+	  collection
+	]
+	// localStorage.setItem('boxlist', JSON.stringify(state.boxCollectionList))
+  },
+  setBoxCollectionList(state, collectionList) {
+	state.boxCollectionList = collectionList
+  },
+  changeFetchingOwnedBox(state, fetching) {
+	state.fetchingOwnedBox = fetching
+  },
   setNotificationList(state, list) {
     state.notificationList = list
   },
@@ -2632,10 +3057,19 @@ export const mutations = {
   },
   changeSuccessTransferToken(state, status) {
     state.successTransferToken = status
-	},
-	changeSellTokenClosed(state, status) {
+  },
+  changeSellTokenClosed(state, status) {
     state.sellTokenClosed = status
-	},
+  },
+  changeSuccessCreateBoxCollection(state, status) {
+    state.successCreateBoxCollection = status
+  },
+  changeSuccessCreateBox(state, status) {
+    state.successCreateBox = status
+  },
+  changeSuccessMintRandomNft(state, status) {
+    state.successMintRandomNft = status
+  },
   setChainId(state, chain) {
     state.chainId = chain
     state.wrongNetwork = chain !== 42220

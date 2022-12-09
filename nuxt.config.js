@@ -62,7 +62,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/exchange-bee-second',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/randomindexminter',
         options: {}
       },
       ubeswap: {
