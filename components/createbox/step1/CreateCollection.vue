@@ -60,7 +60,7 @@
                 </div>
                 <div class="createbox__collection-main-banner-cover">
                     <p class="createbox__collection-main-banner-label">Cover image</p>
-                    <p class="createbox__collection-main-banner-description">JPEG, PNG. Recommend 1440x236. Max 15mb</p>
+                    <p class="createbox__collection-main-banner-description">JPEG, PNG. Recommend 1440x436. Max 15mb</p>
                     <div class="createbox__collection-main-banner-box createbox__collection-main-banner-cover-box" :class="{ filled: coverImage }"   @click="changeFile('cover')">
 						<input class="createbox__collection-main-fileinput" type="file" accept="image/png, image/gif, image/jpeg" ref="cover" @change="selectBanner('cover', $event)" hidden>
 						<img class="createbox__collection-main-banner-preview" src="/picture.svg" alt="preview" v-if="!coverImage">

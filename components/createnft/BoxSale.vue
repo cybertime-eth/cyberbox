@@ -94,7 +94,7 @@
 			</div>
 			<div class="box__sale-setting-image-cover">
 				<p class="box__sale-setting-image-label">Upload cover</p>
-				<p class="box__sale-setting-image-cover-description">JPEG, PNG. Recommend 1440x236. Max 15mb</p>
+				<p class="box__sale-setting-image-cover-description">JPEG, PNG. Recommend 1440x436. Max 15mb</p>
 				<input class="box__sale-setting-image-cover-input" type="file" accept="image/png, image/gif, image/jpeg" ref="boxCover" @change="selectBoxBanner('cover', $event)" hidden>
 				<div class="box__sale-setting-image-area box__sale-setting-image-cover-area" :class="{ selected: boxCover }" @click="changeBoxBanner('boxCover')">
 					<img class="box__sale-setting-image-area-image" :src="boxCover" v-if="boxCover">
