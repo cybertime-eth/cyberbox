@@ -62,8 +62,7 @@ export default {
      */
     clients: {
       default: {
-        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/randomboxpricetwo',
-        // endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/randomindexminter',
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/randomindexminter',
         options: {}
       },
       ubeswap: {
