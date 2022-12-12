@@ -464,6 +464,7 @@ export default {
 	  &-thumb {
 		width: 100%;
 		height: 100%;
+		object-fit: cover;
       }
       &-cover {
 		margin-top: 3.2rem;

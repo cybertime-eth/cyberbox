@@ -50,7 +50,7 @@
 	  <div class="boxcollection__items" v-else-if="nftList.length && !loading">
         <nft :nft="nft" :key="index"  v-for="(nft, index) of nftList" :owner="nftOwned(nft)" :boxnft="true" :seller="false" :route="nftRoute(nft)" from="Collection"/>
       </div>
-      <button class="boxcollection__create" @click="createCarbonBox" v-else-if="!loading && !collection.linkedBoxAddress">Create Carbon Box</button>
+      <button class="boxcollection__create" @click="createCarbonBox" v-else-if="!loading && !collection.preview && !collection.linkedBoxAddress">Create Carbon Box</button>
     </div>
   </section>
 </template>
@@ -211,7 +211,7 @@ export default {
       this.$store.commit('changeSortData', 'all')
 	},
 	createCarbonBox() {
-	  this.$router.push(`/createbox/4?collectionAddress=${this.collection.collectionAddress}`)
+	  this.$router.push(`/createnft?collectionAddress=${this.collection.collectionAddress}`)
 	},
 	sendCollectionEvent(eventInfo) {
 	  let eventName = ''

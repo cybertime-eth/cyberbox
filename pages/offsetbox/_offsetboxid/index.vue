@@ -7,7 +7,7 @@
                 <p class="box__cover-desc">Offset Box by {{ boxInfo.boxAutorTitle }}</p>
             </div>
             <div class="box__info">
-                <img class="box__info-img" :src="boxInfo.boxImage">
+                <img class="box__info-img" src="/box-picture.png">
                 <div class="box__info-sale">
                     <div class="box__info-sale-price">
                         <img class="box__info-sale-price-img" src="/celo.svg">
@@ -58,7 +58,7 @@
                 </div>
             </div>
         </div>
-        <SuccessfullBuy :name="boxInfo.boxName" :image="boxInfo.boxImage" :randomNft="true" v-if="successMintRandomNft === true"/>
+        <SuccessfullBuy :name="boxInfo.boxName" image="/box-picture.png" :randomNft="true" v-if="successMintRandomNft === true"/>
     </section>
 </template>
 

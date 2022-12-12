@@ -81,14 +81,8 @@
 			<div class="box__sale-setting-image-choose">
 				<p class="box__sale-setting-image-label">Or chouse our image:</p>
 				<div class="box__sale-setting-image-choose-block">
-					<div class="box__sale-setting-image-choose-block-box" :class="{ selected: boxPreImageNum === 1 }" @click="boxPreImageNum = 1">
-						<img class="box__sale-setting-image-choose-block-box-picture" src="/box-1.png">
-					</div>
-					<div class="box__sale-setting-image-choose-block-box" :class="{ selected: boxPreImageNum === 2 }" @click="boxPreImageNum = 2">
-						<img class="box__sale-setting-image-choose-block-box-picture" src="/box-2.png">
-					</div>
-					<div class="box__sale-setting-image-choose-block-box" :class="{ selected: boxPreImageNum === 3 }" @click="boxPreImageNum = 3">
-						<img class="box__sale-setting-image-choose-block-box-picture" src="/box-3.png">
+					<div class="box__sale-setting-image-choose-block-box" :class="{ selected: boxPreImageNum === 1 }" @click="chooseOurImage">
+						<img class="box__sale-setting-image-choose-block-box-picture" src="/box-ours.png">
 					</div>
 				</div>
 			</div>
@@ -207,6 +201,9 @@ export default {
 	  }
 	  reader.readAsDataURL(file)
 	},
+	chooseOurImage() {
+		this.boxPreImageNum = 1
+	},
 	async uploadBoxImagesToIPFS(boxInfo) {
 	  const ipfsArray = []
 	  const nftArray = [
@@ -310,7 +307,7 @@ export default {
 	  this.isSubmitAvailable = false
 	  let preSelectedImage = null
 	  if (this.boxPreImageNum) {
-		preSelectedImage = location.origin + '/' + `box-${this.boxPreImageNum}.png`
+		preSelectedImage = location.origin + '/box-ours.png'
 	  }
 	  const boxInfo = {
 		...JSON.parse(JSON.stringify(this.$store.state.boxNftInfo)),
@@ -560,6 +557,8 @@ export default {
 		cursor: pointer;
 		&-image {
 		  width: 100%;
+			height: 100%;
+			object-fit: cover;
 		}
 	  }
 	  &-box {
@@ -577,9 +576,9 @@ export default {
 		  margin-top: 1.6rem;
 		  &-box {
 			width: 8.8rem;
-			height: 8.8rem;
 			margin-right: 2.4rem;
-			border: 1px dashed $border;
+			border: 0;
+			// border: 1px dashed $border;
 			border-radius: 4px;
 			cursor: pointer;
 			&:last-child {
