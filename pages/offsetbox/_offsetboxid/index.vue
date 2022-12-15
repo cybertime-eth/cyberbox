@@ -4,14 +4,14 @@
             <div class="box__cover">
                 <img class="box__cover-img" :src="boxInfo.boxCoverImage">
                 <h2 class="box__cover-title">{{ boxInfo.boxName }}</h2>
-                <p class="box__cover-desc">Offset Box by {{ boxInfo.boxAutorTitle }}</p>
+                <!-- <p class="box__cover-desc">Offset Box by {{ boxInfo.boxAutorTitle }}</p> -->
             </div>
             <div class="box__info">
                 <img class="box__info-img" src="/box-picture.png">
                 <div class="box__info-sale">
                     <div class="box__info-sale-price">
                         <img class="box__info-sale-price-img" src="/celo.svg">
-                        <p class="box__info-sale-price-celo">{{ boxPrice.toFixed(1) }}</p>
+                        <p class="box__info-sale-price-celo">{{ formatedBoxPrice }}</p>
                         <p class="box__info-sale-price-dollar">(${{ boxDollarPrice }})</p>
                     </div>
                     <p class="box__info-sale-count">{{ remainedBoxCount }}/{{ totalBoxCount }} boxes left</p>
@@ -91,7 +91,21 @@ export default {
   computed: {
     boxList() {
       return this.$store.state.offsetBoxList
-    },
+	},
+	formatedBoxPrice() {
+	  const price = this.boxPrice
+	  if (price < 1) {
+		return price.toFixed(1)
+	  } else {
+		const diff = price - Math.floor(price)
+		if (diff === 0) {
+		  return Math.floor(price)
+		} else {
+		  const diffNum = diff.toString().split('.')[1]
+		  return price.toFixed(diffNum)
+		}
+	  }
+	},
     totalBoxCount() {
       const legendaryNftCount = this.boxInfo.legendary_count || 0
       const epicNftCount = this.boxInfo.epic_count || 0
@@ -245,6 +259,7 @@ export default {
       width: 100%;
       height: 100%;
       z-index: 0;
+      object-fit: cover;
     }
     &-title {
       text-transform: uppercase;

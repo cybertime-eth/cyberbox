@@ -2,7 +2,7 @@
     <div class="box__item" @click="$emit('click')">
         <img class="box__item-cover" :src="box.boxCoverImage">
         <div class="box__item-logoblock">
-            <p class="box__item-logoblock-title">{{ box.boxAutorTitle }}</p>
+            <!-- <p class="box__item-logoblock-title">{{ box.boxAutorTitle }}</p> -->
             <img class="box__item-logoblock-img" :src="box.boxImage">
         </div>
         <div class="box__item-info">
@@ -34,6 +34,7 @@ export default {
     width: 100%;
     height: 100%;
     border-radius: 0.8rem;
+    object-fit: cover;
   }
   &-logoblock {
     display: flex;

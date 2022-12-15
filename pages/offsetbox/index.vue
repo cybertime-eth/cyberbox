@@ -15,7 +15,7 @@
 			</div> -->
 			<div class="offsetbox__content" :class="{ empty: !popularBox }">
 				<div class="offsetbox__content-block">
-					<p class="offsetbox__content-block-name">Discover drops</p>
+					<p class="offsetbox__content-block-name">Discover boxes</p>
 				</div>
 				<div class="offsetbox__content-list">
 					<box :box="box" @click="showBoxDetail(box)" :key="idx" v-for="(box, idx) of boxList"/>
@@ -165,7 +165,7 @@ export default {
 
   @media (max-width: 460px) {
 	max-width: none;
-	padding: 0 0 4rem;
+	padding: 2.4rem 0 4rem;
 	&__popular {
 	  padding-top: 2.2rem;
 	  padding-bottom: 3rem;

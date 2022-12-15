@@ -2346,7 +2346,7 @@ export const actions = {
 	  }
 	  const query = gql`
 	  query Sample {
-        contracts(first: 30) {
+        contracts(first: 100) {
           nftSymbol
           mint_count
         }
