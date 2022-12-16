@@ -65,6 +65,10 @@ export default {
         endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/randomindexminter',
         options: {}
       },
+      boxmgr: {
+        endpoint: 'https://api.thegraph.com/subgraphs/name/itdev-1210/randomnftonly',
+        options: {}
+      },
       ubeswap: {
         endpoint: 'https://api.thegraph.com/subgraphs/name/ubeswap/ubeswap',
         options: {}

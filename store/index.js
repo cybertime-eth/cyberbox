@@ -2262,7 +2262,7 @@ export const actions = {
 			linkedBoxAddress
 		  }
 		}`
-	  const data = await this.$graphql.default.request(query)
+	  const data = await this.$graphql.boxmgr.request(query)
 	  const rnCollections = data.rncollections
 	  commit('setBoxCollectionList', rnCollections)
 	  return rnCollections		
@@ -2325,7 +2325,7 @@ export const actions = {
 				}
 			}
 		}`;
-	  const data = await this.$graphql.default.request(query)
+	  const data = await this.$graphql.boxmgr.request(query)
 	  let contractInfos = data.contractInfos || []
 	  state.pagination ? commit('addNftToList', contractInfos) : commit('setNewNftList', contractInfos)
 	  return contractInfos
@@ -2372,7 +2372,7 @@ export const actions = {
 		  updatedAt
 	    }
 		}`
-	  const data = await this.$graphql.default.request(query)
+	  const data = await this.$graphql.boxmgr.request(query)
       let rnBoxes = data.rnboxes || []
       rnBoxes.map(box => {
         const contract = data.contracts.find(contract => contract.nftSymbol === box.linkedNFTAddress)
@@ -2399,7 +2399,7 @@ export const actions = {
 		  imageCount
 		}
 	  }`
-	  const data = await this.$graphql.default.request(query)
+	  const data = await this.$graphql.boxmgr.request(query)
 	  return data.rnimages.sort((a, b) => b.rnType - a.rnType)
 	} catch(e) {
 	  console.log(e)
