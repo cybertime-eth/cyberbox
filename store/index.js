@@ -2373,7 +2373,9 @@ export const actions = {
 	    }
 		}`
 	  const data = await this.$graphql.boxmgr.request(query)
-      let rnBoxes = data.rnboxes || []
+	  let rnBoxes = data.rnboxes || []
+	  const hiddenBoxes = ['0x1a20fc1e8560f0d4b364dc5939ff09668ed0b19d', '0xd53c5c6b0ee908bce29c8878039444aea7c7a641']
+	  rnBoxes = rnBoxes.filter(item => !hiddenBoxes.includes(item.boxAddress))
       rnBoxes.map(box => {
         const contract = data.contracts.find(contract => contract.nftSymbol === box.linkedNFTAddress)
         box.mint_count = contract ? contract.mint_count : 0
