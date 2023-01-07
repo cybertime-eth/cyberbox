@@ -5,9 +5,9 @@
 		<client-only>
 			<img class="refi__main-img" :src="backgroundImage" alt="background">
 		</client-only>
-    	<h1 class="refi__title">Carbon NFT Marketplace</h1>
+    	<h1 class="refi__title">Raise Funds for Your Ideas and Build a DAO Community to Scale Them</h1>
 		<client-only>
-    		<h3 class="refi__subtitle">We help businesses and NFT buyers to restore nature, become carbon neutral and earn</h3>
+    		<h3 class="refi__subtitle">Just imagine Product Hunt + Kickstarter on one platform in Web 3 space. Get feedback on your idea, raise funds to implement it, and build a DAO community to scale.</h3>
 		</client-only>
 		<div class="refi__main-buttons">
 		  <button class="refi__main-button btn-createbox" @click="gotoCreateBox">Create Box</button>
@@ -24,7 +24,7 @@
         </div>
 	</div>
     <div class="refi__block">
-	  <div class="refi__block-carbon">
+	  <!-- <div class="refi__block-carbon">
 		<div class="refi__block-carbon-info">
 			<h2 class="refi__block-carbon-info-title">ReFi Calendar 2022</h2>
 			<p class="refi__block-carbon-info-content">Mint NFT, offset 1 tCO2 every month and regenerate nature</p>
@@ -45,7 +45,7 @@
 				</div>
 			</div>
 		</div>
-	  </div>
+	  </div> -->
       <!-- <div class="refi__block-listings">
         <h3 class="refi__block-listings-title">Latest Listings <img :src="getCDNImage('fire.svg')" alt="fire"></h3>
         <div class="refi__block-listings-items">
@@ -201,9 +201,9 @@ export default {
 
 	this.stopLoading()
   },
-  beforeDestroy() {
-	clearInterval(this.certificateTimer)
-  },
+//   beforeDestroy() {
+// 	clearInterval(this.certificateTimer)
+//   },
   mounted() {
 	if (process && process.browser && this.isMobile()) {
 	  this.sliderActive = 1
@@ -277,9 +277,9 @@ export default {
 	},
 	stopLoading() {
 	  this.loading = false
-	  if (!this.certificateTimer) {
-		this.certificateTimer = setInterval(this.startCertificateAnimation, 3000)
-	  }
+	//   if (!this.certificateTimer) {
+	// 	this.certificateTimer = setInterval(this.startCertificateAnimation, 3000)
+	//   }
 	},
 	startCertificateAnimation() {
 	  const newCertifiate = this.activeCertificate + 1
@@ -506,11 +506,15 @@ export default {
       }
   }
   &__title {
+	max-width: 80rem;
+	margin: 0 auto;
     text-align: center;
     font-family: Cabin-Bold;
     font-size: 5rem;
   }
   &__subtitle {
+	max-width: 90rem;
+	margin: 0 auto;
     padding-top: 1.6rem;
     text-align: center;
     font-weight: 500;
