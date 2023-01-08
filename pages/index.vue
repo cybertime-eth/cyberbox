@@ -5,7 +5,7 @@
 		<client-only>
 			<img class="refi__main-img" :src="backgroundImage" alt="background">
 		</client-only>
-    	<h1 class="refi__title">Raise Funds for Your Ideas and Build a DAO Community to Scale Them</h1>
+    	<h1 class="refi__title">Raise funds for your ideas and build a DAO community of supporters</h1>
 		<client-only>
     		<h3 class="refi__subtitle">Just imagine Product Hunt + Kickstarter on one platform in Web 3 space. Get feedback on your idea, raise funds to implement it, and build a DAO community to scale.</h3>
 		</client-only>

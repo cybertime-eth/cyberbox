@@ -97,11 +97,11 @@ export default {
 	  if (price < 1) {
 		return price.toFixed(1)
 	  } else {
-		const diff = price - Math.floor(price)
+    const diff = price - Math.floor(price)
 		if (diff === 0) {
 		  return Math.floor(price)
 		} else {
-		  const diffNum = diff.toString().split('.')[1]
+		  const diffNum = diff.toString().split('.')[1].toString().length
 		  return price.toFixed(diffNum)
 		}
 	  }
