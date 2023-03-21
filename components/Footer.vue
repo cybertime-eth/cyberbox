@@ -55,11 +55,11 @@ export default {
 	},
 	methods: {
 	  updateLayout() {
-		const nonFixedRoutes = ['index', 'explorer', 'tracker', 'calendar']
+		const nonFixedRoutes = ['explorer', 'tracker', 'calendar']
 		if (nonFixedRoutes.includes(this.routeName) || (this.routeName !== 'index' && process.browser && window.innerWidth <= 460)) {
 		  this.footerFixed = false
 		}
-		const hiddenRoutes = ['createbox', 'createnft', 'boxcollection', 'offsetbox']
+		const hiddenRoutes = ['index', 'createbox', 'createnft', 'boxcollection', 'offsetbox']
 		hiddenRoutes.forEach(route => {
 		  if (!this.footerHidden && this.routeName.includes(route)) {
 			this.footerHidden = true
