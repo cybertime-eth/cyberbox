@@ -16,7 +16,6 @@ import nomABI from '../abis/nomMarket.json'
 import { uuid } from "@walletconnect/utils"
 import {gql} from "nuxt-graphql-request";
 const ContractKit = require('@celo/contractkit')
-import redstone from 'redstone-api'
 import { Magic } from 'magic-sdk'
 import { RESOURCE_CDN_ROOT } from '@/config'
 export const state = () => ({
@@ -1585,7 +1584,23 @@ export const actions = {
 	}
   },
   async getPriceToken() {
-	return await redstone.getPrice('CELO')
+	try {
+		const query = gql`
+		query Sample {
+			pairs(first: 1 where: { token0: "0x471ece3750da237f93b8e339c536989b8978a438" token1: "0x765de816845861e75a25fca122bb6898b8b1282a" }) {
+				token1Price
+			}
+		}`
+		let data = await this.$graphql.ubeswap.request(query)
+		const tokenCeloPrice = parseFloat(data.pairs[0].token1Price)
+		return {
+		  value: tokenCeloPrice
+		}
+	} catch {
+	  return {
+		value: 0
+	  }
+	}
   },
   async getCMCO2TokenPrice({commit}) {
 	try {
